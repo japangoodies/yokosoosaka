@@ -283,10 +283,12 @@ modalImg.addEventListener('touchend', function(e) {
   }
 
   viewer.addEventListener('touchstart', function(e) {
+    if (!viewer.classList.contains('active')) return;
     var t = e.touches[0];
     startY = t.clientY;
     dragOffset = 0;
     dragging = true;
+    track.style.transition = 'none';
   }, { passive: true });
 
   viewer.addEventListener('touchmove', function(e) {
