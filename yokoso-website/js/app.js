@@ -252,8 +252,9 @@ function renderFullscreenTrack() {
 function goToSlide(index, smooth) {
   currentImageIndex = index;
   const track = document.getElementById('fullscreenTrack');
+  var h = window.innerHeight;
   track.style.transition = smooth ? 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)' : 'none';
-  track.style.transform = `translateY(-${index * 100}vh)`;
+  track.style.transform = 'translate3d(0,' + (-index * h) + 'px,0)';
   updateCounter();
 }
 
@@ -303,12 +304,13 @@ modalImg.addEventListener('touchend', function(e) {
     const dy = t.clientY - startY;
     const dx = t.clientX - startX;
     if (Math.abs(dy) > Math.abs(dx)) {
+      var h = window.innerHeight;
       dragOffset = dy;
-      var base = -currentImageIndex * 100;
+      var base = -currentImageIndex * h;
       var offset = dy * 0.4;
       if (currentImageIndex === 0) offset = Math.min(offset, 0);
       if (currentImageIndex === currentModalImages.length - 1) offset = Math.max(offset, 0);
-      track.style.transform = 'translateY(' + (base + offset) + 'vh)';
+      track.style.transform = 'translate3d(0,' + (base + offset) + 'px,0)';
     }
   }, { passive: true });
 
