@@ -15,16 +15,21 @@ const DEFAULT_PRODUCTS = [
 ];
 
 // Firebase
-firebase.initializeApp({
-  apiKey: "AIzaSyCR8jcz2JeDr3VYztZm2KYdns4uPUajtqQ",
-  authDomain: "japan-goodies.firebaseapp.com",
-  projectId: "japan-goodies",
-  storageBucket: "japan-goodies.firebasestorage.app",
-  messagingSenderId: "768529751498",
-  appId: "1:768529751498:web:b0a48ecd1e709a8a5f0333",
-  measurementId: "G-EJ6NKSDDHE"
-});
-const fbDB = firebase.firestore();
+var fbDB = null;
+try {
+  if (typeof firebase !== 'undefined') {
+    firebase.initializeApp({
+      apiKey: "AIzaSyCR8jcz2JeDr3VYztZm2KYdns4uPUajtqQ",
+      authDomain: "japan-goodies.firebaseapp.com",
+      projectId: "japan-goodies",
+      storageBucket: "japan-goodies.firebasestorage.app",
+      messagingSenderId: "768529751498",
+      appId: "1:768529751498:web:b0a48ecd1e709a8a5f0333",
+      measurementId: "G-EJ6NKSDDHE"
+    });
+    fbDB = firebase.firestore();
+  }
+} catch (e) {}
 const FB_COLLECTION = 'yokoso';
 const FB_DOC = 'products';
 
@@ -61,25 +66,31 @@ function loadProducts(callback) {
     products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
   }
 
-  fbDB.collection(FB_COLLECTION).doc(FB_DOC).get()
-    .then(doc => {
-      if (doc.exists && doc.data().items && doc.data().items.length > 0) {
-        products = doc.data().items;
-        migrateProducts();
-        localStorage.setItem('yokoso_products', JSON.stringify(products));
-      } else {
-        fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(() => {});
-      }
-      if (callback) callback();
-    })
-    .catch(() => {
-      if (callback) callback();
-    });
+  if (fbDB) {
+    fbDB.collection(FB_COLLECTION).doc(FB_DOC).get()
+      .then(doc => {
+        if (doc.exists && doc.data().items && doc.data().items.length > 0) {
+          products = doc.data().items;
+          migrateProducts();
+          localStorage.setItem('yokoso_products', JSON.stringify(products));
+        } else {
+          fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(() => {});
+        }
+        if (callback) callback();
+      })
+      .catch(() => {
+        if (callback) callback();
+      });
+  } else {
+    if (callback) callback();
+  }
 }
 
 function saveProducts() {
   localStorage.setItem('yokoso_products', JSON.stringify(products));
-  fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(() => {});
+  if (fbDB) {
+    fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(() => {});
+  }
 }
 
 function getCategories() {
