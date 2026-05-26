@@ -369,12 +369,27 @@ document.getElementById('searchInput').addEventListener('input', e => {
   renderProducts();
 });
 
-document.getElementById('searchInput').addEventListener('search', e => {
-  e.target.blur();
+function dismissKeyboard() {
+  var tmp = document.createElement('input');
+  tmp.style.position = 'fixed';
+  tmp.style.top = '-100px';
+  tmp.style.left = '-100px';
+  tmp.style.width = '1px';
+  tmp.style.height = '1px';
+  tmp.style.opacity = '0';
+  tmp.setAttribute('readonly', true);
+  document.body.appendChild(tmp);
+  tmp.focus();
+  setTimeout(function() { document.body.removeChild(tmp); }, 50);
+}
+
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  dismissKeyboard();
 });
 
-document.getElementById('searchInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') { e.preventDefault(); setTimeout(() => e.target.blur(), 0); }
+document.getElementById('searchInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); dismissKeyboard(); }
 });
 
 document.getElementById('menuToggle').addEventListener('click', () => {
