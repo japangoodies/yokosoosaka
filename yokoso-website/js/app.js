@@ -370,7 +370,7 @@ document.getElementById('searchInput').addEventListener('input', e => {
 });
 
 document.getElementById('menuToggle').addEventListener('click', () => {
-  document.querySelector('.nav').classList.toggle('open');
+  document.querySelector('.header-nav-wrapper').classList.toggle('open');
 });
 
 // ---- ADMIN PANEL ----
