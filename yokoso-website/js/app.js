@@ -233,38 +233,28 @@ function openFullscreen() {
   renderFullscreenTrack();
 }
 
-function closeFullscreen() {
-  document.getElementById('fullscreenViewer').classList.remove('active');
-  document.body.style.overflow = '';
-}
-
 function renderFullscreenTrack() {
-  const track = document.getElementById('fullscreenTrack');
-  track.innerHTML = currentModalImages.map((src, i) =>
-    `<div class="fullscreen-slide">
-      <img src="${src}" loading="lazy" decoding="async" onerror="this.src='images/products/placeholder.svg'" alt="">
-    </div>`
-  ).join('');
-  goToSlide(currentImageIndex, false);
+  var imgs = currentModalImages;
+  var idx = currentImageIndex;
+  var track = document.getElementById('fullscreenTrack');
+  track.innerHTML =
+    '<div class="fullscreen-slide"><img src="' + (idx > 0 ? imgs[idx - 1] : '') + '" alt=""></div>' +
+    '<div class="fullscreen-slide"><img src="' + imgs[idx] + '" alt=""></div>' +
+    '<div class="fullscreen-slide"><img src="' + (idx < imgs.length - 1 ? imgs[idx + 1] : '') + '" alt=""></div>';
   updateCounter();
-}
-
-function goToSlide(index, smooth) {
-  currentImageIndex = index;
-  const track = document.getElementById('fullscreenTrack');
   var h = window.innerHeight;
-  track.style.transition = smooth ? 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)' : 'none';
-  track.style.transform = 'translate3d(0,' + (-index * h) + 'px,0)';
-  updateCounter();
+  track.style.transition = 'none';
+  track.style.transform = 'translate3d(0,' + (-h) + 'px,0)';
 }
 
 function updateCounter() {
   document.getElementById('fullscreenCounter').textContent =
-    `${currentImageIndex + 1} / ${currentModalImages.length}`;
+    (currentImageIndex + 1) + ' / ' + currentModalImages.length;
 }
 
 function closeFullscreen() {
   document.getElementById('fullscreenViewer').classList.remove('active');
+  document.body.style.overflow = '';
 }
 
 var modalImg = document.getElementById('modalImage');
@@ -276,63 +266,84 @@ modalImg.addEventListener('touchend', function(e) {
 
 // Fullscreen swipe / drag
 (function() {
-  const viewer = document.getElementById('fullscreenViewer');
-  const track = document.getElementById('fullscreenTrack');
-  let startY = 0, startX = 0;
-  let dragging = false;
-  let dragOffset = 0;
+  var viewer = document.getElementById('fullscreenViewer');
+  var track = document.getElementById('fullscreenTrack');
+  var startY = 0;
+  var dragging = false;
+  var dragOffset = 0;
 
   function nav(dir) {
     if (currentModalImages.length < 2) return;
     var next = currentImageIndex + dir;
     if (next < 0 || next >= currentModalImages.length) return;
-    goToSlide(next, true);
+    var imgs = currentModalImages;
+    var slides = track.children;
+    var h = window.innerHeight;
+    if (dir === 1) {
+      slides[0].firstChild.src = slides[1].firstChild.src;
+      slides[1].firstChild.src = slides[2].firstChild.src;
+      slides[2].firstChild.src = next + 1 < imgs.length ? imgs[next + 1] : '';
+      track.style.transition = 'none';
+      track.style.transform = 'translate3d(0,' + (-2 * h) + 'px,0)';
+    } else {
+      slides[2].firstChild.src = slides[1].firstChild.src;
+      slides[1].firstChild.src = slides[0].firstChild.src;
+      slides[0].firstChild.src = next - 1 >= 0 ? imgs[next - 1] : '';
+      track.style.transition = 'none';
+      track.style.transform = 'translate3d(0,0,0)';
+    }
+    currentImageIndex = next;
+    updateCounter();
+    requestAnimationFrame(function() {
+      track.style.transition = 'transform 0.3s ease';
+      track.style.transform = 'translate3d(0,' + (-h) + 'px,0)';
+    });
   }
 
-  viewer.addEventListener('touchstart', e => {
-    const t = e.touches[0];
+  viewer.addEventListener('touchstart', function(e) {
+    var t = e.touches[0];
     startY = t.clientY;
-    startX = t.clientX;
     dragOffset = 0;
     dragging = true;
-    track.style.transition = 'none';
   }, { passive: true });
 
-  viewer.addEventListener('touchmove', e => {
+  viewer.addEventListener('touchmove', function(e) {
     if (!dragging || currentModalImages.length < 2) return;
-    const t = e.touches[0];
-    const dy = t.clientY - startY;
-    const dx = t.clientX - startX;
+    var t = e.touches[0];
+    var dy = t.clientY - startY;
+    var dx = t.clientX - startX;
     if (Math.abs(dy) > Math.abs(dx)) {
-      var h = window.innerHeight;
       dragOffset = dy;
-      var base = -currentImageIndex * h;
-      var offset = dy * 0.4;
+      track.style.transition = 'none';
+      var h = window.innerHeight;
+      var offset = dy * 0.3;
       if (currentImageIndex === 0) offset = Math.min(offset, 0);
       if (currentImageIndex === currentModalImages.length - 1) offset = Math.max(offset, 0);
-      track.style.transform = 'translate3d(0,' + (base + offset) + 'px,0)';
+      track.style.transform = 'translate3d(0,' + (-h + offset) + 'px,0)';
     }
   }, { passive: true });
 
-  viewer.addEventListener('touchend', e => {
+  viewer.addEventListener('touchend', function(e) {
     if (!dragging) return;
     dragging = false;
     if (currentModalImages.length < 2) return;
     if (Math.abs(dragOffset) > 50) {
       nav(dragOffset < 0 ? 1 : -1);
     } else {
-      goToSlide(currentImageIndex, true);
+      var h = window.innerHeight;
+      track.style.transition = 'transform 0.3s ease';
+      track.style.transform = 'translate3d(0,' + (-h) + 'px,0)';
     }
   }, { passive: true });
 
-  viewer.addEventListener('wheel', e => {
+  viewer.addEventListener('wheel', function(e) {
     if (currentModalImages.length < 2) return;
     if (Math.abs(e.deltaY) < 20) return;
     nav(e.deltaY > 0 ? 1 : -1);
   }, { passive: true });
 })();
 
-document.getElementById('fullscreenViewer').addEventListener('click', e => {
+document.getElementById('fullscreenViewer').addEventListener('click', function(e) {
   if (e.target === e.currentTarget) closeFullscreen();
 });
 
