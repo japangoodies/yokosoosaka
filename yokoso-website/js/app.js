@@ -376,12 +376,14 @@ function doSearch(e) {
   input.blur();
   setTimeout(function() {
     input.readOnly = false;
-    var img = document.querySelector('.product-card .product-image');
-    if (img) {
-      var y = img.getBoundingClientRect().top + window.pageYOffset - 70;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  }, 500);
+    requestAnimationFrame(function() {
+      var img = document.querySelector('.product-card .product-image');
+      if (img) {
+        var y = img.getBoundingClientRect().top + window.pageYOffset - 90;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  }, 600);
 }
 
 document.getElementById('searchForm').addEventListener('submit', doSearch);
