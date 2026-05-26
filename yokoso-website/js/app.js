@@ -282,7 +282,7 @@ modalImg.addEventListener('touchend', function(e) {
     track.style.transform = 'translate3d(0,' + (-next * h) + 'px,0)';
   }
 
-  viewer.addEventListener('touchstart', function(e) {
+  document.addEventListener('touchstart', function(e) {
     if (!viewer.classList.contains('active')) return;
     var t = e.touches[0];
     startY = t.clientY;
@@ -291,8 +291,9 @@ modalImg.addEventListener('touchend', function(e) {
     track.style.transition = 'none';
   }, { passive: true });
 
-  viewer.addEventListener('touchmove', function(e) {
+  document.addEventListener('touchmove', function(e) {
     if (!dragging || currentModalImages.length < 2) return;
+    if (!viewer.classList.contains('active')) return;
     var t = e.touches[0];
     var dy = t.clientY - startY;
     var dx = t.clientX - startX;
@@ -304,10 +305,11 @@ modalImg.addEventListener('touchend', function(e) {
       if (currentImageIndex === 0) offset = Math.min(offset, 0);
       if (currentImageIndex === currentModalImages.length - 1) offset = Math.max(offset, 0);
       track.style.transform = 'translate3d(0,' + (-currentImageIndex * h + offset) + 'px,0)';
+      e.preventDefault();
     }
-  }, { passive: true });
+  }, { passive: false });
 
-  viewer.addEventListener('touchend', function(e) {
+  document.addEventListener('touchend', function(e) {
     if (!dragging) return;
     dragging = false;
     if (currentModalImages.length < 2) return;
