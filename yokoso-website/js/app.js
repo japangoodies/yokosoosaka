@@ -374,11 +374,13 @@ function doSearch(e) {
   var input = document.getElementById('searchInput');
   input.readOnly = true;
   input.blur();
-  var grid = document.getElementById('productGrid');
-  if (grid && grid.children.length > 0) {
-    grid.children[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-  setTimeout(function() { input.readOnly = false; }, 300);
+  setTimeout(function() {
+    input.readOnly = false;
+    var card = document.querySelector('.product-card');
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 500);
 }
 
 document.getElementById('searchForm').addEventListener('submit', doSearch);
