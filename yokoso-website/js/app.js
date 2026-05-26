@@ -335,6 +335,10 @@ document.getElementById('fullscreenViewer').addEventListener('click', function(e
 });
 
 document.querySelector('#fullscreenViewer .fullscreen-close').addEventListener('click', closeFullscreen);
+document.querySelector('#fullscreenViewer .fullscreen-close').addEventListener('touchend', function(e) {
+  e.preventDefault();
+  closeFullscreen();
+});
 
 
 
