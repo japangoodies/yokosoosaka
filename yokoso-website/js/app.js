@@ -381,7 +381,7 @@ function doSearch(e) {
       var y = grid.getBoundingClientRect().top + window.pageYOffset - 80;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
-  }, 400);
+  }, 600);
 }
 
 document.getElementById('searchForm').addEventListener('submit', doSearch);
