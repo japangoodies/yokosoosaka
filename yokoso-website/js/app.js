@@ -369,27 +369,19 @@ document.getElementById('searchInput').addEventListener('input', e => {
   renderProducts();
 });
 
-function dismissKeyboard() {
-  var tmp = document.createElement('div');
-  tmp.tabIndex = -1;
-  tmp.style.position = 'fixed';
-  tmp.style.top = '-100px';
-  tmp.style.left = '-100px';
-  tmp.style.width = '1px';
-  tmp.style.height = '1px';
-  tmp.style.opacity = '0';
-  document.body.appendChild(tmp);
-  tmp.focus();
-  setTimeout(function() { document.body.removeChild(tmp); }, 50);
-}
-
-document.getElementById('searchForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  dismissKeyboard();
-});
-
 document.getElementById('searchInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') { e.preventDefault(); dismissKeyboard(); }
+  if (e.key === 'Enter' || e.keyCode === 13) {
+    e.preventDefault();
+    var input = e.target;
+    input.blur();
+    var h = document.createElement('div');
+    h.tabIndex = -1;
+    h.style.position = 'fixed';
+    h.style.top = '-9999px';
+    document.body.appendChild(h);
+    h.focus();
+    setTimeout(function() { document.body.removeChild(h); }, 10);
+  }
 });
 
 document.getElementById('menuToggle').addEventListener('click', () => {
