@@ -379,7 +379,7 @@ function doSearch(e) {
     requestAnimationFrame(function() {
       var el = document.querySelector('.product-card .product-image') || document.getElementById('productGrid');
       if (el) {
-        var y = el.getBoundingClientRect().top + window.pageYOffset - 220;
+        var y = el.getBoundingClientRect().top + window.pageYOffset - 225;
         window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
       }
     });
