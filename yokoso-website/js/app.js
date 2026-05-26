@@ -14,6 +14,20 @@ const DEFAULT_PRODUCTS = [
   { id: 13, name: "test", category: "test", price: "11", description: "test", images: ["images/products/placeholder.svg"] }
 ];
 
+// Firebase
+firebase.initializeApp({
+  apiKey: "AIzaSyCR8jcz2JeDr3VYztZm2KYdns4uPUajtqQ",
+  authDomain: "japan-goodies.firebaseapp.com",
+  projectId: "japan-goodies",
+  storageBucket: "japan-goodies.firebasestorage.app",
+  messagingSenderId: "768529751498",
+  appId: "1:768529751498:web:b0a48ecd1e709a8a5f0333",
+  measurementId: "G-EJ6NKSDDHE"
+});
+const fbDB = firebase.firestore();
+const FB_COLLECTION = 'yokoso';
+const FB_DOC = 'products';
+
 let products = [];
 let editingId = null;
 let currentCategory = 'all';
@@ -22,29 +36,50 @@ let selectedImagesData = [];
 let currentModalImages = [];
 let currentImageIndex = 0;
 
-function loadProducts() {
-  try {
-    const saved = localStorage.getItem('yokoso_products');
-    if (saved) {
-      products = JSON.parse(saved);
-      let migrated = false;
-      products.forEach(p => {
-        if (p.image && !p.images) {
-          p.images = [p.image];
-          delete p.image;
-          migrated = true;
-        }
-      });
-      if (migrated) saveProducts();
-      return;
+function migrateProducts() {
+  let migrated = false;
+  products.forEach(p => {
+    if (p.image && !p.images) {
+      p.images = [p.image];
+      delete p.image;
+      migrated = true;
     }
-  } catch {}
-  products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-  saveProducts();
+  });
+  return migrated;
+}
+
+function loadProducts(callback) {
+  const saved = localStorage.getItem('yokoso_products');
+  if (saved) {
+    try {
+      products = JSON.parse(saved);
+      migrateProducts();
+    } catch {
+      products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+    }
+  } else {
+    products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+  }
+
+  fbDB.collection(FB_COLLECTION).doc(FB_DOC).get()
+    .then(doc => {
+      if (doc.exists && doc.data().items && doc.data().items.length > 0) {
+        products = doc.data().items;
+        migrateProducts();
+        localStorage.setItem('yokoso_products', JSON.stringify(products));
+      } else if (!saved) {
+        fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(() => {});
+      }
+      if (callback) callback();
+    })
+    .catch(() => {
+      if (callback) callback();
+    });
 }
 
 function saveProducts() {
   localStorage.setItem('yokoso_products', JSON.stringify(products));
+  fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(() => {});
 }
 
 function getCategories() {
@@ -435,15 +470,11 @@ document.getElementById('backToPublicBtn').addEventListener('click', () => {
 });
 
 // ---- INIT ----
-loadProducts();
-
-function init() {
+loadProducts(function() {
   if (typeof MAINTENANCE_MODE !== 'undefined' && MAINTENANCE_MODE) {
     document.getElementById('maintenanceOverlay').classList.add('active');
     return;
   }
   renderFilters();
   renderProducts();
-}
-
-init();
+});
