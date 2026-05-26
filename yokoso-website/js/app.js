@@ -234,17 +234,30 @@ function openFullscreen() {
 }
 
 function renderFullscreenTrack() {
-  var imgs = currentModalImages;
-  var idx = currentImageIndex;
   var track = document.getElementById('fullscreenTrack');
-  track.innerHTML =
-    '<div class="fullscreen-slide"><img src="' + (idx > 0 ? imgs[idx - 1] : '') + '" alt=""></div>' +
-    '<div class="fullscreen-slide"><img src="' + imgs[idx] + '" alt=""></div>' +
-    '<div class="fullscreen-slide"><img src="' + (idx < imgs.length - 1 ? imgs[idx + 1] : '') + '" alt=""></div>';
+  track.innerHTML = '';
+  for (var i = 0; i < currentModalImages.length; i++) {
+    var slide = document.createElement('div');
+    slide.className = 'fullscreen-slide';
+    var img = document.createElement('img');
+    img.src = '';
+    img.dataset.src = currentModalImages[i];
+    slide.appendChild(img);
+    track.appendChild(slide);
+  }
+  loadAdjacentImages();
   updateCounter();
   var h = window.innerHeight;
   track.style.transition = 'none';
-  track.style.transform = 'translate3d(0,' + (-h) + 'px,0)';
+  track.style.transform = 'translate3d(0,' + (-currentImageIndex * h) + 'px,0)';
+}
+
+function loadAdjacentImages() {
+  var imgs = document.querySelectorAll('#fullscreenTrack .fullscreen-slide img');
+  var idx = currentImageIndex;
+  imgs[idx].src = imgs[idx].dataset.src;
+  if (idx > 0) imgs[idx - 1].src = imgs[idx - 1].dataset.src;
+  if (idx < imgs.length - 1) imgs[idx + 1].src = imgs[idx + 1].dataset.src;
 }
 
 function updateCounter() {
@@ -276,28 +289,12 @@ modalImg.addEventListener('touchend', function(e) {
     if (currentModalImages.length < 2) return;
     var next = currentImageIndex + dir;
     if (next < 0 || next >= currentModalImages.length) return;
-    var imgs = currentModalImages;
-    var slides = track.children;
-    var h = window.innerHeight;
-    if (dir === 1) {
-      slides[0].firstChild.src = slides[1].firstChild.src;
-      slides[1].firstChild.src = slides[2].firstChild.src;
-      slides[2].firstChild.src = next + 1 < imgs.length ? imgs[next + 1] : '';
-      track.style.transition = 'none';
-      track.style.transform = 'translate3d(0,' + (-2 * h) + 'px,0)';
-    } else {
-      slides[2].firstChild.src = slides[1].firstChild.src;
-      slides[1].firstChild.src = slides[0].firstChild.src;
-      slides[0].firstChild.src = next - 1 >= 0 ? imgs[next - 1] : '';
-      track.style.transition = 'none';
-      track.style.transform = 'translate3d(0,0,0)';
-    }
     currentImageIndex = next;
+    loadAdjacentImages();
     updateCounter();
-    requestAnimationFrame(function() {
-      track.style.transition = 'transform 0.3s ease';
-      track.style.transform = 'translate3d(0,' + (-h) + 'px,0)';
-    });
+    var h = window.innerHeight;
+    track.style.transition = 'transform 0.3s ease';
+    track.style.transform = 'translate3d(0,' + (-next * h) + 'px,0)';
   }
 
   viewer.addEventListener('touchstart', function(e) {
@@ -319,7 +316,7 @@ modalImg.addEventListener('touchend', function(e) {
       var offset = dy * 0.3;
       if (currentImageIndex === 0) offset = Math.min(offset, 0);
       if (currentImageIndex === currentModalImages.length - 1) offset = Math.max(offset, 0);
-      track.style.transform = 'translate3d(0,' + (-h + offset) + 'px,0)';
+      track.style.transform = 'translate3d(0,' + (-currentImageIndex * h + offset) + 'px,0)';
     }
   }, { passive: true });
 
@@ -332,7 +329,7 @@ modalImg.addEventListener('touchend', function(e) {
     } else {
       var h = window.innerHeight;
       track.style.transition = 'transform 0.3s ease';
-      track.style.transform = 'translate3d(0,' + (-h) + 'px,0)';
+      track.style.transform = 'translate3d(0,' + (-currentImageIndex * h) + 'px,0)';
     }
   }, { passive: true });
 
