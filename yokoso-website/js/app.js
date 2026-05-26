@@ -369,13 +369,30 @@ document.getElementById('searchInput').addEventListener('input', e => {
   renderProducts();
 });
 
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  document.getElementById('searchInput').readOnly = true;
+  document.getElementById('searchInput').blur();
+  var that = document.getElementById('searchInput');
+  that.readOnly = true;
+  that.blur();
+  setTimeout(function() { that.readOnly = false; }, 300);
+});
+
+document.getElementById('searchInput').addEventListener('search', function() {
+  this.readOnly = true;
+  this.blur();
+  var that = this;
+  setTimeout(function() { that.readOnly = false; }, 300);
+});
+
 document.getElementById('searchInput').addEventListener('keydown', function(e) {
   if (e.key === 'Enter' || e.keyCode === 13) {
     e.preventDefault();
-    var input = e.target;
-    input.readOnly = true;
-    input.blur();
-    setTimeout(function() { input.readOnly = false; }, 300);
+    this.readOnly = true;
+    this.blur();
+    var that = this;
+    setTimeout(function() { that.readOnly = false; }, 300);
   }
 });
 
