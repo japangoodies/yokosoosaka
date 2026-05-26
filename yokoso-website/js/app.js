@@ -1,16 +1,16 @@
 const DEFAULT_PRODUCTS = [
-  { id: 1, name: "Nike Air Force 1 Low (Japan Exclusive)", category: "Shoes", price: "₱5,200", description: "Authentic Nike Air Force 1 Low from Japan. Limited Japan-exclusive colorway. Leather upper with Air-Sole cushioning. Sizes 7-12 US.", images: ["images/products/placeholder.jpg"] },
-  { id: 2, name: "Nike Dunk Low Retro", category: "Shoes", price: "₱4,800", description: "Classic Nike Dunk Low in premium leather. Japan release. Available in multiple colors. Sizes 7-11 US.", images: ["images/products/placeholder.jpg"] },
-  { id: 3, name: "Nike Air Max 90 (Japan Pack)", category: "Shoes", price: "₱5,500", description: "Nike Air Max 90 from the Japan-exclusive pack. Visible Air cushioning. Iconic silhouette. Sizes 7-12 US.", images: ["images/products/placeholder.jpg"] },
-  { id: 4, name: "GU Fluffy Knit Sweater", category: "Clothing", price: "₱850", description: "Soft fluffy knit sweater from GU. Available in multiple colors. Perfect for cold season. Oversized relaxed fit.", images: ["images/products/placeholder.jpg"] },
-  { id: 5, name: "Uniqlo Airism Oversized T-Shirt", category: "Clothing", price: "₱650", description: "Authentic Uniqlo Airism oversized t-shirt. Ultra-lightweight and breathable. Moisture-wicking fabric. Perfect for everyday use.", images: ["images/products/placeholder.jpg"] },
-  { id: 6, name: "GU Wide Leg Pants", category: "Clothing", price: "₱950", description: "GU wide-leg pants. Comfortable and stylish. Premium cotton blend. Available in black, beige, and navy.", images: ["images/products/placeholder.jpg"] },
-  { id: 7, name: "Uniqlo Light Down Jacket", category: "Clothing", price: "₱2,200", description: "Lightweight Uniqlo down jacket. Packable design. 750 fill power. Warm without being bulky. Water-repellent.", images: ["images/products/placeholder.jpg"] },
-  { id: 8, name: "Japanese Biore UV Aqua Rich SPF50+", category: "Cosmetics", price: "₱550", description: "Biore UV Aqua Rich watery essence sunscreen. SPF50+ PA++++. Lightweight, non-sticky, refreshing finish. 80g.", images: ["images/products/placeholder.jpg"] },
-  { id: 9, name: "Japanese Sheet Mask Variety Pack (10pcs)", category: "Cosmetics", price: "₱380", description: "Assorted Japanese facial sheet masks. Infused with collagen, hyaluronic acid, and vitamin C. 10-piece pack.", images: ["images/products/placeholder.jpg"] },
-  { id: 10, name: "Heroine Make Waterproof Eyeliner", category: "Cosmetics", price: "₱480", description: "Japanese Heroine Make waterproof liquid eyeliner. Ultra-fine 0.1mm tip. Smudge-proof and long-lasting. Black.", images: ["images/products/placeholder.jpg"] },
-  { id: 11, name: "Onitsuka Tiger Mexico 66", category: "Shoes", price: "₱3,800", description: "Classic Onitsuka Tiger Mexico 66 sneakers. Japan-exclusive colorway. Iconic design. Comfortable sole. Sizes 6-10 US.", images: ["images/products/placeholder.jpg"] },
-  { id: 12, name: "GU Knit Cardigan", category: "Clothing", price: "₱1,100", description: "GU open-front knit cardigan. Soft acrylic blend. Oversized fit. Perfect layering piece for any outfit.", images: ["images/products/placeholder.jpg"] }
+  { id: 1, name: "Nike Air Force 1 Low (Japan Exclusive)", category: "Shoes", price: "₱5,200", description: "Authentic Nike Air Force 1 Low from Japan. Limited Japan-exclusive colorway. Leather upper with Air-Sole cushioning. Sizes 7-12 US.", images: ["images/products/placeholder.svg"] },
+  { id: 2, name: "Nike Dunk Low Retro", category: "Shoes", price: "₱4,800", description: "Classic Nike Dunk Low in premium leather. Japan release. Available in multiple colors. Sizes 7-11 US.", images: ["images/products/placeholder.svg"] },
+  { id: 3, name: "Nike Air Max 90 (Japan Pack)", category: "Shoes", price: "₱5,500", description: "Nike Air Max 90 from the Japan-exclusive pack. Visible Air cushioning. Iconic silhouette. Sizes 7-12 US.", images: ["images/products/placeholder.svg"] },
+  { id: 4, name: "GU Fluffy Knit Sweater", category: "Clothing", price: "₱850", description: "Soft fluffy knit sweater from GU. Available in multiple colors. Perfect for cold season. Oversized relaxed fit.", images: ["images/products/placeholder.svg"] },
+  { id: 5, name: "Uniqlo Airism Oversized T-Shirt", category: "Clothing", price: "₱650", description: "Authentic Uniqlo Airism oversized t-shirt. Ultra-lightweight and breathable. Moisture-wicking fabric. Perfect for everyday use.", images: ["images/products/placeholder.svg"] },
+  { id: 6, name: "GU Wide Leg Pants", category: "Clothing", price: "₱950", description: "GU wide-leg pants. Comfortable and stylish. Premium cotton blend. Available in black, beige, and navy.", images: ["images/products/placeholder.svg"] },
+  { id: 7, name: "Uniqlo Light Down Jacket", category: "Clothing", price: "₱2,200", description: "Lightweight Uniqlo down jacket. Packable design. 750 fill power. Warm without being bulky. Water-repellent.", images: ["images/products/placeholder.svg"] },
+  { id: 8, name: "Japanese Biore UV Aqua Rich SPF50+", category: "Cosmetics", price: "₱550", description: "Biore UV Aqua Rich watery essence sunscreen. SPF50+ PA++++. Lightweight, non-sticky, refreshing finish. 80g.", images: ["images/products/placeholder.svg"] },
+  { id: 9, name: "Japanese Sheet Mask Variety Pack (10pcs)", category: "Cosmetics", price: "₱380", description: "Assorted Japanese facial sheet masks. Infused with collagen, hyaluronic acid, and vitamin C. 10-piece pack.", images: ["images/products/placeholder.svg"] },
+  { id: 10, name: "Heroine Make Waterproof Eyeliner", category: "Cosmetics", price: "₱480", description: "Japanese Heroine Make waterproof liquid eyeliner. Ultra-fine 0.1mm tip. Smudge-proof and long-lasting. Black.", images: ["images/products/placeholder.svg"] },
+  { id: 11, name: "Onitsuka Tiger Mexico 66", category: "Shoes", price: "₱3,800", description: "Classic Onitsuka Tiger Mexico 66 sneakers. Japan-exclusive colorway. Iconic design. Comfortable sole. Sizes 6-10 US.", images: ["images/products/placeholder.svg"] },
+  { id: 12, name: "GU Knit Cardigan", category: "Clothing", price: "₱1,100", description: "GU open-front knit cardigan. Soft acrylic blend. Oversized fit. Perfect layering piece for any outfit.", images: ["images/products/placeholder.svg"] }
 ];
 
 let products = [];
@@ -90,8 +90,8 @@ function renderProducts() {
   empty.style.display = 'none';
   grid.innerHTML = filtered.map(p => `
     <div class="product-card" data-id="${p.id}">
-      <img class="product-image" src="${p.images?.[0] || 'images/products/placeholder.jpg'}" alt="${p.name}" loading="lazy"
-           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22><rect fill=%22%23f0f0f0%22 width=%22300%22 height=%22300%22/><text fill=%22%23999%22 font-size=%2216%22 x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22>No Image</text></svg>'">
+      <img class="product-image" src="${p.images?.[0] || 'images/products/placeholder.svg'}" alt="${p.name}" loading="lazy"
+           onerror="this.src='images/products/placeholder.svg'">
       <div class="product-info">
         <div class="product-category">${p.category}</div>
         <div class="product-name">${p.name}</div>
@@ -109,7 +109,7 @@ function renderProducts() {
 }
 
 function openModal(product) {
-  currentModalImages = product.images || [product.image || 'images/products/placeholder.jpg'];
+  currentModalImages = product.images || [product.image || 'images/products/placeholder.svg'];
   currentImageIndex = 0;
   showModalImage();
   document.getElementById('modalTitle').textContent = product.name;
@@ -122,9 +122,9 @@ function openModal(product) {
 
 function showModalImage() {
   const img = document.getElementById('modalImage');
-  img.src = currentModalImages[currentImageIndex] || 'images/products/placeholder.jpg';
+  img.src = currentModalImages[currentImageIndex] || 'images/products/placeholder.svg';
   img.onerror = function() {
-    this.src = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22><rect fill=%22%23f0f0f0%22 width=%22300%22 height=%22300%22/><text fill=%22%23999%22 font-size=%2216%22 x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22>No Image</text></svg>";
+    this.src = 'images/products/placeholder.svg';
   };
   const dotsContainer = document.getElementById('carouselDots');
   const prevBtn = document.getElementById('carouselPrev');
@@ -207,8 +207,8 @@ function renderAdminList() {
   }
   container.innerHTML = products.map(p => `
     <div class="admin-product-item" data-id="${p.id}">
-      <img src="${p.images?.[0] || 'images/products/placeholder.jpg'}" alt="${p.name}"
-           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2248%22 height=%2248%22><rect fill=%22%23333%22 width=%2248%22 height=%2248%22/><text fill=%22%23777%22 font-size=%2210%22 x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22>No</text></svg>'">
+      <img src="${p.images?.[0] || 'images/products/placeholder.svg'}" alt="${p.name}"
+           onerror="this.src='images/products/placeholder.svg'">
       <div class="admin-product-item-info">
         <div class="name">${p.name}</div>
         <div class="meta">${p.category} · ${p.price}</div>
@@ -281,8 +281,8 @@ document.getElementById('productForm').addEventListener('submit', e => {
   if (!name || !category || !price || !description) return;
 
   const images = selectedImagesData.length > 0 ? selectedImagesData : (editingId
-    ? (products.find(p => p.id === editingId)?.images || ['images/products/placeholder.jpg'])
-    : ['images/products/placeholder.jpg']);
+    ? (products.find(p => p.id === editingId)?.images || ['images/products/placeholder.svg'])
+    : ['images/products/placeholder.svg']);
 
   if (editingId) {
     const idx = products.findIndex(p => p.id === editingId);
@@ -327,15 +327,36 @@ document.getElementById('addImageBtn').addEventListener('click', () => {
   document.getElementById('formImage').click();
 });
 
+function resizeImage(file, maxW, maxQ, cb) {
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const img = new Image();
+    img.onload = function() {
+      let w = img.width, h = img.height;
+      if (w > maxW || h > maxW) {
+        const ratio = Math.min(maxW / w, maxW / h);
+        w = Math.round(w * ratio);
+        h = Math.round(h * ratio);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      cb(canvas.toDataURL('image/jpeg', maxQ));
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 document.getElementById('formImage').addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    selectedImagesData.push(ev.target.result);
+  resizeImage(file, 800, 0.8, function(dataUrl) {
+    selectedImagesData.push(dataUrl);
     renderImagePreview();
-  };
-  reader.readAsDataURL(file);
+  });
   e.target.value = '';
 });
 
