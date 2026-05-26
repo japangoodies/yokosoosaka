@@ -213,27 +213,32 @@ document.querySelector('#productModal .modal-close').addEventListener('click', c
 // Fullscreen image viewer
 function openFullscreen() {
   if (currentModalImages.length === 0) return;
-  const viewer = document.getElementById('fullscreenViewer');
-  const img = document.getElementById('fullscreenImage');
-  viewer.classList.add('active');
-  updateFullscreen();
+  document.getElementById('fullscreenViewer').classList.add('active');
+  renderFullscreenTrack();
 }
 
-function updateFullscreen() {
-  const img = document.getElementById('fullscreenImage');
-  img.src = currentModalImages[currentImageIndex] || 'images/products/placeholder.svg';
-  const dots = document.getElementById('fullscreenDots');
-  const counter = document.getElementById('fullscreenCounter');
-  counter.textContent = `${currentImageIndex + 1} / ${currentModalImages.length}`;
-  if (currentModalImages.length > 1) {
-    dots.innerHTML = currentModalImages.map((_, i) =>
-      `<span class="${i === currentImageIndex ? 'active' : ''}" data-index="${i}"></span>`
-    ).join('');
-    dots.style.display = '';
-  } else {
-    dots.innerHTML = '';
-    dots.style.display = 'none';
-  }
+function renderFullscreenTrack() {
+  const track = document.getElementById('fullscreenTrack');
+  track.innerHTML = currentModalImages.map((src, i) =>
+    `<div class="fullscreen-slide">
+      <img src="${src}" onerror="this.src='images/products/placeholder.svg'" alt="">
+    </div>`
+  ).join('');
+  goToSlide(currentImageIndex, false);
+  updateCounter();
+}
+
+function goToSlide(index, smooth) {
+  currentImageIndex = index;
+  const track = document.getElementById('fullscreenTrack');
+  track.style.transition = smooth ? 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)' : 'none';
+  track.style.transform = `translateY(-${index * 100}vh)`;
+  updateCounter();
+}
+
+function updateCounter() {
+  document.getElementById('fullscreenCounter').textContent =
+    `${currentImageIndex + 1} / ${currentModalImages.length}`;
 }
 
 function closeFullscreen() {
@@ -247,35 +252,27 @@ modalImg.addEventListener('touchend', function(e) {
   openFullscreen();
 });
 
-// Fullscreen swipe support
+// Fullscreen swipe / drag
 (function() {
   const viewer = document.getElementById('fullscreenViewer');
-  const imgEl = document.getElementById('fullscreenImage');
+  const track = document.getElementById('fullscreenTrack');
   let startY = 0, startX = 0;
   let dragging = false;
-  let currentY = 0;
+  let dragOffset = 0;
 
   function nav(dir) {
     if (currentModalImages.length < 2) return;
-    currentImageIndex = (currentImageIndex + dir + currentModalImages.length) % currentModalImages.length;
-    updateFullscreen();
-  }
-
-  function resetDrag() {
-    dragging = false;
-    imgEl.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-    imgEl.style.transform = '';
-    imgEl.style.opacity = '';
-    setTimeout(() => { imgEl.style.transition = ''; }, 350);
+    var next = (currentImageIndex + dir + currentModalImages.length) % currentModalImages.length;
+    goToSlide(next, true);
   }
 
   viewer.addEventListener('touchstart', e => {
     const t = e.touches[0];
     startY = t.clientY;
     startX = t.clientX;
-    currentY = 0;
+    dragOffset = 0;
     dragging = true;
-    imgEl.style.transition = '';
+    track.style.transition = 'none';
   }, { passive: true });
 
   viewer.addEventListener('touchmove', e => {
@@ -283,21 +280,20 @@ modalImg.addEventListener('touchend', function(e) {
     const t = e.touches[0];
     const dy = t.clientY - startY;
     const dx = t.clientX - startX;
-    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 5) {
-      currentY = dy;
-      imgEl.style.transform = `translateY(${dy * 0.5}px)`;
-      imgEl.style.opacity = Math.max(0, 1 - Math.abs(dy) / 400);
+    if (Math.abs(dy) > Math.abs(dx)) {
+      dragOffset = dy;
+      track.style.transform = `translateY(${-currentImageIndex * 100 + dy * 0.4}vh)`;
     }
   }, { passive: true });
 
   viewer.addEventListener('touchend', e => {
     if (!dragging) return;
     dragging = false;
-    if (currentModalImages.length < 2) { resetDrag(); return; }
-    if (Math.abs(currentY) > 60) {
-      nav(currentY < 0 ? 1 : -1);
+    if (currentModalImages.length < 2) return;
+    if (Math.abs(dragOffset) > 50) {
+      nav(dragOffset < 0 ? 1 : -1);
     } else {
-      resetDrag();
+      goToSlide(currentImageIndex, true);
     }
   }, { passive: true });
 
@@ -345,14 +341,18 @@ document.addEventListener('keydown', e => {
     return;
   }
   if (document.getElementById('fullscreenViewer').classList.contains('active')) {
-    if (e.key === 'ArrowLeft' && currentModalImages.length > 1) {
-      currentImageIndex = (currentImageIndex - 1 + currentModalImages.length) % currentModalImages.length;
-      updateFullscreen();
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      if (currentModalImages.length > 1) {
+        var next = (currentImageIndex - 1 + currentModalImages.length) % currentModalImages.length;
+        goToSlide(next, true);
+      }
       e.preventDefault();
     }
-    if (e.key === 'ArrowRight' && currentModalImages.length > 1) {
-      currentImageIndex = (currentImageIndex + 1) % currentModalImages.length;
-      updateFullscreen();
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      if (currentModalImages.length > 1) {
+        var next = (currentImageIndex + 1) % currentModalImages.length;
+        goToSlide(next, true);
+      }
       e.preventDefault();
     }
     return;
