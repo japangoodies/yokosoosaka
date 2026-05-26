@@ -472,6 +472,18 @@ document.getElementById('backToPublicBtn').addEventListener('click', () => {
   }
 });
 
+// ---- HERO CAROUSEL ----
+(function() {
+  const slides = document.querySelectorAll('.hero-slide');
+  if (slides.length < 2) return;
+  let idx = 0;
+  setInterval(() => {
+    slides[idx].classList.remove('active');
+    idx = (idx + 1) % slides.length;
+    slides[idx].classList.add('active');
+  }, 5000);
+})();
+
 // ---- INIT ----
 loadProducts(function() {
   if (typeof MAINTENANCE_MODE !== 'undefined' && MAINTENANCE_MODE) {
