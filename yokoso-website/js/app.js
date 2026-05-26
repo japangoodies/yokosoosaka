@@ -285,29 +285,29 @@ modalImg.addEventListener('touchend', function(e) {
   document.addEventListener('touchstart', function(e) {
     if (!viewer.classList.contains('active')) return;
     var t = e.touches[0];
+    if (!t) return;
     startY = t.clientY;
     startX = t.clientX;
     dragOffset = 0;
     dragging = true;
     track.style.transition = 'none';
-  }, { passive: true });
+    e.preventDefault();
+  }, { passive: false });
 
   document.addEventListener('touchmove', function(e) {
-    if (!dragging || currentModalImages.length < 2) return;
-    if (!viewer.classList.contains('active')) return;
+    if (!dragging || !viewer.classList.contains('active')) return;
+    if (currentModalImages.length < 2) { dragging = false; return; }
     var t = e.touches[0];
+    if (!t) return;
     var dy = t.clientY - startY;
-    var dx = t.clientX - startX;
-    if (Math.abs(dy) > Math.abs(dx)) {
-      dragOffset = dy;
-      track.style.transition = 'none';
-      var h = window.innerHeight;
-      var offset = dy * 0.3;
-      if (currentImageIndex === 0) offset = Math.min(offset, 0);
-      if (currentImageIndex === currentModalImages.length - 1) offset = Math.max(offset, 0);
-      track.style.transform = 'translate3d(0,' + (-currentImageIndex * h + offset) + 'px,0)';
-      e.preventDefault();
-    }
+    var h = window.innerHeight;
+    dragOffset = dy;
+    track.style.transition = 'none';
+    var offset = dy * 0.3;
+    if (currentImageIndex === 0) offset = Math.min(offset, 0);
+    if (currentImageIndex === currentModalImages.length - 1) offset = Math.max(offset, 0);
+    track.style.transform = 'translate3d(0,' + (-currentImageIndex * h + offset) + 'px,0)';
+    e.preventDefault();
   }, { passive: false });
 
   document.addEventListener('touchend', function(e) {
