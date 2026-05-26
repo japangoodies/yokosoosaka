@@ -28,17 +28,13 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-}
-
-.header-inner {
-  position: relative;
+  padding: 0.9rem 0;
 }
 
 .header-content {
   display: flex;
   align-items: center;
-  padding: 1rem 0 0.6rem;
-  position: relative;
+  justify-content: space-between;
 }
 
 .logo-img {
@@ -55,7 +51,9 @@ body {
   display: flex;
   gap: 2rem;
   align-items: center;
-  padding: 0.6rem 0;
+  margin-left: 3rem;
+  flex: 1;
+  justify-content: flex-end;
 }
 
 .nav-link {
@@ -912,45 +910,30 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .header-content {
-    justify-content: space-between;
-  }
-
   .menu-toggle {
     display: block;
   }
 
-  .header-nav-wrapper {
+  .nav {
     display: none;
+    flex-direction: column;
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     background: #fff;
+    padding: 1rem;
+    gap: 1rem;
     border-bottom: 1px solid #e8e8ed;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    z-index: 99;
   }
 
-  .header-nav-wrapper.open {
-    display: block;
-  }
-
-  .nav {
-    flex-direction: column;
-    gap: 0;
-    padding: 0;
+  .nav.open {
+    display: flex;
   }
 
   .nav-link {
-    padding: 0.8rem 1.5rem;
-    display: block;
-    border-bottom: 1px solid #f0f0f0;
-  }
-
-  .contact-btn {
-    margin: 0.5rem 1rem;
-    text-align: center;
+    padding: 0.5rem 0;
   }
 
   .hero {
