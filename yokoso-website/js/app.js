@@ -67,7 +67,7 @@ function loadProducts(callback) {
         products = doc.data().items;
         migrateProducts();
         localStorage.setItem('yokoso_products', JSON.stringify(products));
-      } else if (!saved) {
+      } else {
         fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(() => {});
       }
       if (callback) callback();
