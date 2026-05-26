@@ -370,14 +370,14 @@ document.getElementById('searchInput').addEventListener('input', e => {
 });
 
 function dismissKeyboard() {
-  var tmp = document.createElement('input');
+  var tmp = document.createElement('div');
+  tmp.tabIndex = -1;
   tmp.style.position = 'fixed';
   tmp.style.top = '-100px';
   tmp.style.left = '-100px';
   tmp.style.width = '1px';
   tmp.style.height = '1px';
   tmp.style.opacity = '0';
-  tmp.setAttribute('readonly', true);
   document.body.appendChild(tmp);
   tmp.focus();
   setTimeout(function() { document.body.removeChild(tmp); }, 50);
