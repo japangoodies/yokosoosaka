@@ -245,54 +245,61 @@ document.getElementById('modalImage').addEventListener('click', openFullscreen);
 // Fullscreen swipe support
 (function() {
   const viewer = document.getElementById('fullscreenViewer');
-  let startY = 0, startX = 0, swiping = false;
+  const imgEl = document.getElementById('fullscreenImage');
+  let startY = 0, startX = 0;
+  let dragging = false;
+  let currentY = 0;
+
+  function nav(dir) {
+    if (currentModalImages.length < 2) return;
+    currentImageIndex = (currentImageIndex + dir + currentModalImages.length) % currentModalImages.length;
+    updateFullscreen();
+  }
+
+  function resetDrag() {
+    dragging = false;
+    imgEl.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+    imgEl.style.transform = '';
+    imgEl.style.opacity = '';
+    setTimeout(() => { imgEl.style.transition = ''; }, 350);
+  }
 
   viewer.addEventListener('touchstart', e => {
     const t = e.touches[0];
     startY = t.clientY;
     startX = t.clientX;
-    swiping = true;
+    currentY = 0;
+    dragging = true;
+    imgEl.style.transition = '';
   }, { passive: true });
 
   viewer.addEventListener('touchmove', e => {
-    if (!swiping || currentModalImages.length < 2) return;
+    if (!dragging || currentModalImages.length < 2) return;
     const t = e.touches[0];
     const dy = t.clientY - startY;
     const dx = t.clientX - startX;
-    const img = document.getElementById('fullscreenImage');
-    if (Math.abs(dy) > Math.abs(dx)) {
-      img.style.transform = `translateY(${dy * 0.4}px) scale(${1 - Math.abs(dy) / 1500})`;
-      img.style.opacity = 1 - Math.abs(dy) / 600;
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 5) {
+      currentY = dy;
+      imgEl.style.transform = `translateY(${dy * 0.5}px)`;
+      imgEl.style.opacity = Math.max(0, 1 - Math.abs(dy) / 400);
     }
   }, { passive: true });
 
   viewer.addEventListener('touchend', e => {
-    if (!swiping || currentModalImages.length < 2) { swiping = false; return; }
-    const t = e.changedTouches[0];
-    const dy = t.clientY - startY;
-    const img = document.getElementById('fullscreenImage');
-    img.style.transform = '';
-    img.style.opacity = '';
-    swiping = false;
-    if (Math.abs(dy) > 80) {
-      if (dy < 0) {
-        currentImageIndex = (currentImageIndex + 1) % currentModalImages.length;
-      } else {
-        currentImageIndex = (currentImageIndex - 1 + currentModalImages.length) % currentModalImages.length;
-      }
-      updateFullscreen();
+    if (!dragging) return;
+    dragging = false;
+    if (currentModalImages.length < 2) { resetDrag(); return; }
+    if (Math.abs(currentY) > 60) {
+      nav(currentY < 0 ? 1 : -1);
+    } else {
+      resetDrag();
     }
   }, { passive: true });
 
   viewer.addEventListener('wheel', e => {
     if (currentModalImages.length < 2) return;
-    if (Math.abs(e.deltaY) < 30) return;
-    if (e.deltaY > 0) {
-      currentImageIndex = (currentImageIndex + 1) % currentModalImages.length;
-    } else {
-      currentImageIndex = (currentImageIndex - 1 + currentModalImages.length) % currentModalImages.length;
-    }
-    updateFullscreen();
+    if (Math.abs(e.deltaY) < 20) return;
+    nav(e.deltaY > 0 ? 1 : -1);
   }, { passive: true });
 })();
 

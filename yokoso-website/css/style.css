@@ -826,6 +826,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: zoom-out;
+  touch-action: none;
 }
 
 .fullscreen-viewer.active {
