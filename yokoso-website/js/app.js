@@ -27,7 +27,7 @@ try {
       appId: "1:768529751498:web:b0a48ecd1e709a8a5f0333",
       measurementId: "G-EJ6NKSDDHE"
     });
-    if (fbDB) fbDB = firebase.firestore();
+    fbDB = firebase.firestore();
   }
 } catch (e) {}
 const FB_COLLECTION = 'yokoso';
