@@ -326,7 +326,7 @@ function renderProducts() {
     var brandHtml = p.category2 ? '<span class="product-brand">' + p.category2 + '</span>' : '';
     var sizesHtml = Array.isArray(p.sizes) && p.sizes.length > 0 ? '<div class="product-sizes">' + p.sizes.map(function(s) { return '<span class="product-size-tag">' + s + '</span>'; }).join('') + '</div>' : '';
     return '<div class="product-card" data-id="' + p.id + '" onclick="openProduct(' + p.id + ')">' +
-      '<img class="product-image" src="' + (p.images?.[0] || 'images/products/placeholder.svg') + '" alt="' + p.name + '" loading="lazy" onerror="if(this.dataset.retry)this.style.display=\'none\';else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">' +
+      '<img class="product-image" src="' + (p.images?.[0] || 'images/products/placeholder.svg') + '" alt="' + p.name + '" loading="lazy" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">' +
       '<div class="product-info">' +
       '<div class="product-category">' + p.category1 + '</div>' +
       brandHtml +
@@ -338,7 +338,6 @@ function renderProducts() {
 }
 
 function openModal(product) {
-  console.log('openModal DYNAMIC version running');
   try {
     var overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
@@ -352,7 +351,7 @@ function openModal(product) {
       '<button onclick="this.closest(\'.modal-overlay\').remove()" style="position:absolute;top:12px;right:16px;background:rgba(0,0,0,0.06);border:none;font-size:24px;cursor:pointer;color:#666;z-index:10;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">×</button>' +
       '<div style="display:flex;flex-direction:column">' +
         '<div style="position:relative">' +
-          '<img src="' + (images[0] || 'images/products/placeholder.svg') + '" style="width:100%;height:500px;object-fit:cover;background:#f0f0f0" onerror="this.src=\'images/products/placeholder.svg\'">' +
+          '<img src="' + (images[0] || 'images/products/placeholder.svg') + '" style="width:100%;height:500px;object-fit:cover;background:#f0f0f0" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">' +
         '</div>' +
         '<div style="padding:24px 32px 32px">' +
           '<h2 style="font-size:20px;margin:0 0 4px;line-height:1.3">' + (product.name || '') + '</h2>' +
