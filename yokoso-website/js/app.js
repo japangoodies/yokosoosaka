@@ -362,12 +362,12 @@ function openModal(product) {
 var _modalImgRetry = 0;
 function showModalImage() {
   const img = document.getElementById('modalImage');
-  img.src = currentModalImages[currentImageIndex] || 'images/products/placeholder.svg';
   img.onerror = function() {
-    if (_modalImgRetry > 0) { this.onerror = null; this.style.display = 'none'; return; }
+    if (_modalImgRetry > 0) { this.onerror = null; this.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; return; }
     _modalImgRetry++;
     this.src = 'images/products/placeholder.svg';
   };
+  img.src = currentModalImages[currentImageIndex] || 'images/products/placeholder.svg';
   const dotsContainer = document.getElementById('carouselDots');
   const prevBtn = document.getElementById('carouselPrev');
   const nextBtn = document.getElementById('carouselNext');
