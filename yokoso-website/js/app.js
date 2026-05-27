@@ -317,9 +317,13 @@ function renderProducts() {
 }
 
 function openModalFullscreen() {
-  currentModalImages = _modalImages.slice();
-  currentImageIndex = _modalImageIdx;
-  openFullscreen();
+  try {
+    currentModalImages = _modalImages.slice();
+    currentImageIndex = _modalImageIdx;
+    openFullscreen();
+  } catch (e) {
+    console.error('openModalFullscreen error:', e);
+  }
 }
 
 function closeLiveModal() {
