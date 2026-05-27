@@ -85,7 +85,7 @@ document.addEventListener('touchmove', function(e) {
 // Back button closes overlay via hashchange
 window.addEventListener('hashchange', function() {
   var live = document.getElementById('liveModal');
-  if (live && location.hash !== '#modal') { live.remove(); unlockBody(); return; }
+  if (live && location.hash !== '#modal') { closeLiveModal(); return; }
   var fs = document.getElementById('fullscreenViewer');
   var modal = document.getElementById('productModal');
   if ((!fs || !fs.classList.contains('active')) && (!modal || !modal.classList.contains('active'))) return;
@@ -310,6 +310,11 @@ function renderProducts() {
   }).join('');
 }
 
+function closeLiveModal() {
+  var el = document.getElementById('liveModal');
+  if (el) { el.remove(); unlockBody(); if (location.hash === '#modal') history.back(); }
+}
+
 function openModal(product) {
   try {
     var overlay = document.createElement('div');
@@ -321,7 +326,7 @@ function openModal(product) {
     var sizesHtml = Array.isArray(product.sizes) && product.sizes.length > 0 ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">' + product.sizes.map(function(s) { return '<span style="font-size:12px;padding:3px 8px;border:1px solid #ddd;border-radius:4px;color:#666;background:#f5f5f7">' + s + '</span>'; }).join('') + '</div>' : '';
     
     overlay.innerHTML = '<div style="background:#fff;border-radius:16px;max-width:720px;width:100%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.15)">' +
-      '<button onclick="this.closest(\'.modal-overlay\').remove()" style="position:absolute;top:12px;right:16px;background:rgba(0,0,0,0.06);border:none;font-size:24px;cursor:pointer;color:#666;z-index:10;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">×</button>' +
+      '<button onclick="closeLiveModal()" style="position:absolute;top:12px;right:16px;background:rgba(0,0,0,0.06);border:none;font-size:24px;cursor:pointer;color:#666;z-index:10;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">×</button>' +
       '<div style="display:flex;flex-direction:column">' +
         '<div style="position:relative">' +
           '<img src="' + (images[0] || 'images/products/placeholder.svg') + '" style="width:100%;height:500px;object-fit:cover;background:#f0f0f0" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">' +
@@ -337,7 +342,7 @@ function openModal(product) {
       '</div>' +
     '</div>';
     
-    overlay.addEventListener('click', function(e) { if (e.target === this) this.remove(); });
+    overlay.addEventListener('click', function(e) { if (e.target === this) closeLiveModal(); });
     document.body.appendChild(overlay);
     lockBody();
     try { history.pushState({modal: true}, '', '#modal'); } catch (e) {}
@@ -542,11 +547,10 @@ document.querySelector('#fullscreenViewer .fullscreen-close').addEventListener('
 });
 
 
-
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     var live = document.getElementById('liveModal');
-    if (live) { live.remove(); unlockBody(); if (location.hash === '#modal') history.back(); return; }
+    if (live) { closeLiveModal(); return; }
     if (document.getElementById('fullscreenViewer').classList.contains('active')) {
       closeFullscreen();
       return;
