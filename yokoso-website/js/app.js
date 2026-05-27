@@ -321,6 +321,8 @@ function openModalFullscreen() {
   currentImageIndex = _modalImageIdx;
   openFullscreen();
 }
+
+function closeLiveModal() {
   var el = document.getElementById('liveModal');
   if (el) { el.remove(); unlockBody(); if (location.hash === '#modal') history.back(); }
 }
