@@ -338,6 +338,7 @@ function renderProducts() {
 }
 
 function openModal(product) {
+  console.log('openModal DYNAMIC version running');
   try {
     var overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
