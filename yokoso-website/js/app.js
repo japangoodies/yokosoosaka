@@ -355,8 +355,10 @@ function openModal(product) {
     document.getElementById('modalDesc').textContent = product.description || '';
     showModalImage();
     var pm = document.getElementById('productModal');
+    if (!pm) { console.error('modal element missing!'); return; }
     pm.classList.add('active');
-    console.log('modal visible:', getComputedStyle(pm).display, 'z-index:', getComputedStyle(pm).zIndex);
+    pm.style.setProperty('display', 'flex', 'important');
+    console.log('modal shown');
     lockBody();
     try { history.pushState({modal: true}, '', '#modal'); } catch (e) {}
   } catch (e) {
@@ -412,7 +414,8 @@ document.getElementById('carouselDots').addEventListener('click', e => {
 });
 
 function closeModal() {
-  document.getElementById('productModal').classList.remove('active');
+  var pm = document.getElementById('productModal');
+  if (pm) { pm.classList.remove('active'); pm.style.display = ''; }
   unlockBody();
   currentModalImages = [];
   currentImageIndex = 0;
