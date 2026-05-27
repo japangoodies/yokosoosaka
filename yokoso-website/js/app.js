@@ -321,6 +321,18 @@ function closeLiveModal() {
   if (el) { el.remove(); unlockBody(); if (location.hash === '#modal') history.back(); }
 }
 
+var _modalImages = [];
+var _modalImageIdx = 0;
+
+function modalNav(delta) {
+  if (_modalImages.length < 2) return;
+  _modalImageIdx = (_modalImageIdx + delta + _modalImages.length) % _modalImages.length;
+  var img = document.getElementById('modalMainImg');
+  if (img) { img.src = _modalImages[_modalImageIdx]; }
+  var dots = document.querySelectorAll('#liveModal .modal-dot');
+  dots.forEach(function(d, i) { d.style.background = i === _modalImageIdx ? '#e94560' : '#ddd'; });
+}
+
 function openModal(product) {
   try {
     var overlay = document.createElement('div');
@@ -328,14 +340,19 @@ function openModal(product) {
     overlay.id = 'liveModal';
     overlay.style.cssText = 'display:flex !important;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;padding:20px;';
     
-    var images = Array.isArray(product.images) && product.images.length > 0 ? product.images : [product.image || 'images/products/placeholder.svg'];
+    _modalImages = (Array.isArray(product.images) && product.images.length > 0) ? product.images : [product.image || 'images/products/placeholder.svg'];
+    _modalImageIdx = 0;
     var sizesHtml = Array.isArray(product.sizes) && product.sizes.length > 0 ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">' + product.sizes.map(function(s) { return '<span style="font-size:12px;padding:3px 8px;border:1px solid #ddd;border-radius:4px;color:#666;background:#f5f5f7">' + s + '</span>'; }).join('') + '</div>' : '';
+    var dotsHtml = _modalImages.length > 1 ? '<div style="display:flex;justify-content:center;gap:6px;padding:8px 0;position:absolute;bottom:0;left:0;right:0">' + _modalImages.map(function(_, i) { return '<span class="modal-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + (i === 0 ? '#e94560' : '#ddd') + ';cursor:pointer" onclick="modalNav(' + (i - _modalImageIdx) + ')"></span>'; }).join('') + '</div>' : '';
     
     overlay.innerHTML = '<div style="background:#fff;border-radius:16px;max-width:720px;width:100%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.15)">' +
       '<button onclick="closeLiveModal()" style="position:absolute;top:12px;right:16px;background:rgba(0,0,0,0.06);border:none;font-size:24px;cursor:pointer;color:#666;z-index:10;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">×</button>' +
       '<div style="display:flex;flex-direction:column">' +
         '<div style="position:relative">' +
-          '<img src="' + (images[0] || 'images/products/placeholder.svg') + '" style="width:100%;height:500px;object-fit:cover;background:#f0f0f0" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">' +
+          (_modalImages.length > 1 ? '<button onclick="modalNav(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.8);border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333">‹</button>' : '') +
+          (_modalImages.length > 1 ? '<button onclick="modalNav(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.8);border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333">›</button>' : '') +
+          '<img id="modalMainImg" src="' + (_modalImages[0] || 'images/products/placeholder.svg') + '" style="width:100%;height:500px;object-fit:cover;background:#f0f0f0" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">' +
+          dotsHtml +
         '</div>' +
         '<div style="padding:24px 32px 32px">' +
           '<h2 style="font-size:20px;margin:0 0 4px;line-height:1.3">' + (product.name || '') + '</h2>' +
