@@ -326,7 +326,11 @@ var _modalImageIdx = 0;
 
 function modalNav(delta) {
   if (_modalImages.length < 2) return;
-  _modalImageIdx = (_modalImageIdx + delta + _modalImages.length) % _modalImages.length;
+  modalGoTo((_modalImageIdx + delta + _modalImages.length) % _modalImages.length);
+}
+
+function modalGoTo(index) {
+  _modalImageIdx = index;
   var img = document.getElementById('modalMainImg');
   if (img) { img.src = _modalImages[_modalImageIdx]; }
   var dots = document.querySelectorAll('#liveModal .modal-dot');
@@ -343,7 +347,7 @@ function openModal(product) {
     _modalImages = (Array.isArray(product.images) && product.images.length > 0) ? product.images : [product.image || 'images/products/placeholder.svg'];
     _modalImageIdx = 0;
     var sizesHtml = Array.isArray(product.sizes) && product.sizes.length > 0 ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">' + product.sizes.map(function(s) { return '<span style="font-size:12px;padding:3px 8px;border:1px solid #ddd;border-radius:4px;color:#666;background:#f5f5f7">' + s + '</span>'; }).join('') + '</div>' : '';
-    var dotsHtml = _modalImages.length > 1 ? '<div style="display:flex;justify-content:center;gap:6px;padding:8px 0;position:absolute;bottom:0;left:0;right:0">' + _modalImages.map(function(_, i) { return '<span class="modal-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + (i === 0 ? '#e94560' : '#ddd') + ';cursor:pointer" onclick="modalNav(' + (i - _modalImageIdx) + ')"></span>'; }).join('') + '</div>' : '';
+    var dotsHtml = _modalImages.length > 1 ? '<div style="display:flex;justify-content:center;gap:6px;padding:8px 0;position:absolute;bottom:0;left:0;right:0">' + _modalImages.map(function(_, i) { return '<span class="modal-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + (i === 0 ? '#e94560' : '#ddd') + ';cursor:pointer" onclick="modalGoTo(' + i + ')"></span>'; }).join('') + '</div>' : '';
     
     overlay.innerHTML = '<div style="background:#fff;border-radius:16px;max-width:720px;width:100%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.15)">' +
       '<button onclick="closeLiveModal()" style="position:absolute;top:12px;right:16px;background:rgba(0,0,0,0.06);border:none;font-size:24px;cursor:pointer;color:#666;z-index:10;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">×</button>' +
