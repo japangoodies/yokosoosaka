@@ -1,17 +1,17 @@
 const DEFAULT_PRODUCTS = [
-  { id: 1, name: "Nike Air Force 1 Low (Japan Exclusive)", category: "Shoes", price: "₱5,200", description: "Authentic Nike Air Force 1 Low from Japan. Limited Japan-exclusive colorway. Leather upper with Air-Sole cushioning. Sizes 7-12 US.", images: ["images/products/placeholder.svg"] },
-  { id: 2, name: "Nike Dunk Low Retro", category: "Shoes", price: "₱4,800", description: "Classic Nike Dunk Low in premium leather. Japan release. Available in multiple colors. Sizes 7-11 US.", images: ["images/products/placeholder.svg"] },
-  { id: 3, name: "Nike Air Max 90 (Japan Pack)", category: "Shoes", price: "₱5,500", description: "Nike Air Max 90 from the Japan-exclusive pack. Visible Air cushioning. Iconic silhouette. Sizes 7-12 US.", images: ["images/products/placeholder.svg"] },
-  { id: 4, name: "GU Fluffy Knit Sweater", category: "Clothing", price: "₱850", description: "Soft fluffy knit sweater from GU. Available in multiple colors. Perfect for cold season. Oversized relaxed fit.", images: ["images/products/placeholder.svg"] },
-  { id: 5, name: "Uniqlo Airism Oversized T-Shirt", category: "Clothing", price: "₱650", description: "Authentic Uniqlo Airism oversized t-shirt. Ultra-lightweight and breathable. Moisture-wicking fabric. Perfect for everyday use.", images: ["images/products/placeholder.svg"] },
-  { id: 6, name: "GU Wide Leg Pants", category: "Clothing", price: "₱950", description: "GU wide-leg pants. Comfortable and stylish. Premium cotton blend. Available in black, beige, and navy.", images: ["images/products/placeholder.svg"] },
-  { id: 7, name: "Uniqlo Light Down Jacket", category: "Clothing", price: "₱2,200", description: "Lightweight Uniqlo down jacket. Packable design. 750 fill power. Warm without being bulky. Water-repellent.", images: ["images/products/placeholder.svg"] },
-  { id: 8, name: "Japanese Biore UV Aqua Rich SPF50+", category: "Cosmetics", price: "₱550", description: "Biore UV Aqua Rich watery essence sunscreen. SPF50+ PA++++. Lightweight, non-sticky, refreshing finish. 80g.", images: ["images/products/placeholder.svg"] },
-  { id: 9, name: "Japanese Sheet Mask Variety Pack (10pcs)", category: "Cosmetics", price: "₱380", description: "Assorted Japanese facial sheet masks. Infused with collagen, hyaluronic acid, and vitamin C. 10-piece pack.", images: ["images/products/placeholder.svg"] },
-  { id: 10, name: "Heroine Make Waterproof Eyeliner", category: "Cosmetics", price: "₱480", description: "Japanese Heroine Make waterproof liquid eyeliner. Ultra-fine 0.1mm tip. Smudge-proof and long-lasting. Black.", images: ["images/products/placeholder.svg"] },
-  { id: 11, name: "Onitsuka Tiger Mexico 66", category: "Shoes", price: "₱3,800", description: "Classic Onitsuka Tiger Mexico 66 sneakers. Japan-exclusive colorway. Iconic design. Comfortable sole. Sizes 6-10 US.", images: ["images/products/placeholder.svg"] },
-  { id: 12, name: "GU Knit Cardigan", category: "Clothing", price: "₱1,100", description: "GU open-front knit cardigan. Soft acrylic blend. Oversized fit. Perfect layering piece for any outfit.", images: ["images/products/placeholder.svg"] },
-  { id: 13, name: "test", category: "test", price: "11", description: "test", images: ["images/products/placeholder.svg"] }
+  { id: 1, name: "Nike Air Force 1 Low (Japan Exclusive)", category: "Shoes", price: "₱5,200", description: "Authentic Nike Air Force 1 Low from Japan. Limited Japan-exclusive colorway. Leather upper with Air-Sole cushioning. Sizes 7-12 US.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 2, name: "Nike Dunk Low Retro", category: "Shoes", price: "₱4,800", description: "Classic Nike Dunk Low in premium leather. Japan release. Available in multiple colors. Sizes 7-11 US.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 3, name: "Nike Air Max 90 (Japan Pack)", category: "Shoes", price: "₱5,500", description: "Nike Air Max 90 from the Japan-exclusive pack. Visible Air cushioning. Iconic silhouette. Sizes 7-12 US.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 4, name: "GU Fluffy Knit Sweater", category: "Clothing", price: "₱850", description: "Soft fluffy knit sweater from GU. Available in multiple colors. Perfect for cold season. Oversized relaxed fit.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 5, name: "Uniqlo Airism Oversized T-Shirt", category: "Clothing", price: "₱650", description: "Authentic Uniqlo Airism oversized t-shirt. Ultra-lightweight and breathable. Moisture-wicking fabric. Perfect for everyday use.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 6, name: "GU Wide Leg Pants", category: "Clothing", price: "₱950", description: "GU wide-leg pants. Comfortable and stylish. Premium cotton blend. Available in black, beige, and navy.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 7, name: "Uniqlo Light Down Jacket", category: "Clothing", price: "₱2,200", description: "Lightweight Uniqlo down jacket. Packable design. 750 fill power. Warm without being bulky. Water-repellent.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 8, name: "Japanese Biore UV Aqua Rich SPF50+", category: "Cosmetics", price: "₱550", description: "Biore UV Aqua Rich watery essence sunscreen. SPF50+ PA++++. Lightweight, non-sticky, refreshing finish. 80g.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 9, name: "Japanese Sheet Mask Variety Pack (10pcs)", category: "Cosmetics", price: "₱380", description: "Assorted Japanese facial sheet masks. Infused with collagen, hyaluronic acid, and vitamin C. 10-piece pack.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 10, name: "Heroine Make Waterproof Eyeliner", category: "Cosmetics", price: "₱480", description: "Japanese Heroine Make waterproof liquid eyeliner. Ultra-fine 0.1mm tip. Smudge-proof and long-lasting. Black.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 11, name: "Onitsuka Tiger Mexico 66", category: "Shoes", price: "₱3,800", description: "Classic Onitsuka Tiger Mexico 66 sneakers. Japan-exclusive colorway. Iconic design. Comfortable sole. Sizes 6-10 US.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 12, name: "GU Knit Cardigan", category: "Clothing", price: "₱1,100", description: "GU open-front knit cardigan. Soft acrylic blend. Oversized fit. Perfect layering piece for any outfit.", available: true, images: ["images/products/placeholder.svg"] },
+  { id: 13, name: "test", category: "test", price: "11", description: "test", available: true, images: ["images/products/placeholder.svg"] }
 ];
 
 // Firebase
@@ -98,6 +98,10 @@ function migrateProducts() {
       delete p.image;
       migrated = true;
     }
+    if (p.available === undefined) {
+      p.available = true;
+      migrated = true;
+    }
   });
   return migrated;
 }
@@ -171,7 +175,7 @@ document.getElementById('filterContainer').addEventListener('click', e => {
 function renderProducts() {
   const grid = document.getElementById('productGrid');
   const empty = document.getElementById('emptyState');
-  let filtered = products;
+  let filtered = products.filter(p => p.available !== false);
   if (currentCategory !== 'all') {
     filtered = filtered.filter(p => p.category === currentCategory);
   }
@@ -502,11 +506,26 @@ function renderAdminList() {
         <div class="meta">${p.category} · ${p.price}</div>
       </div>
       <div class="admin-product-item-actions">
+        <button class="btn btn-sm ${p.available !== false ? 'btn-success' : 'btn-secondary'} toggle-available-btn">${p.available !== false ? 'Available' : 'Hidden'}</button>
         <button class="btn btn-secondary btn-sm edit-product-btn">Edit</button>
         <button class="btn btn-danger btn-sm delete-product-btn">Delete</button>
       </div>
     </div>
   `).join('');
+
+  container.querySelectorAll('.toggle-available-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const id = parseInt(e.target.closest('.admin-product-item').dataset.id);
+      const p = products.find(x => x.id === id);
+      if (p) {
+        p.available = p.available === false;
+        saveProducts();
+        renderAdminList();
+        renderProducts();
+        renderFilters();
+      }
+    });
+  });
 
   container.querySelectorAll('.edit-product-btn').forEach(btn => {
     btn.addEventListener('click', e => {
@@ -541,6 +560,7 @@ function populateForm(product) {
   document.getElementById('formCategory').value = product.category;
   document.getElementById('formPrice').value = product.price;
   document.getElementById('formDesc').value = product.description;
+  document.getElementById('formAvailable').checked = product.available !== false;
   const imgs = product.images || (product.image ? [product.image] : []);
   selectedImagesData = imgs.filter(img => img && !img.includes('placeholder'));
   renderImagePreview();
@@ -575,11 +595,11 @@ document.getElementById('productForm').addEventListener('submit', e => {
   if (editingId) {
     const idx = products.findIndex(p => p.id === editingId);
     if (idx !== -1) {
-      products[idx] = { ...products[idx], name, category, price, description, images };
+      products[idx] = { ...products[idx], name, category, price, description, images, available: document.getElementById('formAvailable').checked };
     }
   } else {
     const maxId = products.length > 0 ? Math.max(...products.map(p => p.id)) : 0;
-    products.push({ id: maxId + 1, name, category, price, description, images });
+    products.push({ id: maxId + 1, name, category, price, description, images, available: document.getElementById('formAvailable').checked });
   }
 
   saveProducts();
