@@ -336,6 +336,8 @@ function renderProducts() {
 }
 
 function openModal(product) {
+  alert('Product: ' + product.name + '\nPrice: ' + product.price + '\n' + (product.category1 || '') + (product.category2 ? ' · ' + product.category2 : '') + '\n\n' + product.description);
+  return;
   try {
     currentModalImages = Array.isArray(product.images) ? product.images : [product.image || 'images/products/placeholder.svg'];
     currentImageIndex = 0;
