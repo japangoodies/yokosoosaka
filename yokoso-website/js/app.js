@@ -61,7 +61,6 @@ function lockBody() {
 }
 
 function unlockBody() {
-  console.log('unlockBody called, bodyLocked:', bodyLocked);
   if (!bodyLocked) return;
   bodyLocked = false;
   document.body.style.position = '';
@@ -124,6 +123,12 @@ function migrateProducts() {
     if (!p.sizes) {
       p.sizes = [];
       migrated = true;
+    }
+    if (p.images) {
+      var oldLen = p.images.length;
+      p.images = p.images.filter(function(img) { return img && !img.match(/firebasestorage\.googleapis\.com/); });
+      if (p.images.length === 0 && oldLen > 0) { p.images = ['images/products/placeholder.svg']; migrated = true; }
+      else if (p.images.length !== oldLen) migrated = true;
     }
   });
   return migrated;
@@ -312,9 +317,8 @@ function renderProducts() {
 }
 
 function closeLiveModal() {
-  console.log('closeLiveModal called');
   var el = document.getElementById('liveModal');
-  if (el) { el.remove(); unlockBody(); console.log('liveModal removed, body unlocked'); if (location.hash === '#modal') history.back(); }
+  if (el) { el.remove(); unlockBody(); if (location.hash === '#modal') history.back(); }
 }
 
 function openModal(product) {
@@ -840,7 +844,7 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
   }
 
   Promise.all(toUpload.map(function(src) { return uploadImage(src); })).then(function(urls) {
-    finish(keep.concat(urls));
+    finish(urls.concat(keep));
   }).catch(function() {
     alert('Failed to upload one or more images. Please try again.');
     submitBtn.disabled = false;
