@@ -593,13 +593,21 @@ document.addEventListener('keydown', e => {
   if (document.getElementById('fullscreenViewer').classList.contains('active')) {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       if (currentImageIndex > 0) {
-        goToSlide(currentImageIndex - 1, true);
+        currentImageIndex--;
+        updateCounter();
+        var h2 = window.innerHeight;
+        document.getElementById('fullscreenTrack').style.transition = 'transform 0.3s ease';
+        document.getElementById('fullscreenTrack').style.transform = 'translate3d(0,' + (-currentImageIndex * h2) + 'px,0)';
       }
       e.preventDefault();
     }
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       if (currentImageIndex < currentModalImages.length - 1) {
-        goToSlide(currentImageIndex + 1, true);
+        currentImageIndex++;
+        updateCounter();
+        var h2 = window.innerHeight;
+        document.getElementById('fullscreenTrack').style.transition = 'transform 0.3s ease';
+        document.getElementById('fullscreenTrack').style.transform = 'translate3d(0,' + (-currentImageIndex * h2) + 'px,0)';
       }
       e.preventDefault();
     }
