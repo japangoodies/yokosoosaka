@@ -326,13 +326,17 @@ function renderProducts() {
   grid.querySelectorAll('.product-card').forEach(card => {
     card.addEventListener('click', () => {
       const id = parseInt(card.dataset.id);
+      console.log('clicked product id:', id, 'products length:', products.length);
       const product = products.find(p => p.id === id);
+      console.log('found product:', product?.name, 'images:', product?.images);
       if (product) openModal(product);
+      else console.error('product not found for id:', id);
     });
   });
 }
 
 function openModal(product) {
+  console.log('openModal called for:', product.name);
   try {
     currentModalImages = Array.isArray(product.images) ? product.images : [product.image || 'images/products/placeholder.svg'];
     currentImageIndex = 0;
@@ -361,7 +365,9 @@ function openModal(product) {
 
 var _modalImgRetry = 0;
 function showModalImage() {
+  console.log('showModalImage called, src:', currentModalImages[currentImageIndex]);
   const img = document.getElementById('modalImage');
+  if (!img) { console.error('modalImage element not found!'); return; }
   img.onerror = function() {
     if (_modalImgRetry > 0) { this.onerror = null; this.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; return; }
     _modalImgRetry++;
