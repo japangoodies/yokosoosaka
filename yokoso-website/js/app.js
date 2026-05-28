@@ -87,10 +87,15 @@ var scrollPos = 0, bodyLocked = false;
 // Per-size stock tracking
 var stockMap = {};
 
+function stockField(size) {
+  if (!size || size === 'default' || size === 'quantity') return 'q';
+  return 's' + size.replace(/[^a-zA-Z0-9]/g, '');
+}
+
 function getSizeStock(productId, size) {
   var m = stockMap[productId];
   if (!m) return 5;
-  var qty = m[size || 'default'];
+  var qty = m[stockField(size)];
   return qty !== undefined ? qty : 0;
 }
 
@@ -701,11 +706,11 @@ function syncStockToFirestore(productId) {
       body = m;
     } else {
       var perSize = Math.max(1, Math.floor((p.stock !== undefined ? p.stock : 5) / p.sizes.length));
-      p.sizes.forEach(function(s) { body[s] = perSize; });
-      body.default = 0;
+      p.sizes.forEach(function(s) { body[stockField(s)] = perSize; });
+      body.q = 0;
     }
   } else {
-    body.default = p.stock !== undefined ? p.stock : 5;
+    body.q = p.stock !== undefined ? p.stock : 5;
   }
   console.log('[Stock] Syncing product', productId, '->', JSON.stringify(body));
   fetch(proxyUrl('stocks/' + productId), {
@@ -744,13 +749,13 @@ function loadStockFromFirestore(callback) {
             var id = parseInt(doc.id);
             var p = products.find(function(x) { return x.id === id; });
             if (p && doc.fields) {
-              // If product has sizes but doc has only 'default', migrate to per-size fields
-              if (hasSizes(p) && Object.keys(doc.fields).length === 1 && doc.fields.default !== undefined) {
-                var total = doc.fields.default;
+              // If product has sizes but doc has only 'q' (or old 'default'), migrate to per-size fields
+              if (hasSizes(p) && Object.keys(doc.fields).length === 1 && (doc.fields.q !== undefined || doc.fields.default !== undefined)) {
+                var total = doc.fields.q !== undefined ? doc.fields.q : doc.fields.default;
                 stockMap[id] = {};
                 var perSize = Math.max(1, Math.floor(total / p.sizes.length));
-                p.sizes.forEach(function(s) { stockMap[id][s] = perSize; });
-                stockMap[id].default = 0;
+                p.sizes.forEach(function(s) { stockMap[id][stockField(s)] = perSize; });
+                stockMap[id].q = 0;
               } else {
                 stockMap[id] = doc.fields;
               }
@@ -766,10 +771,10 @@ function loadStockFromFirestore(callback) {
           if (hasSizes(p)) {
             stockMap[p.id] = {};
             var perSize = Math.max(1, Math.floor((p.stock !== undefined ? p.stock : 5) / p.sizes.length));
-            p.sizes.forEach(function(s) { stockMap[p.id][s] = perSize; });
-            stockMap[p.id].default = 0;
+            p.sizes.forEach(function(s) { stockMap[p.id][stockField(s)] = perSize; });
+            stockMap[p.id].q = 0;
           } else {
-            stockMap[p.id] = { default: p.stock !== undefined ? p.stock : 5 };
+            stockMap[p.id] = { q: p.stock !== undefined ? p.stock : 5 };
           }
           p.stock = getTotalStock(p.id);
           syncStockToFirestore(p.id);
@@ -803,12 +808,12 @@ function subscribeStockUpdates() {
             if (p && doc.fields) {
               var fields = doc.fields;
               // Migrate old format to per-size
-              if (hasSizes(p) && Object.keys(fields).length === 1 && fields.default !== undefined) {
-                var total = fields.default;
+              if (hasSizes(p) && Object.keys(fields).length === 1 && (fields.q !== undefined || fields.default !== undefined)) {
+                var total = fields.q !== undefined ? fields.q : fields.default;
                 fields = {};
                 var perSize = Math.max(1, Math.floor(total / p.sizes.length));
-                p.sizes.forEach(function(s) { fields[s] = perSize; });
-                fields.default = 0;
+                p.sizes.forEach(function(s) { fields[stockField(s)] = perSize; });
+                fields.q = 0;
               }
               var newTotal = 0;
               for (var k in fields) newTotal += fields[k];
@@ -828,7 +833,7 @@ function subscribeStockUpdates() {
 
 function firestoreAddToCart(productId, size) {
   if (!isProxyReady()) { console.warn('[Stock] Proxy not ready'); return; }
-  var field = size || 'default';
+  var field = stockField(size);
   var url = proxyUrl('stocks/' + productId + '/decrement');
   console.log('[Stock] Decrement fetch to', url, 'field:', field);
   fetch(url, {
@@ -847,7 +852,7 @@ function firestoreAddToCart(productId, size) {
 
 function firestoreRestoreStock(productId, amount, size) {
   if (!isProxyReady() || amount <= 0) return;
-  var field = size || 'default';
+  var field = stockField(size);
   var url = proxyUrl('stocks/' + productId + '/increment');
   console.log('[Stock] Increment fetch to', url, 'field:', field, 'amount:', amount);
   fetch(url, {
@@ -946,7 +951,7 @@ function cartKey(id, size) {
 function addToCart(productId, size) {
   var p = products.find(function(x) { return x.id === productId; });
   if (!p) return;
-  var field = size || 'default';
+  var field = stockField(size);
   var avail = getSizeStock(productId, field);
   if (avail <= 0) { alert('Size ' + size + ' is out of stock.'); return; }
   var key = cartKey(productId, size);
@@ -979,7 +984,7 @@ function removeFromCart(productId, size) {
   if (idx === -1) return;
   var item = cart[idx];
   var p = products.find(function(x) { return x.id === productId; });
-  var field = item.size || 'default';
+  var field = stockField(item.size);
   if (p) {
     if (!stockMap[productId]) stockMap[productId] = {};
     stockMap[productId][field] = (stockMap[productId][field] || 0) + item.qty;
@@ -1000,7 +1005,7 @@ function updateCartQty(productId, delta, size) {
   if (idx === -1) return;
   var item = cart[idx];
   var p = products.find(function(x) { return x.id === productId; });
-  var field = item.size || 'default';
+  var field = stockField(item.size);
   var avail = p ? getSizeStock(productId, field) : 0;
   var newQty = item.qty + delta;
   if (newQty <= 0) { removeFromCart(productId, item.size); return; }
@@ -1766,7 +1771,7 @@ if (pf) pf.addEventListener('submit', function(e) {
     if (hasSizes(savedProduct) && !stockMap[savedProduct.id]) {
       stockMap[savedProduct.id] = {};
       var perSize = Math.max(1, Math.floor(stock / savedProduct.sizes.length));
-      savedProduct.sizes.forEach(function(s) { stockMap[savedProduct.id][s] = perSize; });
+      savedProduct.sizes.forEach(function(s) { stockMap[savedProduct.id][stockField(s)] = perSize; });
     }
     saveProducts();
     syncStockToFirestore(savedProduct.id);
