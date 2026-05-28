@@ -866,8 +866,6 @@ function doSearch(e) {
   }, 600);
 }
 
-document.getElementById('searchForm').addEventListener('submit', doSearch);
-
 document.getElementById('searchInput').addEventListener('search', doSearch);
 
 document.getElementById('searchInput').addEventListener('keydown', function(e) {
