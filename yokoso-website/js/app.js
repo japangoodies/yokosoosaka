@@ -424,6 +424,13 @@ function getBrands() {
   return brands.sort();
 }
 
+function getBrandsForSubcategory(sub) {
+  if (!sub || sub === 'all') return [];
+  var filtered = products.filter(function(p) { return p.available !== false && p.category0 === currentGroup && p.category1 === sub; });
+  var brands = [...new Set(filtered.map(function(p) { return p.category2; }).filter(Boolean))].sort();
+  return brands;
+}
+
 function renderFilters() {
   renderCarousel();
   renderSubcategoryFilter();
@@ -436,7 +443,9 @@ function renderSubcategoryFilter() {
   var subs = getSubcategories(currentGroup);
   var html = '<button class="filter-btn' + (currentCategory === 'all' ? ' active' : '') + '" data-subcategory="all">All ' + currentGroup + ' Subcategories</button>';
   subs.forEach(function(s) {
-    html += '<button class="filter-btn' + (currentCategory === s ? ' active' : '') + '" data-subcategory="' + s + '">' + s + '</button>';
+    var brands = getBrandsForSubcategory(s);
+    var brandHtml = brands.length ? brands.map(function(b) { return '<button class="brand-option" data-subcategory="' + s + '" data-brand="' + b + '">' + b + '</button>'; }).join('') : '';
+    html += '<div class="subcategory-wrapper"><button class="filter-btn' + (currentCategory === s ? ' active' : '') + '" data-subcategory="' + s + '">' + s + '</button>' + (brandHtml ? '<div class="subcategory-brands">' + brandHtml + '</div>' : '') + '</div>';
   });
   container.innerHTML = html;
 }
@@ -476,6 +485,19 @@ if (cc) {
 }
 
 document.addEventListener('click', function(e) {
+  var brandOpt = e.target.closest('.brand-option');
+  if (brandOpt) {
+    var sub = brandOpt.dataset.subcategory;
+    var brand = brandOpt.dataset.brand;
+    document.querySelectorAll('#subcategoryFilterContainer .filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    var activeSubBtn = document.querySelector('#subcategoryFilterContainer .filter-btn[data-subcategory="' + sub + '"]');
+    if (activeSubBtn) activeSubBtn.classList.add('active');
+    currentCategory = sub;
+    currentBrand = brand;
+    renderSubcategoryFilter();
+    renderProducts();
+    return;
+  }
   var subBtn = e.target.closest('#subcategoryFilterContainer .filter-btn');
   if (subBtn) {
     document.querySelectorAll('#subcategoryFilterContainer .filter-btn').forEach(function(b) { b.classList.remove('active'); });

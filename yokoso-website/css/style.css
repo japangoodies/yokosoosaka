@@ -381,6 +381,50 @@ body {
   border-color: #e94560;
 }
 
+.subcategory-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.subcategory-brands {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px;
+  z-index: 20;
+  min-width: 140px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.subcategory-wrapper:hover .subcategory-brands {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.brand-option {
+  display: block;
+  width: 100%;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #333;
+  text-align: left;
+  border-radius: 3px;
+  transition: background 0.15s;
+}
+
+.brand-option:hover {
+  background: #f0f0f5;
+  color: #e94560;
+}
+
 /* Products */
 .products {
   padding: 3rem 0;
