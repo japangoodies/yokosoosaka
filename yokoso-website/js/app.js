@@ -663,11 +663,19 @@ function setProxyStatus(msg, isError) {
 
 function syncStockToFirestore(productId, quantity) {
   if (!isProxyReady()) return;
+  console.log('[Stock] Syncing product', productId, '->', quantity);
   fetch(proxyUrl('stocks/' + productId), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ quantity: quantity })
-  }).catch(function() {});
+  }).then(function(r) {
+    if (!r.ok) console.warn('[Stock] Sync PUT failed:', r.status);
+    return r.json().then(function(d) {
+      console.log('[Stock] Sync response for', productId, ':', d);
+    });
+  }).catch(function(err) {
+    console.warn('[Stock] Sync error for', productId, ':', err.message);
+  });
 }
 
 function syncAllStockToFirestore() {

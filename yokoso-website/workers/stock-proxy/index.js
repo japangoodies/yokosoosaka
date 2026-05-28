@@ -6,13 +6,17 @@ const API_KEY = 'AIzaSyCR8jcz2JeDr3VYztZm2KYdns4uPUajtqQ';
 
 async function firestoreGet(path) {
   const resp = await fetch(`${FIRESTORE_BASE}/${path}?key=${API_KEY}`);
-  if (!resp.ok) return null;
+  if (!resp.ok) {
+    const text = await resp.text().catch(() => '');
+    throw new Error(`Firestore GET ${path}: HTTP ${resp.status} ${resp.statusText} ${text}`);
+  }
   return resp.json();
 }
 
 async function firestorePatch(path, fields) {
   const keys = Object.keys(fields).join(',');
-  const resp = await fetch(`${FIRESTORE_BASE}/${path}?key=${API_KEY}&updateMask.fieldPaths=${keys}`, {
+  const url = `${FIRESTORE_BASE}/${path}?key=${API_KEY}&updateMask.fieldPaths=${keys}`;
+  const resp = await fetch(url, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -22,12 +26,14 @@ async function firestorePatch(path, fields) {
     })
   });
   if (resp.ok) return true;
+  const text = await resp.text().catch(() => '');
   if (resp.status === 404) return null; // doesn't exist yet
-  return false;
+  throw new Error(`Firestore PATCH ${path}: HTTP ${resp.status} ${resp.statusText} ${text}`);
 }
 
 async function firestoreCreate(docId, fields) {
-  const resp = await fetch(`${FIRESTORE_BASE}/stocks?key=${API_KEY}&documentId=${docId}`, {
+  const url = `${FIRESTORE_BASE}/stocks?key=${API_KEY}&documentId=${docId}`;
+  const resp = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -36,7 +42,9 @@ async function firestoreCreate(docId, fields) {
       )
     })
   });
-  return resp.ok;
+  if (resp.ok) return true;
+  const text = await resp.text().catch(() => '');
+  throw new Error(`Firestore CREATE ${docId}: HTTP ${resp.status} ${resp.statusText} ${text}`);
 }
 
 function parseStockDoc(doc) {
@@ -88,8 +96,12 @@ async function handleRequest(request) {
       const body = await request.json();
       const qty = parseInt(body.quantity, 10);
       if (isNaN(qty)) return new Response(JSON.stringify({ error: 'invalid quantity' }), { status: 400, headers: corsHeaders(origin) });
+      // Always do PATCH then fallback to CREATE if needed
       const r = await firestorePatch(`stocks/${parts[1]}`, { quantity: qty });
-      if (r === null) await firestoreCreate(parts[1], { quantity: qty });
+      if (r === null || r === false) {
+        const created = await firestoreCreate(parts[1], { quantity: qty });
+        return new Response(JSON.stringify({ ok: created }), { headers: corsHeaders(origin) });
+      }
       return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders(origin) });
     }
 
