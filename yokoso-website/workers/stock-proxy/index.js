@@ -347,9 +347,37 @@ async function handleRequest(request, env) {
       if (typeof r === 'object' && r.error) {
         const fields = {};
         fields[field] = amount;
-        await firestoreCreate(parts[1], fields);
+        const patched = await firestorePatch(`stocks/${parts[1]}`, fields);
+        if (patched === null) {
+          await firestoreCreate(parts[1], fields);
+        }
         return new Response(JSON.stringify({ id: parts[1], fields, total: amount }), { headers: corsHeaders(origin) });
       }
+      throw new Error(`Increment failed: ${JSON.stringify(r)}`);
+    }
+
+    // POST /stocks/:id/decrement  — atomic decrement by amount on a field
+    if (request.method === 'POST' && parts.length === 3 && parts[0] === 'stocks' && parts[2] === 'decrement') {
+      const body = await request.json().catch(() => ({}));
+      const amount = parseInt(body.amount, 10) || 1;
+      const field = body.field || 'default';
+      const r = await firestoreTransform(parts[1], -amount, field);
+      if (r === true) {
+        const data = await firestoreGet(`stocks/${parts[1]}`);
+        const parsed = parseStockDoc(data);
+        return new Response(JSON.stringify(parsed || { id: parts[1], fields: {}, total: 0 }), { headers: corsHeaders(origin) });
+      }
+      if (typeof r === 'object' && r.error) {
+        const fields = {};
+        fields[field] = Math.max(0, 5 - amount);
+        const patched = await firestorePatch(`stocks/${parts[1]}`, fields);
+        if (patched === null) {
+          await firestoreCreate(parts[1], fields);
+        }
+        return new Response(JSON.stringify({ id: parts[1], fields, total: fields[field] }), { headers: corsHeaders(origin) });
+      }
+      throw new Error(`Decrement failed: ${JSON.stringify(r)}`);
+    }
       throw new Error(`Transform failed: ${JSON.stringify(r)}`);
     }
 
