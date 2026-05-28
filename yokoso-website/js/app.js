@@ -646,6 +646,13 @@ function isProxyReady() {
   return STOCK_PROXY_URL && STOCK_PROXY_URL.startsWith('http');
 }
 
+function setProxyStatus(msg, isError) {
+  var el = document.getElementById('proxyStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isError ? '#e94560' : '#2e7d32';
+}
+
 function syncStockToFirestore(productId, quantity) {
   if (!isProxyReady()) return;
   fetch(proxyUrl('stocks/' + productId), {
@@ -660,12 +667,16 @@ function syncAllStockToFirestore() {
   products.forEach(function(p) {
     syncStockToFirestore(p.id, p.stock !== undefined ? p.stock : 5);
   });
+  setProxyStatus('Stock synced to proxy');
 }
 
 function loadStockFromFirestore(callback) {
   if (!isProxyReady()) { stockInitialized = true; if (callback) callback(); return; }
   fetch(proxyUrl('stocks'))
-    .then(function(r) { return r.json(); })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
     .then(function(docs) {
       if (Array.isArray(docs)) {
         docs.forEach(function(doc) {
@@ -677,9 +688,14 @@ function loadStockFromFirestore(callback) {
         });
       }
       stockInitialized = true;
+      setProxyStatus('Proxy connected (' + (docs ? docs.length : 0) + ' stock docs)');
       if (callback) callback();
     })
-    .catch(function() { stockInitialized = true; if (callback) callback(); });
+    .catch(function(err) {
+      stockInitialized = true;
+      setProxyStatus('Proxy error: ' + (err.message || 'connection failed'), true);
+      if (callback) callback();
+    });
 }
 
 function subscribeStockUpdates() {
@@ -687,19 +703,21 @@ function subscribeStockUpdates() {
   if (stockPollTimer) clearInterval(stockPollTimer);
   stockPollTimer = setInterval(function() {
     fetch(proxyUrl('stocks'))
-      .then(function(r) { return r.json(); })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function(docs) {
         if (!Array.isArray(docs)) return;
+        var changed = false;
         docs.forEach(function(doc) {
           if (doc && doc.quantity !== undefined) {
             var id = parseInt(doc.id);
             var p = products.find(function(x) { return x.id === id; });
             if (p && stockInitialized && p.stock !== doc.quantity) {
               p.stock = doc.quantity;
-              renderProducts();
+              changed = true;
             }
           }
         });
+        if (changed) renderProducts();
       })
       .catch(function() {});
   }, 5000);
@@ -711,7 +729,12 @@ function firestoreAddToCart(productId) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ amount: 1 })
-  }).catch(function() {});
+  }).then(function(r) {
+    if (r.ok) setProxyStatus('Stock updated via proxy');
+    else setProxyStatus('Proxy write failed (HTTP ' + r.status + ')', true);
+  }).catch(function(err) {
+    setProxyStatus('Proxy write error: ' + (err.message || 'connection failed'), true);
+  });
 }
 
 function firestoreRestoreStock(productId, amount) {
@@ -720,28 +743,65 @@ function firestoreRestoreStock(productId, amount) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ amount: amount })
-  }).catch(function() {});
+  }).then(function(r) {
+    if (r.ok) setProxyStatus('Stock restored via proxy');
+    else setProxyStatus('Proxy restore failed (HTTP ' + r.status + ')', true);
+  }).catch(function(err) {
+    setProxyStatus('Proxy restore error: ' + (err.message || 'connection failed'), true);
+  });
+}
+
+function testProxyConnection() {
+  var statusEl = document.getElementById('proxyStatus');
+  if (!statusEl) return;
+  statusEl.textContent = 'Testing...';
+  statusEl.style.color = '#888';
+  if (!isProxyReady()) { setProxyStatus('No proxy URL configured', true); return; }
+  fetch(proxyUrl('stocks'))
+    .then(function(r) {
+      if (r.ok) { setProxyStatus('Connected! (' + r.status + ')'); return r.json(); }
+      throw new Error('HTTP ' + r.status);
+    })
+    .then(function(docs) {
+      setProxyStatus('Connected — ' + (Array.isArray(docs) ? docs.length : 0) + ' products in stock');
+    })
+    .catch(function(err) {
+      setProxyStatus('Test failed: ' + (err.message || 'connection error'), true);
+    });
 }
 
 // ---- ADMIN: Proxy URL config ----
-var proxyUrlInput = document.getElementById('stockProxyUrl');
-if (proxyUrlInput) {
-  proxyUrlInput.value = STOCK_PROXY_URL;
-  proxyUrlInput.addEventListener('change', function() {
-    STOCK_PROXY_URL = this.value.trim();
-    localStorage.setItem('yokoso_stock_proxy_url', STOCK_PROXY_URL);
-    if (isProxyReady()) {
-      if (stockInitialized) {
-        subscribeStockUpdates();
-      } else {
-        loadStockFromFirestore(function() {
-          renderProducts();
-          subscribeStockUpdates();
-        });
-      }
-    }
-  });
+function initProxyUrlInput() {
+  var input = document.getElementById('stockProxyUrl');
+  if (!input) return;
+  input.value = STOCK_PROXY_URL;
+  input.addEventListener('change', applyProxyUrl);
+  var btn = document.getElementById('proxySaveBtn');
+  if (btn) btn.addEventListener('click', applyProxyUrl);
+  var testBtn = document.getElementById('proxyTestBtn');
+  if (testBtn) testBtn.addEventListener('click', testProxyConnection);
+  if (STOCK_PROXY_URL) setProxyStatus('Proxy configured, connecting...');
 }
+
+function applyProxyUrl() {
+  var input = document.getElementById('stockProxyUrl');
+  if (!input) return;
+  STOCK_PROXY_URL = input.value.trim();
+  localStorage.setItem('yokoso_stock_proxy_url', STOCK_PROXY_URL);
+  if (isProxyReady()) {
+    setProxyStatus('Connecting...');
+    stockInitialized = false;
+    syncAllStockToFirestore();
+    loadStockFromFirestore(function() {
+      renderProducts();
+      subscribeStockUpdates();
+    });
+  } else {
+    setProxyStatus('Enter a valid proxy URL', true);
+  }
+}
+
+initProxyUrlInput();
 
 // ---- CART SYSTEM ----
 var cart = JSON.parse(localStorage.getItem('yokoso_cart') || '[]');
@@ -771,6 +831,12 @@ function addToCart(productId) {
   } else {
     cart.push({ id: productId, qty: 1, name: p.name, price: p.price, image: p.images?.[0] || 'images/products/placeholder.svg' });
   }
+  saveCart();
+  console.log('[Cart] Added ' + p.name + ', new stock=' + p.stock + ', proxy=' + STOCK_PROXY_URL);
+  firestoreAddToCart(productId);
+  renderProducts();
+  showCartNotification(p.name);
+}
   saveCart();
   saveProducts();
   firestoreAddToCart(productId);
