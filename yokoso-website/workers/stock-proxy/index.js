@@ -240,7 +240,7 @@ async function handleRequest(request, env) {
 
     // GET /accounts (list all)
     if (request.method === 'GET' && parts.length === 1 && parts[0] === 'accounts') {
-      const data = await firestoreGet('accounts');
+      const data = await firestoreGet('accounts').catch(() => null);
       const docs = (data && data.documents) ? data.documents.map(parseAccountDoc).filter(Boolean) : [];
       return new Response(JSON.stringify(docs), { headers: corsHeaders(origin) });
     }
