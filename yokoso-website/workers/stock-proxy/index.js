@@ -378,8 +378,6 @@ async function handleRequest(request, env) {
       }
       throw new Error(`Decrement failed: ${JSON.stringify(r)}`);
     }
-      throw new Error(`Transform failed: ${JSON.stringify(r)}`);
-    }
 
     return new Response(JSON.stringify({ error: 'not found' }), { status: 404, headers: corsHeaders(origin) });
   } catch (e) {
