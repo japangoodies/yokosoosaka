@@ -100,6 +100,25 @@ function parseStockDoc(doc) {
   return { id, fields, total };
 }
 
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password + 'y0k0s0_salt');
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function parseAccountDoc(doc) {
+  if (!doc || !doc.fields) return null;
+  const match = doc.name.match(/\/([^/]+)$/);
+  const contact = match ? match[1] : null;
+  const fields = {};
+  for (const [key, val] of Object.entries(doc.fields)) {
+    fields[key] = val.stringValue || val.integerValue || '';
+  }
+  return fields.contact ? { name: fields.name || '', address: fields.address || '', contact: fields.contact } : null;
+}
+
 function corsHeaders(origin) {
   return {
     'Access-Control-Allow-Origin': origin || '*',
@@ -133,6 +152,69 @@ async function handleRequest(request) {
       const parsed = parseStockDoc(data);
       if (!parsed) return new Response(JSON.stringify({ id: parts[1], fields: {}, total: 0 }), { headers: corsHeaders(origin) });
       return new Response(JSON.stringify(parsed), { headers: corsHeaders(origin) });
+    }
+
+    // ---- ACCOUNTS ----
+
+    // POST /accounts/create
+    if (request.method === 'POST' && parts.length === 2 && parts[0] === 'accounts' && parts[1] === 'create') {
+      const body = await request.json();
+      if (!body.contact || !body.password || !body.name || !body.address) {
+        return new Response(JSON.stringify({ error: 'name, address, contact, and password required' }), { status: 400, headers: corsHeaders(origin) });
+      }
+      // Check if account already exists
+      const existing = await firestoreGet(`accounts/${encodeURIComponent(body.contact)}`).catch(() => null);
+      if (existing && existing.fields && existing.fields.contact) {
+        return new Response(JSON.stringify({ error: 'Account with this contact number already exists' }), { status: 409, headers: corsHeaders(origin) });
+      }
+      const passwordHash = await hashPassword(body.password);
+      const url = `${FIRESTORE_BASE}/accounts?key=${API_KEY}&documentId=${encodeURIComponent(body.contact)}`;
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fields: {
+            name: { stringValue: body.name },
+            address: { stringValue: body.address },
+            contact: { stringValue: body.contact },
+            passwordHash: { stringValue: passwordHash }
+          }
+        })
+      });
+      if (!resp.ok) {
+        const text = await resp.text().catch(() => '');
+        throw new Error(`Firestore create account: HTTP ${resp.status} ${text}`);
+      }
+      return new Response(JSON.stringify({ ok: true, name: body.name, address: body.address, contact: body.contact }), { headers: corsHeaders(origin) });
+    }
+
+    // POST /accounts/login
+    if (request.method === 'POST' && parts.length === 2 && parts[0] === 'accounts' && parts[1] === 'login') {
+      const body = await request.json();
+      if (!body.contact || !body.password) {
+        return new Response(JSON.stringify({ error: 'contact and password required' }), { status: 400, headers: corsHeaders(origin) });
+      }
+      const data = await firestoreGet(`accounts/${encodeURIComponent(body.contact)}`).catch(() => null);
+      if (!data || !data.fields) {
+        return new Response(JSON.stringify({ error: 'Account not found' }), { status: 404, headers: corsHeaders(origin) });
+      }
+      const storedHash = data.fields.passwordHash ? data.fields.passwordHash.stringValue || data.fields.passwordHash.integerValue || '' : '';
+      const inputHash = await hashPassword(body.password);
+      if (storedHash !== inputHash) {
+        return new Response(JSON.stringify({ error: 'Invalid password' }), { status: 401, headers: corsHeaders(origin) });
+      }
+      const acct = parseAccountDoc(data);
+      return new Response(JSON.stringify({ ok: true, ...acct }), { headers: corsHeaders(origin) });
+    }
+
+    // GET /accounts/:contact
+    if (request.method === 'GET' && parts.length === 2 && parts[0] === 'accounts') {
+      const data = await firestoreGet(`accounts/${encodeURIComponent(parts[1])}`).catch(() => null);
+      if (!data || !data.fields) {
+        return new Response(JSON.stringify({ error: 'Account not found' }), { status: 404, headers: corsHeaders(origin) });
+      }
+      const acct = parseAccountDoc(data);
+      return new Response(JSON.stringify(acct || { error: 'Account not found' }), { headers: corsHeaders(origin) });
     }
 
     // PUT /stocks/:id  — set fields (idempotent)
