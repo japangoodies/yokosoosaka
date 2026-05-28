@@ -819,6 +819,8 @@ function subscribeStockUpdates() {
               var newTotal = 0;
               for (var k in fields) newTotal += fields[k];
               if (stockInitialized && p.stock !== newTotal) {
+                // Don't overwrite local stock that was recently modified (pending async sync)
+                if (p._stockLock && p._stockLock > Date.now()) return;
                 stockMap[id] = fields;
                 p.stock = newTotal;
                 changed = true;
@@ -972,6 +974,7 @@ function addToCart(productId, size) {
   if (!stockMap[productId]) stockMap[productId] = {};
   stockMap[productId][field] = Math.max(0, (stockMap[productId][field] || 0) - 1);
   p.stock = getTotalStock(productId);
+  p._stockLock = Date.now() + 10000; // prevent poll overwrite for 10s
   saveCart();
   console.log('[Cart] Added ' + p.name + (size ? ' (' + size + ')' : '') + ', remaining ' + field + ': ' + stockMap[productId][field]);
   firestoreAddToCart(productId, size);
@@ -990,6 +993,7 @@ function removeFromCart(productId, size) {
     if (!stockMap[productId]) stockMap[productId] = {};
     stockMap[productId][field] = (stockMap[productId][field] || 0) + item.qty;
     p.stock = getTotalStock(productId);
+    p._stockLock = Date.now() + 10000;
   }
   cart.splice(idx, 1);
   saveCart();
@@ -1015,6 +1019,7 @@ function updateCartQty(productId, delta, size) {
     if (!stockMap[productId]) stockMap[productId] = {};
     stockMap[productId][field] = Math.max(0, (stockMap[productId][field] || 0) - delta);
     p.stock = getTotalStock(productId);
+    p._stockLock = Date.now() + 10000;
   }
   item.qty = newQty;
   saveCart();
