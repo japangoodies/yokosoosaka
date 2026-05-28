@@ -262,6 +262,9 @@ function saveProducts() {
   if (fbDB) {
     fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(() => {});
   }
+  if (localStorage.getItem('autoSyncEnabled') === 'true' && localStorage.getItem('github_token')) {
+    syncToGitHub();
+  }
   // Show commit reminder in admin panel
   var reminder = document.getElementById('commitReminder');
   if (!reminder) {
@@ -271,10 +274,11 @@ function saveProducts() {
     reminder.addEventListener('click', function() { this.remove(); });
     document.body.appendChild(reminder);
   }
-  reminder.innerHTML = 'Changes saved locally. <b>Export JSON</b> and commit <code>data/products.json</code> to GitHub to sync all devices.';
+  var syncing = localStorage.getItem('autoSyncEnabled') === 'true' && localStorage.getItem('github_token');
+  reminder.innerHTML = syncing ? 'Syncing to GitHub... ✓' : 'Changes saved locally. <b>Export JSON</b> and commit <code>data/products.json</code> to GitHub to sync all devices.';
   reminder.style.display = 'block';
   clearTimeout(reminder._timeout);
-  reminder._timeout = setTimeout(function() { if (reminder) reminder.style.display = 'none'; }, 6000);
+  reminder._timeout = setTimeout(function() { if (reminder) reminder.style.display = 'none'; }, syncing ? 2000 : 6000);
 }
 
 function uploadImage(dataUrl) {
@@ -1110,6 +1114,62 @@ document.getElementById('importFileInput').addEventListener('change', e => {
   reader.readAsText(file);
   e.target.value = '';
 });
+
+// GitHub Auto Sync
+var GITHUB_OWNER = 'japangoodies';
+var GITHUB_REPO = 'yokosoosaka';
+var GITHUB_PATH = 'yokoso-website/data/products.json';
+var GITHUB_BRANCH = 'main';
+
+document.getElementById('syncSettingsBtn').addEventListener('click', function() {
+  var el = document.getElementById('adminSyncSettings');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('githubTokenInput').value = localStorage.getItem('github_token') || '';
+  document.getElementById('autoSyncToggle').checked = localStorage.getItem('autoSyncEnabled') === 'true';
+});
+
+document.getElementById('githubTokenInput').addEventListener('input', function() {
+  localStorage.setItem('github_token', this.value);
+});
+
+document.getElementById('autoSyncToggle').addEventListener('change', function() {
+  localStorage.setItem('autoSyncEnabled', this.checked ? 'true' : 'false');
+});
+
+function syncToGitHub() {
+  var token = localStorage.getItem('github_token');
+  if (!token) return;
+  var statusEl = document.getElementById('syncStatus');
+  statusEl.textContent = 'Syncing...';
+  statusEl.style.color = '#666';
+  var content = JSON.stringify(products, null, 2);
+  var encoded = btoa(unescape(encodeURIComponent(content)));
+  fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_PATH, {
+    headers: { 'Authorization': 'token ' + token }
+  })
+  .then(function(r) {
+    if (r.status === 404) return null;
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function(data) {
+    var sha = data ? data.sha : null;
+    return fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_PATH, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'Auto-sync products from admin panel', content: encoded, sha: sha, branch: GITHUB_BRANCH })
+    });
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    statusEl.textContent = 'Synced to GitHub ✓ (CDN ~1-2 min)';
+    statusEl.style.color = '#28a745';
+  })
+  .catch(function(err) {
+    statusEl.textContent = 'Sync failed: ' + err.message;
+    statusEl.style.color = '#dc3545';
+  });
+}
 
 // Navigation between public and admin view
 const ADMIN_PASSWORD = 'amped2016';
