@@ -132,6 +132,43 @@ function handleLogout() {
 }
 // ---- END ACCOUNT ----
 
+// ---- ADMIN USERS ----
+function toggleUsersPanel() {
+  var el = document.getElementById('adminUsers');
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  if (el.style.display === 'block') loadUsers();
+}
+function loadUsers() {
+  var list = document.getElementById('usersList');
+  if (!list) return;
+  list.innerHTML = 'Loading...';
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/accounts')
+    .then(function(r) { return r.json(); })
+    .then(function(users) {
+      if (!Array.isArray(users) || users.length === 0) {
+        list.innerHTML = '<p style="color:#888">No registered users yet.</p>';
+        return;
+      }
+      var html = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;font-weight:600;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);color:#ff6b81;font-size:0.8rem">' +
+        '<span>Name</span><span>Contact</span><span>Email</span><span>Address</span></div>';
+      users.forEach(function(u) {
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.8rem">' +
+          '<span>' + (u.name || '-') + '</span>' +
+          '<span>' + (u.contact || '-') + '</span>' +
+          '<span>' + (u.email || '-') + '</span>' +
+          '<span style="font-size:0.75rem;color:#aaa">' + (u.address || '-') + '</span></div>';
+      });
+      html += '<div style="margin-top:8px;font-size:0.75rem;color:#888">Total: ' + users.length + ' user(s)</div>';
+      list.innerHTML = html;
+    })
+    .catch(function() {
+      list.innerHTML = '<p style="color:#c62828">Failed to load users. Check worker connection.</p>';
+    });
+}
+// ---- END ADMIN USERS ----
+
 // ---- DEPOSIT & CHECKOUT ----
 var depositPercent = 50;
 var adminEmail = '';
@@ -2451,6 +2488,8 @@ var backBtn = document.getElementById('backToPublicBtn');
 if (backBtn) backBtn.addEventListener('click', function() {
   var ac = document.getElementById('adminCategories');
   if (ac) ac.style.display = 'none';
+  var au = document.getElementById('adminUsers');
+  if (au) au.style.display = 'none';
   var ap = document.getElementById('adminPanel');
   if (ap) ap.style.display = 'none';
   adminSearchVal = '';
