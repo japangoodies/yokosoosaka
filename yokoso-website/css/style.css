@@ -396,7 +396,8 @@ body {
   min-width: 200px;
 }
 
-.subcategory-wrapper:hover .subcategory-brands {
+.subcategory-wrapper:hover .subcategory-brands,
+.subcategory-wrapper.open .subcategory-brands {
   display: block;
 }
 
