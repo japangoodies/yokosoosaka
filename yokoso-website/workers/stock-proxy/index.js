@@ -116,7 +116,34 @@ function parseAccountDoc(doc) {
   for (const [key, val] of Object.entries(doc.fields)) {
     fields[key] = val.stringValue || val.integerValue || '';
   }
-  return fields.contact ? { name: fields.name || '', address: fields.address || '', contact: fields.contact } : null;
+  return fields.contact ? { name: fields.name || '', address: fields.address || '', contact: fields.contact, email: fields.email || '' } : null;
+}
+
+async function sendEmail(env, to, subject, text) {
+  if (env && env.EMAIL) {
+    const msg = new SendEmailMessage({ to, from: 'noreply@yokosoosaka.com', subject, text });
+    await msg.send();
+    return 'email_binding';
+  }
+  if (env && env.SENDGRID_API_KEY) {
+    const resp = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + env.SENDGRID_API_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ personalizations: [{ to: [{ email: to }] }], from: { email: 'noreply@yokosoosaka.com' }, subject, content: [{ type: 'text/plain', value: text }] })
+    });
+    if (!resp.ok) throw new Error('SendGrid: HTTP ' + resp.status);
+    return 'sendgrid';
+  }
+  if (env && env.MAILGUN_API_KEY && env.MAILGUN_DOMAIN) {
+    const resp = await fetch(`https://api.mailgun.net/v3/${env.MAILGUN_DOMAIN}/messages`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Basic ' + btoa('api:' + env.MAILGUN_API_KEY), 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ from: 'noreply@yokosoosaka.com', to, subject, text })
+    });
+    if (!resp.ok) throw new Error('Mailgun: HTTP ' + resp.status);
+    return 'mailgun';
+  }
+  throw new Error('No email method configured. Set EMAIL binding, SENDGRID_API_KEY, or MAILGUN_API_KEY+MAILGUN_DOMAIN.');
 }
 
 function corsHeaders(origin) {
@@ -128,7 +155,7 @@ function corsHeaders(origin) {
   };
 }
 
-async function handleRequest(request) {
+async function handleRequest(request, env) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/^\/+/, '');
   const parts = path.split('/').filter(Boolean);
@@ -169,23 +196,23 @@ async function handleRequest(request) {
       }
       const passwordHash = await hashPassword(body.password);
       const url = `${FIRESTORE_BASE}/accounts?key=${API_KEY}&documentId=${encodeURIComponent(body.contact)}`;
+      const fields = {
+        name: { stringValue: body.name },
+        address: { stringValue: body.address },
+        contact: { stringValue: body.contact },
+        passwordHash: { stringValue: passwordHash }
+      };
+      if (body.email) fields.email = { stringValue: body.email };
       const resp = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fields: {
-            name: { stringValue: body.name },
-            address: { stringValue: body.address },
-            contact: { stringValue: body.contact },
-            passwordHash: { stringValue: passwordHash }
-          }
-        })
+        body: JSON.stringify({ fields })
       });
       if (!resp.ok) {
         const text = await resp.text().catch(() => '');
         throw new Error(`Firestore create account: HTTP ${resp.status} ${text}`);
       }
-      return new Response(JSON.stringify({ ok: true, name: body.name, address: body.address, contact: body.contact }), { headers: corsHeaders(origin) });
+      return new Response(JSON.stringify({ ok: true, name: body.name, address: body.address, contact: body.contact, email: body.email || '' }), { headers: corsHeaders(origin) });
     }
 
     // POST /accounts/login
@@ -215,6 +242,32 @@ async function handleRequest(request) {
       }
       const acct = parseAccountDoc(data);
       return new Response(JSON.stringify(acct || { error: 'Account not found' }), { headers: corsHeaders(origin) });
+    }
+
+    // POST /cart/send-order
+    if (request.method === 'POST' && parts.length === 2 && parts[0] === 'cart' && parts[1] === 'send-order') {
+      const body = await request.json();
+      if (!body.adminEmail || !body.subject || !body.text) {
+        return new Response(JSON.stringify({ error: 'adminEmail, subject, and text required' }), { status: 400, headers: corsHeaders(origin) });
+      }
+      const results = [];
+      const sendPromises = [];
+      // Send to admin
+      sendPromises.push(
+        sendEmail(env, body.adminEmail, body.subject, body.text)
+          .then(function(m) { results.push({ to: 'admin', method: m }); })
+          .catch(function(e) { results.push({ to: 'admin', error: e.message }); })
+      );
+      // Send to customer if email provided
+      if (body.customerEmail) {
+        sendPromises.push(
+          sendEmail(env, body.customerEmail, 'Your Purchase Order: ' + body.subject, body.text)
+            .then(function(m) { results.push({ to: 'customer', method: m }); })
+            .catch(function(e) { results.push({ to: 'customer', error: e.message }); })
+        );
+      }
+      await Promise.allSettled(sendPromises);
+      return new Response(JSON.stringify({ results }), { headers: corsHeaders(origin) });
     }
 
     // PUT /stocks/:id  — set fields (idempotent)
@@ -283,6 +336,6 @@ async function handleRequest(request) {
 
 export default {
   async fetch(request, env, ctx) {
-    return handleRequest(request);
+    return handleRequest(request, env);
   }
 };

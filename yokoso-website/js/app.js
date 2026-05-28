@@ -53,6 +53,7 @@ function updateAccountUI() {
     loggedOut.style.display = 'none'; loggedIn.style.display = 'block';
     var dn = document.getElementById('accountDetailName'); if (dn) dn.textContent = currentUser.name || '';
     var dc = document.getElementById('accountDetailContact'); if (dc) dc.textContent = currentUser.contact || '';
+    var de = document.getElementById('accountDetailEmail'); if (de) de.textContent = currentUser.email || '';
     var da = document.getElementById('accountDetailAddress'); if (da) da.textContent = currentUser.address || '';
   } else {
     loggedOut.style.display = 'block'; loggedIn.style.display = 'none';
@@ -85,16 +86,17 @@ function switchAccountTab(tab) {
 function handleCreateAccount() {
   var name = document.getElementById('registerName'); var address = document.getElementById('registerAddress');
   var contact = document.getElementById('registerContact'); var password = document.getElementById('registerPassword');
+  var email = document.getElementById('registerEmail');
   var err = document.getElementById('accountRegisterError');
   if (!name || !address || !contact || !password) return;
-  var n = name.value.trim(), a = address.value.trim(), c = contact.value.trim(), p = password.value;
+  var n = name.value.trim(), a = address.value.trim(), c = contact.value.trim(), p = password.value, e = email ? email.value.trim() : '';
   if (!n || !a || !c || !p) { if (err) err.textContent = 'All fields are required.'; return; }
   if (err) err.textContent = 'Creating account...';
-  fetch(proxyAccountUrl('create'), { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:n,address:a,contact:c,password:p}) })
+  fetch(proxyAccountUrl('create'), { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:n,address:a,contact:c,password:p,email:e}) })
     .then(function(r){ return r.json(); })
     .then(function(j){
       if (j.ok) {
-        saveSession({name:j.name, address:j.address, contact:j.contact});
+        saveSession({name:j.name, address:j.address, contact:j.contact, email: j.email || ''});
         closeAccountModal();
         showCartNotification('Account created! Welcome, ' + j.name + '!');
       } else {
@@ -114,7 +116,7 @@ function handleLogin() {
     .then(function(r){ return r.json(); })
     .then(function(j){
       if (j.ok) {
-        saveSession({name:j.name, address:j.address, contact:j.contact});
+        saveSession({name:j.name, address:j.address, contact:j.contact, email: j.email || ''});
         closeAccountModal();
         showCartNotification('Welcome back, ' + j.name + '!');
       } else {
@@ -132,10 +134,12 @@ function handleLogout() {
 
 // ---- DEPOSIT & CHECKOUT ----
 var depositPercent = 50;
+var adminEmail = '';
 
 function loadDepositConfig() {
   fetch('maintenance.json?_=' + Date.now()).then(function(r) { return r.json(); }).then(function(d) {
     if (d && typeof d.depositPercent === 'number') depositPercent = d.depositPercent;
+    if (d && d.adminEmail) adminEmail = d.adminEmail;
   }).catch(function() {});
 }
 
@@ -180,6 +184,8 @@ function handleCheckout() {
   if (depositPctEl) depositPctEl.textContent = depositPercent + '%';
   if (depositEl) depositEl.textContent = '₱' + deposit.toFixed(2);
   if (poEl) poEl.textContent = _checkoutPO;
+  // Try to send email via worker
+  sendOrderEmail();
   var modal = document.getElementById('checkoutModal');
   if (modal) {
     modal.style.display = 'flex';
@@ -233,9 +239,31 @@ function messageOrderDetails() {
 }
 
 function emailOrderDetails() {
+  if (!adminEmail) { showCartNotification('Admin email not configured.'); return; }
   var text = getOrderText();
-  var mailto = 'mailto:yokosoosaka@gmail.com?subject=' + encodeURIComponent('Purchase Order ' + _checkoutPO) + '&body=' + encodeURIComponent(text);
+  var mailto = 'mailto:' + adminEmail + '?subject=' + encodeURIComponent('Purchase Order ' + _checkoutPO) + '&body=' + encodeURIComponent(text);
   window.location.href = mailto;
+}
+
+function sendOrderEmail() {
+  if (!adminEmail) return;
+  var text = getOrderText();
+  var customerEmail = currentUser && currentUser.email ? currentUser.email : '';
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/cart/send-order', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({adminEmail:adminEmail, customerEmail:customerEmail, subject:'Purchase Order ' + _checkoutPO, text:text}) })
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      if (j.results) {
+        var sent = j.results.filter(function(r) { return r.method; }).length;
+        var failed = j.results.filter(function(r) { return r.error; });
+        if (sent > 0) {
+          showCartNotification('Order confirmation sent to ' + (customerEmail ? 'your email and ' : '') + 'admin.');
+        } else if (failed.length > 0) {
+          console.log('[Checkout] Email send not configured (set EMAIL binding, SENDGRID_API_KEY, or MAILGUN_API_KEY in worker)');
+        }
+      }
+    })
+    .catch(function(e) { console.log('[Checkout] Email send error:', e); });
 }
 // ---- END DEPOSIT & CHECKOUT ----
 
