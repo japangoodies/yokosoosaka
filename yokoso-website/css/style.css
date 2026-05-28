@@ -1166,6 +1166,11 @@ body {
   color: #fff;
 }
 
+.admin-panel select option {
+  background: #fff;
+  color: #333;
+}
+
 .admin-tag-label {
   cursor: text;
 }
