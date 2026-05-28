@@ -889,7 +889,7 @@ function removeFromCart(productId) {
   saveCart();
   if (item) {
     firestoreRestoreStock(productId, item.qty);
-    saveProducts(); renderProducts();
+    renderProducts();
   }
   renderCart();
 }
@@ -908,7 +908,7 @@ function updateCartQty(productId, delta) {
   if (p) {
     if (delta > 0) { firestoreAddToCart(productId); }
     else { firestoreRestoreStock(productId, Math.abs(delta)); }
-    saveProducts(); renderProducts();
+    renderProducts();
   }
   renderCart();
 }
