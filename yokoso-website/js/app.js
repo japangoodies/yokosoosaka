@@ -31,7 +31,7 @@ try {
 } catch (e) {}
 const FB_COLLECTION = 'yokoso';
 const FB_DOC = 'products';
-var STOCK_PROXY_URL = localStorage.getItem('yokoso_stock_proxy_url') || '';
+var STOCK_PROXY_URL = localStorage.getItem('yokoso_stock_proxy_url') || 'https://yokoso-stock-proxy.shayera019.workers.dev';
 
 function migrateCategoriesConfig(cfg) {
   if (cfg.types && !cfg.groups) {
@@ -779,7 +779,7 @@ function testProxyConnection() {
 }
 
 // Pre-fill proxy URL input on load and auto-connect if saved
-// Priority: localStorage > categoriesConfig > empty
+// Priority: localStorage > categoriesConfig > JS default
 (function initProxy() {
   var saved = localStorage.getItem('yokoso_stock_proxy_url');
   if (saved) {
@@ -789,7 +789,9 @@ function testProxyConnection() {
     localStorage.setItem('yokoso_stock_proxy_url', STOCK_PROXY_URL);
   }
   var input = document.getElementById('stockProxyUrl');
-  if (input) input.value = STOCK_PROXY_URL;
+  if (input) {
+    if (!input.value) input.value = STOCK_PROXY_URL;
+  }
   if (STOCK_PROXY_URL) setProxyStatus('Proxy configured, connecting...');
 })();
 
