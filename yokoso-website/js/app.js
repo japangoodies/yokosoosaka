@@ -1833,14 +1833,19 @@ if (ast) ast.addEventListener('change', function() {
 function syncToGitHub() {
   var token = localStorage.getItem('github_token');
   if (!token) return;
+  if (syncToGitHub._busy) { syncToGitHub._queued = true; return; }
+  syncToGitHub._busy = true;
   var statusEl = document.getElementById('syncStatus');
   statusEl.textContent = 'Syncing...';
   statusEl.style.color = '#666';
   var content = JSON.stringify(products, null, 2);
   var encoded = btoa(unescape(encodeURIComponent(content)));
   doGitHubSync(GITHUB_PATH, encoded, 'Auto-sync products from admin panel', statusEl, 0)
+    .then(function() { syncToGitHub._busy = false; if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); } })
     .catch(function(err) {
+      syncToGitHub._busy = false;
       if (statusEl) { statusEl.textContent = 'Sync failed: ' + err.message; statusEl.style.color = '#dc3545'; }
+      if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); }
     });
 }
 
@@ -1877,6 +1882,8 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
 function syncCategoriesToGitHub() {
   var token = localStorage.getItem('github_token');
   if (!token) return;
+  if (syncToGitHub._busy) { syncToGitHub._queued = true; return; }
+  syncToGitHub._busy = true;
   var statusEl = document.getElementById('syncStatus');
   var groupStatusEl = document.getElementById('groupImageSyncStatus');
   if (statusEl) { statusEl.textContent = 'Syncing categories...'; statusEl.style.color = '#666'; }
@@ -1885,13 +1892,17 @@ function syncCategoriesToGitHub() {
   var encoded = btoa(unescape(encodeURIComponent(content)));
   doGitHubSync(GITHUB_CATEGORIES_PATH, encoded, 'Auto-sync categories from admin panel', null, 0)
     .then(function() {
+      syncToGitHub._busy = false;
+      if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); }
       if (statusEl) { statusEl.textContent = 'Categories synced to GitHub ✓'; statusEl.style.color = '#28a745'; }
       if (groupStatusEl) { groupStatusEl.textContent = 'Synced ✓'; groupStatusEl.style.color = '#28a745'; setTimeout(function() { groupStatusEl.textContent = ''; }, 4000); }
     })
     .catch(function(err) {
+      syncToGitHub._busy = false;
       console.error('Categories sync failed:', err.message);
       if (statusEl) { statusEl.textContent = 'Sync failed: ' + err.message; statusEl.style.color = '#dc3545'; }
       if (groupStatusEl) { groupStatusEl.innerHTML = 'Saved locally. GitHub sync failed (' + err.message + '). Check token in <a href="#" onclick="document.getElementById(\'syncSettingsBtn\').click();return false" style="color:#007bff">sync settings</a>.'; groupStatusEl.style.color = '#e67e22'; }
+      if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); }
     });
 }
 
