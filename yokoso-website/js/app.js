@@ -1159,9 +1159,8 @@ function openModal(product) {
           '<p style="color:#666;margin:0 0 16px;line-height:1.6;font-size:14px">' + (product.description || '') + '</p>' +
           '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">' +
           '<span style="font-size:0.8rem;font-weight:600;padding:4px 10px;border-radius:4px;' + (totalAvail > 0 ? 'background:#e8f5e9;color:#2e7d32' : 'background:#ffebee;color:#c62828') + '">' + (totalAvail > 3 ? 'In Stock' : totalAvail > 0 ? 'Only ' + totalAvail + ' left' : 'Out of Stock') + '</span>' +
-          (totalAvail > 0 ? '<button id="modalAddToCartBtn" onclick="addToCartFromModal(' + product.id + ')" style="padding:12px 32px;border-radius:8px;border:none;font-weight:600;font-size:14px;background:#e94560;color:#fff;cursor:pointer">' + (productHasSizes ? 'Select a size' : 'Add to Cart') + '</button>' : '') +
-          '<a href="https://m.me/yokosoosaka" target="_blank" style="display:inline-block;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;background:#e94560;color:#fff">Inquire / Order</a>' +
-          '</div>' +
+           (totalAvail > 0 ? '<button id="modalAddToCartBtn" onclick="addToCartFromModal(' + product.id + ')" style="padding:12px 32px;border-radius:8px;border:none;font-weight:600;font-size:14px;background:#e94560;color:#fff;cursor:pointer">' + (productHasSizes ? 'Select a size' : 'Add to Cart') + '</button>' : '') +
+           '</div>' +
         '</div>' +
       '</div>' +
     '</div>';
