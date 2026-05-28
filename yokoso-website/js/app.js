@@ -80,6 +80,7 @@ let currentCategory = 'all';
 let currentSearch = '';
 let selectedImagesData = [];
 let selectedSizes = [];
+let _editSizeStock = {};
 let currentModalImages = [];
 let currentImageIndex = 0;
 var scrollPos = 0, bodyLocked = false;
@@ -1661,7 +1662,7 @@ function renderSizePresets() {
 function renderSizeTags() {
   var container = document.getElementById('formSizeTags');
   if (!container) return;
-  if (selectedSizes.length === 0) { container.innerHTML = ''; return; }
+  if (selectedSizes.length === 0) { container.innerHTML = ''; renderSizeStockInputs(); return; }
   container.innerHTML = selectedSizes.map(function(s, i) {
     return '<span class="form-size-tag">' + s + '<span class="form-size-tag-remove" data-index="' + i + '">×</span></span>';
   }).join('');
@@ -1671,6 +1672,26 @@ function renderSizeTags() {
       selectedSizes.splice(idx, 1);
       renderSizeTags();
       renderSizePresets();
+    });
+  });
+  renderSizeStockInputs();
+}
+
+function renderSizeStockInputs() {
+  var container = document.getElementById('formSizeStock');
+  if (!container) return;
+  if (selectedSizes.length === 0) { container.style.display = 'none'; return; }
+  container.style.display = 'block';
+  container.innerHTML = '<label style="font-size:0.8rem;color:#aaa;margin-bottom:4px;display:block">Stock per size</label>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+    selectedSizes.map(function(s) {
+      var val = _editSizeStock && _editSizeStock[s] !== undefined ? _editSizeStock[s] : 5;
+      return '<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-size:11px;color:#888">' + s + '</span><input type="number" class="size-stock-input" data-size="' + s + '" value="' + val + '" min="0" style="width:50px;padding:4px 6px;border:1px solid rgba(255,255,255,0.15);border-radius:4px;background:rgba(255,255,255,0.06);color:#fff;font-size:0.8rem;text-align:center;outline:none"></div>';
+    }).join('') +
+    '</div>';
+  container.querySelectorAll('.size-stock-input').forEach(function(inp) {
+    inp.addEventListener('input', function() {
+      _editSizeStock[this.dataset.size] = parseInt(this.value) || 0;
     });
   });
 }
@@ -1689,14 +1710,15 @@ function resetForm() {
   document.getElementById('formSubmitBtn').textContent = 'Add Product';
   document.getElementById('formCancelBtn').style.display = 'none';
   document.getElementById('productForm').reset();
-  selectedImagesData = [];
-  selectedSizes = [];
   document.getElementById('formStock').value = 5;
-  updateSubcategoryDropdown();
-  updateBrandDropdown();
+  selectedImagesData = [];
   renderImagePreview();
+  selectedSizes = [];
+  _editSizeStock = {};
   renderSizeTags();
   renderSizePresets();
+  var ss = document.getElementById('formSizeStock');
+  if (ss) ss.style.display = 'none';
 }
 
 function populateForm(product) {
@@ -1715,6 +1737,15 @@ function populateForm(product) {
   document.getElementById('formAvailable').checked = product.available !== false;
   document.getElementById('formStock').value = product.stock !== undefined ? product.stock : 5;
   selectedSizes = product.sizes ? product.sizes.slice() : [];
+  // Populate per-size stock from stockMap
+  _editSizeStock = {};
+  var sm = stockMap[product.id];
+  if (sm && selectedSizes.length > 0) {
+    selectedSizes.forEach(function(s) {
+      var k = stockField(s);
+      _editSizeStock[s] = sm[k] !== undefined ? sm[k] : 5;
+    });
+  }
   renderSizeTags();
   renderSizePresets();
   var imgs = product.images || (product.image ? [product.image] : []);
@@ -1761,20 +1792,37 @@ if (pf) pf.addEventListener('submit', function(e) {
       var idx = products.findIndex(function(p) { return p.id === editingId; });
       if (idx !== -1) {
         products[idx] = Object.assign({}, products[idx], { name: name, category0: category0, category1: category1, category2: category2, price: price, description: description, images: images, sizes: selectedSizes.slice(), available: document.getElementById('formAvailable').checked, stock: stock });
+        // Update stockMap from per-size inputs if product has sizes
+        if (selectedSizes.length > 0) {
+          if (!stockMap[products[idx].id]) stockMap[products[idx].id] = {};
+          selectedSizes.forEach(function(s) {
+            var val = _editSizeStock[s] !== undefined ? _editSizeStock[s] : 0;
+            stockMap[products[idx].id][stockField(s)] = val;
+          });
+          stockMap[products[idx].id].q = 0;
+          products[idx].stock = getTotalStock(products[idx].id);
+        }
       }
     } else {
       var maxId = products.length > 0 ? Math.max.apply(null, products.map(function(p) { return p.id; })) : 0;
-      products.push({ id: maxId + 1, name: name, category0: category0, category1: category1, category2: category2, price: price, description: description, images: images, sizes: selectedSizes.slice(), available: document.getElementById('formAvailable').checked, stock: stock });
-    }
-    // Initialize stockMap for size-based products
-    var savedProduct = products[editingId ? products.findIndex(function(p) { return p.id === editingId; }) : products.length - 1];
-    if (hasSizes(savedProduct) && !stockMap[savedProduct.id]) {
-      stockMap[savedProduct.id] = {};
-      var perSize = Math.max(1, Math.floor(stock / savedProduct.sizes.length));
-      savedProduct.sizes.forEach(function(s) { stockMap[savedProduct.id][stockField(s)] = perSize; });
+      var newId = maxId + 1;
+      products.push({ id: newId, name: name, category0: category0, category1: category1, category2: category2, price: price, description: description, images: images, sizes: selectedSizes.slice(), available: document.getElementById('formAvailable').checked, stock: stock });
+      // Initialize stockMap for new product with sizes
+      if (selectedSizes.length > 0) {
+        stockMap[newId] = {};
+        selectedSizes.forEach(function(s) {
+          var val = _editSizeStock[s] !== undefined ? _editSizeStock[s] : 5;
+          stockMap[newId][stockField(s)] = val;
+        });
+        stockMap[newId].q = 0;
+        products[products.length - 1].stock = getTotalStock(newId);
+      }
     }
     saveProducts();
-    syncStockToFirestore(savedProduct.id);
+    if (editingId || selectedSizes.length > 0) {
+      var pid = editingId || (products.length > 0 ? products[products.length - 1].id : null);
+      if (pid) syncStockToFirestore(pid);
+    }
     resetForm();
     renderAdminList();
     renderFilters();
