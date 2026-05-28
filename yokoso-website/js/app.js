@@ -2136,7 +2136,13 @@ function parseURLParams() {
     if (ct) {
       ct.textContent = group;
       ct.style.cursor = 'pointer';
-      ct.onclick = function() { window.location.href = 'index.html'; };
+      ct.onclick = function() {
+        currentCategory = 'all';
+        currentBrand = 'all';
+        renderSubcategoryFilter();
+        renderBrandFilter();
+        renderProducts();
+      };
     }
     var cc = document.getElementById('categoryCarousel');
     if (cc) { cc.style.display = 'none'; }
