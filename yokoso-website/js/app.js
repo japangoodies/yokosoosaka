@@ -135,70 +135,119 @@ function migrateProducts() {
 }
 
 function loadProducts(callback) {
-  const saved = localStorage.getItem('yokoso_products');
-  if (saved) {
-    try {
-      products = JSON.parse(saved);
-      migrateProducts();
-    } catch {
-      products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-    }
-  } else {
-    products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-  }
-
   var rendered = false;
   function done() {
     if (!rendered) { rendered = true; if (callback) callback(); }
   }
 
-  if (fbDB) {
-    fbDB.collection(FB_COLLECTION).doc(FB_DOC).get()
-      .then(doc => {
-        if (doc.exists && doc.data().items && doc.data().items.length > 0) {
-          products = doc.data().items;
-          migrateProducts();
-          localStorage.setItem('yokoso_products', JSON.stringify(products));
-        } else {
-          fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(() => {});
-        }
+  // Stage 1: Load committed data from file
+  fetch('data/products.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data && data.length > 0) { products = data; migrateProducts(); }
+      else { throw new Error('empty'); }
+    })
+    .catch(function() {
+      // Fallback to localStorage or defaults
+      var saved = localStorage.getItem('yokoso_products');
+      if (saved) {
+        try { products = JSON.parse(saved); migrateProducts(); }
+        catch { products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)); }
+      } else {
+        products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+      }
+    })
+    .finally(function() {
+      // Stage 2: Overlay with localStorage (working edits)
+      var saved = localStorage.getItem('yokoso_products');
+      if (saved) {
+        try {
+          var local = JSON.parse(saved);
+          if (local.length > 0) { products = local; migrateProducts(); }
+        } catch(e) {}
+      }
+      localStorage.setItem('yokoso_products', JSON.stringify(products));
+
+      // Stage 3: Firebase sync (if available)
+      if (fbDB) {
+        fbDB.collection(FB_COLLECTION).doc(FB_DOC).get()
+          .then(function(doc) {
+            if (doc.exists && doc.data().items && doc.data().items.length > 0) {
+              products = doc.data().items;
+              migrateProducts();
+              localStorage.setItem('yokoso_products', JSON.stringify(products));
+            } else {
+              fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(function() {});
+            }
+            done();
+          })
+          .catch(function() { done(); });
+        setTimeout(done, 3000);
+      } else {
         done();
-      })
-      .catch(function() { done(); });
-    setTimeout(done, 3000);
-  } else {
-    done();
-  }
+      }
+    });
 
+  // Load categories
+  loadCategories();
+}
+
+function loadCategories() {
   var savedConfig = localStorage.getItem('yokoso_categories');
-  if (savedConfig) {
-    try {
-      var parsed = JSON.parse(savedConfig);
-      if (parsed.types && parsed.brands) { categoriesConfig = parsed; if (!categoriesConfig.sizes) categoriesConfig.sizes = []; }
-    } catch (e) {}
-  }
 
-  if (fbDB) {
-    var catDone = false;
-    fbDB.collection(FB_COLLECTION).doc('categories').get()
-      .then(function(doc) {
-        if (!catDone) {
-          catDone = true;
-          if (doc.exists && doc.data().types && doc.data().brands) {
-            categoriesConfig = doc.data();
-            if (!categoriesConfig.sizes) categoriesConfig.sizes = [];
-            localStorage.setItem('yokoso_categories', JSON.stringify(categoriesConfig));
-          }
-          renderCategoryDropdowns();
-          renderCategoryManagement();
-        }
-      })
-      .catch(function() { if (!catDone) { catDone = true; renderCategoryDropdowns(); renderCategoryManagement(); } });
-    setTimeout(function() { if (!catDone) { catDone = true; renderCategoryDropdowns(); renderCategoryManagement(); } }, 3000);
-  } else {
-    renderCategoryDropdowns();
-    renderCategoryManagement();
-  }
+  // Stage 1: Load committed categories from file
+  fetch('data/categories.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data && data.types && data.brands) {
+        categoriesConfig = data;
+        if (!categoriesConfig.sizes) categoriesConfig.sizes = [];
+        localStorage.setItem('yokoso_categories', JSON.stringify(categoriesConfig));
+      }
+    })
+    .catch(function() {
+      // Fallback to localStorage or defaults
+      if (savedConfig) {
+        try {
+          var parsed = JSON.parse(savedConfig);
+          if (parsed.types && parsed.brands) { categoriesConfig = parsed; if (!categoriesConfig.sizes) categoriesConfig.sizes = []; }
+        } catch(e) {}
+      }
+    })
+    .finally(function() {
+      // Stage 2: Overlay with localStorage (working edits)
+      var localCfg = localStorage.getItem('yokoso_categories');
+      if (localCfg) {
+        try {
+          var parsed = JSON.parse(localCfg);
+          if (parsed.types && parsed.brands) { categoriesConfig = parsed; if (!categoriesConfig.sizes) categoriesConfig.sizes = []; }
+        } catch(e) {}
+      }
+      localStorage.setItem('yokoso_categories', JSON.stringify(categoriesConfig));
+
+      // Stage 3: Firebase sync (if available)
+      if (fbDB) {
+        var catDone = false;
+        fbDB.collection(FB_COLLECTION).doc('categories').get()
+          .then(function(doc) {
+            if (!catDone) {
+              catDone = true;
+              if (doc.exists && doc.data().types && doc.data().brands) {
+                categoriesConfig = doc.data();
+                if (!categoriesConfig.sizes) categoriesConfig.sizes = [];
+                localStorage.setItem('yokoso_categories', JSON.stringify(categoriesConfig));
+              }
+              renderCategoryDropdowns();
+              renderCategoryManagement();
+            }
+          })
+          .catch(function() { if (!catDone) { catDone = true; renderCategoryDropdowns(); renderCategoryManagement(); } });
+        setTimeout(function() { if (!catDone) { catDone = true; renderCategoryDropdowns(); renderCategoryManagement(); } }, 3000);
+      } else {
+        renderCategoryDropdowns();
+        renderCategoryManagement();
+      }
+    });
 }
 
 function saveCategoriesConfig() {
