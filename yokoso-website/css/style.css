@@ -1450,6 +1450,9 @@ body {
   .products .container {
     padding: 0 0.5rem;
   }
+  #catalogHeader {
+    padding: 0 0.75rem;
+  }
 
   .search-filter {
     top: 55px;
@@ -1593,6 +1596,10 @@ body {
 .catalog-mode .footer { display: none; }
 
 .catalog-mode .search-filter { padding-top: 1rem; }
+
+#catalogHeader {
+  padding: 0 24px;
+}
 
 .catalog-back {
   display: inline-block;
