@@ -369,7 +369,7 @@
     <div id="cartItems" class="cart-items"></div>
     <div id="cartTotal" class="cart-total"></div>
     <div class="cart-footer">
-      <a href="https://m.me/yokosoosaka" target="_blank" class="cart-checkout-btn">Checkout via Messenger</a>
+      <button onclick="handleCheckout()" class="cart-checkout-btn">Checkout</button>
     </div>
   </div>
   <div id="cartOverlay" class="cart-overlay" onclick="toggleCart()"></div>
@@ -426,6 +426,29 @@
           <button class="account-btn-primary account-btn-logout" onclick="handleLogout()">Logout</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="checkout-modal-overlay" id="checkoutModal" style="display:none" onclick="if(event.target===this)closeCheckoutModal()">
+    <div class="checkout-modal">
+      <button class="checkout-modal-close" onclick="closeCheckoutModal()">&times;</button>
+      <div class="checkout-header">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#2e7d32" stroke="none"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        <h3>Order Submitted!</h3>
+      </div>
+      <div class="checkout-po" id="checkoutPONumber"></div>
+      <div class="checkout-items" id="checkoutItems"></div>
+      <div class="checkout-totals">
+        <div class="checkout-total-row"><span>Total</span><span id="checkoutTotal"></span></div>
+        <div class="checkout-total-row checkout-deposit-row"><span>Deposit (<span id="checkoutDepositPct"></span>)</span><span id="checkoutDeposit" class="checkout-deposit-amt"></span></div>
+      </div>
+      <div class="checkout-note">Please pay the deposit amount to proceed with your order.</div>
+      <div class="checkout-actions">
+        <button class="checkout-btn checkout-btn-copy" onclick="copyOrderDetails()">📋 Copy Order Details</button>
+        <button class="checkout-btn checkout-btn-email" onclick="emailOrderDetails()">✉️ Email Order</button>
+        <button class="checkout-btn checkout-btn-msg" onclick="messageOrderDetails()">💬 Message Us on Messenger</button>
+      </div>
+      <div class="checkout-copied" id="checkoutCopied">Copied!</div>
     </div>
   </div>
 </body>

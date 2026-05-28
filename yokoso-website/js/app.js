@@ -130,6 +130,115 @@ function handleLogout() {
 }
 // ---- END ACCOUNT ----
 
+// ---- DEPOSIT & CHECKOUT ----
+var depositPercent = 50;
+
+function loadDepositConfig() {
+  fetch('maintenance.json?_=' + Date.now()).then(function(r) { return r.json(); }).then(function(d) {
+    if (d && typeof d.depositPercent === 'number') depositPercent = d.depositPercent;
+  }).catch(function() {});
+}
+
+function getDepositAmount() {
+  return getCartTotal() * depositPercent / 100;
+}
+
+var _checkoutPO = '';
+
+function generatePO() {
+  var d = new Date();
+  var date = d.getFullYear().toString() +
+    String(d.getMonth() + 1).padStart(2, '0') +
+    String(d.getDate()).padStart(2, '0');
+  var rand = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return 'PO-' + date + '-' + rand;
+}
+
+function handleCheckout() {
+  if (!currentUser) {
+    showCartNotification('Please login or create an account first.');
+    openAccountModal();
+    return;
+  }
+  if (!cart || cart.length === 0) return;
+  _checkoutPO = generatePO();
+  var itemsEl = document.getElementById('checkoutItems');
+  var totalEl = document.getElementById('checkoutTotal');
+  var depositEl = document.getElementById('checkoutDeposit');
+  var depositPctEl = document.getElementById('checkoutDepositPct');
+  var poEl = document.getElementById('checkoutPONumber');
+  if (itemsEl) {
+    itemsEl.innerHTML = cart.map(function(item) {
+      var price = parseFloat(item.price.replace(/[^0-9.]/g, ''));
+      var sub = isNaN(price) ? item.price : '₱' + (price * item.qty).toFixed(2);
+      return '<div class="checkout-item"><span class="checkout-item-name">' + item.name + (item.size ? ' (' + item.size + ')' : '') + '</span><span class="checkout-item-qty">x' + item.qty + '</span><span class="checkout-item-price">' + sub + '</span></div>';
+    }).join('');
+  }
+  var total = getCartTotal();
+  var deposit = getDepositAmount();
+  if (totalEl) totalEl.textContent = '₱' + total.toFixed(2);
+  if (depositPctEl) depositPctEl.textContent = depositPercent + '%';
+  if (depositEl) depositEl.textContent = '₱' + deposit.toFixed(2);
+  if (poEl) poEl.textContent = _checkoutPO;
+  var modal = document.getElementById('checkoutModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    toggleCart();
+  }
+}
+
+function closeCheckoutModal() {
+  var modal = document.getElementById('checkoutModal');
+  if (modal) { modal.style.display = 'none'; document.body.style.overflow = ''; }
+}
+
+function getOrderText() {
+  var lines = ['🛍 PURCHASE ORDER', '━━━━━━━━━━━━━━━━━━', 'PO Number: ' + _checkoutPO, 'Date: ' + new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}), '', 'ITEMS:'];
+  cart.forEach(function(item, i) {
+    var price = parseFloat(item.price.replace(/[^0-9.]/g, ''));
+    var sub = isNaN(price) ? item.price : '₱' + (price * item.qty).toFixed(2);
+    lines.push((i + 1) + '. ' + item.name + (item.size ? ' (Size ' + item.size + ')' : '') + ' x' + item.qty + ' = ' + sub);
+  });
+  var total = getCartTotal();
+  var deposit = getDepositAmount();
+  lines.push('', 'Total: ₱' + total.toFixed(2), 'Deposit (' + depositPercent + '%): ₱' + deposit.toFixed(2), '', 'Please pay the deposit amount to proceed with your order.');
+  return lines.join('\n');
+}
+
+function copyOrderDetails() {
+  var text = getOrderText();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() { showCopied(); }).catch(function() { fallbackCopy(text); });
+  } else { fallbackCopy(text); }
+}
+
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showCopied(); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+function showCopied() {
+  var el = document.getElementById('checkoutCopied');
+  if (!el) return;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 2000);
+}
+
+function messageOrderDetails() {
+  window.open('https://m.me/yokosoosaka', '_blank');
+}
+
+function emailOrderDetails() {
+  var text = getOrderText();
+  var mailto = 'mailto:yokosoosaka@gmail.com?subject=' + encodeURIComponent('Purchase Order ' + _checkoutPO) + '&body=' + encodeURIComponent(text);
+  window.location.href = mailto;
+}
+// ---- END DEPOSIT & CHECKOUT ----
+
 function migrateCategoriesConfig(cfg) {
   if (cfg.types && !cfg.groups) {
     cfg.groups = [{ name: "All", image: "" }];
@@ -1181,7 +1290,8 @@ function renderCart() {
   }).join('');
   if (totalEl) {
     var total = getCartTotal();
-    totalEl.textContent = total > 0 ? 'Total: ₱' + total.toFixed(2) : '';
+    var deposit = getDepositAmount();
+    totalEl.innerHTML = total > 0 ? '<div class="cart-total-row">Total: ₱' + total.toFixed(2) + '</div><div class="cart-deposit-row">Deposit (' + depositPercent + '%): <strong>₱' + deposit.toFixed(2) + '</strong></div>' : '';
   }
 }
 
@@ -2883,6 +2993,7 @@ loadProducts(function() {
   }
   loadSession();
   updateAccountUI();
+  loadDepositConfig();
   parseURLParams();
   loadStockFromFirestore(function() {
     renderFilters();
