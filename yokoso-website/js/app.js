@@ -77,7 +77,7 @@ document.addEventListener('touchmove', function(e) {
       !e.target.closest('.modal')) {
     e.preventDefault();
   }
-  if (document.getElementById('fullscreenViewer').classList.contains('active')) {
+  if (document.getElementById('liveFullscreen')) {
     e.preventDefault();
   }
 }, { passive: false });
@@ -86,11 +86,11 @@ document.addEventListener('touchmove', function(e) {
 window.addEventListener('hashchange', function() {
   var live = document.getElementById('liveModal');
   if (live && location.hash !== '#modal') { closeLiveModal(); return; }
-  var fs = document.getElementById('fullscreenViewer');
+  var liveFS = document.getElementById('liveFullscreen');
   var modal = document.getElementById('productModal');
-  if ((!fs || !fs.classList.contains('active')) && (!modal || !modal.classList.contains('active'))) return;
+  if (!liveFS && (!modal || !modal.classList.contains('active'))) return;
   var hash = location.hash;
-  if (fs && fs.classList.contains('active') && hash !== '#fullscreen') {
+  if (liveFS && hash !== '#fullscreen') {
     closeFullscreen();
     return;
   }
@@ -382,7 +382,7 @@ function openModal(product) {
     
     document.body.appendChild(overlay);
     var mImg = overlay.querySelector('#modalMainImg');
-    if (mImg) { mImg.addEventListener('click', function(e) { document.title = 'H:'+Date.now(); currentModalImages = _modalImages.slice(); currentImageIndex = _modalImageIdx; openFullscreen(); }); }
+    if (mImg) { mImg.addEventListener('click', function(e) { currentModalImages = _modalImages.slice(); currentImageIndex = _modalImageIdx; openFullscreen(); }); }
     overlay.addEventListener('click', function(e) { if (e.target === this) closeLiveModal(); });
     lockBody();
     try { history.pushState({modal: true}, '', '#modal'); } catch (e) {}
@@ -453,15 +453,13 @@ document.getElementById('productModal').addEventListener('click', e => {
 document.querySelector('#productModal .modal-close').addEventListener('click', closeModal);
 // Fullscreen image viewer
 function openFullscreen() {
-  document.title = 'O:'+Date.now();
   if (currentModalImages.length === 0) return;
   var old = document.getElementById('liveFullscreen');
   if (old) old.remove();
   var ov = document.createElement('div');
   ov.id = 'liveFullscreen';
-  ov.style.cssText = 'display:flex!important;position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:red!important;z-index:99999!important;align-items:center!important;justify-content:center!important;';
+  ov.style.cssText = 'display:flex!important;position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:#000!important;z-index:99999!important;align-items:center!important;justify-content:center!important;';
   document.body.appendChild(ov);
-  document.title = 'A:'+Date.now();
   var track = document.createElement('div');
   track.style.cssText = 'position:relative;width:100%;height:100%;display:flex;flex-direction:column;';
   var h = window.innerHeight;
@@ -523,13 +521,24 @@ modalImg.addEventListener('click', openFullscreen);
   }, { passive: true });
 })();
 
+function updateCounter() {
+  var el = document.getElementById('fsCounter') || document.getElementById('fullscreenCounter');
+  if (el) el.textContent = (currentImageIndex + 1) + ' / ' + currentModalImages.length;
+}
+
+function getFullscreenTrack() {
+  var ov = document.getElementById('liveFullscreen');
+  return ov ? ov.firstElementChild : document.getElementById('fullscreenTrack');
+}
+
 // Fullscreen swipe / drag
 (function() {
   var viewer = document.getElementById('fullscreenViewer');
-  var track = document.getElementById('fullscreenTrack');
   var startY = 0, startX = 0;
   var dragging = false;
   var dragOffset = 0;
+
+  function isActive() { return !!document.getElementById('liveFullscreen'); }
 
   function nav(dir) {
     if (currentModalImages.length < 2) return;
@@ -538,35 +547,40 @@ modalImg.addEventListener('click', openFullscreen);
     currentImageIndex = next;
     updateCounter();
     var h = window.innerHeight;
-    track.style.transition = 'transform 0.3s ease';
-    track.style.transform = 'translate3d(0,' + (-next * h) + 'px,0)';
+    var tr = getFullscreenTrack();
+    if (!tr) return;
+    tr.style.transition = 'transform 0.3s ease';
+    tr.style.transform = 'translate3d(0,' + (-next * h) + 'px,0)';
   }
 
   document.addEventListener('touchstart', function(e) {
-    if (!viewer.classList.contains('active')) return;
+    if (!isActive()) return;
     var t = e.touches[0];
     if (!t) return;
     startY = t.clientY;
     startX = t.clientX;
     dragOffset = 0;
     dragging = true;
-    track.style.transition = 'none';
+    var tr = getFullscreenTrack();
+    if (tr) tr.style.transition = 'none';
     e.preventDefault();
   }, { passive: false });
 
   document.addEventListener('touchmove', function(e) {
-    if (!dragging || !viewer.classList.contains('active')) return;
+    if (!dragging || !isActive()) return;
     if (currentModalImages.length < 2) { dragging = false; return; }
     var t = e.touches[0];
     if (!t) return;
     var dy = t.clientY - startY;
     var h = window.innerHeight;
     dragOffset = dy;
-    track.style.transition = 'none';
+    var tr = getFullscreenTrack();
+    if (!tr) return;
+    tr.style.transition = 'none';
     var offset = dy * 0.3;
     if (currentImageIndex === 0) offset = Math.min(offset, 0);
     if (currentImageIndex === currentModalImages.length - 1) offset = Math.max(offset, 0);
-    track.style.transform = 'translate3d(0,' + (-currentImageIndex * h + offset) + 'px,0)';
+    tr.style.transform = 'translate3d(0,' + (-currentImageIndex * h + offset) + 'px,0)';
     e.preventDefault();
   }, { passive: false });
 
@@ -578,48 +592,43 @@ modalImg.addEventListener('click', openFullscreen);
       nav(dragOffset < 0 ? 1 : -1);
     } else {
       var h = window.innerHeight;
-      track.style.transition = 'transform 0.3s ease';
-      track.style.transform = 'translate3d(0,' + (-currentImageIndex * h) + 'px,0)';
+      var tr = getFullscreenTrack();
+      if (!tr) return;
+      tr.style.transition = 'transform 0.3s ease';
+      tr.style.transform = 'translate3d(0,' + (-currentImageIndex * h) + 'px,0)';
     }
   }, { passive: true });
 
-  viewer.addEventListener('wheel', function(e) {
+  document.addEventListener('wheel', function(e) {
+    if (!isActive()) return;
     if (currentModalImages.length < 2) return;
     if (Math.abs(e.deltaY) < 20) return;
     nav(e.deltaY > 0 ? 1 : -1);
   }, { passive: true });
 })();
 
-document.getElementById('fullscreenViewer').addEventListener('click', function(e) {
-  if (e.target === e.currentTarget) closeFullscreen();
-});
-
-document.querySelector('#fullscreenViewer .fullscreen-close').addEventListener('click', closeFullscreen);
-document.querySelector('#fullscreenViewer .fullscreen-close').addEventListener('touchend', function(e) {
-  e.preventDefault();
-  closeFullscreen();
-});
-
-
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     var live = document.getElementById('liveModal');
     if (live) { closeLiveModal(); return; }
-    if (document.getElementById('fullscreenViewer').classList.contains('active')) {
+    if (document.getElementById('liveFullscreen')) {
       closeFullscreen();
       return;
     }
     closeModal();
     return;
   }
-  if (document.getElementById('fullscreenViewer').classList.contains('active')) {
+  if (document.getElementById('liveFullscreen')) {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       if (currentImageIndex > 0) {
         currentImageIndex--;
         updateCounter();
-        var h2 = window.innerHeight;
-        document.getElementById('fullscreenTrack').style.transition = 'transform 0.3s ease';
-        document.getElementById('fullscreenTrack').style.transform = 'translate3d(0,' + (-currentImageIndex * h2) + 'px,0)';
+        var tr = getFullscreenTrack();
+        if (tr) {
+          var h2 = window.innerHeight;
+          tr.style.transition = 'transform 0.3s ease';
+          tr.style.transform = 'translate3d(0,' + (-currentImageIndex * h2) + 'px,0)';
+        }
       }
       e.preventDefault();
     }
@@ -627,9 +636,12 @@ document.addEventListener('keydown', e => {
       if (currentImageIndex < currentModalImages.length - 1) {
         currentImageIndex++;
         updateCounter();
-        var h2 = window.innerHeight;
-        document.getElementById('fullscreenTrack').style.transition = 'transform 0.3s ease';
-        document.getElementById('fullscreenTrack').style.transform = 'translate3d(0,' + (-currentImageIndex * h2) + 'px,0)';
+        var tr = getFullscreenTrack();
+        if (tr) {
+          var h2 = window.innerHeight;
+          tr.style.transition = 'transform 0.3s ease';
+          tr.style.transform = 'translate3d(0,' + (-currentImageIndex * h2) + 'px,0)';
+        }
       }
       e.preventDefault();
     }
