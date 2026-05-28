@@ -23,16 +23,45 @@ async function firestorePatch(path, fields) {
     })
   });
   if (resp.ok) return true;
-  // If 404, doc doesn't exist yet — create it
-  if (resp.status === 404) return null; // signal to caller to create
+  if (resp.status === 404) return null; // signal to create
   return false;
 }
 
+// Optimistic concurrency: write only if updateTime hasn't changed
+async function firestorePatchIfMatch(path, fields, updateTime) {
+  const keys = Object.keys(fields).join(',');
+  const url = `${FIRESTORE_BASE}/${path}?key=${API_KEY}&updateMask.fieldPaths=${keys}`;
+  const body = {
+    fields: Object.fromEntries(
+      Object.entries(fields).map(([k, v]) => [k, { integerValue: String(v) }])
+    )
+  };
+  if (updateTime) {
+    // Use Firestore's precondition to ensure atomicity
+    const commitBody = {
+      writes: [{
+        update: { ...body, name: `${FIRESTORE_BASE}/${path}` },
+        updateMask: { fieldPaths: Object.keys(fields) },
+        currentDocument: { updateTime }
+      }]
+    };
+    const resp = await fetch(`${FIRESTORE_BASE}:commit?key=${API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(commitBody)
+    });
+    if (resp.ok) return true;
+    if (resp.status === 409) return 'conflict'; // precondition failed — retry
+    return false;
+  }
+  // No updateTime — use simple PATCH
+  return firestorePatch(path, fields);
+}
+
 async function firestoreUpsert(docId, fields) {
-  // Try PATCH first (update existing)
   const patchResult = await firestorePatch(`stocks/${docId}`, fields);
   if (patchResult === true) return true;
-  // Doc doesn't exist — create with specific ID
+  // Create with specific ID
   const body = {
     fields: Object.fromEntries(
       Object.entries(fields).map(([k, v]) => [k, { integerValue: String(v) }])
@@ -44,6 +73,27 @@ async function firestoreUpsert(docId, fields) {
     body: JSON.stringify(body)
   });
   return resp.ok;
+}
+
+// Atomic read-decrement-write with optimistic concurrency (up to 5 retries)
+async function atomicAdjust(docId, adjustment, maxRetries = 5) {
+  for (let i = 0; i < maxRetries; i++) {
+    const data = await firestoreGet(`stocks/${docId}`);
+    if (!data || !data.fields || !data.fields.quantity) {
+      // No doc yet — create it with new value
+      const initial = Math.max(0, 5 + adjustment);
+      await firestoreUpsert(docId, { quantity: initial });
+      return initial;
+    }
+    const currentQty = parseInt(data.fields.quantity.integerValue || data.fields.quantity.stringValue, 10);
+    const newQty = Math.max(0, currentQty + adjustment);
+    const updateTime = data.updateTime;
+    const result = await firestorePatchIfMatch(`stocks/${docId}`, { quantity: newQty }, updateTime);
+    if (result === true) return newQty;
+    if (result === 'conflict') continue; // retry
+    return currentQty; // failed
+  }
+  return null;
 }
 
 function parseStockDoc(doc) {
@@ -99,36 +149,15 @@ async function handleRequest(request) {
     if (request.method === 'POST' && parts.length === 3 && parts[0] === 'stocks' && parts[2] === 'decrement') {
       const body = await request.json().catch(() => ({}));
       const amount = parseInt(body.amount, 10) || 1;
-      const data = await firestoreGet(`stocks/${parts[1]}`);
-      let currentQty;
-      if (data && data.fields && data.fields.quantity) {
-        currentQty = parseInt(data.fields.quantity.integerValue || data.fields.quantity.stringValue, 10);
-      }
-      if (currentQty === undefined) {
-        const initial = Math.max(0, 5 - amount);
-        await firestoreUpsert(parts[1], { quantity: initial });
-        return new Response(JSON.stringify({ quantity: initial }), { headers: corsHeaders(origin) });
-      }
-      currentQty = Math.max(0, currentQty - amount);
-      await firestoreUpsert(parts[1], { quantity: currentQty });
-      return new Response(JSON.stringify({ quantity: currentQty }), { headers: corsHeaders(origin) });
+      const newQty = await atomicAdjust(parts[1], -amount);
+      return new Response(JSON.stringify({ quantity: newQty }), { headers: corsHeaders(origin) });
     }
 
     if (request.method === 'POST' && parts.length === 3 && parts[0] === 'stocks' && parts[2] === 'increment') {
       const body = await request.json().catch(() => ({}));
       const amount = parseInt(body.amount, 10) || 1;
-      const data = await firestoreGet(`stocks/${parts[1]}`);
-      let currentQty;
-      if (data && data.fields && data.fields.quantity) {
-        currentQty = parseInt(data.fields.quantity.integerValue || data.fields.quantity.stringValue, 10);
-      }
-      if (currentQty === undefined) {
-        await firestoreUpsert(parts[1], { quantity: amount });
-        return new Response(JSON.stringify({ quantity: amount }), { headers: corsHeaders(origin) });
-      }
-      currentQty += amount;
-      await firestoreUpsert(parts[1], { quantity: currentQty });
-      return new Response(JSON.stringify({ quantity: currentQty }), { headers: corsHeaders(origin) });
+      const newQty = await atomicAdjust(parts[1], amount);
+      return new Response(JSON.stringify({ quantity: newQty }), { headers: corsHeaders(origin) });
     }
 
     return new Response(JSON.stringify({ error: 'not found' }), { status: 404, headers: corsHeaders(origin) });
