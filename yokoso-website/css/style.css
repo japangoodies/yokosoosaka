@@ -134,7 +134,7 @@ body {
 .carousel-group-btn {
   flex: 0 0 auto;
   width: 140px;
-  height: 100px;
+  height: 150px;
   border-radius: 0;
   border: none;
   background: #fff;
@@ -1477,7 +1477,7 @@ body {
   }
   .carousel-group-btn {
     width: 33.33%;
-    height: 110px;
+    height: 165px;
     border-radius: 0;
     border: none;
   }
