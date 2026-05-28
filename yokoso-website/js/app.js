@@ -141,7 +141,7 @@ function loadProducts(callback) {
   }
 
   // Stage 1: Load committed data from file
-  fetch('data/products.json')
+  fetch('data/products.json?_=' + Date.now())
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (data && data.length > 0) { products = data; migrateProducts(); }
@@ -200,7 +200,7 @@ function loadCategories() {
   var savedConfig = localStorage.getItem('yokoso_categories');
 
   // Stage 1: Load committed categories from file
-  fetch('data/categories.json')
+  fetch('data/categories.json?_=' + Date.now())
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (data && data.types && data.brands) {
