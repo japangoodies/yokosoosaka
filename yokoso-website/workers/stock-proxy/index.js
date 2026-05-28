@@ -79,13 +79,23 @@ function parseStockDoc(doc) {
   const id = match ? match[1] : null;
   const fields = {};
   let total = 0;
+  // Process new-style fields first, then old 'quantity' only if 'q' not present
+  let quantityVal = null;
   for (const [key, val] of Object.entries(doc.fields)) {
     const qty = parseInt(val.integerValue || val.stringValue, 10);
     if (!isNaN(qty)) {
-      const fieldKey = (key === 'quantity') ? 'q' : key;
-      fields[fieldKey] = qty;
-      total += qty;
+      if (key === 'quantity') {
+        quantityVal = qty;
+      } else {
+        fields[key] = qty;
+        total += qty;
+      }
     }
+  }
+  // Use old 'quantity' as 'q' only if 'q' was not already set
+  if (quantityVal !== null && fields.q === undefined) {
+    fields.q = quantityVal;
+    total += quantityVal;
   }
   return { id, fields, total };
 }
