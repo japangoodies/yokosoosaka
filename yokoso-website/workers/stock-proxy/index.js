@@ -172,7 +172,7 @@ async function handleRequest(request, env) {
   try {
     // GET /stocks
     if (request.method === 'GET' && parts.length === 1 && parts[0] === 'stocks') {
-      const data = await firestoreGet('stocks');
+      const data = await firestoreGet('stocks').catch(() => null);
       const docs = (data && data.documents) ? data.documents.map(parseStockDoc).filter(Boolean) : [];
       return new Response(JSON.stringify(docs), { headers: corsHeaders(origin) });
     }
@@ -313,26 +313,6 @@ async function handleRequest(request, env) {
       return new Response(JSON.stringify({ ok: r }), { headers: corsHeaders(origin) });
     }
 
-    // POST /stocks/:id/decrement  — atomic decrement by amount on a field
-    if (request.method === 'POST' && parts.length === 3 && parts[0] === 'stocks' && parts[2] === 'decrement') {
-      const body = await request.json().catch(() => ({}));
-      const amount = parseInt(body.amount, 10) || 1;
-      const field = body.field || 'default';
-      const r = await firestoreTransform(parts[1], -amount, field);
-      if (r === true) {
-        const data = await firestoreGet(`stocks/${parts[1]}`);
-        const parsed = parseStockDoc(data);
-        return new Response(JSON.stringify(parsed || { id: parts[1], fields: {}, total: 0 }), { headers: corsHeaders(origin) });
-      }
-      if (typeof r === 'object' && r.error) {
-        const fields = {};
-        fields[field] = Math.max(0, 5 - amount);
-        await firestoreCreate(parts[1], fields);
-        return new Response(JSON.stringify({ id: parts[1], fields, total: fields[field] }), { headers: corsHeaders(origin) });
-      }
-      throw new Error(`Transform failed: ${JSON.stringify(r)}`);
-    }
-
     // POST /stocks/:id/increment  — atomic increment by amount on a field
     if (request.method === 'POST' && parts.length === 3 && parts[0] === 'stocks' && parts[2] === 'increment') {
       const body = await request.json().catch(() => ({}));
@@ -340,9 +320,9 @@ async function handleRequest(request, env) {
       const field = body.field || 'default';
       const r = await firestoreTransform(parts[1], amount, field);
       if (r === true) {
-        const data = await firestoreGet(`stocks/${parts[1]}`);
+        const data = await firestoreGet(`stocks/${parts[1]}`).catch(() => null);
         const parsed = parseStockDoc(data);
-        return new Response(JSON.stringify(parsed || { id: parts[1], fields: {}, total: 0 }), { headers: corsHeaders(origin) });
+        return new Response(JSON.stringify(parsed || { id: parts[1], fields: { [field]: amount }, total: amount }), { headers: corsHeaders(origin) });
       }
       if (typeof r === 'object' && r.error) {
         const fields = {};
@@ -363,9 +343,11 @@ async function handleRequest(request, env) {
       const field = body.field || 'default';
       const r = await firestoreTransform(parts[1], -amount, field);
       if (r === true) {
-        const data = await firestoreGet(`stocks/${parts[1]}`);
+        const data = await firestoreGet(`stocks/${parts[1]}`).catch(() => null);
         const parsed = parseStockDoc(data);
-        return new Response(JSON.stringify(parsed || { id: parts[1], fields: {}, total: 0 }), { headers: corsHeaders(origin) });
+        const fallbackFields = {};
+        fallbackFields[field] = 5 - amount;
+        return new Response(JSON.stringify(parsed || { id: parts[1], fields: fallbackFields, total: 5 - amount }), { headers: corsHeaders(origin) });
       }
       if (typeof r === 'object' && r.error) {
         const fields = {};

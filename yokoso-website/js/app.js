@@ -97,6 +97,7 @@ function handleCreateAccount() {
     .then(function(j){
       if (j.ok) {
         saveSession({name:j.name, address:j.address, contact:j.contact, email: j.email || ''});
+        localStorage.setItem('yokoso_account_credentials', JSON.stringify({name:j.name, address:j.address, contact:j.contact, email: j.email || '', password: p}));
         closeAccountModal();
         showCartNotification('Account created! Welcome, ' + j.name + '!');
       } else {
@@ -120,6 +121,21 @@ function handleLogin() {
         closeAccountModal();
         showCartNotification('Welcome back, ' + j.name + '!');
       } else {
+        // Fallback: if Firestore is unavailable (quota exceeded), try cached credentials
+        if (j.error === 'Account not found' || j.error === 'Invalid password') {
+          var creds = localStorage.getItem('yokoso_account_credentials');
+          if (creds) {
+            try {
+              var d = JSON.parse(creds);
+              if (d.contact === c && d.password === p) {
+                saveSession({name:d.name, address:d.address, contact:d.contact, email:d.email || ''});
+                closeAccountModal();
+                showCartNotification('Welcome back, ' + d.name + '! (offline mode)');
+                return;
+              }
+            } catch(e) {}
+          }
+        }
         if (err) err.textContent = j.error || 'Login failed.';
       }
     })
@@ -187,9 +203,11 @@ var depositPercent = 50;
 var adminEmail = '';
 
 function loadDepositConfig() {
+  var saved = localStorage.getItem('yokoso_admin_email');
+  if (saved) adminEmail = saved;
   fetch('maintenance.json?_=' + Date.now()).then(function(r) { return r.json(); }).then(function(d) {
     if (d && typeof d.depositPercent === 'number') depositPercent = d.depositPercent;
-    if (d && d.adminEmail) adminEmail = d.adminEmail;
+    if (d && d.adminEmail && !localStorage.getItem('yokoso_admin_email')) adminEmail = d.adminEmail;
   }).catch(function() {});
 }
 
@@ -200,6 +218,7 @@ function saveAdminEmail() {
   var val = input.value.trim();
   if (!val) { status.textContent = 'Please enter an email.'; return; }
   adminEmail = val;
+  localStorage.setItem('yokoso_admin_email', val);
   status.textContent = 'Saved!';
   setTimeout(function() { status.textContent = ''; }, 2000);
   showCartNotification('Admin email updated.');
@@ -254,6 +273,9 @@ function handleCheckout() {
     document.body.style.overflow = 'hidden';
     toggleCart();
   }
+  cart = [];
+  saveCart();
+  renderCart();
 }
 
 function closeCheckoutModal() {
@@ -322,6 +344,7 @@ function sendOrderEmail() {
         if (sent > 0) {
           showCartNotification('Order confirmation sent to ' + (customerEmail ? 'your email and ' : '') + 'admin.');
         } else if (failed.length > 0) {
+          showCartNotification('Auto-email not configured. Use Copy/Email/Messenger buttons below to send manually.');
           console.log('[Checkout] Email send not configured (set EMAIL binding, SENDGRID_API_KEY, or MAILGUN_API_KEY in worker)');
         }
       }
@@ -979,7 +1002,8 @@ var stockPollTimer = null;
 var stockInitialized = false;
 
 function proxyUrl(path) {
-  return (STOCK_PROXY_URL || '') + '/' + path.replace(/^\/+/, '');
+  var base = (STOCK_PROXY_URL || '').replace(/\/+$/, '');
+  return base + '/' + path.replace(/^\/+/, '');
 }
 
 function isProxyReady() {
@@ -1128,7 +1152,7 @@ function subscribeStockUpdates() {
         if (changed) renderProducts();
       })
       .catch(function() {});
-  }, 5000);
+  }, 60000);
 }
 
 function firestoreAddToCart(productId, size) {
