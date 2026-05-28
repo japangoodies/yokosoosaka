@@ -1,0 +1,8 @@
+name = "yokoso-stock-proxy"
+main = "index.js"
+compatibility_date = "2025-04-01"
+
+[env.production]
+# After first deploy, set STOCK_PROXY_URL in Cloudflare dashboard:
+# Workers > yokoso-stock-proxy > Settings > Variables
+# Value: https://yokoso-stock-proxy.<your-subdomain>.workers.dev

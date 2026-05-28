@@ -31,6 +31,7 @@ try {
 } catch (e) {}
 const FB_COLLECTION = 'yokoso';
 const FB_DOC = 'products';
+var STOCK_PROXY_URL = localStorage.getItem('yokoso_stock_proxy_url') || '';
 
 function migrateCategoriesConfig(cfg) {
   if (cfg.types && !cfg.groups) {
@@ -633,35 +634,48 @@ function renderProducts() {
   });
 }
 
-// ---- FIRESTORE REAL-TIME STOCK ----
-const STOCKS_COLLECTION = 'stocks';
-var stockUnsubscribe = null;
+// ---- PROXY-BASED REAL-TIME STOCK ----
+var stockPollTimer = null;
 var stockInitialized = false;
 
+function proxyUrl(path) {
+  return (STOCK_PROXY_URL || '') + '/' + path.replace(/^\/+/, '');
+}
+
+function isProxyReady() {
+  return STOCK_PROXY_URL && STOCK_PROXY_URL.startsWith('http');
+}
+
 function syncStockToFirestore(productId, quantity) {
-  if (!fbDB) return;
-  fbDB.collection(STOCKS_COLLECTION).doc(String(productId)).set({ quantity: quantity }).catch(function() {});
+  if (!isProxyReady()) return;
+  fetch(proxyUrl('stocks/' + productId), {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ quantity: quantity })
+  }).catch(function() {});
 }
 
 function syncAllStockToFirestore() {
-  if (!fbDB) return;
+  if (!isProxyReady()) return;
   products.forEach(function(p) {
-    fbDB.collection(STOCKS_COLLECTION).doc(String(p.id)).set({ quantity: p.stock !== undefined ? p.stock : 5 }).catch(function() {});
+    syncStockToFirestore(p.id, p.stock !== undefined ? p.stock : 5);
   });
 }
 
 function loadStockFromFirestore(callback) {
-  if (!fbDB) { if (callback) callback(); return; }
-  fbDB.collection(STOCKS_COLLECTION).get()
-    .then(function(snapshot) {
-      snapshot.forEach(function(doc) {
-        var data = doc.data();
-        if (data && data.quantity !== undefined) {
-          var id = parseInt(doc.id);
-          var p = products.find(function(x) { return x.id === id; });
-          if (p) p.stock = data.quantity;
-        }
-      });
+  if (!isProxyReady()) { stockInitialized = true; if (callback) callback(); return; }
+  fetch(proxyUrl('stocks'))
+    .then(function(r) { return r.json(); })
+    .then(function(docs) {
+      if (Array.isArray(docs)) {
+        docs.forEach(function(doc) {
+          if (doc && doc.quantity !== undefined) {
+            var id = parseInt(doc.id);
+            var p = products.find(function(x) { return x.id === id; });
+            if (p) p.stock = doc.quantity;
+          }
+        });
+      }
       stockInitialized = true;
       if (callback) callback();
     })
@@ -669,46 +683,64 @@ function loadStockFromFirestore(callback) {
 }
 
 function subscribeStockUpdates() {
-  if (!fbDB) return;
-  if (stockUnsubscribe) stockUnsubscribe();
-  stockUnsubscribe = fbDB.collection(STOCKS_COLLECTION).onSnapshot(function(snapshot) {
-    snapshot.docChanges().forEach(function(change) {
-      if (change.type === 'modified' || change.type === 'added') {
-        var data = change.doc.data();
-        if (data && data.quantity !== undefined) {
-          var id = parseInt(change.doc.id);
-          var p = products.find(function(x) { return x.id === id; });
-          if (p && stockInitialized) {
-            var oldStock = p.stock;
-            p.stock = data.quantity;
-            if (oldStock !== p.stock) renderProducts();
+  if (!isProxyReady()) return;
+  if (stockPollTimer) clearInterval(stockPollTimer);
+  stockPollTimer = setInterval(function() {
+    fetch(proxyUrl('stocks'))
+      .then(function(r) { return r.json(); })
+      .then(function(docs) {
+        if (!Array.isArray(docs)) return;
+        docs.forEach(function(doc) {
+          if (doc && doc.quantity !== undefined) {
+            var id = parseInt(doc.id);
+            var p = products.find(function(x) { return x.id === id; });
+            if (p && stockInitialized && p.stock !== doc.quantity) {
+              p.stock = doc.quantity;
+              renderProducts();
+            }
           }
-        }
-      }
-    });
-  }, function() {});
+        });
+      })
+      .catch(function() {});
+  }, 5000);
 }
 
 function firestoreAddToCart(productId) {
-  if (!fbDB) return;
-  fbDB.collection(STOCKS_COLLECTION).doc(String(productId)).get()
-    .then(function(doc) {
-      var qty = doc.exists && doc.data().quantity !== undefined ? doc.data().quantity : 5;
-      qty = Math.max(0, qty - 1);
-      fbDB.collection(STOCKS_COLLECTION).doc(String(productId)).set({ quantity: qty }).catch(function() {});
-    })
-    .catch(function() {});
+  if (!isProxyReady()) return;
+  fetch(proxyUrl('stocks/' + productId + '/decrement'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount: 1 })
+  }).catch(function() {});
 }
 
 function firestoreRestoreStock(productId, amount) {
-  if (!fbDB || amount <= 0) return;
-  fbDB.collection(STOCKS_COLLECTION).doc(String(productId)).get()
-    .then(function(doc) {
-      var qty = doc.exists && doc.data().quantity !== undefined ? doc.data().quantity : 0;
-      qty = qty + amount;
-      fbDB.collection(STOCKS_COLLECTION).doc(String(productId)).set({ quantity: qty }).catch(function() {});
-    })
-    .catch(function() {});
+  if (!isProxyReady() || amount <= 0) return;
+  fetch(proxyUrl('stocks/' + productId + '/increment'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount: amount })
+  }).catch(function() {});
+}
+
+// ---- ADMIN: Proxy URL config ----
+var proxyUrlInput = document.getElementById('stockProxyUrl');
+if (proxyUrlInput) {
+  proxyUrlInput.value = STOCK_PROXY_URL;
+  proxyUrlInput.addEventListener('change', function() {
+    STOCK_PROXY_URL = this.value.trim();
+    localStorage.setItem('yokoso_stock_proxy_url', STOCK_PROXY_URL);
+    if (isProxyReady()) {
+      if (stockInitialized) {
+        subscribeStockUpdates();
+      } else {
+        loadStockFromFirestore(function() {
+          renderProducts();
+          subscribeStockUpdates();
+        });
+      }
+    }
+  });
 }
 
 // ---- CART SYSTEM ----
@@ -1794,6 +1826,10 @@ function showAdminPanel() {
   document.getElementById('maintenanceOverlay').classList.add('active');
   document.getElementById('maintenancePublic').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'block';
+  var proxySection = document.getElementById('adminStockProxy');
+  if (proxySection) proxySection.style.display = 'block';
+  var syncSection = document.getElementById('adminSyncSettings');
+  if (syncSection) syncSection.style.display = 'block';
   renderAdminFilterDropdowns();
   renderAdminList();
 }
