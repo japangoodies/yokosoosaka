@@ -33,6 +33,103 @@ const FB_COLLECTION = 'yokoso';
 const FB_DOC = 'products';
 var STOCK_PROXY_URL = localStorage.getItem('yokoso_stock_proxy_url') || 'https://yokoso-stock-proxy.shayera019.workers.dev';
 
+// ---- ACCOUNT ----
+var currentUser = null;
+
+function loadSession() {
+  try {
+    var d = localStorage.getItem('yokoso_account');
+    if (d) currentUser = JSON.parse(d);
+  } catch(e) {}
+}
+function saveSession(u) { currentUser = u; localStorage.setItem('yokoso_account', JSON.stringify(u)); updateAccountUI(); }
+function clearSession() { currentUser = null; localStorage.removeItem('yokoso_account'); updateAccountUI(); }
+function proxyAccountUrl(path) { var base = STOCK_PROXY_URL.replace(/\/+$/, ''); return base + '/accounts/' + path.replace(/^\//, ''); }
+function updateAccountUI() {
+  var loggedOut = document.getElementById('accountLoggedOut');
+  var loggedIn = document.getElementById('accountLoggedIn');
+  if (!loggedOut || !loggedIn) return;
+  if (currentUser) {
+    loggedOut.style.display = 'none'; loggedIn.style.display = 'block';
+    var dn = document.getElementById('accountDetailName'); if (dn) dn.textContent = currentUser.name || '';
+    var dc = document.getElementById('accountDetailContact'); if (dc) dc.textContent = currentUser.contact || '';
+    var da = document.getElementById('accountDetailAddress'); if (da) da.textContent = currentUser.address || '';
+  } else {
+    loggedOut.style.display = 'block'; loggedIn.style.display = 'none';
+  }
+}
+function openAccountModal() {
+  var m = document.getElementById('accountModal');
+  if (m) { m.style.display = 'flex'; document.body.style.overflow = 'hidden'; switchAccountTab('login'); }
+}
+function closeAccountModal() {
+  var m = document.getElementById('accountModal');
+  if (m) { m.style.display = 'none'; document.body.style.overflow = ''; }
+}
+function switchAccountTab(tab) {
+  var lf = document.getElementById('accountLoginForm');
+  var rf = document.getElementById('accountRegisterForm');
+  var lt = document.getElementById('accountTabLogin');
+  var rt = document.getElementById('accountTabRegister');
+  var le = document.getElementById('accountLoginError');
+  var re = document.getElementById('accountRegisterError');
+  if (le) le.textContent = ''; if (re) re.textContent = '';
+  if (tab === 'login') {
+    if (lf) lf.style.display = 'block'; if (rf) rf.style.display = 'none';
+    if (lt) lt.classList.add('active'); if (rt) rt.classList.remove('active');
+  } else {
+    if (lf) lf.style.display = 'none'; if (rf) rf.style.display = 'block';
+    if (lt) lt.classList.remove('active'); if (rt) rt.classList.add('active');
+  }
+}
+function handleCreateAccount() {
+  var name = document.getElementById('registerName'); var address = document.getElementById('registerAddress');
+  var contact = document.getElementById('registerContact'); var password = document.getElementById('registerPassword');
+  var err = document.getElementById('accountRegisterError');
+  if (!name || !address || !contact || !password) return;
+  var n = name.value.trim(), a = address.value.trim(), c = contact.value.trim(), p = password.value;
+  if (!n || !a || !c || !p) { if (err) err.textContent = 'All fields are required.'; return; }
+  if (err) err.textContent = 'Creating account...';
+  fetch(proxyAccountUrl('create'), { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:n,address:a,contact:c,password:p}) })
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (j.ok) {
+        saveSession({name:j.name, address:j.address, contact:j.contact});
+        closeAccountModal();
+        showCartNotification('Account created! Welcome, ' + j.name + '!');
+      } else {
+        if (err) err.textContent = j.error || 'Failed to create account.';
+      }
+    })
+    .catch(function(){ if (err) err.textContent = 'Network error. Please try again.'; });
+}
+function handleLogin() {
+  var contact = document.getElementById('loginContact'); var password = document.getElementById('loginPassword');
+  var err = document.getElementById('accountLoginError');
+  if (!contact || !password) return;
+  var c = contact.value.trim(), p = password.value;
+  if (!c || !p) { if (err) err.textContent = 'Please enter contact number and password.'; return; }
+  if (err) err.textContent = 'Logging in...';
+  fetch(proxyAccountUrl('login'), { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({contact:c,password:p}) })
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (j.ok) {
+        saveSession({name:j.name, address:j.address, contact:j.contact});
+        closeAccountModal();
+        showCartNotification('Welcome back, ' + j.name + '!');
+      } else {
+        if (err) err.textContent = j.error || 'Login failed.';
+      }
+    })
+    .catch(function(){ if (err) err.textContent = 'Network error. Please try again.'; });
+}
+function handleLogout() {
+  var name = currentUser ? currentUser.name : '';
+  clearSession();
+  showCartNotification('Logged out' + (name ? ', ' + name : '') + '.');
+}
+// ---- END ACCOUNT ----
+
 function migrateCategoriesConfig(cfg) {
   if (cfg.types && !cfg.groups) {
     cfg.groups = [{ name: "All", image: "" }];
@@ -2784,6 +2881,8 @@ loadProducts(function() {
     document.getElementById('maintenanceOverlay').classList.add('active');
     return;
   }
+  loadSession();
+  updateAccountUI();
   parseURLParams();
   loadStockFromFirestore(function() {
     renderFilters();

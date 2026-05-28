@@ -1694,6 +1694,127 @@ body {
 .product-name { cursor: pointer; }
 .product-name:hover { color: #e94560; }
 
+/* Account Button */
+.account-toggle {
+  position: relative;
+  background: none;
+  border: none;
+  color: #1a1a2e;
+  cursor: pointer;
+  padding: 0.4rem;
+  display: flex;
+  align-items: center;
+  margin-right: 0.2rem;
+}
+.account-toggle:hover { color: #e94560; }
+
+/* Account Modal */
+.account-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.account-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+.account-modal-close {
+  position: absolute;
+  top: 0.8rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #888;
+}
+.account-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #eee;
+}
+.account-tab {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #888;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.account-tab.active {
+  color: #e94560;
+  border-bottom-color: #e94560;
+}
+.account-form-group {
+  margin-bottom: 1rem;
+}
+.account-form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.3rem;
+}
+.account-form-group input,
+.account-form-group textarea {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border: 2px solid #e8e8ed;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+.account-form-group input:focus,
+.account-form-group textarea:focus {
+  border-color: #e94560;
+}
+.account-btn-primary {
+  width: 100%;
+  padding: 0.75rem;
+  background: #e94560;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.5rem;
+}
+.account-btn-primary:hover { background: #d63851; }
+.account-btn-logout { background: #666; margin-top: 1rem; }
+.account-btn-logout:hover { background: #555; }
+.account-error {
+  font-size: 0.8rem;
+  color: #c62828;
+  margin-top: 0.5rem;
+  min-height: 1.2em;
+}
+.account-profile { text-align: center; }
+.account-avatar { margin-bottom: 0.8rem; }
+.account-detail { font-size: 1rem; font-weight: 600; margin-bottom: 0.2rem; }
+.account-detail-label { font-size: 0.85rem; color: #888; font-weight: 400; }
+.account-detail-address { font-size: 0.85rem; color: #666; font-weight: 400; margin-top: 0.3rem; }
+
 /* Cart Toggle Button */
 .cart-toggle {
   position: relative;
