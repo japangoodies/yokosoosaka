@@ -441,7 +441,7 @@ function renderSubcategoryFilter() {
   if (!container) return;
   if (currentGroup === 'all') { container.innerHTML = ''; return; }
   var subs = getSubcategories(currentGroup);
-  var html = '<button class="filter-btn' + (currentCategory === 'all' ? ' active' : '') + '" data-subcategory="all">All ' + currentGroup + ' Subcategories</button>';
+  var html = '<button class="filter-btn' + (currentCategory === 'all' ? ' active' : '') + '" data-subcategory="all">All ' + currentGroup + ' Products</button>';
   subs.forEach(function(s) {
     var brands = getBrandsForSubcategory(s);
     var brandHtml = brands.length ? brands.map(function(b) { return '<button class="brand-option" data-subcategory="' + s + '" data-brand="' + b + '">' + b + '</button>'; }).join('') : '';
