@@ -1334,8 +1334,13 @@ body {
     font-size: 0.8rem;
   }
   .carousel-group-btn {
-    width: 100px;
-    height: 75px;
+    width: calc(33.33% - 0.5rem);
+    height: 110px;
+  }
+  .category-carousel {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    overflow-x: visible;
   }
   .carousel-group-label {
     font-size: 0.7rem;
