@@ -407,7 +407,6 @@ function saveProducts() {
   if (fbDB) {
     fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(function() {});
   }
-  syncAllStockToFirestore();
   if (localStorage.getItem('autoSyncEnabled') === 'true' && localStorage.getItem('github_token')) {
     syncToGitHub();
   }
