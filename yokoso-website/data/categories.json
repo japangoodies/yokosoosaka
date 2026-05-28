@@ -18,7 +18,9 @@
     }
   ],
   "subcategoryMap": {
-    "MENS": [],
+    "MENS": [
+      "Shoes"
+    ],
     "WOMENS": [
       "Shoes",
       "Clothing",
