@@ -128,10 +128,26 @@
           <button class="btn btn-secondary" id="importBtn">Import JSON</button>
           <button class="btn btn-secondary" id="exportBtn">Export JSON</button>
           <button class="btn btn-secondary" id="manageCategoriesBtn">Categories</button>
+          <button class="btn btn-secondary" id="syncSettingsBtn">Auto Sync</button>
           <button class="btn btn-secondary" id="backToPublicBtn">Back</button>
         </div>
       </div>
       <input type="file" id="importFileInput" accept=".json" style="display:none">
+
+      <div class="admin-sync-settings" id="adminSyncSettings" style="display:none;padding:12px 20px;background:#f8f9fa;border-bottom:1px solid #dee2e6">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <strong style="font-size:14px">GitHub Auto Sync</strong>
+          <input type="password" id="githubTokenInput" placeholder="GitHub Personal Access Token" style="padding:6px 10px;border:1px solid #ccc;border-radius:4px;flex:1;min-width:200px;font-size:13px">
+          <label style="font-size:13px;display:flex;align-items:center;gap:4px;cursor:pointer">
+            <input type="checkbox" id="autoSyncToggle"> Auto-sync on save
+          </label>
+          <span id="syncStatus" style="font-size:12px;color:#666"></span>
+        </div>
+        <div style="font-size:11px;color:#888;margin-top:6px">
+          Token needs <code>repo</code> scope. Create one at 
+          <a href="https://github.com/settings/tokens" target="_blank" style="color:#007bff">github.com/settings/tokens</a>
+        </div>
+      </div>
 
       <div class="admin-layout">
         <div class="admin-form">
@@ -264,6 +280,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="maintenance.js"></script>
-  <script src="js/app.js?v=20250603"></script>
+  <script src="js/app.js?v=20250604"></script>
 </body>
 </html>
