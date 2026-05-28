@@ -14,8 +14,9 @@ async function firestoreGet(path) {
 }
 
 async function firestorePatch(path, fields) {
-  const keys = Object.keys(fields).join(',');
-  const url = `${FIRESTORE_BASE}/${path}?key=${API_KEY}&updateMask.fieldPaths=${keys}`;
+  const keys = Object.keys(fields);
+  const maskParams = keys.map(k => `updateMask.fieldPaths=${encodeURIComponent(k)}`).join('&');
+  const url = `${FIRESTORE_BASE}/${path}?key=${API_KEY}&${maskParams}`;
   const resp = await fetch(url, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -50,7 +51,7 @@ async function firestoreCreate(docId, fields) {
 // Atomic increment/decrement via Firestore transform — no read-modify-write race
 // fieldPath defaults to 'default' (for products without sizes)
 async function firestoreTransform(docId, amount, fieldPath) {
-  fieldPath = fieldPath || 'default';
+  fieldPath = fieldPath || 'q';
   const docName = `projects/japan-goodies/databases/(default)/documents/stocks/${docId}`;
   const resp = await fetch(`${FIRESTORE_BASE}:commit?key=${API_KEY}`, {
     method: 'POST',
@@ -81,7 +82,7 @@ function parseStockDoc(doc) {
   for (const [key, val] of Object.entries(doc.fields)) {
     const qty = parseInt(val.integerValue || val.stringValue, 10);
     if (!isNaN(qty)) {
-      const fieldKey = key === 'quantity' ? 'default' : key;
+      const fieldKey = (key === 'quantity') ? 'q' : key;
       fields[fieldKey] = qty;
       total += qty;
     }
