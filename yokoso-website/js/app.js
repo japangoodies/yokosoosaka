@@ -528,7 +528,7 @@ document.addEventListener('click', function(e) {
     currentBrand = brand;
     openSubcats = {};
     renderSubcategoryFilter();
-    renderBrandFilter();
+    document.getElementById('brandFilterContainer').innerHTML = '';
     renderProducts();
     return;
   }
