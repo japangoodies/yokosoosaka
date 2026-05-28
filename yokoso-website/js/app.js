@@ -158,25 +158,19 @@ function loadProducts(callback) {
       }
     })
     .finally(function() {
-      // Stage 2: Check localStorage for pending edits or backward compat
+      // Stage 2: Use localStorage only if there are explicit pending edits
       var saved = localStorage.getItem('yokoso_products');
       var pendingSync = localStorage.getItem('yokoso_pending_sync');
-      if (saved) {
+      if (saved && pendingSync === 'true') {
         try {
           var local = JSON.parse(saved);
-          if (local.length > 0) {
-            // Use localStorage if: pending edits exist, OR this is first load (no pending flag set yet)
-            if (pendingSync === 'true') {
-              products = local; migrateProducts();
-            } else if (pendingSync === null || pendingSync === undefined) {
-              products = local; migrateProducts(); // backward compat
-              localStorage.setItem('yokoso_pending_sync', 'false');
-            }
-          }
+          if (local.length > 0) { products = local; migrateProducts(); }
         } catch(e) {}
       }
       localStorage.setItem('yokoso_products', JSON.stringify(products));
-      localStorage.setItem('yokoso_pending_sync', localStorage.getItem('yokoso_pending_sync') || 'false');
+      if (!saved || pendingSync !== 'true') {
+        localStorage.setItem('yokoso_pending_sync', 'false');
+      }
 
       // Stage 3: Firebase sync (if available)
       if (fbDB) {
@@ -1188,6 +1182,20 @@ const ADMIN_PASSWORD = 'amped2016';
 
 function showAdminPanel() {
   if (prompt('Enter admin password:') !== ADMIN_PASSWORD) return;
+  // Migrate localStorage data if not yet synced
+  if (localStorage.getItem('yokoso_pending_sync') !== 'true') {
+    var saved = localStorage.getItem('yokoso_products');
+    if (saved) {
+      try {
+        var local = JSON.parse(saved);
+        if (local.length > 0 && JSON.stringify(local) !== JSON.stringify(products)) {
+          products = local;
+          migrateProducts();
+          saveProducts();
+        }
+      } catch(e) {}
+    }
+  }
   document.getElementById('maintenanceOverlay').classList.add('active');
   document.getElementById('maintenancePublic').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'block';
