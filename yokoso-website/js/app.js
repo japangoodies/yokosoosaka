@@ -339,12 +339,22 @@ function loadCategories() {
 }
 
 function saveCategoriesConfig() {
+  var groupStatusEl = document.getElementById('groupImageSyncStatus');
+  if (groupStatusEl) groupStatusEl.textContent = 'Saving...';
   localStorage.setItem('yokoso_categories', JSON.stringify(categoriesConfig));
   if (fbDB) {
     fbDB.collection(FB_COLLECTION).doc('categories').set(categoriesConfig).catch(function() {});
   }
-  if (localStorage.getItem('autoSyncEnabled') === 'true' && localStorage.getItem('github_token')) {
+  var autoSync = localStorage.getItem('autoSyncEnabled') === 'true';
+  var token = localStorage.getItem('github_token');
+  if (autoSync && token) {
+    if (groupStatusEl) groupStatusEl.textContent = 'Syncing categories to GitHub...';
     syncCategoriesToGitHub();
+  } else {
+    if (groupStatusEl) {
+      groupStatusEl.innerHTML = (autoSync ? '' : 'Auto-sync not enabled. ') + (!token ? 'No GitHub token.' : '') + ' <a href="#" onclick="document.getElementById(\'syncSettingsBtn\').click();return false">Open sync settings</a>';
+      groupStatusEl.style.color = '#e67e22';
+    }
   }
 }
 
@@ -1241,7 +1251,15 @@ function resizeImage(file, maxW, maxQ, cb) {
       ctx.drawImage(img, 0, 0, w, h);
       cb(canvas.toDataURL('image/jpeg', maxQ));
     };
+    img.onerror = function() {
+      var el = document.getElementById('groupImageSyncStatus');
+      if (el) { el.textContent = 'Error: image failed to load'; el.style.color = '#dc3545'; }
+    };
     img.src = ev.target.result;
+  };
+  reader.onerror = function() {
+    var el = document.getElementById('groupImageSyncStatus');
+    if (el) { el.textContent = 'Error: failed to read file'; el.style.color = '#dc3545'; }
   };
   reader.readAsDataURL(file);
 }
