@@ -1422,7 +1422,19 @@ body {
 
   .search-filter {
     top: 55px;
-    padding: 0.6rem 0;
+    padding: 0;
+    border-bottom: none;
+  }
+  .search-filter .container {
+    padding: 0;
+  }
+  .search-filter .filters {
+    padding: 0 0.75rem 0.6rem;
+    margin-top: 0;
+  }
+  .search-filter .brand-filter-section {
+    padding: 0 0.75rem 0.6rem;
+    margin-top: 0;
   }
   .header-search {
     max-width: none;
@@ -1436,6 +1448,11 @@ body {
     width: 33.33%;
     height: 110px;
     border-radius: 0;
+    border: none;
+  }
+  .carousel-group-btn.active {
+    border: none;
+    box-shadow: none;
   }
   .category-carousel {
     gap: 0;
