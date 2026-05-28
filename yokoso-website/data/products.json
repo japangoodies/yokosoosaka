@@ -24,22 +24,26 @@
     ],
     "price": "₱5,200",
     "available": true,
-    "stock": 31
+    "stock": 25
   },
   {
     "name": "Nike Dunk Low Retro",
     "id": 2,
-    "category2": "",
+    "category2": "Nike",
     "category1": "Shoes",
     "images": [
-      "images/products/placeholder.jpg"
+      "images/products/placeholder.svg"
     ],
     "category0": "MENS",
     "description": "Classic Nike Dunk Low in premium leather. Japan release. Available in multiple colors. Sizes 7-11 US.",
     "price": "₱4,800",
-    "sizes": [],
+    "sizes": [
+      "6",
+      "7",
+      "8"
+    ],
     "available": true,
-    "stock": 25
+    "stock": 0
   },
   {
     "available": true,
