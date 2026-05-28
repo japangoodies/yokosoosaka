@@ -1,6 +1,5 @@
 // Cloudflare Worker — Firestore stock proxy
-// Deploy via Cloudflare Dashboard > Workers & Pages > Create Worker
-// or use: npx wrangler deploy (after `npm create cloudflare`)
+// Paste this entire file into Cloudflare Dashboard > Workers & Pages > Create Worker > Save and Deploy
 
 const FIRESTORE_BASE = 'https://firestore.googleapis.com/v1/projects/japan-goodies/databases/(default)/documents';
 const API_KEY = 'AIzaSyCR8jcz2JeDr3VYztZm2KYdns4uPUajtqQ';
@@ -23,77 +22,21 @@ async function firestorePatch(path, fields) {
     })
   });
   if (resp.ok) return true;
-  if (resp.status === 404) return null; // signal to create
+  if (resp.status === 404) return null; // doesn't exist yet
   return false;
 }
 
-// Optimistic concurrency: write only if updateTime hasn't changed
-async function firestorePatchIfMatch(path, fields, updateTime) {
-  const keys = Object.keys(fields).join(',');
-  const url = `${FIRESTORE_BASE}/${path}?key=${API_KEY}&updateMask.fieldPaths=${keys}`;
-  const body = {
-    fields: Object.fromEntries(
-      Object.entries(fields).map(([k, v]) => [k, { integerValue: String(v) }])
-    )
-  };
-  if (updateTime) {
-    // Use Firestore's precondition to ensure atomicity
-    const commitBody = {
-      writes: [{
-        update: { ...body, name: `${FIRESTORE_BASE}/${path}` },
-        updateMask: { fieldPaths: Object.keys(fields) },
-        currentDocument: { updateTime }
-      }]
-    };
-    const resp = await fetch(`${FIRESTORE_BASE}:commit?key=${API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(commitBody)
-    });
-    if (resp.ok) return true;
-    if (resp.status === 409) return 'conflict'; // precondition failed — retry
-    return false;
-  }
-  // No updateTime — use simple PATCH
-  return firestorePatch(path, fields);
-}
-
-async function firestoreUpsert(docId, fields) {
-  const patchResult = await firestorePatch(`stocks/${docId}`, fields);
-  if (patchResult === true) return true;
-  // Create with specific ID
-  const body = {
-    fields: Object.fromEntries(
-      Object.entries(fields).map(([k, v]) => [k, { integerValue: String(v) }])
-    )
-  };
+async function firestoreCreate(docId, fields) {
   const resp = await fetch(`${FIRESTORE_BASE}/stocks?key=${API_KEY}&documentId=${docId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    body: JSON.stringify({
+      fields: Object.fromEntries(
+        Object.entries(fields).map(([k, v]) => [k, { integerValue: String(v) }])
+      )
+    })
   });
   return resp.ok;
-}
-
-// Atomic read-decrement-write with optimistic concurrency (up to 5 retries)
-async function atomicAdjust(docId, adjustment, maxRetries = 5) {
-  for (let i = 0; i < maxRetries; i++) {
-    const data = await firestoreGet(`stocks/${docId}`);
-    if (!data || !data.fields || !data.fields.quantity) {
-      // No doc yet — create it with new value
-      const initial = Math.max(0, 5 + adjustment);
-      await firestoreUpsert(docId, { quantity: initial });
-      return initial;
-    }
-    const currentQty = parseInt(data.fields.quantity.integerValue || data.fields.quantity.stringValue, 10);
-    const newQty = Math.max(0, currentQty + adjustment);
-    const updateTime = data.updateTime;
-    const result = await firestorePatchIfMatch(`stocks/${docId}`, { quantity: newQty }, updateTime);
-    if (result === true) return newQty;
-    if (result === 'conflict') continue; // retry
-    return currentQty; // failed
-  }
-  return null;
 }
 
 function parseStockDoc(doc) {
@@ -125,12 +68,14 @@ async function handleRequest(request) {
   }
 
   try {
+    // GET /stocks
     if (request.method === 'GET' && parts.length === 1 && parts[0] === 'stocks') {
       const data = await firestoreGet('stocks');
       const docs = (data && data.documents) ? data.documents.map(parseStockDoc).filter(Boolean) : [];
       return new Response(JSON.stringify(docs), { headers: corsHeaders(origin) });
     }
 
+    // GET /stocks/:id
     if (request.method === 'GET' && parts.length === 2 && parts[0] === 'stocks') {
       const data = await firestoreGet(`stocks/${parts[1]}`);
       const parsed = parseStockDoc(data);
@@ -138,26 +83,56 @@ async function handleRequest(request) {
       return new Response(JSON.stringify(parsed), { headers: corsHeaders(origin) });
     }
 
+    // PUT /stocks/:id  — set absolute quantity (idempotent, no race)
     if (request.method === 'PUT' && parts.length === 2 && parts[0] === 'stocks') {
       const body = await request.json();
       const qty = parseInt(body.quantity, 10);
       if (isNaN(qty)) return new Response(JSON.stringify({ error: 'invalid quantity' }), { status: 400, headers: corsHeaders(origin) });
-      await firestoreUpsert(parts[1], { quantity: qty });
+      const r = await firestorePatch(`stocks/${parts[1]}`, { quantity: qty });
+      if (r === null) await firestoreCreate(parts[1], { quantity: qty });
       return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders(origin) });
     }
 
+    // POST /stocks/:id/decrement  — decrement by 1 (or body.amount)
     if (request.method === 'POST' && parts.length === 3 && parts[0] === 'stocks' && parts[2] === 'decrement') {
       const body = await request.json().catch(() => ({}));
       const amount = parseInt(body.amount, 10) || 1;
-      const newQty = await atomicAdjust(parts[1], -amount);
-      return new Response(JSON.stringify({ quantity: newQty }), { headers: corsHeaders(origin) });
+      // Retry loop for safety
+      let result = null;
+      for (let i = 0; i < 3; i++) {
+        const data = await firestoreGet(`stocks/${parts[1]}`);
+        if (!data || !data.fields || !data.fields.quantity) {
+          const initial = Math.max(0, 5 - amount);
+          await firestoreCreate(parts[1], { quantity: initial });
+          result = { quantity: initial };
+          break;
+        }
+        const current = parseInt(data.fields.quantity.integerValue || data.fields.quantity.stringValue, 10);
+        const newQty = Math.max(0, current - amount);
+        const ok = await firestorePatch(`stocks/${parts[1]}`, { quantity: newQty });
+        if (ok) { result = { quantity: newQty }; break; }
+      }
+      return new Response(JSON.stringify(result || { quantity: null }), { headers: corsHeaders(origin) });
     }
 
+    // POST /stocks/:id/increment  — increment by N (body.amount)
     if (request.method === 'POST' && parts.length === 3 && parts[0] === 'stocks' && parts[2] === 'increment') {
       const body = await request.json().catch(() => ({}));
       const amount = parseInt(body.amount, 10) || 1;
-      const newQty = await atomicAdjust(parts[1], amount);
-      return new Response(JSON.stringify({ quantity: newQty }), { headers: corsHeaders(origin) });
+      let result = null;
+      for (let i = 0; i < 3; i++) {
+        const data = await firestoreGet(`stocks/${parts[1]}`);
+        if (!data || !data.fields || !data.fields.quantity) {
+          await firestoreCreate(parts[1], { quantity: amount });
+          result = { quantity: amount };
+          break;
+        }
+        const current = parseInt(data.fields.quantity.integerValue || data.fields.quantity.stringValue, 10);
+        const newQty = current + amount;
+        const ok = await firestorePatch(`stocks/${parts[1]}`, { quantity: newQty });
+        if (ok) { result = { quantity: newQty }; break; }
+      }
+      return new Response(JSON.stringify(result || { quantity: null }), { headers: corsHeaders(origin) });
     }
 
     return new Response(JSON.stringify({ error: 'not found' }), { status: 404, headers: corsHeaders(origin) });
