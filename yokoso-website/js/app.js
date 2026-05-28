@@ -370,6 +370,14 @@ function loadCategories() {
         renderFilters();
         renderProducts();
       }
+
+      // Pick up proxy URL from categoriesConfig if not set locally
+      if (!localStorage.getItem('yokoso_stock_proxy_url') && categoriesConfig.proxyUrl) {
+        STOCK_PROXY_URL = categoriesConfig.proxyUrl;
+        localStorage.setItem('yokoso_stock_proxy_url', STOCK_PROXY_URL);
+        var pi = document.getElementById('stockProxyUrl');
+        if (pi) pi.value = STOCK_PROXY_URL;
+      }
     });
 }
 
@@ -771,7 +779,15 @@ function testProxyConnection() {
 }
 
 // Pre-fill proxy URL input on load and auto-connect if saved
+// Priority: localStorage > categoriesConfig > empty
 (function initProxy() {
+  var saved = localStorage.getItem('yokoso_stock_proxy_url');
+  if (saved) {
+    STOCK_PROXY_URL = saved;
+  } else if (categoriesConfig && categoriesConfig.proxyUrl) {
+    STOCK_PROXY_URL = categoriesConfig.proxyUrl;
+    localStorage.setItem('yokoso_stock_proxy_url', STOCK_PROXY_URL);
+  }
   var input = document.getElementById('stockProxyUrl');
   if (input) input.value = STOCK_PROXY_URL;
   if (STOCK_PROXY_URL) setProxyStatus('Proxy configured, connecting...');
@@ -782,6 +798,11 @@ function applyProxyUrl() {
   if (!input) return;
   STOCK_PROXY_URL = input.value.trim();
   localStorage.setItem('yokoso_stock_proxy_url', STOCK_PROXY_URL);
+  // Persist across devices via categoriesConfig (synced to GitHub)
+  if (categoriesConfig) {
+    categoriesConfig.proxyUrl = STOCK_PROXY_URL;
+    saveCategoriesConfig();
+  }
   if (isProxyReady()) {
     setProxyStatus('Connecting...');
     stockInitialized = false;
@@ -1791,7 +1812,17 @@ function syncToGitHub() {
   statusEl.style.color = '#666';
   var content = JSON.stringify(products, null, 2);
   var encoded = btoa(unescape(encodeURIComponent(content)));
-  fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_PATH, {
+  doGitHubSync(GITHUB_PATH, encoded, 'Auto-sync products from admin panel', statusEl, 0)
+    .catch(function(err) {
+      if (statusEl) { statusEl.textContent = 'Sync failed: ' + err.message; statusEl.style.color = '#dc3545'; }
+    });
+}
+
+function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
+  var token = localStorage.getItem('github_token');
+  if (!token) { return Promise.reject(new Error('No token')); }
+  statusEl = statusEl || document.getElementById('syncStatus');
+  return fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + filePath, {
     headers: { 'Authorization': 'token ' + token }
   })
   .then(function(r) {
@@ -1801,21 +1832,19 @@ function syncToGitHub() {
   })
   .then(function(data) {
     var sha = data ? data.sha : null;
-    return fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_PATH, {
+    return fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + filePath, {
       method: 'PUT',
       headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: 'Auto-sync products from admin panel', content: encoded, sha: sha, branch: GITHUB_BRANCH })
+      body: JSON.stringify({ message: message, content: encoded, sha: sha, branch: GITHUB_BRANCH })
     });
   })
   .then(function(r) {
+    if (r.status === 409 && attempt < 3) {
+      return doGitHubSync(filePath, encoded, message, statusEl, attempt + 1);
+    }
     if (!r.ok) throw new Error('HTTP ' + r.status);
-    localStorage.setItem('yokoso_pending_sync', 'false');
-    statusEl.textContent = 'Synced to GitHub ✓ (CDN ~1-2 min)';
-    statusEl.style.color = '#28a745';
-  })
-  .catch(function(err) {
-    statusEl.textContent = 'Sync failed: ' + err.message;
-    statusEl.style.color = '#dc3545';
+    if (filePath === GITHUB_PATH) localStorage.setItem('yokoso_pending_sync', 'false');
+    if (statusEl) { statusEl.textContent = 'Synced ✓ (CDN ~1-2 min)'; statusEl.style.color = '#28a745'; }
   });
 }
 
@@ -1828,32 +1857,16 @@ function syncCategoriesToGitHub() {
   if (groupStatusEl) { groupStatusEl.textContent = 'Syncing categories to GitHub...'; groupStatusEl.style.color = '#888'; }
   var content = JSON.stringify(categoriesConfig, null, 2);
   var encoded = btoa(unescape(encodeURIComponent(content)));
-  fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_CATEGORIES_PATH, {
-    headers: { 'Authorization': 'token ' + token }
-  })
-  .then(function(r) {
-    if (r.status === 404) return null;
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  })
-  .then(function(data) {
-    var sha = data ? data.sha : null;
-    return fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_CATEGORIES_PATH, {
-      method: 'PUT',
-      headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: 'Auto-sync categories from admin panel', content: encoded, sha: sha, branch: GITHUB_BRANCH })
+  doGitHubSync(GITHUB_CATEGORIES_PATH, encoded, 'Auto-sync categories from admin panel', null, 0)
+    .then(function() {
+      if (statusEl) { statusEl.textContent = 'Categories synced to GitHub ✓'; statusEl.style.color = '#28a745'; }
+      if (groupStatusEl) { groupStatusEl.textContent = 'Synced ✓'; groupStatusEl.style.color = '#28a745'; setTimeout(function() { groupStatusEl.textContent = ''; }, 4000); }
+    })
+    .catch(function(err) {
+      console.error('Categories sync failed:', err.message);
+      if (statusEl) { statusEl.textContent = 'Sync failed: ' + err.message; statusEl.style.color = '#dc3545'; }
+      if (groupStatusEl) { groupStatusEl.innerHTML = 'Saved locally. GitHub sync failed (' + err.message + '). Check token in <a href="#" onclick="document.getElementById(\'syncSettingsBtn\').click();return false" style="color:#007bff">sync settings</a>.'; groupStatusEl.style.color = '#e67e22'; }
     });
-  })
-  .then(function(r) {
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    if (statusEl) { statusEl.textContent = 'Categories synced to GitHub ✓'; statusEl.style.color = '#28a745'; }
-    if (groupStatusEl) { groupStatusEl.textContent = 'Synced ✓'; groupStatusEl.style.color = '#28a745'; setTimeout(function() { groupStatusEl.textContent = ''; }, 4000); }
-  })
-  .catch(function(err) {
-    console.error('Categories sync failed:', err.message);
-    if (statusEl) { statusEl.textContent = 'Sync failed: ' + err.message; statusEl.style.color = '#dc3545'; }
-    if (groupStatusEl) { groupStatusEl.innerHTML = 'Saved locally. GitHub sync failed (' + err.message + '). Check token in <a href="#" onclick="document.getElementById(\'syncSettingsBtn\').click();return false" style="color:#007bff">sync settings</a>.'; groupStatusEl.style.color = '#e67e22'; }
-  });
 }
 
 // Navigation between public and admin view
