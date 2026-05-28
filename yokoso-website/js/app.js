@@ -1707,11 +1707,15 @@ function makeEditableSubcategoryTag(el) {
 
 function renderGroupImagePreview() {
   var container = document.getElementById('groupImagePreview');
-  if (!container) return;
+  var targetSelect = document.getElementById('groupImageTarget');
+  if (!container || !targetSelect) return;
   var groups = getGroups();
+  targetSelect.innerHTML = '<option value="">Set image for...</option>' + groups.map(function(g) {
+    return '<option value="' + g.name + '">' + g.name + '</option>';
+  }).join('');
   container.innerHTML = groups.map(function(g) {
-    var imgHtml = g.image ? '<img src="' + g.image + '" style="width:60px;height:60px;object-fit:cover;border-radius:6px;cursor:pointer" title="' + g.name + '" data-group-image="' + g.name + '">' : '';
-    return imgHtml;
+    var imgHtml = g.image ? '<img src="' + g.image + '" style="width:100px;height:100px;object-fit:cover;border-radius:8px;cursor:pointer" title="Click to remove ' + g.name + ' image" data-group-image="' + g.name + '">' : '';
+    return imgHtml ? '<div style="text-align:center"><div style="font-size:0.7rem;color:#aaa;margin-bottom:2px">' + g.name + '</div>' + imgHtml + '</div>' : '';
   }).join('');
   container.querySelectorAll('[data-group-image]').forEach(function(img) {
     img.addEventListener('click', function() {
@@ -1724,155 +1728,39 @@ function renderGroupImagePreview() {
   });
 }
 
-var sg = document.getElementById('subcategoryGroupPicker');
-if (sg) {
-  sg.addEventListener('change', function() {
-    selectedSubcategoryGroup = this.value;
-    renderCategoryManagement();
-  });
-}
+var groupTargetSelect = document.getElementById('groupImageTarget');
 
-var agb = document.getElementById('addGroupBtn');
-if (agb) {
-  agb.addEventListener('click', function() {
-    var input = document.getElementById('newGroupInput');
-    var val = input.value.trim().toUpperCase();
-    if (!val) return;
-    var existing = categoriesConfig.groups.find(function(g) { return g.name === val; });
-    if (!existing) {
-      categoriesConfig.groups.push({ name: val, image: '' });
-      if (!categoriesConfig.subcategoryMap[val]) categoriesConfig.subcategoryMap[val] = [];
-      saveCategoriesConfig();
-      renderCategoryManagement();
-      renderCategoryDropdowns();
-      renderAdminFilterDropdowns();
-      renderFilters();
-    }
-    input.value = '';
-  });
-}
-
-var ngi = document.getElementById('newGroupInput');
-if (ngi) {
-  ngi.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') { e.preventDefault(); var btn = document.getElementById('addGroupBtn'); if (btn) btn.click(); }
-  });
-}
-
-var asb = document.getElementById('addSubcategoryBtn');
-if (asb) {
-  asb.addEventListener('click', function() {
-  var subPicker = document.getElementById('subcategoryGroupPicker');
-  var group = subPicker ? subPicker.value : '';
-  if (!group) { alert('Select a group first.'); return; }
-  var input = document.getElementById('newSubcategoryInput');
-  var val = input.value.trim();
-  if (!val) return;
-  var arr = categoriesConfig.subcategoryMap[group];
-  if (arr && arr.indexOf(val) === -1) {
-    arr.push(val);
-    saveCategoriesConfig();
-    renderCategoryManagement();
-    renderCategoryDropdowns();
-    renderAdminFilterDropdowns();
-    renderFilters();
-  }
-  input.value = '';
-  });
-}
-
-var nsi = document.getElementById('newSubcategoryInput');
-if (nsi) {
-  nsi.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') { e.preventDefault(); var btn = document.getElementById('addSubcategoryBtn'); if (btn) btn.click(); }
-  });
-}
-
-document.getElementById('addBrandBtn').addEventListener('click', function() {
-  var input = document.getElementById('newBrandInput');
-  var val = input.value.trim();
-  if (!val) return;
-  if (categoriesConfig.brands.indexOf(val) === -1) {
-    categoriesConfig.brands.push(val);
-    saveCategoriesConfig();
-    renderCategoryManagement();
-    renderCategoryDropdowns();
-    renderAdminFilterDropdowns();
-  }
-  input.value = '';
+document.getElementById('uploadGroupImageBtn').addEventListener('click', function() {
+  if (!groupTargetSelect || !groupTargetSelect.value) { alert('Select a group first.'); return; }
+  document.getElementById('groupImageInput').click();
 });
 
-document.getElementById('newBrandInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') { e.preventDefault(); document.getElementById('addBrandBtn').click(); }
-});
-
-document.getElementById('addSizeCatBtn').addEventListener('click', function() {
-  var input = document.getElementById('newSizeCatInput');
-  var val = input.value.trim();
-  if (!val) return;
-  if (categoriesConfig.sizes.indexOf(val) === -1) {
-    categoriesConfig.sizes.push(val);
-    saveCategoriesConfig();
-    renderCategoryManagement();
-    renderSizePresets();
-  }
-  input.value = '';
-});
-
-document.getElementById('newSizeCatInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') { e.preventDefault(); document.getElementById('addSizeCatBtn').click(); }
-});
-
-// Group image upload
-var ugib = document.getElementById('uploadGroupImageBtn');
-if (ugib) {
-  ugib.addEventListener('click', function() {
-    var input = document.getElementById('groupImageInput');
-    if (input) input.click();
-  });
-}
-
-var gii = document.getElementById('groupImageInput');
-if (gii) {
-  gii.addEventListener('change', function(e) {
-    var file = e.target.files[0];
-    if (!file) return;
-    resizeImage(file, 400, 0.7, function(dataUrl) {
-      var urlInput = document.getElementById('groupImageUrl');
-      if (urlInput) urlInput.value = dataUrl;
-      var groups = categoriesConfig.groups;
-      var target = groups.find(function(g) { return !g.image; });
-      if (target) {
-        target.image = dataUrl;
-      } else if (groups.length > 0) {
-        groups[groups.length - 1].image = dataUrl;
-      }
-      saveCategoriesConfig();
-      renderGroupImagePreview();
-      renderCarousel();
-    });
-    e.target.value = '';
-  });
-}
-
-var giu = document.getElementById('groupImageUrl');
-if (giu) {
-  giu.addEventListener('input', function() {
-    var url = this.value.trim();
-  if (url) {
-    var groups = categoriesConfig.groups;
-    var target = groups.find(function(g) { return !g.image; });
-    if (target) {
-      target.image = url;
-    } else if (groups.length > 0) {
-      groups[groups.length - 1].image = url;
-    }
+document.getElementById('groupImageInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file || !groupTargetSelect || !groupTargetSelect.value) return;
+  var targetGroup = groupTargetSelect.value;
+  resizeImage(file, 400, 0.7, function(dataUrl) {
+    var grp = categoriesConfig.groups.find(function(g) { return g.name === targetGroup; });
+    if (grp) grp.image = dataUrl;
     saveCategoriesConfig();
     renderGroupImagePreview();
     renderCarousel();
-    }
   });
-}
+  e.target.value = '';
+});
+
+document.getElementById('groupImageUrl').addEventListener('input', function() {
+  if (!groupTargetSelect || !groupTargetSelect.value) return;
+  var url = this.value.trim();
+  if (url) {
+    var targetGroup = groupTargetSelect.value;
+    var grp = categoriesConfig.groups.find(function(g) { return g.name === targetGroup; });
+    if (grp) grp.image = url;
+    saveCategoriesConfig();
+    renderGroupImagePreview();
+    renderCarousel();
+  }
+});
 
 // ---- HERO CAROUSEL ----
 (function() {
