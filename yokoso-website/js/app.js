@@ -427,7 +427,6 @@ function getBrands() {
 function renderFilters() {
   renderCarousel();
   renderSubcategoryFilter();
-  renderBrandFilter();
 }
 
 function renderSubcategoryFilter() {
@@ -488,16 +487,9 @@ document.addEventListener('click', function(e) {
     currentCategory = subBtn.dataset.subcategory;
     currentBrand = 'all';
     renderSubcategoryFilter();
-    renderBrandFilter();
     renderProducts();
     return;
   }
-  var brandBtn = e.target.closest('#brandFilterContainer .filter-btn');
-  if (!brandBtn) return;
-  document.querySelectorAll('#brandFilterContainer .filter-btn').forEach(function(b) { b.classList.remove('active'); });
-  brandBtn.classList.add('active');
-  currentBrand = brandBtn.dataset.brand;
-  renderProducts();
 });
 
 function openProduct(id) {
