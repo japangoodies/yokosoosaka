@@ -234,6 +234,13 @@ async function handleRequest(request, env) {
       return new Response(JSON.stringify({ ok: true, ...acct }), { headers: corsHeaders(origin) });
     }
 
+    // GET /accounts (list all)
+    if (request.method === 'GET' && parts.length === 1 && parts[0] === 'accounts') {
+      const data = await firestoreGet('accounts');
+      const docs = (data && data.documents) ? data.documents.map(parseAccountDoc).filter(Boolean) : [];
+      return new Response(JSON.stringify(docs), { headers: corsHeaders(origin) });
+    }
+
     // GET /accounts/:contact
     if (request.method === 'GET' && parts.length === 2 && parts[0] === 'accounts') {
       const data = await firestoreGet(`accounts/${encodeURIComponent(parts[1])}`).catch(() => null);

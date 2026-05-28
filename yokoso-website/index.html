@@ -138,6 +138,7 @@
           <button class="btn btn-secondary" id="exportBtn">Export JSON</button>
           <button class="btn btn-secondary" id="manageCategoriesBtn">Categories</button>
           <button class="btn btn-secondary" id="syncSettingsBtn">Auto Sync</button>
+          <button class="btn btn-secondary" id="usersBtn" onclick="toggleUsersPanel()">Users</button>
           <button class="btn btn-secondary" id="backToPublicBtn">Back</button>
         </div>
       </div>
@@ -312,6 +313,12 @@
                 <button class="btn btn-primary btn-sm" id="addSizeCatBtn">Add</button>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="admin-users" id="adminUsers" style="display:none">
+          <h3>Registered Users</h3>
+          <div id="usersList" style="font-size:0.85rem;color:#ccc">
+            <p style="color:#888">Loading...</p>
           </div>
         </div>
       </div>
