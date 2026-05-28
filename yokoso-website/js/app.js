@@ -468,7 +468,8 @@ function renderSubcategoryFilter() {
   subs.forEach(function(s) {
     var brands = getBrandsForSubcategory(s);
     if (!brands.length) return;
-    html += '<div class="subcategory-wrapper"><button class="filter-btn' + (currentCategory === s && currentBrand === 'all' ? ' active' : '') + '" data-subcategory="' + s + '">' + s + '</button>';
+    var openClass = openSubcats[s] ? ' open' : '';
+    html += '<div class="subcategory-wrapper' + openClass + '"><button class="filter-btn' + (currentCategory === s && currentBrand === 'all' ? ' active' : '') + '" data-subcategory="' + s + '">' + s + '</button>';
     html += '<div class="subcategory-brands"><div class="brand-grid">';
     brands.forEach(function(b) {
       var logo = categoriesConfig.brandLogos && categoriesConfig.brandLogos[b] ? categoriesConfig.brandLogos[b] : '';
@@ -516,6 +517,8 @@ if (cc) {
   });
 }
 
+var openSubcats = {};
+
 document.addEventListener('click', function(e) {
   var brandCard = e.target.closest('.brand-card');
   if (brandCard) {
@@ -523,6 +526,7 @@ document.addEventListener('click', function(e) {
     var brand = brandCard.dataset.brand;
     currentCategory = sub;
     currentBrand = brand;
+    openSubcats[sub] = true;
     renderSubcategoryFilter();
     renderProducts();
     return;
@@ -533,9 +537,11 @@ document.addEventListener('click', function(e) {
     if (sub === 'all') {
       currentCategory = 'all';
       currentBrand = 'all';
+      openSubcats = {};
     } else {
       currentCategory = sub;
       currentBrand = 'all';
+      openSubcats[sub] = !openSubcats[sub];
     }
     renderSubcategoryFilter();
     renderProducts();
