@@ -22,18 +22,26 @@ async function firestorePatch(path, fields) {
       )
     })
   });
-  return resp.ok;
+  if (resp.ok) return true;
+  // If 404, doc doesn't exist yet — create it
+  if (resp.status === 404) return null; // signal to caller to create
+  return false;
 }
 
-async function firestoreCreate(path, fields) {
-  const resp = await fetch(`${FIRESTORE_BASE}/${path}?key=${API_KEY}`, {
+async function firestoreUpsert(docId, fields) {
+  // Try PATCH first (update existing)
+  const patchResult = await firestorePatch(`stocks/${docId}`, fields);
+  if (patchResult === true) return true;
+  // Doc doesn't exist — create with specific ID
+  const body = {
+    fields: Object.fromEntries(
+      Object.entries(fields).map(([k, v]) => [k, { integerValue: String(v) }])
+    )
+  };
+  const resp = await fetch(`${FIRESTORE_BASE}/stocks?key=${API_KEY}&documentId=${docId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      fields: Object.fromEntries(
-        Object.entries(fields).map(([k, v]) => [k, { integerValue: String(v) }])
-      )
-    })
+    body: JSON.stringify(body)
   });
   return resp.ok;
 }
@@ -84,8 +92,7 @@ async function handleRequest(request) {
       const body = await request.json();
       const qty = parseInt(body.quantity, 10);
       if (isNaN(qty)) return new Response(JSON.stringify({ error: 'invalid quantity' }), { status: 400, headers: corsHeaders(origin) });
-      const ok = await firestorePatch(`stocks/${parts[1]}`, { quantity: qty });
-      if (!ok) await firestoreCreate('stocks', { quantity: qty });
+      await firestoreUpsert(parts[1], { quantity: qty });
       return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders(origin) });
     }
 
@@ -99,11 +106,11 @@ async function handleRequest(request) {
       }
       if (currentQty === undefined) {
         const initial = Math.max(0, 5 - amount);
-        await firestoreCreate('stocks', { quantity: initial });
+        await firestoreUpsert(parts[1], { quantity: initial });
         return new Response(JSON.stringify({ quantity: initial }), { headers: corsHeaders(origin) });
       }
       currentQty = Math.max(0, currentQty - amount);
-      await firestorePatch(`stocks/${parts[1]}`, { quantity: currentQty });
+      await firestoreUpsert(parts[1], { quantity: currentQty });
       return new Response(JSON.stringify({ quantity: currentQty }), { headers: corsHeaders(origin) });
     }
 
@@ -116,11 +123,11 @@ async function handleRequest(request) {
         currentQty = parseInt(data.fields.quantity.integerValue || data.fields.quantity.stringValue, 10);
       }
       if (currentQty === undefined) {
-        await firestoreCreate('stocks', { quantity: amount });
+        await firestoreUpsert(parts[1], { quantity: amount });
         return new Response(JSON.stringify({ quantity: amount }), { headers: corsHeaders(origin) });
       }
       currentQty += amount;
-      await firestorePatch(`stocks/${parts[1]}`, { quantity: currentQty });
+      await firestoreUpsert(parts[1], { quantity: currentQty });
       return new Response(JSON.stringify({ quantity: currentQty }), { headers: corsHeaders(origin) });
     }
 
