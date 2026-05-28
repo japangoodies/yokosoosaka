@@ -465,7 +465,7 @@ function renderSubcategoryFilter() {
   if (!container) return;
   if (currentGroup === 'all') { container.innerHTML = ''; return; }
   var subs = getSubcategories(currentGroup);
-  var html = '<button class="filter-btn' + (currentCategory === 'all' ? ' active' : '') + '" data-subcategory="all">All ' + currentGroup + ' Products</button>';
+  var html = '';
   subs.forEach(function(s) {
     var brands = getBrandsForSubcategory(s);
     if (!brands.length) return;
