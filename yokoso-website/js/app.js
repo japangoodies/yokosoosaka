@@ -158,15 +158,25 @@ function loadProducts(callback) {
       }
     })
     .finally(function() {
-      // Stage 2: Overlay with localStorage (working edits)
+      // Stage 2: Check localStorage for pending edits or backward compat
       var saved = localStorage.getItem('yokoso_products');
+      var pendingSync = localStorage.getItem('yokoso_pending_sync');
       if (saved) {
         try {
           var local = JSON.parse(saved);
-          if (local.length > 0) { products = local; migrateProducts(); }
+          if (local.length > 0) {
+            // Use localStorage if: pending edits exist, OR this is first load (no pending flag set yet)
+            if (pendingSync === 'true') {
+              products = local; migrateProducts();
+            } else if (pendingSync === null || pendingSync === undefined) {
+              products = local; migrateProducts(); // backward compat
+              localStorage.setItem('yokoso_pending_sync', 'false');
+            }
+          }
         } catch(e) {}
       }
       localStorage.setItem('yokoso_products', JSON.stringify(products));
+      localStorage.setItem('yokoso_pending_sync', localStorage.getItem('yokoso_pending_sync') || 'false');
 
       // Stage 3: Firebase sync (if available)
       if (fbDB) {
@@ -259,6 +269,7 @@ function saveCategoriesConfig() {
 
 function saveProducts() {
   localStorage.setItem('yokoso_products', JSON.stringify(products));
+  localStorage.setItem('yokoso_pending_sync', 'true');
   if (fbDB) {
     fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(() => {});
   }
@@ -1162,6 +1173,7 @@ function syncToGitHub() {
   })
   .then(function(r) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
+    localStorage.setItem('yokoso_pending_sync', 'false');
     statusEl.textContent = 'Synced to GitHub ✓ (CDN ~1-2 min)';
     statusEl.style.color = '#28a745';
   })
