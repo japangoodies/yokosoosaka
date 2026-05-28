@@ -770,18 +770,12 @@ function testProxyConnection() {
     });
 }
 
-// ---- ADMIN: Proxy URL config ----
-function initProxyUrlInput() {
+// Pre-fill proxy URL input on load and auto-connect if saved
+(function initProxy() {
   var input = document.getElementById('stockProxyUrl');
-  if (!input) return;
-  input.value = STOCK_PROXY_URL;
-  input.addEventListener('change', applyProxyUrl);
-  var btn = document.getElementById('proxySaveBtn');
-  if (btn) btn.addEventListener('click', applyProxyUrl);
-  var testBtn = document.getElementById('proxyTestBtn');
-  if (testBtn) testBtn.addEventListener('click', testProxyConnection);
+  if (input) input.value = STOCK_PROXY_URL;
   if (STOCK_PROXY_URL) setProxyStatus('Proxy configured, connecting...');
-}
+})();
 
 function applyProxyUrl() {
   var input = document.getElementById('stockProxyUrl');
@@ -800,8 +794,6 @@ function applyProxyUrl() {
     setProxyStatus('Enter a valid proxy URL', true);
   }
 }
-
-initProxyUrlInput();
 
 // ---- CART SYSTEM ----
 var cart = JSON.parse(localStorage.getItem('yokoso_cart') || '[]');
