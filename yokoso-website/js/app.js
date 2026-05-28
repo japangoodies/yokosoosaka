@@ -275,20 +275,18 @@ function loadCategories() {
       }
       localStorage.setItem('yokoso_categories', JSON.stringify(categoriesConfig));
 
-      // Re-assign category0 for products that were migrated under old config
+      // Re-assign category0 for products using authoritative categoriesConfig
       products.forEach(function(p) {
-        if (p.category0 === 'All' || !p.category0) {
-          var assigned = false;
-          (categoriesConfig.groups || []).forEach(function(g) {
-            if (assigned) return;
-            var subs = categoriesConfig.subcategoryMap[g.name] || [];
-            if (subs.indexOf(p.category1) !== -1) {
-              p.category0 = g.name;
-              assigned = true;
-            }
-          });
-          if (!assigned) p.category0 = (categoriesConfig.groups[0] || {}).name || '';
-        }
+        var assigned = false;
+        (categoriesConfig.groups || []).forEach(function(g) {
+          if (assigned) return;
+          var subs = categoriesConfig.subcategoryMap[g.name] || [];
+          if (subs.indexOf(p.category1) !== -1) {
+            p.category0 = g.name;
+            assigned = true;
+          }
+        });
+        if (!assigned) p.category0 = (categoriesConfig.groups[0] || {}).name || '';
       });
       localStorage.setItem('yokoso_products', JSON.stringify(products));
 
