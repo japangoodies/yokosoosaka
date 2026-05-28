@@ -379,10 +379,11 @@ function openModal(product) {
       '</div>' +
     '</div>';
     
-    overlay.addEventListener('click', function(e) { if (e.target === this) closeLiveModal(); });
     document.body.appendChild(overlay);
-    var modalImgEl = document.getElementById('modalMainImg');
-    if (modalImgEl) { modalImgEl.addEventListener('click', function clickFullscreen(e) { e.stopPropagation(); openModalFullscreen(); }); }
+    overlay.addEventListener('click', function(e) {
+      if (e.target.id === 'modalMainImg') { e.stopPropagation(); openModalFullscreen(); }
+      else if (e.target === this) closeLiveModal();
+    });
     lockBody();
     try { history.pushState({modal: true}, '', '#modal'); } catch (e) {}
   } catch (e) {
