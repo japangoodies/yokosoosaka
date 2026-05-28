@@ -28,7 +28,9 @@
       "Clothing",
       "Cosmetics"
     ],
-    "KIDS": [],
+    "KIDS": [
+      "Shoes"
+    ],
     "FOODS": []
   },
   "brands": [
