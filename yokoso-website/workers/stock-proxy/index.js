@@ -402,6 +402,14 @@ async function handleRequest(request, env) {
       return new Response(JSON.stringify({ ok: true, poNumber: parts[1], status: 'cancelled' }), { headers: corsHeaders(origin) });
     }
 
+    // GET /debug/list-orders — raw Firestore response for debugging
+    if (request.method === 'GET' && parts.length === 2 && parts[0] === 'debug' && parts[1] === 'list-orders') {
+      const getResp = await fetch(`${FIRESTORE_BASE}/orders?key=${API_KEY}`).catch(() => null);
+      const getStatus = getResp ? getResp.status : 'no_resp';
+      const getBody = getResp ? await getResp.text().catch(() => 'no_body') : 'no_resp';
+      return new Response(JSON.stringify({ status: getStatus, body: getBody.length > 2000 ? getBody.substring(0, 2000) + '...' : getBody, bodyLength: getBody.length }), { headers: corsHeaders(origin) });
+    }
+
     // GET /orders — list all orders (same pattern as stocks)
     if (request.method === 'GET' && parts.length === 1 && parts[0] === 'orders') {
       const getResp = await fetch(`${FIRESTORE_BASE}/orders?key=${API_KEY}`).catch(() => null);
