@@ -398,7 +398,8 @@ async function handleRequest(request, env) {
 
     // GET /orders — list all orders
     if (request.method === 'GET' && parts.length === 1 && parts[0] === 'orders') {
-      const data = await firestoreGet('orders').catch(() => null);
+      const listResp = await fetch(`${FIRESTORE_BASE}:listDocuments?key=${API_KEY}&collectionId=orders`, { method: 'POST' }).catch(() => null);
+      const data = listResp && listResp.ok ? await listResp.json().catch(() => null) : null;
       const docs = (data && data.documents) ? data.documents.map(parseOrderDoc).filter(Boolean) : [];
       docs.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
       return new Response(JSON.stringify({ count: docs.length, docs: docs }), { headers: corsHeaders(origin) });
@@ -517,7 +518,8 @@ async function handleRequest(request, env) {
 }
 
 async function releaseExpiredOrders(env) {
-  const data = await firestoreGet('orders').catch(() => null);
+  const listResp = await fetch(`${FIRESTORE_BASE}:listDocuments?key=${API_KEY}&collectionId=orders`, { method: 'POST' }).catch(() => null);
+  const data = listResp && listResp.ok ? await listResp.json().catch(() => null) : null;
   const docs = (data && data.documents) ? data.documents : [];
   const released = [];
   const now = Date.now();
