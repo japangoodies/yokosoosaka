@@ -356,7 +356,6 @@ function placeOrder() {
   if (actionsEl) {
     actionsEl.innerHTML =
       '<button class="checkout-btn checkout-btn-copy" onclick="copyOrderDetails()">📋 Copy Order Details</button>' +
-      '<button class="checkout-btn checkout-btn-email" onclick="emailOrderDetails()">✉️ Email Order</button>' +
       '<button class="checkout-btn checkout-btn-msg" onclick="messageOrderDetails()">💬 Message Us on Messenger</button>';
   }
 }
