@@ -269,6 +269,20 @@ async function handleRequest(request, env) {
       return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders(origin) });
     }
 
+    // GET /cart/test-email — send a test email to verify email config
+    if (request.method === 'GET' && parts.length === 2 && parts[0] === 'cart' && parts[1] === 'test-email') {
+      const to = url.searchParams.get('to');
+      if (!to) {
+        return new Response(JSON.stringify({ error: 'Query param "to" is required' }), { status: 400, headers: corsHeaders(origin) });
+      }
+      try {
+        const method = await sendEmail(env, to, 'Test Email from Yokoso Osaka', 'This is a test email to verify your email configuration is working correctly.\n\nIf you received this, SendGrid/Mailgun is properly configured!');
+        return new Response(JSON.stringify({ ok: true, method: method, message: 'Test email sent to ' + to + ' via ' + method }), { headers: corsHeaders(origin) });
+      } catch (e) {
+        return new Response(JSON.stringify({ ok: false, error: e.message }), { status: 500, headers: corsHeaders(origin) });
+      }
+    }
+
     // POST /cart/send-order
     if (request.method === 'POST' && parts.length === 2 && parts[0] === 'cart' && parts[1] === 'send-order') {
       const body = await request.json();
