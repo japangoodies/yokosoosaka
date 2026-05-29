@@ -423,6 +423,13 @@ function releaseExpiredOrders() {
     });
 }
 
+function toggleOrdersPanel() {
+  var el = document.getElementById('adminOrdersSection');
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  if (el.style.display === 'block') loadOrders();
+}
+
 function loadOrders() {
   var el = document.getElementById('ordersList');
   if (!el) return;
@@ -437,38 +444,68 @@ function loadOrders() {
 function renderOrders(orders) {
   var el = document.getElementById('ordersList');
   if (!el) return;
-  if (!orders || orders.length === 0) { el.innerHTML = 'No orders yet.'; return; }
-  var html = '<table style="width:100%;border-collapse:collapse;font-size:12px">';
-  html += '<thead><tr style="background:#eee;text-align:left">' +
-    '<th style="padding:6px 8px">PO#</th>' +
-    '<th style="padding:6px 8px">Date</th>' +
-    '<th style="padding:6px 8px">Customer</th>' +
-    '<th style="padding:6px 8px">Items</th>' +
-    '<th style="padding:6px 8px">Total</th>' +
-    '<th style="padding:6px 8px">Status</th>' +
-    '<th style="padding:6px 8px">Action</th></tr></thead><tbody>';
+  var filterEl = document.getElementById('ordersFilterStatus');
+  var filter = filterEl ? filterEl.value : 'all';
+  if (filter !== 'all') orders = orders.filter(function(o) { return o.status === filter; });
+  var countEl = document.getElementById('ordersCount');
+  if (countEl) countEl.textContent = orders.length + ' order(s)';
+  if (!orders || orders.length === 0) { el.innerHTML = '<div style="color:#888;text-align:center;padding:20px">No orders yet.</div>'; return; }
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:12px;min-width:700px">';
+  html += '<thead><tr style="background:rgba(255,255,255,0.08);text-align:left;color:#ff6b81">' +
+    '<th style="padding:8px 10px">PO#</th>' +
+    '<th style="padding:8px 10px">Date</th>' +
+    '<th style="padding:8px 10px">Customer</th>' +
+    '<th style="padding:8px 10px">Contact</th>' +
+    '<th style="padding:8px 10px">Items</th>' +
+    '<th style="padding:8px 10px">Total</th>' +
+    '<th style="padding:8px 10px">Deposit</th>' +
+    '<th style="padding:8px 10px">Status</th>' +
+    '<th style="padding:8px 10px">Action</th></tr></thead><tbody>';
   orders.forEach(function(o) {
     var items = [];
     try { items = JSON.parse(o.items || '[]'); } catch(e) {}
-    var itemSummary = items.map(function(i) { return (i.name || '') + ' x' + (i.qty || 1); }).join(', ');
+    var itemSummary = items.map(function(i) { return (i.name || '').substring(0, 20) + ' x' + (i.qty || 1); }).join(', ');
     var created = o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '—';
-    var statusColor = o.status === 'confirmed' ? '#2e7d32' : o.status === 'cancelled' ? '#c62828' : '#f57f17';
-    html += '<tr style="border-bottom:1px solid #ddd">';
-    html += '<td style="padding:6px 8px">' + (o.id || o.poNumber || '—') + '</td>';
-    html += '<td style="padding:6px 8px">' + created + '</td>';
-    html += '<td style="padding:6px 8px">' + (o.customerName || '—') + '</td>';
-    html += '<td style="padding:6px 8px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + itemSummary.replace(/"/g, '&quot;') + '">' + itemSummary + '</td>';
-    html += '<td style="padding:6px 8px">' + (o.total || '—') + '</td>';
-    html += '<td style="padding:6px 8px;color:' + statusColor + ';font-weight:600">' + (o.status || '—') + '</td>';
-    html += '<td style="padding:6px 8px">';
+    var statusBadge = '';
+    var statusColor = '';
+    if (o.status === 'pending') { statusBadge = 'Pending'; statusColor = '#f57f17'; }
+    else if (o.status === 'deposit_paid') { statusBadge = 'Deposit Paid'; statusColor = '#1976d2'; }
+    else if (o.status === 'confirmed') { statusBadge = 'Confirmed'; statusColor = '#2e7d32'; }
+    else if (o.status === 'cancelled') { statusBadge = 'Cancelled'; statusColor = '#c62828'; }
+    else { statusBadge = o.status || '—'; statusColor = '#888'; }
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.06)">';
+    html += '<td style="padding:8px 10px;color:#ff6b81;font-weight:600">' + (o.id || o.poNumber || '—') + '</td>';
+    html += '<td style="padding:8px 10px">' + created + '</td>';
+    html += '<td style="padding:8px 10px">' + (o.customerName || '—') + '</td>';
+    html += '<td style="padding:8px 10px">' + (o.customerContact || '—') + '</td>';
+    html += '<td style="padding:8px 10px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + itemSummary.replace(/"/g, '&quot;') + '">' + itemSummary + '</td>';
+    html += '<td style="padding:8px 10px;font-weight:600">' + (o.total || '—') + '</td>';
+    html += '<td style="padding:8px 10px">' + (o.deposit || '—') + '</td>';
+    html += '<td style="padding:8px 10px"><span style="display:inline-block;padding:2px 8px;border-radius:10px;background:' + statusColor + '20;color:' + statusColor + ';font-weight:600;font-size:11px">' + statusBadge + '</span></td>';
+    html += '<td style="padding:8px 10px;white-space:nowrap">';
+    var poSafe = o.id.replace(/'/g, "\\'");
     if (o.status === 'pending') {
-      html += '<button onclick="confirmOrder(\'' + o.id.replace(/'/g, "\\'") + '\')" style="padding:3px 8px;background:#2e7d32;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px;margin-right:4px">Confirm</button>';
-      html += '<button onclick="cancelOrder(\'' + o.id.replace(/'/g, "\\'") + '\')" style="padding:3px 8px;background:#c62828;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px">Cancel</button>';
+      html += '<button onclick="depositPaidOrder(\'' + poSafe + '\')" style="padding:3px 8px;background:#1976d2;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px;margin-right:4px">Deposit Paid</button>';
+      html += '<button onclick="cancelOrder(\'' + poSafe + '\')" style="padding:3px 8px;background:#c62828;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px">Cancel</button>';
+    } else if (o.status === 'deposit_paid') {
+      html += '<button onclick="confirmOrder(\'' + poSafe + '\')" style="padding:3px 8px;background:#2e7d32;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px;margin-right:4px">Confirm</button>';
+      html += '<button onclick="cancelOrder(\'' + poSafe + '\')" style="padding:3px 8px;background:#c62828;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px">Cancel</button>';
     }
     html += '</td></tr>';
   });
   html += '</tbody></table>';
   el.innerHTML = html;
+}
+
+function depositPaidOrder(poNumber) {
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/orders/' + encodeURIComponent(poNumber) + '/deposit-paid', { method: 'POST' })
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      if (j.ok) { showCartNotification('Deposit marked paid: ' + poNumber); loadOrders(); }
+      else showCartNotification('Failed: ' + (j.error || ''));
+    })
+    .catch(function(e) { showCartNotification('Error: ' + (e.message || '')); });
 }
 
 function confirmOrder(poNumber) {
@@ -492,6 +529,42 @@ function cancelOrder(poNumber) {
       else showCartNotification('Cancel failed: ' + (j.error || ''));
     })
     .catch(function(e) { showCartNotification('Cancel error: ' + (e.message || '')); });
+}
+
+function exportOrdersCSV() {
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/orders')
+    .then(function(r) { return r.json(); })
+    .then(function(orders) {
+      if (!orders || orders.length === 0) { showCartNotification('No orders to export.'); return; }
+      var rows = [['PO#','Date','Customer','Contact','Email','Items','Total','Deposit','Status']];
+      orders.forEach(function(o) {
+        var items = [];
+        try { items = JSON.parse(o.items || '[]'); } catch(e) {}
+        var itemStr = items.map(function(i) { return (i.name || '') + ' x' + (i.qty || 1); }).join('; ');
+        rows.push([
+          o.id || o.poNumber || '',
+          o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '',
+          o.customerName || '',
+          o.customerContact || '',
+          o.customerEmail || '',
+          itemStr,
+          o.total || '',
+          o.deposit || '',
+          o.status || ''
+        ]);
+      });
+      var csv = rows.map(function(r) {
+        return r.map(function(c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(',');
+      }).join('\n');
+      var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'orders_' + new Date().toISOString().slice(0,10) + '.csv';
+      a.click();
+      showCartNotification('Orders exported to CSV.');
+    })
+    .catch(function(e) { showCartNotification('Export error: ' + (e.message || '')); });
 }
 // ---- END DEPOSIT & CHECKOUT ----
 
@@ -2606,9 +2679,6 @@ function showAdminPanel() {
   if (emailSection) emailSection.style.display = 'block';
   var emailInput = document.getElementById('adminEmailInput');
   if (emailInput) emailInput.value = adminEmail;
-  var ordersSection = document.getElementById('adminOrdersSection');
-  if (ordersSection) ordersSection.style.display = 'block';
-  loadOrders();
   var syncSection = document.getElementById('adminSyncSettings');
   if (syncSection) syncSection.style.display = 'block';
   renderAdminFilterDropdowns();
