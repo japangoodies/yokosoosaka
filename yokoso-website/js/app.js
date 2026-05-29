@@ -92,7 +92,6 @@ function switchAccountTab(tab) {
     if (lt) lt.classList.remove('active'); if (rt) rt.classList.add('active');
     requestAnimationFrame(function() { var el = document.getElementById('registerName'); if (el && el.focus) el.focus(); });
   }
-  }
 }
 function handleCreateAccount() {
   var name = document.getElementById('registerName'); var address = document.getElementById('registerAddress');
