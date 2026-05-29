@@ -346,11 +346,11 @@ async function handleRequest(request, env) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fields: mappedFields })
       });
+      const respBody = await resp.text().catch(() => '');
       if (!resp.ok) {
-        const text = await resp.text().catch(() => '');
-        throw new Error(`Firestore create order: HTTP ${resp.status} ${text}`);
+        throw new Error(`Firestore create order: HTTP ${resp.status} ${respBody}`);
       }
-      return new Response(JSON.stringify({ ok: true, poNumber: body.poNumber }), { headers: corsHeaders(origin) });
+      return new Response(JSON.stringify({ ok: true, poNumber: body.poNumber, firestoreResponse: respBody }), { headers: corsHeaders(origin) });
     }
 
     // POST /orders/release-expired — find orders older than 24h, restore stock, mark cancelled

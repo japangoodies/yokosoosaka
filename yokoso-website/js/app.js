@@ -406,18 +406,21 @@ function saveOrder() {
       deposit: '₱' + deposit.toFixed(2)
     })
   }).then(function(r) {
-    console.log('[Order] response status:', r.status);
-    if (!r.ok) { 
-      r.text().then(function(t) { console.log('[Order] error body:', t); });
-      showCartNotification('Order save failed (HTTP ' + r.status + ')'); 
-    } else {
-      showCartNotification('Order saved!');
-      // Verify order exists via direct fetch
-      fetch(base + '/orders/' + encodeURIComponent(_checkoutPO))
-        .then(function(r2) { console.log('[Order] verify status:', r2.status); return r2.text(); })
-        .then(function(body2) { console.log('[Order] verify body:', body2); })
-        .catch(function(e) { console.log('[Order] verify error:', e); });
-    }
+    r.text().then(function(body) {
+      console.log('[Order] response status:', r.status, 'body:', body);
+      if (!r.ok) {
+        showCartNotification('Order save failed (HTTP ' + r.status + ')');
+      } else {
+        showCartNotification('Order saved!');
+        var j = JSON.parse(body);
+        console.log('[Order] firestore response:', j.firestoreResponse);
+        // Verify order exists via direct fetch
+        fetch(base + '/orders/' + encodeURIComponent(_checkoutPO))
+          .then(function(r2) { console.log('[Order] verify status:', r2.status); return r2.text(); })
+          .then(function(body2) { console.log('[Order] verify body:', body2); })
+          .catch(function(e) { console.log('[Order] verify error:', e); });
+      }
+    });
   }).catch(function(e) {
     console.log('[Order] fetch error:', e); showCartNotification('Order save error: ' + (e.message || ''));
   });
