@@ -228,17 +228,6 @@ async function kvSaveOrder(env, order) {
   await kvPutOrders(env, orders);
 }
 
-// KV stock cache (avoids Firestore read quota on GET /stocks)
-async function kvGetStockCache(env) {
-  if (!env || !env.ORDERS_KV) return null;
-  return env.ORDERS_KV.get('stock_cache', { type: 'json' }).catch(() => null);
-}
-
-async function kvSetStockCache(env, cache) {
-  if (!env || !env.ORDERS_KV) return;
-  await env.ORDERS_KV.put('stock_cache', JSON.stringify(cache)).catch(() => {});
-}
-
 function serializeStockDoc(doc) {
   const match = doc.name.match(/\/stocks\/([^/]+)$/);
   const id = match ? match[1] : null;
@@ -254,29 +243,52 @@ function serializeStockDoc(doc) {
   return { id, fields, total };
 }
 
-async function buildStockCacheFromFirestore(env) {
+// In-memory stock cache (avoids Firestore reads, consistent within a worker instance)
+let stockMemoryCache = null;
+let stockMemoryCacheTime = 0;
+const STOCK_CACHE_TTL = 120000; // 2 minutes
+
+async function getStocks(env) {
+  // Try memory cache first
+  if (stockMemoryCache && (Date.now() - stockMemoryCacheTime) < STOCK_CACHE_TTL) {
+    return stockMemoryCache;
+  }
+  // Try KV cache next
+  if (env && env.ORDERS_KV) {
+    const kvCache = await env.ORDERS_KV.get('stock_cache', { type: 'json' }).catch(() => null);
+    if (kvCache && kvCache.length > 0) {
+      stockMemoryCache = kvCache;
+      stockMemoryCacheTime = Date.now();
+      return kvCache;
+    }
+  }
+  // Try Firestore
   try {
     const data = await firestoreGet('stocks');
     const docs = (data && data.documents) ? data.documents.map(serializeStockDoc).filter(Boolean) : [];
-    await kvSetStockCache(env, docs);
-    return docs;
-  } catch(e) {
-    return null;
-  }
+    if (docs.length > 0) {
+      stockMemoryCache = docs;
+      stockMemoryCacheTime = Date.now();
+      if (env && env.ORDERS_KV) {
+        await env.ORDERS_KV.put('stock_cache', JSON.stringify(docs)).catch(() => {});
+      }
+      return docs;
+    }
+  } catch(e) {}
+  // If all fail and we have stale memory cache, return it
+  if (stockMemoryCache) return stockMemoryCache;
+  // Last resort: empty array (client will use defaults)
+  return [];
 }
 
-// Update a single product's stock in the KV cache (no Firestore read needed)
-async function kvUpdateStockInCache(env, productId, field, amount) {
-  if (!env || !env.ORDERS_KV) return;
-  const cache = await kvGetStockCache(env);
-  if (!cache) return;
-  const entry = cache.find(d => d.id === productId);
+async function updateStockInMemoryCache(productId, field, amount) {
+  if (!stockMemoryCache) return;
+  const entry = stockMemoryCache.find(d => d.id === productId);
   if (entry) {
     const oldVal = entry.fields[field] || 0;
     entry.fields[field] = Math.max(0, oldVal + amount);
     entry.total = Object.values(entry.fields).reduce((a, b) => a + b, 0);
   }
-  await kvSetStockCache(env, cache);
 }
 
 async function handleRequest(request, env) {
@@ -292,17 +304,7 @@ async function handleRequest(request, env) {
   try {
     // GET /stocks
     if (request.method === 'GET' && parts.length === 1 && parts[0] === 'stocks') {
-      let docs = null;
-      if (env && env.ORDERS_KV) {
-        docs = await kvGetStockCache(env);
-      }
-      if (!docs) {
-        const data = await firestoreGet('stocks').catch(() => null);
-        docs = (data && data.documents) ? data.documents.map(serializeStockDoc).filter(Boolean) : [];
-        if (env && env.ORDERS_KV && docs.length > 0) {
-          await kvSetStockCache(env, docs).catch(() => {});
-        }
-      }
+      const docs = await getStocks(env);
       return new Response(JSON.stringify(docs), { headers: corsHeaders(origin) });
     }
 
@@ -518,7 +520,7 @@ async function handleRequest(request, env) {
           await restoreItemStock(item.productId || item.id, item.size || '', parseInt(item.qty, 10) || 1);
           if (env && env.ORDERS_KV) {
             const field = orderField(item.size || '');
-            await kvUpdateStockInCache(env, String(item.productId || item.id), field, parseInt(item.qty, 10) || 1).catch(() => {});
+            await updateStockInMemoryCache(String(item.productId || item.id), field, parseInt(item.qty, 10) || 1).catch(() => {});
           }
         } catch(e) {}
       }
@@ -560,7 +562,7 @@ async function handleRequest(request, env) {
           await restoreItemStock(item.productId || item.id, item.size || '', parseInt(item.qty, 10) || 1);
           if (env && env.ORDERS_KV) {
             const field = orderField(item.size || '');
-            await kvUpdateStockInCache(env, String(item.productId || item.id), field, parseInt(item.qty, 10) || 1).catch(() => {});
+            await updateStockInMemoryCache(String(item.productId || item.id), field, parseInt(item.qty, 10) || 1).catch(() => {});
           }
         } catch(e) {}
       }
@@ -665,10 +667,10 @@ async function handleRequest(request, env) {
       const r = await firestorePatch(`stocks/${parts[1]}`, fields);
       if (r === null) {
         const created = await firestoreCreate(parts[1], fields);
-        if (env && env.ORDERS_KV) await buildStockCacheFromFirestore(env).catch(() => {});
+        stockMemoryCache = null; stockMemoryCacheTime = 0;
         return new Response(JSON.stringify({ ok: created }), { headers: corsHeaders(origin) });
       }
-      if (env && env.ORDERS_KV) await buildStockCacheFromFirestore(env).catch(() => {});
+      stockMemoryCache = null; stockMemoryCacheTime = 0;
       return new Response(JSON.stringify({ ok: r }), { headers: corsHeaders(origin) });
     }
 
@@ -679,7 +681,7 @@ async function handleRequest(request, env) {
       const field = body.field || 'default';
       const r = await firestoreTransform(parts[1], amount, field);
       if (env && env.ORDERS_KV && r === true) {
-        await kvUpdateStockInCache(env, parts[1], field, amount).catch(() => {});
+        await updateStockInMemoryCache(parts[1], field, amount).catch(() => {});
       }
       if (r === true) {
         const data = await firestoreGet(`stocks/${parts[1]}`).catch(() => null);
@@ -705,7 +707,7 @@ async function handleRequest(request, env) {
       const field = body.field || 'default';
       const r = await firestoreTransform(parts[1], -amount, field);
       if (env && env.ORDERS_KV && r === true) {
-        await kvUpdateStockInCache(env, parts[1], field, -amount).catch(() => {});
+        await updateStockInMemoryCache(parts[1], field, -amount).catch(() => {});
       }
       if (r === true) {
         const data = await firestoreGet(`stocks/${parts[1]}`).catch(() => null);
@@ -756,7 +758,7 @@ async function releaseExpiredOrders(env) {
         await restoreItemStock(item.productId || item.id, item.size || '', parseInt(item.qty, 10) || 1);
         if (env && env.ORDERS_KV) {
           const field = orderField(item.size || '');
-          await kvUpdateStockInCache(env, String(item.productId || item.id), field, parseInt(item.qty, 10) || 1).catch(() => {});
+          await updateStockInMemoryCache(String(item.productId || item.id), field, parseInt(item.qty, 10) || 1).catch(() => {});
         }
       } catch(e) {}
     }
