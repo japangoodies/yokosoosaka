@@ -224,6 +224,35 @@ function saveAdminEmail() {
   showCartNotification('Admin email updated.');
 }
 
+function testAdminEmail() {
+  var input = document.getElementById('adminEmailInput');
+  var status = document.getElementById('adminEmailStatus');
+  if (!input || !status) return;
+  var val = input.value.trim();
+  if (!val) { status.textContent = 'Please enter an email first.'; return; }
+  status.textContent = 'Sending test email...';
+  status.style.color = '#888';
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/cart/test-email?to=' + encodeURIComponent(val))
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      if (j.ok) {
+        status.textContent = 'Test email sent via ' + (j.method || '?') + '! Check ' + val;
+        status.style.color = '#2e7d32';
+        showCartNotification('Test email sent! Check ' + val);
+      } else {
+        status.textContent = 'Failed: ' + (j.error || 'unknown error');
+        status.style.color = '#c62828';
+        showCartNotification('Test email failed: ' + (j.error || 'unknown error'));
+      }
+    })
+    .catch(function(e) {
+      status.textContent = 'Connection error: ' + (e.message || '');
+      status.style.color = '#c62828';
+      showCartNotification('Test email connection error');
+    });
+}
+
 function getDepositAmount() {
   return getCartTotal() * depositPercent / 100;
 }
