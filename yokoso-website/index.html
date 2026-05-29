@@ -64,6 +64,7 @@
       <div class="category-carousel" id="categoryCarousel"></div>
       <div class="filters" id="subcategoryFilterContainer"></div>
       <div class="brand-filter-section" id="brandFilterContainer"></div>
+      <div class="color-filter-section" id="colorFilterContainer"></div>
     </div>
   </section>
 
@@ -221,6 +222,12 @@
                 <label>Brand</label>
                 <select id="formCategory2" required></select>
               </div>
+              <div class="form-group">
+                <label>Color</label>
+                <select id="formColor" required>
+                  <option value="">Select color...</option>
+                </select>
+              </div>
             </div>
             <div class="form-row">
               <div class="form-group">
@@ -277,6 +284,7 @@
             <select id="adminFilterGroup" class="admin-filter-select"><option value="all">All Groups</option></select>
             <select id="adminFilterType" class="admin-filter-select"><option value="all">All Subcategories</option></select>
             <select id="adminFilterBrand" class="admin-filter-select"><option value="all">All Brands</option></select>
+            <select id="adminFilterColor" class="admin-filter-select"><option value="all">All Colors</option></select>
           </div>
           <div class="admin-product-list" id="adminProductList"></div>
         <div class="admin-categories" id="adminCategories" style="display:none">
@@ -338,6 +346,14 @@
                   <button class="btn btn-secondary btn-sm" id="uploadBrandLogoBtn">Upload</button>
                 </div>
                 <div id="brandLogoPreview" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:8px"></div>
+              </div>
+            </div>
+            <div class="admin-category-group">
+              <h4>Colors</h4>
+              <div class="admin-tag-list" id="colorTagList"></div>
+              <div class="admin-add-category">
+                <input type="text" id="newColorInput" placeholder="New color...">
+                <button class="btn btn-primary btn-sm" id="addColorBtn">Add</button>
               </div>
             </div>
             <div class="admin-category-group">

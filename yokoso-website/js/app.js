@@ -652,6 +652,7 @@ function migrateCategoriesConfig(cfg) {
     if (!cfg.subcategoryMap[g.name]) cfg.subcategoryMap[g.name] = [];
   });
   if (!cfg.brands) cfg.brands = [];
+  if (!cfg.colors) cfg.colors = [];
   if (!cfg.sizes) cfg.sizes = [];
   if (!cfg.subcategoryBrands) cfg.subcategoryBrands = {};
   if (!cfg.brandLogos) cfg.brandLogos = {};
@@ -668,14 +669,17 @@ let categoriesConfig = migrateCategoriesConfig({
     "WOMENS": ["Shoes", "Clothing", "Cosmetics"]
   },
   brands: ["Nike", "Uniqlo", "GU", "Biore", "Onitsuka Tiger", "Heroine Make", "Generic"],
+  colors: ["Black", "White", "Navy", "Beige", "Gray"],
   sizes: ["S", "M", "L", "XL", "6", "7", "8", "9", "10", "11", "12", "One Size", "Free Size"]
 });
 
 let currentGroup = 'all';
+let currentColor = 'all';
 let currentBrand = 'all';
 var adminSearchVal = '';
 var adminFilterGroup = 'all';
 var adminFilterType = 'all';
+var adminFilterColor = 'all';
 var adminFilterBrand = 'all';
 
 let products = [];
@@ -799,6 +803,10 @@ function migrateProducts() {
     }
     if (!p.category2) {
       p.category2 = "";
+      migrated = true;
+    }
+    if (!p.color) {
+      p.color = "";
       migrated = true;
     }
     if (!p.sizes) {
@@ -1085,18 +1093,26 @@ function getTypes() {
 }
 
 function getBrands() {
-  var filtered = products.filter(function(p) { return p.available !== false; });
-  if (currentGroup !== 'all') {
-    filtered = filtered.filter(function(p) { return p.category0 === currentGroup; });
-  }
-  if (currentCategory !== 'all') {
-    filtered = filtered.filter(function(p) { return p.category1 === currentCategory; });
-  }
-  var brands = [...new Set(filtered.map(function(p) { return p.category2; }).filter(Boolean))].sort();
-  categoriesConfig.brands.forEach(function(b) {
-    if (brands.indexOf(b) === -1) brands.push(b);
-  });
-  return brands.sort();
+  var fromConfig = categoriesConfig.brands || [];
+  var fromProducts = products.filter(function(p) {
+    if (currentGroup !== 'all' && p.category0 !== currentGroup) return false;
+    if (currentCategory !== 'all' && p.category1 !== currentCategory) return false;
+    return true;
+  }).map(function(p) { return p.category2; }).filter(Boolean);
+  var merged = fromConfig.concat(fromProducts);
+  return merged.filter(function(v, i, a) { return a.indexOf(v) === i; });
+}
+
+function getColors() {
+  var fromConfig = categoriesConfig.colors || [];
+  var fromProducts = products.filter(function(p) {
+    if (currentGroup !== 'all' && p.category0 !== currentGroup) return false;
+    if (currentCategory !== 'all' && p.category1 !== currentCategory) return false;
+    if (currentBrand !== 'all' && p.category2 !== currentBrand) return false;
+    return true;
+  }).map(function(p) { return p.color; }).filter(Boolean);
+  var merged = fromConfig.concat(fromProducts);
+  return merged.filter(function(v, i, a) { return a.indexOf(v) === i; });
 }
 
 function getBrandsForSubcategory(sub) {
@@ -1113,6 +1129,7 @@ function renderFilters() {
   renderCarousel();
   renderSubcategoryFilter();
   renderBrandFilter();
+  renderColorFilter();
 }
 
 function renderSubcategoryFilter() {
@@ -1160,6 +1177,24 @@ function renderBrandFilter() {
   container.innerHTML = html;
 }
 
+function renderColorFilter() {
+  var container = document.getElementById('colorFilterContainer');
+  if (!container) return;
+  if (currentGroup === 'all' || currentCategory === 'all' || currentBrand === 'all') {
+    container.innerHTML = '';
+    return;
+  }
+  var colors = getColors();
+  if (!colors.length) { container.innerHTML = ''; return; }
+  var html = '<div class="color-filter-section">';
+  colors.forEach(function(c) {
+    var active = currentColor === c ? ' active' : '';
+    html += '<button class="filter-btn' + active + '" data-color="' + c + '">' + c + '</button>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
 var cc = document.getElementById('categoryCarousel');
 if (cc) {
   cc.addEventListener('click', function(e) {
@@ -1179,9 +1214,11 @@ document.addEventListener('click', function(e) {
     var brand = brandCard.dataset.brand;
     currentCategory = sub;
     currentBrand = brand;
+    currentColor = 'all';
     openSubcats = {};
     renderSubcategoryFilter();
     document.getElementById('brandFilterContainer').innerHTML = '';
+    renderColorFilter();
     renderProducts();
     return;
   }
@@ -1191,14 +1228,25 @@ document.addEventListener('click', function(e) {
     if (sub === 'all') {
       currentCategory = 'all';
       currentBrand = 'all';
+      currentColor = 'all';
       openSubcats = {};
     } else {
       currentCategory = sub;
       currentBrand = 'all';
+      currentColor = 'all';
       openSubcats = {};
     }
     renderSubcategoryFilter();
     renderBrandFilter();
+    renderColorFilter();
+    renderProducts();
+    return;
+  }
+  var colorBtn = e.target.closest('#colorFilterContainer .filter-btn');
+  if (colorBtn) {
+    var color = colorBtn.dataset.color;
+    currentColor = currentColor === color ? 'all' : color;
+    renderColorFilter();
     renderProducts();
     return;
   }
@@ -1221,6 +1269,9 @@ function renderProducts() {
   }
   if (currentBrand !== 'all') {
     filtered = filtered.filter(function(p) { return p.category2 === currentBrand; });
+  }
+  if (currentColor !== 'all') {
+    filtered = filtered.filter(function(p) { return (p.color || '') === currentColor; });
   }
   if (currentSearch) {
     var q = currentSearch.toLowerCase();
@@ -1257,6 +1308,7 @@ function renderProducts() {
       (p.category0 ? '<div class="product-group">' + p.category0 + '</div>' : '') +
       '<div class="product-category">' + p.category1 + '</div>' +
       brandHtml +
+      (p.color ? '<div class="product-color">' + p.color + '</div>' : '') +
       '<div class="product-name" onclick="openProduct(' + p.id + ')">' + p.name + '</div>' +
       sizesHtml +
       '<div class="product-price">' + p.price + '</div>' +
@@ -1760,7 +1812,7 @@ function openModal(product) {
         '<div style="padding:24px 32px 32px">' +
           '<h2 style="font-size:20px;margin:0 0 4px;line-height:1.3">' + (product.name || '') + '</h2>' +
           '<p style="font-size:18px;font-weight:700;color:#e94560;margin:0 0 4px">' + (product.price || '') + '</p>' +
-          '<p style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:#888;font-weight:600;margin:0 0 8px">' + (product.category0 ? product.category0 + ' / ' : '') + (product.category1 || '') + (product.category2 ? ' · ' + product.category2 : '') + '</p>' +
+          '<p style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:#888;font-weight:600;margin:0 0 8px">' + (product.category0 ? product.category0 + ' / ' : '') + (product.category1 || '') + (product.category2 ? ' · ' + product.category2 : '') + (product.color ? ' · ' + product.color : '') + '</p>' +
           sizesHtml +
           '<p style="color:#666;margin:0 0 16px;line-height:1.6;font-size:14px">' + (product.description || '') + '</p>' +
           '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">' +
@@ -2135,7 +2187,8 @@ function renderAdminList() {
       return (p.name && p.name.toLowerCase().indexOf(q) !== -1) ||
              (p.category0 && p.category0.toLowerCase().indexOf(q) !== -1) ||
              (p.category1 && p.category1.toLowerCase().indexOf(q) !== -1) ||
-             (p.category2 && p.category2.toLowerCase().indexOf(q) !== -1);
+             (p.category2 && p.category2.toLowerCase().indexOf(q) !== -1) ||
+             (p.color && p.color.toLowerCase().indexOf(q) !== -1);
     });
   }
   if (adminFilterGroup !== 'all') {
@@ -2147,6 +2200,9 @@ function renderAdminList() {
   if (adminFilterBrand !== 'all') {
     filtered = filtered.filter(function(p) { return p.category2 === adminFilterBrand; });
   }
+  if (adminFilterColor !== 'all') {
+    filtered = filtered.filter(function(p) { return (p.color || '') === adminFilterColor; });
+  }
   document.getElementById('productCount').textContent = filtered.length;
   if (filtered.length === 0) {
     container.innerHTML = '<p style="color:#888;text-align:center;padding:2rem">' + (products.length === 0 ? 'No products yet. Add your first product!' : 'No products match your filters.') + '</p>';
@@ -2156,6 +2212,7 @@ function renderAdminList() {
     var catStr = p.category1;
     if (p.category0) catStr = p.category0 + ' / ' + catStr;
     if (p.category2) catStr += ' · ' + p.category2;
+    if (p.color) catStr += ' · ' + p.color;
     var sizesStr = p.sizes && p.sizes.length > 0 ? ' · Sizes: ' + p.sizes.join(', ') : '';
     var stockStr = ' · Stock: ' + (p.stock !== undefined ? p.stock : 5);
     return '<div class="admin-product-item" data-id="' + p.id + '">' +
@@ -2212,6 +2269,7 @@ function renderCategoryDropdowns() {
 
   updateSubcategoryDropdown();
   updateBrandDropdown();
+  renderColorDropdown();
   renderSizePresets();
 }
 
@@ -2246,6 +2304,19 @@ function updateBrandDropdown() {
   brandSelect.innerHTML = '<option value="">Select brand...</option>' + allBrands.map(function(b) {
     var sel = b === currentVal ? ' selected' : '';
     return '<option value="' + b + '"' + sel + '>' + b + '</option>';
+  }).join('');
+}
+
+function renderColorDropdown() {
+  var colorSelect = document.getElementById('formColor');
+  if (!colorSelect) return;
+  var colors = categoriesConfig.colors.slice();
+  var usedColors = [...new Set(products.filter(function(p) { return p.color; }).map(function(p) { return p.color; }))];
+  usedColors.forEach(function(c) { if (colors.indexOf(c) === -1) colors.push(c); });
+  var currentVal = colorSelect.value;
+  colorSelect.innerHTML = '<option value="">Select color...</option>' + colors.map(function(c) {
+    var sel = c === currentVal ? ' selected' : '';
+    return '<option value="' + c + '">' + c + '</option>';
   }).join('');
 }
 
@@ -2329,6 +2400,7 @@ function resetForm() {
   _editSizeStock = {};
   renderSizeTags();
   renderSizePresets();
+  renderColorDropdown();
   var ss = document.getElementById('formSizeStock');
   if (ss) ss.style.display = 'none';
 }
@@ -2344,6 +2416,8 @@ function populateForm(product) {
   document.getElementById('formCategory1').value = product.category1 || '';
   updateBrandDropdown();
   document.getElementById('formCategory2').value = product.category2 || '';
+  renderColorDropdown();
+  document.getElementById('formColor').value = product.color || '';
   document.getElementById('formPrice').value = product.price;
   var depEl = document.getElementById('formDeposit');
   if (depEl) depEl.value = product.deposit !== undefined ? product.deposit : '';
@@ -2388,6 +2462,7 @@ if (pf) pf.addEventListener('submit', function(e) {
   var category0 = document.getElementById('formCategory0').value;
   var category1 = document.getElementById('formCategory1').value;
   var category2 = document.getElementById('formCategory2').value;
+  var color = document.getElementById('formColor').value;
   var price = document.getElementById('formPrice').value.trim();
   var description = document.getElementById('formDesc').value.trim();
   if (!name || !category0 || !category1 || !category2 || !price || !description) return;
@@ -2406,7 +2481,7 @@ if (pf) pf.addEventListener('submit', function(e) {
     if (editingId) {
       var idx = products.findIndex(function(p) { return p.id === editingId; });
       if (idx !== -1) {
-        products[idx] = Object.assign({}, products[idx], { name: name, category0: category0, category1: category1, category2: category2, price: price, description: description, images: images, sizes: selectedSizes.slice(), available: document.getElementById('formAvailable').checked, stock: stock, deposit: deposit || undefined });
+        products[idx] = Object.assign({}, products[idx], { name: name, category0: category0, category1: category1, category2: category2, color: color, price: price, description: description, images: images, sizes: selectedSizes.slice(), available: document.getElementById('formAvailable').checked, stock: stock, deposit: deposit || undefined });
         // Update stockMap from per-size inputs if product has sizes
         if (selectedSizes.length > 0) {
           if (!stockMap[products[idx].id]) stockMap[products[idx].id] = {};
@@ -2421,7 +2496,7 @@ if (pf) pf.addEventListener('submit', function(e) {
     } else {
       var maxId = products.length > 0 ? Math.max.apply(null, products.map(function(p) { return p.id; })) : 0;
       var newId = maxId + 1;
-      products.push({ id: newId, name: name, category0: category0, category1: category1, category2: category2, price: price, description: description, images: images, sizes: selectedSizes.slice(), available: document.getElementById('formAvailable').checked, stock: stock, deposit: deposit || undefined });
+      products.push({ id: newId, name: name, category0: category0, category1: category1, category2: category2, color: color, price: price, description: description, images: images, sizes: selectedSizes.slice(), available: document.getElementById('formAvailable').checked, stock: stock, deposit: deposit || undefined });
       // Initialize stockMap for new product with sizes
       if (selectedSizes.length > 0) {
         stockMap[newId] = {};
@@ -2772,6 +2847,7 @@ function renderAdminFilterDropdowns() {
   var groupSelect = document.getElementById('adminFilterGroup');
   var typeSelect = document.getElementById('adminFilterType');
   var brandSelect = document.getElementById('adminFilterBrand');
+  var colorSelect = document.getElementById('adminFilterColor');
   if (!typeSelect || !brandSelect) return;
   if (groupSelect) {
     var groups = getGroups();
@@ -2788,6 +2864,14 @@ function renderAdminFilterDropdowns() {
   brandSelect.innerHTML = '<option value="all">All Brands</option>' + brands.map(function(b) {
     return '<option value="' + b + '"' + (adminFilterBrand === b ? ' selected' : '') + '>' + b + '</option>';
   }).join('');
+  if (colorSelect) {
+    var colors = (categoriesConfig.colors || []).slice();
+    var usedColors = [...new Set(products.filter(function(p) { return p.color; }).map(function(p) { return p.color; }))];
+    usedColors.forEach(function(c) { if (colors.indexOf(c) === -1) colors.push(c); });
+    colorSelect.innerHTML = '<option value="all">All Colors</option>' + colors.map(function(c) {
+      return '<option value="' + c + '"' + (adminFilterColor === c ? ' selected' : '') + '>' + c + '</option>';
+    }).join('');
+  }
 }
 
 var admSearch = document.getElementById('adminSearch');
@@ -2813,6 +2897,12 @@ if (aft) aft.addEventListener('change', function() {
 var afb = document.getElementById('adminFilterBrand');
 if (afb) afb.addEventListener('change', function() {
   adminFilterBrand = this.value;
+  renderAdminList();
+});
+
+var afc = document.getElementById('adminFilterColor');
+if (afc) afc.addEventListener('change', function() {
+  adminFilterColor = this.value;
   renderAdminList();
 });
 
@@ -2915,6 +3005,7 @@ function renderSubcategoryTagList() {
 function renderCategoryManagement() {
   var groupList = document.getElementById('groupTagList');
   var brandList = document.getElementById('brandTagList');
+  var colorList = document.getElementById('colorTagList');
   var sizeList = document.getElementById('sizeTagList');
   if (!groupList || !brandList) return;
 
@@ -2965,6 +3056,11 @@ function renderCategoryManagement() {
   brandList.innerHTML = (categoriesConfig.brands || []).map(function(b) {
     return '<span class="admin-tag"><span class="admin-tag-label" title="Double-click to rename">' + b + '</span><span class="admin-tag-remove" data-brand="' + b + '">×</span></span>';
   }).join('');
+  if (colorList) {
+    colorList.innerHTML = (categoriesConfig.colors || []).map(function(c) {
+      return '<span class="admin-tag"><span class="admin-tag-label" title="Double-click to rename">' + c + '</span><span class="admin-tag-remove" data-color-cat="' + c + '">×</span></span>';
+    }).join('');
+  }
   if (sizeList) {
     sizeList.innerHTML = (categoriesConfig.sizes || []).map(function(s) {
       return '<span class="admin-tag"><span class="admin-tag-label" title="Double-click to rename">' + s + '</span><span class="admin-tag-remove" data-size-cat="' + s + '">×</span></span>';
@@ -3008,6 +3104,21 @@ function renderCategoryManagement() {
     });
     sizeList.querySelectorAll('.admin-tag-label').forEach(function(el) {
       el.addEventListener('dblclick', function() { makeEditableTag(el.parentNode, categoriesConfig.sizes, 'sizes'); });
+    });
+  }
+
+  if (colorList) {
+    colorList.querySelectorAll('.admin-tag-remove').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var c = this.dataset.colorCat;
+        categoriesConfig.colors = categoriesConfig.colors.filter(function(x) { return x !== c; });
+        saveCategoriesConfig();
+        renderCategoryManagement();
+        renderColorDropdown();
+      });
+    });
+    colorList.querySelectorAll('.admin-tag-label').forEach(function(el) {
+      el.addEventListener('dblclick', function() { makeEditableTag(el.parentNode, categoriesConfig.colors, 'colors'); });
     });
   }
 
@@ -3335,6 +3446,22 @@ if (ascb) ascb.addEventListener('click', function() {
 });
 var nsci = document.getElementById('newSizeCatInput');
 if (nsci) nsci.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); var btn = document.getElementById('addSizeCatBtn'); if (btn) btn.click(); } });
+
+var acb = document.getElementById('addColorBtn');
+if (acb) acb.addEventListener('click', function() {
+  var input = document.getElementById('newColorInput');
+  var val = input.value.trim();
+  if (!val) return;
+  if ((categoriesConfig.colors || []).indexOf(val) !== -1) return;
+  categoriesConfig.colors.push(val);
+  input.value = '';
+  saveCategoriesConfig();
+  renderCategoryManagement();
+  renderColorDropdown();
+  renderAdminFilterDropdowns();
+});
+var nci = document.getElementById('newColorInput');
+if (nci) nci.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); var btn = document.getElementById('addColorBtn'); if (btn) btn.click(); } });
 
 // ---- BRAND MAP UI ----
 var bmsp = document.getElementById('brandMapSubcategoryPicker');
