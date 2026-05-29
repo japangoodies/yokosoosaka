@@ -404,10 +404,16 @@ async function handleRequest(request, env) {
 
     // GET /orders — list all orders (same pattern as stocks)
     if (request.method === 'GET' && parts.length === 1 && parts[0] === 'orders') {
-      const data = await firestoreGet('orders').catch(() => null);
-      const docs = (data && data.documents) ? data.documents.map(parseOrderDoc).filter(Boolean) : [];
+      const getResp = await fetch(`${FIRESTORE_BASE}/orders?key=${API_KEY}`).catch(() => null);
+      const getStatus = getResp ? getResp.status : 'no_resp';
+      const getBody = getResp ? await getResp.text().catch(() => 'no_body') : 'no_resp';
+      let data = null, docs = [];
+      if (getResp && getResp.ok) {
+        try { data = JSON.parse(getBody); } catch(e) { data = null; }
+        docs = (data && data.documents) ? data.documents.map(parseOrderDoc).filter(Boolean) : [];
+      }
       docs.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
-      return new Response(JSON.stringify({ count: docs.length, docs: docs }), { headers: corsHeaders(origin) });
+      return new Response(JSON.stringify({ count: docs.length, docs: docs, _debug: { status: getStatus, bodyLength: getBody.length, hasDocuments: data ? !!data.documents : false, responsePreview: getBody.substring(0, 500) } }), { headers: corsHeaders(origin) });
     }
 
     // GET /orders/:poNumber — get single order by PO number
