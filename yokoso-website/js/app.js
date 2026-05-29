@@ -1271,6 +1271,8 @@ document.addEventListener('click', function(e) {
       currentBrand = 'all';
       openSubcats = {};
     } else {
+      currentCategory = sub;
+      currentBrand = 'all';
       openSubcats = {};
     }
     renderSubcategoryFilter();
