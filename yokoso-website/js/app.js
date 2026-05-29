@@ -2648,6 +2648,7 @@ if (pf) pf.addEventListener('submit', function(e) {
         var t = 0;
         for (var c in p.variants) { var s = p.variants[c].stock || {}; for (var k in s) t += s[k]; }
         stockMap[savedId] = { q: t };
+        syncStockToFirestore(savedId);
       }
     }
     saveProducts();
