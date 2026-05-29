@@ -20,15 +20,6 @@
         }
       },
       "Red": {
-        "stock": {
-          "6": 3,
-          "7": 3,
-          "8": 3,
-          "9": 5,
-          "10": 5,
-          "11": 5,
-          "12": 5
-        },
         "sizes": [
           "6",
           "7",
@@ -37,7 +28,16 @@
           "10",
           "11",
           "12"
-        ]
+        ],
+        "stock": {
+          "6": 3,
+          "7": 3,
+          "8": 3,
+          "9": 5,
+          "10": 5,
+          "11": 5,
+          "12": 5
+        }
       },
       "Blue": {
         "sizes": [
@@ -75,7 +75,7 @@
       "One Size",
       "Free Size"
     ],
-    "stock": 87,
+    "stock": 0,
     "price": "₱5,200",
     "description": "Authentic Nike Air Force 1 Low from Japan. Limited Japan-exclusive colorway. Leather upper with Air-Sole cushioning. Sizes 7-12 US.",
     "available": true,
@@ -111,7 +111,7 @@
         }
       }
     },
-    "stock": 15,
+    "stock": 0,
     "sizes": [
       "6",
       "7",
@@ -120,7 +120,7 @@
   },
   {
     "sizes": [],
-    "stock": 9,
+    "stock": 5,
     "variants": {
       "Default": {
         "stock": {
@@ -143,7 +143,7 @@
   },
   {
     "sizes": [],
-    "stock": 10,
+    "stock": 5,
     "variants": {
       "Default": {
         "stock": {
@@ -165,7 +165,7 @@
     "available": true
   },
   {
-    "stock": 10,
+    "stock": 5,
     "sizes": [],
     "category2": "",
     "images": [
@@ -207,7 +207,7 @@
         }
       }
     },
-    "stock": 10,
+    "stock": 5,
     "sizes": []
   },
   {
@@ -230,7 +230,7 @@
         }
       }
     },
-    "stock": 10,
+    "stock": 5,
     "sizes": []
   },
   {
@@ -246,7 +246,7 @@
         }
       }
     },
-    "stock": 10,
+    "stock": 5,
     "sizes": [],
     "available": true,
     "description": "Biore UV Aqua Rich watery essence sunscreen. SPF50+ PA++++. Lightweight, non-sticky, refreshing finish. 80g.",
@@ -258,7 +258,7 @@
   },
   {
     "sizes": [],
-    "stock": 10,
+    "stock": 5,
     "variants": {
       "Default": {
         "stock": {
@@ -281,7 +281,7 @@
   },
   {
     "sizes": [],
-    "stock": 10,
+    "stock": 5,
     "variants": {
       "Default": {
         "stock": {
@@ -322,7 +322,7 @@
         }
       }
     },
-    "stock": 10,
+    "stock": 5,
     "sizes": []
   },
   {
@@ -333,7 +333,7 @@
     "available": true,
     "description": "GU open-front knit cardigan. Soft acrylic blend. Oversized fit. Perfect layering piece for any outfit.",
     "price": "₱1,100",
-    "stock": 10,
+    "stock": 5,
     "sizes": [],
     "category2": "",
     "images": [
@@ -369,7 +369,7 @@
     "category1": "NEW",
     "category2": "",
     "sizes": [],
-    "stock": 10
+    "stock": 5
   },
   {
     "variants": {
@@ -385,7 +385,7 @@
     ],
     "category1": "clothes",
     "sizes": [],
-    "stock": 10,
+    "stock": 5,
     "description": "test",
     "price": "₱5,200",
     "available": true,
@@ -396,7 +396,7 @@
   },
   {
     "sizes": [],
-    "stock": 10,
+    "stock": 5,
     "variants": {
       "Default": {
         "stock": {
