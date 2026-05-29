@@ -420,14 +420,6 @@ async function handleRequest(request, env) {
           .then(function(m) { results.push({ to: 'admin', method: m }); })
           .catch(function(e) { results.push({ to: 'admin', error: e.message }); })
       );
-      // Send to customer if email provided
-      if (body.customerEmail) {
-        sendPromises.push(
-          sendEmail(env, body.customerEmail, 'Your Purchase Order: ' + body.subject, body.text, body.adminEmail)
-            .then(function(m) { results.push({ to: 'customer', method: m }); })
-            .catch(function(e) { results.push({ to: 'customer', error: e.message }); })
-        );
-      }
       await Promise.allSettled(sendPromises);
       return new Response(JSON.stringify({ results }), { headers: corsHeaders(origin) });
     }
