@@ -86,16 +86,53 @@ Now also syncs `data/categories.json` automatically
 - Admin categories grid stacks to single column
 
 ## Known Files
-- `yokoso-website/js/app.js` — All logic (~1865 lines)
-- `yokoso-website/index.html` — Page structure (search in header, carousel, admin form with group)
+- `yokoso-website/js/app.js` — All logic (~3700 lines)
+- `yokoso-website/index.html` — Page structure, now with PWA manifest + apple-touch-icon
 - `yokoso-website/css/style.css` — Styles (carousel, header search, product group badge)
 - `yokoso-website/data/products.json` — Committed product data (with `category0` field)
 - `yokoso-website/data/categories.json` — Committed category config (new `groups`/`subcategoryMap` format)
 - `yokoso-website/maintenance.js` — Maintenance mode toggle (`MAINTENANCE_MODE = false`)
 - `yokoso-website/maintenance.json` — Maintenance settings
+- `yokoso-website/manifest.json` — PWA manifest (app name, icons, theme_color #d32f2f)
+- `yokoso-website/sw.js` — PWA service worker (cache-first for assets, network-first for data)
+- `yokoso-website/images/app-icon-192.png` — PWA icon (192x192, from logo)
+- `yokoso-website/images/app-icon-512.png` — PWA icon (512x512, from logo)
+- `yokoso-website/workers/stock-proxy/index.js` — Cloudflare Worker (stock proxy + orders API)
 
 ## Test Files (can be cleaned up)
 - `yokoso-website/test-*.html` — Various test files created during debugging
+
+## Session History (May 30, 2026)
+
+### Fix: Firebase "undefined" deposit field error
+- **Problem**: `deposit || undefined` passed `undefined` to Firestore when deposit was empty, causing "Unsupported field value: undefined"
+- **Fix**: Changed to conditional `if (deposit) upd.deposit = deposit` in `js/app.js:2631,2637`
+- **Files**: `js/app.js`
+
+### Fix: Admin stock changes not reflecting on customer site
+- **Problem**: When admin edited stock via product form, the proxy (stockMap) was never synced. On page refresh, `loadStockFromFirestore()` loaded old proxy data which overrode the new variants stock.
+- **Fix**: Added `syncStockToFirestore(savedId)` after updating stockMap in the form submit handler (`js/app.js:2651`)
+- **Files**: `js/app.js`
+
+### Change: Product image display from cropped to full
+- **Problem**: `object-fit: cover` cropped images on product cards and modal
+- **Fix**: Changed to `object-fit: contain` and background to `#fff` in CSS and modal inline style
+- **Files**: `css/style.css`, `js/app.js`
+
+### Change: Per-order KV keys (remove 10 MB limit)
+- **Problem**: All orders stored in single KV key `"orders"` — capped at 10 MB
+- **Fix**: Each order stored under its own key `order:{poNumber}`; `kvGetOrders()` uses paginated KV list
+- **Files**: `workers/stock-proxy/index.js`
+
+### Added: `/orders/clear-all` endpoint
+- **Purpose**: One-time route to wipe test orders from KV and Firestore
+- **Files**: `workers/stock-proxy/index.js`
+
+### Added: PWA (Progressive Web App) support
+- **Files created**: `manifest.json`, `sw.js`, `images/app-icon-192.png`, `images/app-icon-512.png`
+- **HTML updated**: manifest link, apple-touch-icon, theme-color meta
+- **JS updated**: service worker registration at end of init
+- **Service worker**: cache-first for static assets, network-first for `data/*.json` and API calls
 
 ## Credentials
 - Admin password: `amped2016`
