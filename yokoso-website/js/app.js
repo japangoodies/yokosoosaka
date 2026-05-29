@@ -446,6 +446,7 @@ function loadOrders() {
   fetch(url)
     .then(function(r) { return r.json(); })
     .then(function(j) {
+      console.log('[Orders] response:', j);
       var orders = Array.isArray(j) ? j : (j.docs || []);
       renderOrders(orders);
     })
