@@ -339,7 +339,9 @@ async function handleRequest(request, env) {
       for (const [k, v] of Object.entries(fields)) {
         mappedFields[k] = { stringValue: String(v) };
       }
-      const resp = await fetch(`${FIRESTORE_BASE}/orders/${docId}?key=${API_KEY}`, {
+      const fieldKeys = Object.keys(fields);
+      const maskParams = fieldKeys.map(k => `updateMask.fieldPaths=${encodeURIComponent(k)}`).join('&');
+      const resp = await fetch(`${FIRESTORE_BASE}/orders/${docId}?key=${API_KEY}&${maskParams}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fields: mappedFields })
