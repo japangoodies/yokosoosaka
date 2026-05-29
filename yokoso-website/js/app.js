@@ -412,6 +412,11 @@ function saveOrder() {
       showCartNotification('Order save failed (HTTP ' + r.status + ')'); 
     } else {
       showCartNotification('Order saved!');
+      // Verify order exists via direct fetch
+      fetch(base + '/orders/' + encodeURIComponent(_checkoutPO))
+        .then(function(r2) { console.log('[Order] verify status:', r2.status); return r2.text(); })
+        .then(function(body2) { console.log('[Order] verify body:', body2); })
+        .catch(function(e) { console.log('[Order] verify error:', e); });
     }
   }).catch(function(e) {
     console.log('[Order] fetch error:', e); showCartNotification('Order save error: ' + (e.message || ''));
