@@ -96,16 +96,16 @@
     "name": "Nike Dunk Low Retro",
     "variants": {
       "Red": {
-        "stock": {
-          "6": 5,
-          "7": 5,
-          "8": 5
-        },
         "sizes": [
           "6",
           "7",
           "8"
-        ]
+        ],
+        "stock": {
+          "6": 3,
+          "7": 10,
+          "8": 6
+        }
       }
     },
     "category1": "Shoes",
