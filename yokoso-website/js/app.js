@@ -60,6 +60,13 @@ function updateAccountUI() {
   }
 }
 function openAccountModal() {
+  // Close cart if open
+  var cartEl = document.getElementById('cartSlideout');
+  var cartOv = document.getElementById('cartOverlay');
+  if (cartEl && cartEl.classList.contains('active')) {
+    cartEl.classList.remove('active');
+    if (cartOv) cartOv.classList.remove('active');
+  }
   var m = document.getElementById('accountModal');
   if (m) {
     m.style.display = 'flex';
