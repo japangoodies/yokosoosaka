@@ -204,28 +204,40 @@ function corsHeaders(origin) {
   };
 }
 
-// KV helpers for orders (bypasses Firestore read quota limits)
+// KV helpers for orders — each order stored under its own key (avoids 10 MB single-key limit)
 async function kvGetOrders(env) {
-  if (!env || !env.ORDERS_KV) return null;
-  const val = await env.ORDERS_KV.get('orders', { type: 'json' }).catch(() => null);
-  return val || {};
+  if (!env || !env.ORDERS_KV) return {};
+  const orders = {};
+  let cursor;
+  do {
+    const list = await env.ORDERS_KV.list({ prefix: 'order:', cursor });
+    for (const key of list.keys) {
+      const val = await env.ORDERS_KV.get(key.name, { type: 'json' }).catch(() => null);
+      if (val) orders[val.poNumber || val.id] = val;
+    }
+    cursor = list.cursor;
+  } while (cursor);
+  return orders;
 }
 
 async function kvPutOrders(env, orders) {
   if (!env || !env.ORDERS_KV) return false;
-  await env.ORDERS_KV.put('orders', JSON.stringify(orders)).catch(() => {});
+  for (const [po, order] of Object.entries(orders)) {
+    await env.ORDERS_KV.put('order:' + po, JSON.stringify(order)).catch(() => {});
+  }
   return true;
 }
 
 async function kvGetOrder(env, poNumber) {
-  const orders = await kvGetOrders(env);
-  return orders ? (orders[poNumber] || null) : null;
+  if (!env || !env.ORDERS_KV) return null;
+  const val = await env.ORDERS_KV.get('order:' + poNumber, { type: 'json' }).catch(() => null);
+  return val || null;
 }
 
 async function kvSaveOrder(env, order) {
-  const orders = await kvGetOrders(env);
-  orders[order.poNumber || order.id] = order;
-  await kvPutOrders(env, orders);
+  if (!env || !env.ORDERS_KV) return;
+  const po = order.poNumber || order.id;
+  await env.ORDERS_KV.put('order:' + po, JSON.stringify(order)).catch(() => {});
 }
 
 function serializeStockDoc(doc) {
