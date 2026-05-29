@@ -364,16 +364,15 @@ function sendOrderEmail() {
   if (!adminEmail) return;
   if (!adminEmail) return;
   var text = getOrderText();
-  var customerEmail = currentUser && currentUser.email ? currentUser.email : '';
   var base = STOCK_PROXY_URL.replace(/\/+$/, '');
-  fetch(base + '/cart/send-order', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({adminEmail:adminEmail, customerEmail:customerEmail, subject:'Purchase Order ' + _checkoutPO, text:text}) })
+  fetch(base + '/cart/send-order', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({adminEmail:adminEmail, customerEmail:'', subject:'Purchase Order ' + _checkoutPO, text:text}) })
     .then(function(r) { return r.json(); })
     .then(function(j) {
       if (j.results) {
         var sent = j.results.filter(function(r) { return r.method; }).length;
         var failed = j.results.filter(function(r) { return r.error; });
         if (sent > 0) {
-          showCartNotification('Order confirmation sent to ' + (customerEmail ? 'your email and ' : '') + 'admin.');
+          showCartNotification('Order confirmation sent to admin.');
         } else if (failed.length > 0) {
           showCartNotification('Auto-email not configured. Use Copy/Email/Messenger buttons below to send manually.');
           console.log('[Checkout] Email send not configured (set RESEND_API_KEY, EMAIL binding, or MAILGUN_API_KEY in worker)');
