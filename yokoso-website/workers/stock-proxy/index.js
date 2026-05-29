@@ -325,20 +325,24 @@ async function handleRequest(request, env) {
       const docId = encodeURIComponent(body.poNumber);
       const now = new Date().toISOString();
       const fields = {
-        poNumber: { stringValue: body.poNumber },
-        status: { stringValue: 'pending' },
-        createdAt: { stringValue: now },
-        items: { stringValue: JSON.stringify(body.items) },
-        customerName: { stringValue: body.customerName || '' },
-        customerEmail: { stringValue: body.customerEmail || '' },
-        customerContact: { stringValue: body.customerContact || '' },
-        total: { stringValue: body.total || '' },
-        deposit: { stringValue: body.deposit || '' }
+        poNumber: body.poNumber,
+        status: 'pending',
+        createdAt: now,
+        items: JSON.stringify(body.items),
+        customerName: body.customerName || '',
+        customerEmail: body.customerEmail || '',
+        customerContact: body.customerContact || '',
+        total: body.total || '',
+        deposit: body.deposit || ''
       };
-      const resp = await fetch(`${FIRESTORE_BASE}/orders?key=${API_KEY}&documentId=${docId}`, {
-        method: 'POST',
+      const mappedFields = {};
+      for (const [k, v] of Object.entries(fields)) {
+        mappedFields[k] = { stringValue: String(v) };
+      }
+      const resp = await fetch(`${FIRESTORE_BASE}/orders/${docId}?key=${API_KEY}`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields })
+        body: JSON.stringify({ fields: mappedFields })
       });
       if (!resp.ok) {
         const text = await resp.text().catch(() => '');
