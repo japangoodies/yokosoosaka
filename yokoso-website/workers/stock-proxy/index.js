@@ -171,10 +171,11 @@ async function sendEmail(env, to, subject, text, fromAddr) {
     return 'email_binding';
   }
   if (env && env.RESEND_API_KEY) {
+    const resendFrom = env.RESEND_FROM || 'onboarding@resend.dev';
     const resp = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: fromAddr, to: [to], subject, text })
+      body: JSON.stringify({ from: resendFrom, to: [to], subject, text })
     });
     if (!resp.ok) {
       const errText = await resp.text().catch(() => '');
