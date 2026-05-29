@@ -365,6 +365,18 @@ async function handleRequest(request, env) {
       return new Response(JSON.stringify({ ok: true, poNumber: parts[1], status: 'confirmed' }), { headers: corsHeaders(origin) });
     }
 
+    // POST /orders/:poNumber/deposit-paid — mark deposit as paid
+    if (request.method === 'POST' && parts.length === 3 && parts[0] === 'orders' && parts[2] === 'deposit-paid') {
+      const docId = encodeURIComponent(parts[1]);
+      const resp = await fetch(`${FIRESTORE_BASE}/orders/${docId}?key=${API_KEY}&updateMask.fieldPaths=status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: { status: { stringValue: 'deposit_paid' } } })
+      });
+      if (!resp.ok) throw new Error(`Deposit paid order: HTTP ${resp.status}`);
+      return new Response(JSON.stringify({ ok: true, poNumber: parts[1], status: 'deposit_paid' }), { headers: corsHeaders(origin) });
+    }
+
     // POST /orders/:poNumber/cancel — cancel order and restore stock
     if (request.method === 'POST' && parts.length === 3 && parts[0] === 'orders' && parts[2] === 'cancel') {
       const data = await firestoreGet(`orders/${encodeURIComponent(parts[1])}`).catch(() => null);

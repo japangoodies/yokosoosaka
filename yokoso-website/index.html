@@ -139,6 +139,7 @@
           <button class="btn btn-secondary" id="manageCategoriesBtn">Categories</button>
           <button class="btn btn-secondary" id="syncSettingsBtn">Auto Sync</button>
           <button class="btn btn-secondary" id="usersBtn" onclick="toggleUsersPanel()">Users</button>
+          <button class="btn btn-secondary" onclick="toggleOrdersPanel()">Orders</button>
           <button class="btn btn-secondary" id="backToPublicBtn">Back</button>
         </div>
       </div>
@@ -182,12 +183,21 @@
         </div>
       </div>
 
-      <div class="admin-orders" style="display:none;padding:12px 20px;background:#f8f9fa;border-bottom:1px solid #dee2e6" id="adminOrdersSection">
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <strong style="font-size:14px">Orders</strong>
+      <div class="admin-orders" style="display:none;padding:12px 20px;background:#1a1a2e;border-bottom:1px solid #333" id="adminOrdersSection">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+          <strong style="font-size:15px;color:#ff6b81">Orders</strong>
+          <select id="ordersFilterStatus" onchange="loadOrders()" style="padding:4px 8px;border:1px solid #555;border-radius:4px;background:rgba(255,255,255,0.06);color:#ccc;font-size:12px">
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="deposit_paid">Deposit Paid</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
           <button type="button" onclick="loadOrders()" style="padding:4px 12px;background:#1976d2;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px">Refresh</button>
+          <button type="button" onclick="exportOrdersCSV()" style="padding:4px 12px;background:#2e7d32;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px">Export CSV</button>
+          <span id="ordersCount" style="font-size:11px;color:#888"></span>
         </div>
-        <div id="ordersList" style="margin-top:8px;font-size:12px;color:#333;max-height:400px;overflow-y:auto"></div>
+        <div id="ordersList" style="font-size:12px;color:#ccc;max-height:500px;overflow-y:auto;background:rgba(255,255,255,0.03);border-radius:6px;padding:8px"></div>
       </div>
 
       <div class="admin-layout">
