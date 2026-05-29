@@ -28,12 +28,12 @@ body {
 
 /* Header */
 .header {
-  background: #ffffff;
-  border-bottom: 1px solid #e8e8ed;
+  background: #F8C361;
+  border-bottom: 1px solid #f0f0f2;
   position: sticky;
   top: 0;
   z-index: 100;
-  padding: 0.9rem 0;
+  padding: 0;
 }
 
 .header-content {
