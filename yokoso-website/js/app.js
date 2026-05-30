@@ -1605,15 +1605,6 @@ function renderProducts() {
 function goToPage(newPage) {
   mainPage = newPage;
   renderProducts();
-  requestAnimationFrame(function() {
-    var first = document.querySelector('#productGrid .product-card');
-    if (first) {
-      var headerH = document.querySelector('.header') ? document.querySelector('.header').offsetHeight : 60;
-      var filterH = document.querySelector('.search-filter') ? document.querySelector('.search-filter').offsetHeight : 50;
-      var top = first.getBoundingClientRect().top + window.scrollY - headerH - filterH;
-      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-    }
-  });
 }
 
 // ---- PROXY-BASED REAL-TIME STOCK ----
@@ -2085,7 +2076,7 @@ function renderModalMedia(src) {
   if (isVideoUrl(src)) {
     return '<video src="' + src + '" controls style="width:100%;height:500px;object-fit:contain;background:#000" playsinline></video>';
   }
-  return '<img src="' + src + '" style="width:100%;height:500px;object-fit:contain;background:#fff;cursor:pointer" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
+  return '<img id="modalMainImg" src="' + src + '" style="width:100%;height:500px;object-fit:contain;background:#fff;cursor:pointer" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
 }
 
 function modalGoTo(index) {
