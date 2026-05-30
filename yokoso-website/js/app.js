@@ -1603,11 +1603,17 @@ function renderProducts() {
 }
 
 function goToPage(newPage) {
-  var grid = document.getElementById('productGrid');
-  if (grid) grid.style.minHeight = grid.offsetHeight + 'px';
   mainPage = newPage;
   renderProducts();
-  if (grid) setTimeout(function() { grid.style.minHeight = ''; }, 100);
+  requestAnimationFrame(function() {
+    var first = document.querySelector('#productGrid .product-card');
+    if (first) {
+      var headerH = document.querySelector('.header') ? document.querySelector('.header').offsetHeight : 60;
+      var filterH = document.querySelector('.search-filter') ? document.querySelector('.search-filter').offsetHeight : 50;
+      var top = first.getBoundingClientRect().top + window.scrollY - headerH - filterH;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    }
+  });
 }
 
 // ---- PROXY-BASED REAL-TIME STOCK ----
