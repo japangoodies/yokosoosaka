@@ -1603,10 +1603,24 @@ function renderProducts() {
 }
 
 function goToPage(newPage) {
-  var sy = window.scrollY;
   mainPage = newPage;
   renderProducts();
-  if (sy > 0) window.scrollTo(0, sy);
+  if (window.innerWidth > 768) {
+    var first = document.querySelector('#productGrid .product-card');
+    if (first) {
+      var headerH = document.querySelector('.header') ? document.querySelector('.header').offsetHeight : 60;
+      var filterH = document.querySelector('.search-filter') ? document.querySelector('.search-filter').offsetHeight : 50;
+      first.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.scrollBy(0, -headerH - filterH);
+    }
+  } else {
+    var sy = window.scrollY;
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        window.scrollTo(0, sy);
+      });
+    });
+  }
 }
 
 // ---- PROXY-BASED REAL-TIME STOCK ----
@@ -2168,18 +2182,20 @@ function openModal(product) {
       if (card) { card.style.maxWidth = '100%'; card.style.borderRadius = '0'; card.style.maxHeight = '100vh'; }
       var closeBtn = overlay.querySelector('button');
       if (closeBtn) closeBtn.classList.add('modal-close-mobile');
-      if (mImg) {
-        (function(el) {
-          var mx = 0;
-          el.addEventListener('touchstart', function(e) { mx = e.touches[0].clientX; }, { passive: true });
-          el.addEventListener('touchend', function(e) {
-            var dx = e.changedTouches[0].clientX - mx;
-            if (Math.abs(dx) > 30) {
-              if (dx < 0) modalNav(1); else modalNav(-1);
-            }
-          }, { passive: true });
-        })(mImg);
-      }
+      (function() {
+        var mx = 0;
+        overlay.addEventListener('touchstart', function(e) {
+          if (e.target.id === 'modalMainImg') mx = e.touches[0].clientX;
+        }, { passive: true });
+        overlay.addEventListener('touchend', function(e) {
+          if (e.target.id !== 'modalMainImg') return;
+          var dx = e.changedTouches[0].clientX - mx;
+          if (Math.abs(dx) > 30) {
+            e.preventDefault();
+            if (dx < 0) modalNav(1); else modalNav(-1);
+          }
+        }, { passive: false });
+      })();
     }
     lockBody();
     startModalAutoPlay();
