@@ -113,8 +113,8 @@ function handleCreateAccount() {
     .then(function(r){ return r.json(); })
     .then(function(j){
       if (j.ok) {
-        saveSession({name:j.name, address:j.address, contact:j.contact, email: j.email || ''});
-        localStorage.setItem('yokoso_account_credentials', JSON.stringify({name:j.name, address:j.address, contact:j.contact, email: j.email || '', password: p}));
+        saveSession({name:j.name, address:j.address, contact:j.contact, email: j.email || '', admin: false});
+        localStorage.setItem('yokoso_account_credentials', JSON.stringify({name:j.name, address:j.address, contact:j.contact, email: j.email || '', password: p, admin: false}));
         closeAccountModal();
         showCartNotification('Account created! Welcome, ' + j.name + '!');
       } else {
@@ -134,9 +134,10 @@ function handleLogin() {
     .then(function(r){ return r.json(); })
     .then(function(j){
       if (j.ok) {
-        saveSession({name:j.name, address:j.address, contact:j.contact, email: j.email || ''});
+        saveSession({name:j.name, address:j.address, contact:j.contact, email: j.email || '', admin: j.admin || false});
         closeAccountModal();
         showCartNotification('Welcome back, ' + j.name + '!');
+        if (j.admin) showAdminPanel();
       } else {
         // Fallback: if Firestore is unavailable (quota exceeded), try cached credentials
         if (j.error === 'Account not found' || j.error === 'Invalid password') {
@@ -145,9 +146,10 @@ function handleLogin() {
             try {
               var d = JSON.parse(creds);
               if (d.contact === c && d.password === p) {
-                saveSession({name:d.name, address:d.address, contact:d.contact, email:d.email || ''});
+                saveSession({name:d.name, address:d.address, contact:d.contact, email:d.email || '', admin: d.admin || false});
                 closeAccountModal();
                 showCartNotification('Welcome back, ' + d.name + '! (offline mode)');
+                if (d.admin) showAdminPanel();
                 return;
               }
             } catch(e) {}
@@ -161,6 +163,12 @@ function handleLogin() {
 function handleLogout() {
   var name = currentUser ? currentUser.name : '';
   clearSession();
+  var overlay = document.getElementById('maintenanceOverlay');
+  if (overlay && overlay.classList.contains('active')) {
+    overlay.classList.remove('active');
+    document.getElementById('maintenancePublic').style.display = '';
+    document.getElementById('adminPanel').style.display = 'none';
+  }
   showCartNotification('Logged out' + (name ? ', ' + name : '') + '.');
 }
 // ---- END ACCOUNT ----
@@ -186,15 +194,21 @@ function loadUsers() {
         list.innerHTML = '<p style="color:#888">No registered users yet.</p>';
         return;
       }
-      var html = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 80px;gap:4px;font-weight:600;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);color:#ff6b81;font-size:0.8rem">' +
-        '<span>Name</span><span>Contact</span><span>Email</span><span>Address</span><span style="text-align:center">Action</span></div>';
+      var html = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 60px 120px;gap:4px;font-weight:600;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);color:#ff6b81;font-size:0.8rem">' +
+        '<span>Name</span><span>Contact</span><span>Email</span><span>Address</span><span style="text-align:center">Admin</span><span style="text-align:center">Actions</span></div>';
       users.forEach(function(u) {
-        html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 80px;gap:4px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.8rem;align-items:center">' +
+        var isAdmin = u.admin === true || u.admin === 'true';
+        var escContact = u.contact.replace(/'/g, "\\'");
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 60px 120px;gap:4px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.8rem;align-items:center">' +
           '<span>' + (u.name || '-') + '</span>' +
           '<span>' + (u.contact || '-') + '</span>' +
           '<span>' + (u.email || '-') + '</span>' +
           '<span style="font-size:0.75rem;color:#aaa">' + (u.address || '-') + '</span>' +
-          '<span style="text-align:center"><button onclick="resetPassword(\'' + u.contact.replace(/'/g, "\\'") + '\')" style="padding:2px 8px;border:none;border-radius:3px;background:#e94560;color:#fff;font-size:0.7rem;cursor:pointer">Reset</button></span></div>';
+          '<span style="text-align:center"><span style="color:' + (isAdmin ? '#4caf50' : '#666') + ';font-weight:' + (isAdmin ? '600' : '400') + '">' + (isAdmin ? 'Yes' : 'No') + '</span></span>' +
+          '<span style="text-align:center;display:flex;gap:4px;justify-content:center">' +
+          '<button onclick="toggleAdminRole(\'' + escContact + '\')" style="padding:2px 8px;border:none;border-radius:3px;background:' + (isAdmin ? '#e94560' : '#4caf50') + ';color:#fff;font-size:0.7rem;cursor:pointer">' + (isAdmin ? 'Demote' : 'Make Admin') + '</button>' +
+          '<button onclick="deleteUser(\'' + escContact + '\')" style="padding:2px 8px;border:none;border-radius:3px;background:#c62828;color:#fff;font-size:0.7rem;cursor:pointer">Delete</button>' +
+          '<button onclick="resetPassword(\'' + escContact + '\')" style="padding:2px 8px;border:none;border-radius:3px;background:#e94560;color:#fff;font-size:0.7rem;cursor:pointer">Reset</button></span></div>';
       });
       html += '<div style="margin-top:8px;font-size:0.75rem;color:#888">Total: ' + users.length + ' user(s)</div>';
       list.innerHTML = html;
@@ -202,6 +216,31 @@ function loadUsers() {
     .catch(function() {
       list.innerHTML = '<p style="color:#c62828">Failed to load users. Check worker connection.</p>';
     });
+}
+function toggleAdminRole(contact) {
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/accounts/' + encodeURIComponent(contact) + '/admin', { method:'POST' })
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      if (j.ok) {
+        alert('Admin role ' + (j.admin ? 'granted' : 'removed') + ' for ' + contact + '!');
+        loadUsers();
+      } else { alert(j.error || 'Failed to toggle admin role.'); }
+    })
+    .catch(function() { alert('Network error.'); });
+}
+function deleteUser(contact) {
+  if (!confirm('Are you sure you want to delete user ' + contact + '? This cannot be undone.')) return;
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/accounts/' + encodeURIComponent(contact), { method:'DELETE' })
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      if (j.ok) {
+        alert('User ' + contact + ' deleted.');
+        loadUsers();
+      } else { alert(j.error || 'Failed to delete user.'); }
+    })
+    .catch(function() { alert('Network error.'); });
 }
 function resetPassword(contact) {
   var newPass = prompt('Enter new password for ' + contact + ':');
@@ -3005,10 +3044,18 @@ function syncCategoriesToGitHub() {
 }
 
 // Navigation between public and admin view
-const ADMIN_PASSWORD = 'amped2016';
 
 function showAdminPanel() {
-  if (prompt('Enter admin password:') !== ADMIN_PASSWORD) return;
+  if (!currentUser) {
+    openAccountModal();
+    var loginError = document.getElementById('accountLoginError');
+    if (loginError) loginError.textContent = 'Please log in with an admin account.';
+    return;
+  }
+  if (!currentUser.admin) {
+    alert('This account does not have admin access.');
+    return;
+  }
   // Release expired orders (older than 24h)
   releaseExpiredOrders();
   // Migrate localStorage data if not yet synced
@@ -3728,6 +3775,7 @@ loadProducts(function() {
   updateAccountUI();
   loadDepositConfig();
   parseURLParams();
+  if (currentUser && currentUser.admin) showAdminPanel();
   loadStockFromFirestore(function() {
     renderFilters();
     renderProducts();
