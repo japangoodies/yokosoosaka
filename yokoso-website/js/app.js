@@ -3118,6 +3118,8 @@ if (sgp) sgp.addEventListener('change', function() {
 
 var backBtn = document.getElementById('backToPublicBtn');
 if (backBtn) backBtn.addEventListener('click', function() {
+  document.getElementById('maintenanceOverlay').classList.remove('active');
+  document.getElementById('maintenancePublic').style.display = '';
   document.getElementById('adminPanel').style.display = 'none';
   adminSearchVal = '';
   adminFilterGroup = 'all';
