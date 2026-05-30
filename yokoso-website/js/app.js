@@ -596,7 +596,14 @@ function depositPaidOrder(poNumber) {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ to: contact, message: msg })
-            }).catch(function() {});
+            }).then(function(r) {
+              return r.json();
+            }).then(function(j) {
+              if (!j.ok) console.error('WhatsApp error:', j.error);
+              else console.log('WhatsApp sent to', contact);
+            }).catch(function(e) {
+              console.error('WhatsApp fetch failed:', e);
+            });
           }
           loadOrders();
         });
