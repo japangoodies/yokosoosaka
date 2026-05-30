@@ -1580,6 +1580,8 @@ function renderProducts() {
       if (!isNaN(id)) addToCart(id, color);
     });
   });
+  var gridTop = document.getElementById('productGrid');
+  if (gridTop) gridTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ---- PROXY-BASED REAL-TIME STOCK ----
