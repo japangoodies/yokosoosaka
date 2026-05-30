@@ -1469,7 +1469,7 @@ document.addEventListener('click', function(e) {
     openSubcats = {};
     renderSubcategoryFilter();
     document.getElementById('brandFilterContainer').innerHTML = '';
-    mainPage = 1; renderProducts(true);
+    mainPage = 1; renderProducts();
     return;
   }
   var subBtn = e.target.closest('#subcategoryFilterContainer .filter-btn');
@@ -1486,7 +1486,7 @@ document.addEventListener('click', function(e) {
     }
     renderSubcategoryFilter();
     renderBrandFilter();
-    mainPage = 1; renderProducts(true);
+    mainPage = 1; renderProducts();
     return;
   }
 });
@@ -1521,7 +1521,7 @@ function renderProducts() {
   }
   var totalFiltered = filtered.length;
   var totalPages = Math.max(1, Math.ceil(totalFiltered / mainLimit));
-  if (mainPage > totalPages) { mainPage = totalPages; renderProducts(false); return; }
+  if (mainPage > totalPages) { mainPage = totalPages; renderProducts(); return; }
   var start = (mainPage - 1) * mainLimit;
   var pageItems = filtered.slice(start, start + mainLimit);
 
@@ -1595,14 +1595,10 @@ function renderProducts() {
     var prevDisabled = mainPage <= 1;
     var nextDisabled = mainPage >= totalPages;
     pag.innerHTML =
-      '<button style="padding:6px 14px;background:' + (prevDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (prevDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (prevDisabled ? '0.4' : '1') + '"' + (prevDisabled ? '' : ' onclick="mainPage--;renderProducts(true)"') + '>‹ Prev</button>' +
+      '<button style="padding:6px 14px;background:' + (prevDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (prevDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (prevDisabled ? '0.4' : '1') + '"' + (prevDisabled ? '' : ' onclick="mainPage--;renderProducts()"') + '>‹ Prev</button>' +
       '<span style="font-size:13px;color:#aaa">' + mainPage + ' / ' + totalPages + '</span>' +
-      '<button style="padding:6px 14px;background:' + (nextDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (nextDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (nextDisabled ? '0.4' : '1') + '"' + (nextDisabled ? '' : ' onclick="mainPage++;renderProducts(true)"') + '>Next ›</button>';
+      '<button style="padding:6px 14px;background:' + (nextDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (nextDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (nextDisabled ? '0.4' : '1') + '"' + (nextDisabled ? '' : ' onclick="mainPage++;renderProducts()"') + '>Next ›</button>';
     grid.appendChild(pag);
-  }
-  if (arguments.length > 0 && arguments[0] === true) {
-    var gridTop = document.getElementById('productGrid');
-    if (gridTop) gridTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
@@ -2523,7 +2519,7 @@ document.addEventListener('keydown', e => {
 var si = document.getElementById('searchInput');
 if (si) si.addEventListener('input', e => {
   currentSearch = e.target.value;
-  mainPage = 1; renderProducts(true);
+  mainPage = 1; renderProducts();
 });
 
 function doSearch(e) {
@@ -3338,7 +3334,7 @@ if (backBtn) backBtn.addEventListener('click', function() {
   if (si) si.value = '';
   renderAdminList();
   renderFilters();
-  mainPage = 1; renderProducts(true);
+  mainPage = 1; renderProducts();
 });
 
 var selectedSubcategoryGroup = '';
@@ -3923,7 +3919,7 @@ function parseURLParams() {
         currentBrand = 'all';
         renderSubcategoryFilter();
         renderBrandFilter();
-  mainPage = 1; renderProducts(true);
+  mainPage = 1; renderProducts();
       };
     }
     var cc = document.getElementById('categoryCarousel');
@@ -3948,9 +3944,6 @@ loadProducts(function() {
     subscribeStockUpdates();
     updateCartBadge();
   });
-  // Prevent browser from restoring previous scroll position (common on mobile)
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  window.scrollTo(0, 0);
 });
 
 // Register service worker for PWA
