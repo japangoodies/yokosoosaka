@@ -3791,6 +3791,12 @@ loadProducts(function() {
   });
 });
 
+// Clear any browser autofill in search input
+setTimeout(function() {
+  var si = document.getElementById('searchInput');
+  if (si && si.value) { si.value = ''; currentSearch = ''; }
+}, 100);
+
 // Register service worker for PWA
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function() {});
