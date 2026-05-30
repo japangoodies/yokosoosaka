@@ -3179,6 +3179,9 @@ if (backBtn) backBtn.addEventListener('click', function() {
   adminFilterGroup = 'all';
   adminFilterType = 'all';
   adminFilterBrand = 'all';
+  currentSearch = '';
+  var si = document.getElementById('searchInput');
+  if (si) si.value = '';
   renderAdminList();
   renderFilters();
   renderProducts();
@@ -3790,12 +3793,6 @@ loadProducts(function() {
     updateCartBadge();
   });
 });
-
-// Clear any browser autofill in search input
-setTimeout(function() {
-  var si = document.getElementById('searchInput');
-  if (si && si.value) { si.value = ''; currentSearch = ''; }
-}, 100);
 
 // Register service worker for PWA
 if ('serviceWorker' in navigator) {
