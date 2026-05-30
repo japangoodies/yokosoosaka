@@ -589,6 +589,15 @@ function depositPaidOrder(poNumber) {
           syncAllStockToFirestore();
           renderProducts();
           showCartNotification('Deposit marked paid: ' + poNumber);
+          var contact = order.customerContact || '';
+          if (contact) {
+            var msg = '✅ Deposit Confirmed!\n\nHi ' + (order.customerName || 'there') + ', your deposit of ' + (order.deposit || '') + ' for order ' + poNumber + ' has been received. Your items are now being processed!\n\nThank you for shopping with JapanGoodies!';
+            fetch(base + '/notifications/whatsapp', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ to: contact, message: msg })
+            }).catch(function() {});
+          }
           loadOrders();
         });
     })
