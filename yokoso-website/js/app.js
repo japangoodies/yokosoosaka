@@ -1595,11 +1595,19 @@ function renderProducts() {
     var prevDisabled = mainPage <= 1;
     var nextDisabled = mainPage >= totalPages;
     pag.innerHTML =
-      '<button style="padding:6px 14px;background:' + (prevDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (prevDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (prevDisabled ? '0.4' : '1') + '"' + (prevDisabled ? '' : ' onclick="mainPage--;renderProducts()"') + '>‹ Prev</button>' +
+      '<button style="padding:6px 14px;background:' + (prevDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (prevDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (prevDisabled ? '0.4' : '1') + '"' + (prevDisabled ? '' : ' onclick="goToPage(mainPage-1)"') + '>‹ Prev</button>' +
       '<span style="font-size:13px;color:#aaa">' + mainPage + ' / ' + totalPages + '</span>' +
-      '<button style="padding:6px 14px;background:' + (nextDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (nextDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (nextDisabled ? '0.4' : '1') + '"' + (nextDisabled ? '' : ' onclick="mainPage++;renderProducts()"') + '>Next ›</button>';
+      '<button style="padding:6px 14px;background:' + (nextDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (nextDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (nextDisabled ? '0.4' : '1') + '"' + (nextDisabled ? '' : ' onclick="goToPage(mainPage+1)"') + '>Next ›</button>';
     grid.appendChild(pag);
   }
+}
+
+function goToPage(newPage) {
+  var grid = document.getElementById('productGrid');
+  if (grid) grid.style.minHeight = grid.offsetHeight + 'px';
+  mainPage = newPage;
+  renderProducts();
+  if (grid) setTimeout(function() { grid.style.minHeight = ''; }, 100);
 }
 
 // ---- PROXY-BASED REAL-TIME STOCK ----
