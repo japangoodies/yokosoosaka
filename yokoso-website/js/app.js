@@ -3109,7 +3109,7 @@ function showAdminPanel() {
   document.getElementById('adminPanel').style.display = 'block';
   var emailInput = document.getElementById('adminEmailInput');
   if (emailInput) emailInput.value = adminEmail;
-  switchAdminTab('products');
+  switchAdminTab('orders');
   renderAdminFilterDropdowns();
   renderAdminList();
 }
