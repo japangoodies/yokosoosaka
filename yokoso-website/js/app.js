@@ -844,7 +844,7 @@ let categoriesConfig = migrateCategoriesConfig({
 let currentGroup = 'all';
 let currentBrand = 'all';
 var mainPage = 1;
-var _initialRender = true;
+
 var mainLimit = 24;
 var adminSearchVal = '';
 var adminFilterGroup = 'all';
@@ -1469,7 +1469,7 @@ document.addEventListener('click', function(e) {
     openSubcats = {};
     renderSubcategoryFilter();
     document.getElementById('brandFilterContainer').innerHTML = '';
-    mainPage = 1; renderProducts();
+    mainPage = 1; renderProducts(true);
     return;
   }
   var subBtn = e.target.closest('#subcategoryFilterContainer .filter-btn');
@@ -1486,7 +1486,7 @@ document.addEventListener('click', function(e) {
     }
     renderSubcategoryFilter();
     renderBrandFilter();
-    mainPage = 1; renderProducts();
+    mainPage = 1; renderProducts(true);
     return;
   }
 });
@@ -1521,7 +1521,7 @@ function renderProducts() {
   }
   var totalFiltered = filtered.length;
   var totalPages = Math.max(1, Math.ceil(totalFiltered / mainLimit));
-  if (mainPage > totalPages) { mainPage = totalPages; renderProducts(); return; }
+  if (mainPage > totalPages) { mainPage = totalPages; renderProducts(false); return; }
   var start = (mainPage - 1) * mainLimit;
   var pageItems = filtered.slice(start, start + mainLimit);
 
@@ -1595,16 +1595,15 @@ function renderProducts() {
     var prevDisabled = mainPage <= 1;
     var nextDisabled = mainPage >= totalPages;
     pag.innerHTML =
-      '<button style="padding:6px 14px;background:' + (prevDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (prevDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (prevDisabled ? '0.4' : '1') + '"' + (prevDisabled ? '' : ' onclick="mainPage--;renderProducts()"') + '>‹ Prev</button>' +
+      '<button style="padding:6px 14px;background:' + (prevDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (prevDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (prevDisabled ? '0.4' : '1') + '"' + (prevDisabled ? '' : ' onclick="mainPage--;renderProducts(true)"') + '>‹ Prev</button>' +
       '<span style="font-size:13px;color:#aaa">' + mainPage + ' / ' + totalPages + '</span>' +
-      '<button style="padding:6px 14px;background:' + (nextDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (nextDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (nextDisabled ? '0.4' : '1') + '"' + (nextDisabled ? '' : ' onclick="mainPage++;renderProducts()"') + '>Next ›</button>';
+      '<button style="padding:6px 14px;background:' + (nextDisabled ? '#444' : '#555') + ';color:#fff;border:none;border-radius:6px;cursor:' + (nextDisabled ? 'default' : 'pointer') + ';font-size:13px;opacity:' + (nextDisabled ? '0.4' : '1') + '"' + (nextDisabled ? '' : ' onclick="mainPage++;renderProducts(true)"') + '>Next ›</button>';
     grid.appendChild(pag);
   }
-  if (!_initialRender) {
+  if (arguments.length > 0 && arguments[0] === true) {
     var gridTop = document.getElementById('productGrid');
     if (gridTop) gridTop.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-  _initialRender = false;
 }
 
 // ---- PROXY-BASED REAL-TIME STOCK ----
@@ -2524,7 +2523,7 @@ document.addEventListener('keydown', e => {
 var si = document.getElementById('searchInput');
 if (si) si.addEventListener('input', e => {
   currentSearch = e.target.value;
-  mainPage = 1; renderProducts();
+  mainPage = 1; renderProducts(true);
 });
 
 function doSearch(e) {
@@ -3339,7 +3338,7 @@ if (backBtn) backBtn.addEventListener('click', function() {
   if (si) si.value = '';
   renderAdminList();
   renderFilters();
-  mainPage = 1; renderProducts();
+  mainPage = 1; renderProducts(true);
 });
 
 var selectedSubcategoryGroup = '';
@@ -3924,7 +3923,7 @@ function parseURLParams() {
         currentBrand = 'all';
         renderSubcategoryFilter();
         renderBrandFilter();
-        mainPage = 1; renderProducts();
+  mainPage = 1; renderProducts(true);
       };
     }
     var cc = document.getElementById('categoryCarousel');
