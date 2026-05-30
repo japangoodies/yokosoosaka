@@ -1009,13 +1009,6 @@ body {
   display: grid;
   grid-template-columns: 380px 1fr;
   gap: 2rem;
-  height: calc(100vh - 100px);
-  min-height: 0;
-}
-.admin-layout > .admin-list {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
 }
 
 .admin-form h3, .admin-list h3 {
@@ -1263,10 +1256,7 @@ body {
 }
 
 .admin-product-list {
-  flex: 1;
-  overflow-y: auto;
   padding-right: 0.5rem;
-  min-height: 0;
 }
 
 .admin-product-item {
