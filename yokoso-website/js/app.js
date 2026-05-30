@@ -95,8 +95,12 @@ function switchAccountTab(tab) {
     if (lt) lt.classList.add('active'); if (rt) rt.classList.remove('active');
     requestAnimationFrame(function() { var el = document.getElementById('loginContact'); if (el && el.focus) el.focus(); });
   } else {
+    // Clear register form to prevent browser autofill
+    var regFields = ['registerName','registerAddress','registerContact','registerEmail','registerPassword'];
+    regFields.forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
     if (lf) lf.style.display = 'none'; if (rf) rf.style.display = 'block';
     if (lt) lt.classList.remove('active'); if (rt) rt.classList.add('active');
+    if (typeof turnstile !== 'undefined') turnstile.reset();
     requestAnimationFrame(function() { var el = document.getElementById('registerName'); if (el && el.focus) el.focus(); });
   }
 }
