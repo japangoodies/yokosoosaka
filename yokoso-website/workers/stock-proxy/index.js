@@ -19,7 +19,7 @@ async function firestorePatch(path, fields) {
   const url = `${FIRESTORE_BASE}/${path}?key=${API_KEY}&${maskParams}`;
   const mappedFields = {};
   for (const [k, v] of Object.entries(fields)) {
-    if (k === 'passwordHash') {
+    if (k === 'passwordHash' || k === 'admin') {
       mappedFields[k] = { stringValue: String(v) };
     } else {
       mappedFields[k] = { integerValue: String(v) };
@@ -160,7 +160,7 @@ function parseAccountDoc(doc) {
   for (const [key, val] of Object.entries(doc.fields)) {
     fields[key] = val.stringValue || val.integerValue || '';
   }
-  return fields.contact ? { name: fields.name || '', address: fields.address || '', contact: fields.contact, email: fields.email || '' } : null;
+  return fields.contact ? { name: fields.name || '', address: fields.address || '', contact: fields.contact, email: fields.email || '', admin: fields.admin === 'true' } : null;
 }
 
 async function sendEmail(env, to, subject, text, fromAddr) {
@@ -227,7 +227,7 @@ async function sendWhatsApp(env, to, message) {
 function corsHeaders(origin) {
   return {
     'Access-Control-Allow-Origin': origin || '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json'
   };
@@ -376,7 +376,8 @@ async function handleRequest(request, env) {
         name: { stringValue: body.name },
         address: { stringValue: body.address },
         contact: { stringValue: body.contact },
-        passwordHash: { stringValue: passwordHash }
+        passwordHash: { stringValue: passwordHash },
+        admin: { stringValue: 'false' }
       };
       if (body.email) fields.email = { stringValue: body.email };
       const resp = await fetch(url, {
@@ -388,7 +389,7 @@ async function handleRequest(request, env) {
         const text = await resp.text().catch(() => '');
         throw new Error(`Firestore create account: HTTP ${resp.status} ${text}`);
       }
-      return new Response(JSON.stringify({ ok: true, name: body.name, address: body.address, contact: body.contact, email: body.email || '' }), { headers: corsHeaders(origin) });
+      return new Response(JSON.stringify({ ok: true, name: body.name, address: body.address, contact: body.contact, email: body.email || '', admin: false }), { headers: corsHeaders(origin) });
     }
 
     // POST /accounts/login
@@ -407,7 +408,7 @@ async function handleRequest(request, env) {
         return new Response(JSON.stringify({ error: 'Invalid password' }), { status: 401, headers: corsHeaders(origin) });
       }
       const acct = parseAccountDoc(data);
-      return new Response(JSON.stringify({ ok: true, ...acct }), { headers: corsHeaders(origin) });
+      return new Response(JSON.stringify({ ok: true, ...acct, admin: acct ? acct.admin : false }), { headers: corsHeaders(origin) });
     }
 
     // GET /accounts (list all)
@@ -437,6 +438,37 @@ async function handleRequest(request, env) {
       const r = await firestorePatch(`accounts/${encodeURIComponent(parts[1])}`, { passwordHash });
       if (r === null) {
         return new Response(JSON.stringify({ error: 'Account not found' }), { status: 404, headers: corsHeaders(origin) });
+      }
+      return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders(origin) });
+    }
+
+    // POST /accounts/:contact/admin — toggle admin role
+    if (request.method === 'POST' && parts.length === 3 && parts[0] === 'accounts' && parts[2] === 'admin') {
+      const existing = await firestoreGet(`accounts/${encodeURIComponent(parts[1])}`).catch(() => null);
+      if (!existing || !existing.fields) {
+        return new Response(JSON.stringify({ error: 'Account not found' }), { status: 404, headers: corsHeaders(origin) });
+      }
+      const currentAdmin = existing.fields.admin ? existing.fields.admin.stringValue || 'false' : 'false';
+      const newAdmin = currentAdmin === 'true' ? 'false' : 'true';
+      const r = await firestorePatch(`accounts/${encodeURIComponent(parts[1])}`, { admin: newAdmin });
+      if (r === null) {
+        return new Response(JSON.stringify({ error: 'Account not found' }), { status: 404, headers: corsHeaders(origin) });
+      }
+      return new Response(JSON.stringify({ ok: true, admin: newAdmin === 'true' }), { headers: corsHeaders(origin) });
+    }
+
+    // DELETE /accounts/:contact — delete account
+    if (request.method === 'DELETE' && parts.length === 2 && parts[0] === 'accounts') {
+      const existing = await firestoreGet(`accounts/${encodeURIComponent(parts[1])}`).catch(() => null);
+      if (!existing || !existing.fields) {
+        return new Response(JSON.stringify({ error: 'Account not found' }), { status: 404, headers: corsHeaders(origin) });
+      }
+      const resp = await fetch(`${FIRESTORE_BASE}/accounts/${encodeURIComponent(parts[1])}?key=${API_KEY}`, {
+        method: 'DELETE'
+      });
+      if (!resp.ok) {
+        const text = await resp.text().catch(() => '');
+        throw new Error(`Firestore delete account: HTTP ${resp.status} ${text}`);
       }
       return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders(origin) });
     }
