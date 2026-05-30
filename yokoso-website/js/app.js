@@ -1603,8 +1603,10 @@ function renderProducts() {
 }
 
 function goToPage(newPage) {
+  var sy = window.scrollY;
   mainPage = newPage;
   renderProducts();
+  if (sy > 0) window.scrollTo(0, sy);
 }
 
 // ---- PROXY-BASED REAL-TIME STOCK ----
@@ -2151,9 +2153,14 @@ function openModal(product) {
     '</div>';
     
     document.body.appendChild(overlay);
-    var mImg = overlay.querySelector('#modalMainImg');
-    if (mImg) { mImg.addEventListener('click', function(e) { currentModalImages = _modalImages.slice(); currentImageIndex = _modalImageIdx; openFullscreen(); }); }
-    overlay.addEventListener('click', function(e) { if (e.target === this) closeLiveModal(); });
+    overlay.addEventListener('click', function(e) {
+      if (e.target.id === 'modalMainImg') {
+        currentModalImages = _modalImages.slice();
+        currentImageIndex = _modalImageIdx;
+        openFullscreen();
+      }
+      if (e.target === this) closeLiveModal();
+    });
     if (window.innerWidth <= 768) {
       overlay.style.padding = '0';
       overlay.style.alignItems = 'stretch';
