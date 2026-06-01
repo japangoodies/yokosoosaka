@@ -480,7 +480,7 @@ function facebookLoginClick() {
         handleSocialLogin('facebook', me.email || me.id + '@facebook.com', me.name, me.id);
       }
     });
-  }, { scope: 'public_profile,email' });
+  }, { scope: 'public_profile' });
 }
 setTimeout(initSocialLogin, 500);
 
