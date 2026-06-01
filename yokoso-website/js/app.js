@@ -76,6 +76,7 @@ function openAccountModal() {
     requestAnimationFrame(function() {
       var el = document.getElementById('loginContact');
       if (el) el.focus();
+      if (typeof FB !== 'undefined' && FB.XFBML) { try { FB.XFBML.parse(); } catch(e) {} }
     });
   }
 }
