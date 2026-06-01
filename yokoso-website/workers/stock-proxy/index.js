@@ -758,30 +758,6 @@ async function handleRequest(request, env) {
       return new Response(JSON.stringify({ results }), { headers: corsHeaders(origin) });
     }
 
-    // POST /auth/facebook/callback
-    if (request.method === 'POST' && parts.length === 3 && parts[0] === 'auth' && parts[1] === 'facebook' && parts[2] === 'callback') {
-      const body = await request.json().catch(() => ({}));
-      if (!body.code || !body.redirectUri || !body.appId || !body.appSecret) {
-        return new Response(JSON.stringify({ error: 'code, redirectUri, appId, and appSecret required' }), { status: 400, headers: corsHeaders(origin) });
-      }
-      try {
-        const tokenUrl = 'https://graph.facebook.com/v18.0/oauth/access_token?client_id=' + encodeURIComponent(body.appId) + '&redirect_uri=' + encodeURIComponent(body.redirectUri) + '&client_secret=' + encodeURIComponent(body.appSecret) + '&code=' + encodeURIComponent(body.code);
-        const tokenRes = await fetch(tokenUrl);
-        const tokenData = await tokenRes.json();
-        if (!tokenData.access_token) {
-          return new Response(JSON.stringify({ error: tokenData.error_description || tokenData.error || 'Failed to get access token' }), { status: 502, headers: corsHeaders(origin) });
-        }
-        const meRes = await fetch('https://graph.facebook.com/me?fields=name,id&access_token=' + encodeURIComponent(tokenData.access_token));
-        const meData = await meRes.json();
-        if (!meData.name || !meData.id) {
-          return new Response(JSON.stringify({ error: meData.error && meData.error.message || 'Failed to get user info' }), { status: 502, headers: corsHeaders(origin) });
-        }
-        return new Response(JSON.stringify({ ok: true, name: meData.name, id: meData.id }), { headers: corsHeaders(origin) });
-      } catch (e) {
-        return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders(origin) });
-      }
-    }
-
     // POST /notifications/telegram
     if (request.method === 'POST' && parts.length === 2 && parts[0] === 'notifications' && parts[1] === 'telegram') {
       const body = await request.json().catch(() => ({}));
