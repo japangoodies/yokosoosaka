@@ -181,7 +181,8 @@ function showCustomerOrders() {
   var overlay = document.getElementById('customerOrdersModal');
   var list = document.getElementById('customerOrdersList');
   if (!overlay || !list) return;
-  overlay.style.display = 'flex';
+  overlay.style.display = 'block';
+  document.body.style.overflow = 'hidden';
   list.innerHTML = 'Loading...';
   if (!currentUser || !currentUser.email) { list.innerHTML = '<div style="color:#888;padding:20px;text-align:center">No email on file.</div>'; return; }
   var base = STOCK_PROXY_URL.replace(/\/+$/, '');
@@ -194,12 +195,17 @@ function showCustomerOrders() {
         var items = [];
         try { items = JSON.parse(o.items || '[]'); } catch(e) {}
         var itemsHtml = items.map(function(i) {
+          var ip = parseFloat(i.price);
+          if (isNaN(ip)) ip = 0;
           return '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px;border-bottom:1px solid #f0f0f0">' +
             '<span>' + escapeHtml(i.name) + (i.color ? ' (' + escapeHtml(i.color) + ')' : '') + (i.size && i.size !== 'q' ? '/' + i.size : '') + ' x' + i.qty + '</span>' +
-            '<span>\u20b1' + (i.price * i.qty).toFixed(2) + '</span></div>';
+            '<span>\u20b1' + (ip * i.qty).toFixed(2) + '</span></div>';
         }).join('');
         var statusColors = { pending: '#f59e0b', 'deposit-paid': '#3b82f6', confirmed: '#22c55e', cancelled: '#ef4444' };
         var statusColor = statusColors[o.status] || '#888';
+        var totalVal = parseFloat(o.total);
+        if (isNaN(totalVal)) totalVal = items.reduce(function(s, it) { return s + (parseFloat(it.price) || 0) * (it.qty || 0); }, 0);
+        var depVal = parseFloat(o.deposit);
         return '<div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;margin-bottom:10px;background:#fafafa">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
           '<strong style="font-size:14px">' + escapeHtml(o.poNumber || '') + '</strong>' +
@@ -207,9 +213,9 @@ function showCustomerOrders() {
           '<div style="font-size:12px;color:#666;margin-bottom:6px">' + (o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '') + '</div>' +
           itemsHtml +
           '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:bold;padding-top:4px;margin-top:4px;border-top:2px solid #e0e0e0">' +
-          '<span>Total</span><span>' + escapeHtml(o.total || '') + '</span></div>' +
-          (o.deposit ? '<div style="display:flex;justify-content:space-between;font-size:12px;color:#666">' +
-          '<span>Deposit</span><span>' + escapeHtml(o.deposit) + '</span></div>' : '') +
+          '<span>Total</span><span>\u20b1' + totalVal.toFixed(2) + '</span></div>' +
+          (!isNaN(depVal) ? '<div style="display:flex;justify-content:space-between;font-size:12px;color:#666">' +
+          '<span>Deposit</span><span>\u20b1' + depVal.toFixed(2) + '</span></div>' : '') +
           '</div>';
       }).join('');
       list.innerHTML = html;
@@ -219,6 +225,7 @@ function showCustomerOrders() {
 function closeCustomerOrders() {
   var overlay = document.getElementById('customerOrdersModal');
   if (overlay) overlay.style.display = 'none';
+  document.body.style.overflow = '';
 }
 function escapeHtml(str) {
   if (!str) return '';
@@ -2877,62 +2884,7 @@ function openFullscreen() {
     var img = document.createElement('img');
     img.dataset.src = currentModalImages[i];
     if (Math.abs(i - currentImageIndex) <= 1) img.src = currentModalImages[i];
-    img.style.cssText = 'max-width:100vw;max-height:100vh;object-fit:contain;user-select:none;transition:transform 0.1s;transform-origin:0 0';
-    img._scale = 1; img._tx = 0; img._ty = 0;
-    img.addEventListener('touchstart', function(e) {
-      if (e.touches.length === 2) {
-        e.preventDefault();
-        var mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-        var my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-        var rect = this.getBoundingClientRect();
-        this._pinchOriginX = mx - rect.left;
-        this._pinchOriginY = my - rect.top;
-        var dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-        this._pinchDist = dist;
-        this._pinchScale = this._scale;
-        this._pinchTx = this._tx;
-        this._pinchTy = this._ty;
-      } else if (e.touches.length === 1 && this._scale > 1) {
-        this._panStartX = e.touches[0].clientX;
-        this._panStartY = e.touches[0].clientY;
-        this._panTx = this._tx;
-        this._panTy = this._ty;
-      }
-    }, { passive: false });
-    img.addEventListener('touchmove', function(e) {
-      if (e.touches.length === 2) {
-        e.preventDefault();
-        var mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-        var my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-        var rect = this.getBoundingClientRect();
-        var ox = mx - rect.left, oy = my - rect.top;
-        var dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-        var newScale = Math.max(1, Math.min(5, this._pinchScale * (dist / this._pinchDist)));
-        var ratio = newScale / this._pinchScale;
-        this._tx = this._pinchTx * ratio + ox * (1 - ratio);
-        this._ty = this._pinchTy * ratio + oy * (1 - ratio);
-        this._scale = newScale;
-        this.style.transform = 'translate(' + this._tx + 'px,' + this._ty + 'px) scale(' + newScale + ')';
-      } else if (e.touches.length === 1 && this._scale > 1) {
-        e.preventDefault();
-        this._tx = this._panTx + (e.touches[0].clientX - this._panStartX);
-        this._ty = this._panTy + (e.touches[0].clientY - this._panStartY);
-        this.style.transform = 'translate(' + this._tx + 'px,' + this._ty + 'px) scale(' + this._scale + ')';
-      }
-    }, { passive: false });
-    img.addEventListener('touchend', function(e) {
-      if (e.changedTouches.length === 1 && !this._pinchDist) {
-        var now = Date.now();
-        var last = parseInt(this.dataset.lastTap || '0', 10);
-        if (now - last < 300) {
-          if (this._scale > 1) { this._scale = 1; this._tx = 0; this._ty = 0; this.style.transform = ''; this.dataset.lastTap = '0'; }
-          else { this._scale = 2.5; this._tx = 0; this._ty = 0; this.style.transform = 'scale(2.5)'; this.dataset.lastTap = '0'; }
-          return;
-        }
-        this.dataset.lastTap = String(now);
-      }
-      this._pinchDist = null;
-    }, { passive: true });
+    img.style.cssText = 'max-width:100vw;max-height:100vh;object-fit:contain;user-select:none';
     slides.push(img);
     slide.appendChild(img);
     track.appendChild(slide);
@@ -2953,8 +2905,6 @@ function openFullscreen() {
   counter.textContent = (currentImageIndex + 1) + ' / ' + currentModalImages.length;
   ov.appendChild(counter);
   ov.addEventListener('click', function(e) { if (e.target === this) closeFullscreen(); });
-  document.documentElement.style.touchAction = 'none';
-  document.body.style.overscrollBehavior = 'none';
   lockBody();
   try { history.pushState({fullscreen: true}, '', '#fullscreen'); } catch (e) {}
 }
@@ -2962,8 +2912,6 @@ function openFullscreen() {
 function closeFullscreen() {
   var ov = document.getElementById('liveFullscreen');
   if (ov) ov.remove();
-  document.documentElement.style.touchAction = '';
-  document.body.style.overscrollBehavior = '';
   var modal = document.getElementById('productModal');
   var live = document.getElementById('liveModal');
   if ((!modal || !modal.classList.contains('active')) && !live) unlockBody();

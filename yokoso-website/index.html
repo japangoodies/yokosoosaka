@@ -547,10 +547,10 @@
     </div>
   </div>
 
-  <div id="customerOrdersModal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeCustomerOrders()">
-    <div style="background:#fff;border-radius:8px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;margin:40px auto;padding:20px;position:relative">
-      <button onclick="closeCustomerOrders()" style="position:absolute;top:10px;right:14px;border:none;background:none;font-size:1.5rem;cursor:pointer">&times;</button>
-      <h3 style="margin:0 0 16px">My Orders</h3>
+  <div id="customerOrdersModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:2000;background:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch" onclick="if(event.target===this)closeCustomerOrders()">
+    <div style="max-width:600px;margin:0 auto;padding:60px 16px 40px;position:relative;min-height:100vh;box-sizing:border-box">
+      <button onclick="closeCustomerOrders()" style="position:fixed;top:12px;right:16px;border:none;background:rgba(0,0,0,0.06);font-size:1.5rem;cursor:pointer;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:10">&times;</button>
+      <h3 style="margin:0 0 20px;font-size:1.2rem">My Orders</h3>
       <div id="customerOrdersList" style="min-height:60px">Loading...</div>
     </div>
   </div>
