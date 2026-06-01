@@ -1,30 +1,14 @@
 [
   {
     "category0": "MENS",
-    "category2": "Nike",
     "color": "Black",
-    "sizes": [],
     "variants": {
-      "Green": {
-        "sizes": [
-          "6",
-          "7",
-          "8",
-          "9"
-        ],
-        "stock": {
-          "6": 0,
-          "7": 2,
-          "8": 5,
-          "9": 5
-        }
-      },
       "Red": {
         "stock": {
           "6": 0,
           "7": 0,
           "8": 0,
-          "9": 5,
+          "9": 4,
           "10": 5,
           "11": 5,
           "12": 5,
@@ -43,6 +27,20 @@
           "Free Size"
         ]
       },
+      "Green": {
+        "sizes": [
+          "6",
+          "7",
+          "8",
+          "9"
+        ],
+        "stock": {
+          "6": 0,
+          "7": 2,
+          "8": 5,
+          "9": 5
+        }
+      },
       "Blue": {
         "sizes": [
           "6",
@@ -59,14 +57,7 @@
       }
     },
     "deposit": "500",
-    "stock": 57,
-    "_colorOrder": [
-      "Green",
-      "Blue",
-      "Red"
-    ],
-    "description": "test",
-    "price": "₱5,200",
+    "category1": "Shoes",
     "images": [
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780155255/r8ypyehq36jg7l0x9yxx.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780155255/zq3ncmd7pgpraebj9uam.jpg",
@@ -74,24 +65,21 @@
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780155255/yajgjkaz9h97rzzdnbmc.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780155255/mudb5byhxbh11aw1tp3z.jpg"
     ],
-    "id": 16,
-    "category1": "Shoes",
+    "description": "test",
+    "sizes": [],
+    "stock": 56,
+    "category2": "Nike",
+    "price": "₱5,200",
     "name": "Air Max 97 (Japan Exclusive)",
-    "available": true
+    "id": 16,
+    "available": true,
+    "_colorOrder": [
+      "Green",
+      "Blue",
+      "Red"
+    ]
   },
   {
-    "available": true,
-    "category1": "Shoes",
-    "name": "Dunk High Retro",
-    "price": "₱497",
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "id": 17,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
     "variants": {
       "Default": {
         "stock": {
@@ -99,18 +87,36 @@
         }
       }
     },
-    "stock": 8,
-    "category2": "Adidas",
     "category0": "MENS",
+    "color": "White",
+    "category1": "Shoes",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "stock": 8,
     "sizes": [],
-    "color": "White"
+    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
+    "category2": "Adidas",
+    "price": "₱497",
+    "name": "Dunk High Retro",
+    "id": 17,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true
   },
   {
-    "color": "Beige",
-    "sizes": [],
-    "category2": "New Balance",
-    "category0": "MENS",
+    "id": 18,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "price": "₱614",
+    "name": "Air Jordan 1 Low",
     "stock": 15,
+    "sizes": [],
+    "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
+    "category2": "New Balance",
     "variants": {
       "Default": {
         "stock": {
@@ -118,72 +124,77 @@
         }
       }
     },
+    "category0": "MENS",
+    "color": "Beige",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 18,
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
-    "price": "₱614",
-    "category1": "Shoes",
-    "name": "Air Jordan 1 Low",
-    "available": true
+    "category1": "Shoes"
   },
   {
-    "images": [
-      "images/products/placeholder.svg"
-    ],
+    "price": "₱731",
+    "name": "Blazer Mid '77",
     "id": 19,
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
-    "price": "₱731",
-    "category1": "Clothing",
-    "name": "Blazer Mid '77",
-    "available": true,
-    "color": "Beige",
-    "sizes": [],
-    "category0": "MENS",
-    "category2": "Uniqlo",
-    "stock": 22,
     "variants": {
       "Default": {
         "stock": {
           "q": 22
         }
       }
-    }
-  },
-  {
-    "id": 20,
+    },
+    "color": "Beige",
+    "category0": "MENS",
+    "category1": "Clothing",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "price": "₱848",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "available": true,
-    "name": "Air Force 1 Mid",
-    "category1": "Clothing",
     "sizes": [],
-    "color": "Black",
-    "category0": "MENS",
-    "category2": "GU",
-    "stock": 29,
+    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
+    "stock": 22,
+    "category2": "Uniqlo"
+  },
+  {
     "variants": {
       "Default": {
         "stock": {
           "q": 29
         }
       }
-    }
+    },
+    "category0": "MENS",
+    "color": "Black",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Clothing",
+    "stock": 29,
+    "sizes": [],
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
+    "category2": "GU",
+    "price": "₱848",
+    "name": "Air Force 1 Mid",
+    "id": 20,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true
   },
   {
+    "name": "Ultraboost 22",
+    "price": "₱965",
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 21,
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Clothing",
     "variants": {
       "Default": {
         "stock": {
@@ -191,29 +202,24 @@
         }
       }
     },
-    "stock": 36,
     "category0": "MENS",
-    "category2": "Supreme",
-    "sizes": [],
     "color": "White",
-    "available": true,
-    "category1": "Clothing",
-    "name": "Ultraboost 22",
-    "price": "₱965",
-    "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "id": 21,
-    "images": [
-      "images/products/placeholder.svg"
-    ]
+    "category2": "Supreme",
+    "stock": 36,
+    "sizes": [],
+    "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item."
   },
   {
     "category2": "Nike",
-    "category0": "MENS",
+    "stock": 43,
+    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
     "sizes": [],
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Shoes",
     "color": "Pink",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
@@ -221,25 +227,21 @@
         }
       }
     },
-    "stock": 43,
-    "price": "₱1082",
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
     "_colorOrder": [
       "Default"
     ],
-    "id": 22,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
     "available": true,
+    "id": 22,
     "name": "NMD_R1 Primeknit",
-    "category1": "Shoes"
+    "price": "₱1082"
   },
   {
-    "category0": "MENS",
-    "category2": "Adidas",
+    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
     "sizes": [],
+    "stock": 50,
+    "category2": "Adidas",
     "color": "Pink",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
@@ -247,60 +249,60 @@
         }
       }
     },
-    "stock": 50,
-    "price": "₱1199",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
-    "id": 23,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "available": true,
     "category1": "Shoes",
+    "id": 23,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "price": "₱1199",
     "name": "Superstar (Japan Edition)"
   },
   {
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "id": 24,
+    "name": "Gazelle (Made in Japan)",
+    "price": "₱1316",
     "category2": "Uniqlo",
-    "category0": "MENS",
-    "color": "White",
+    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
     "sizes": [],
+    "stock": 7,
+    "category1": "Clothing",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "color": "White",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
           "q": 7
         }
       }
-    },
-    "stock": 7,
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "price": "₱1316",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 24,
-    "name": "Gazelle (Made in Japan)",
-    "category1": "Clothing",
-    "available": true
+    }
   },
   {
-    "name": "Forum Low",
-    "category1": "Clothing",
     "available": true,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 25,
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
+    "id": 25,
+    "name": "Forum Low",
     "price": "₱1433",
+    "category2": "GU",
+    "sizes": [],
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
     "stock": 14,
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Clothing",
     "variants": {
       "Default": {
         "stock": {
@@ -308,12 +310,19 @@
         }
       }
     },
-    "color": "Pink",
-    "sizes": [],
     "category0": "MENS",
-    "category2": "GU"
+    "color": "Pink"
   },
   {
+    "price": "₱1550",
+    "name": "550 (Japan Exclusive)",
+    "id": 26,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": false,
+    "category0": "WOMENS",
+    "color": "",
     "variants": {
       "Default": {
         "stock": {
@@ -321,67 +330,55 @@
         }
       }
     },
-    "stock": 21,
-    "category2": "Shiseido",
-    "category0": "WOMENS",
-    "color": "",
-    "sizes": [],
-    "name": "550 (Japan Exclusive)",
     "category1": "Cosmetics",
-    "available": false,
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
-    "price": "₱1550",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 26
+    "stock": 21,
+    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
+    "sizes": [],
+    "category2": "Shiseido"
   },
   {
-    "id": 27,
+    "category2": "SK-II",
+    "stock": 28,
+    "sizes": [],
+    "description": "Authentic Japanese cosmetics from SK-II. Limited Japan-exclusive item.",
+    "category1": "Cosmetics",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "price": "₱1667",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese cosmetics from SK-II. Limited Japan-exclusive item.",
-    "available": true,
-    "category1": "Cosmetics",
-    "name": "574 Classic",
-    "sizes": [],
-    "color": "",
-    "category2": "SK-II",
-    "category0": "WOMENS",
-    "stock": 28,
     "variants": {
       "Default": {
         "stock": {
           "q": 28
         }
       }
-    }
-  },
-  {
+    },
+    "category0": "WOMENS",
+    "color": "",
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
-    "price": "₱1784",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 28,
-    "category1": "Accessories",
-    "name": "990v5 Made in Japan",
     "available": true,
-    "category0": "MENS",
-    "category2": "G-Shock",
-    "color": "Red",
+    "id": 27,
+    "name": "574 Classic",
+    "price": "₱1667"
+  },
+  {
+    "id": 28,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "price": "₱1784",
+    "name": "990v5 Made in Japan",
+    "stock": 35,
+    "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
     "sizes": [],
+    "category2": "G-Shock",
+    "category0": "MENS",
+    "color": "Red",
     "variants": {
       "Default": {
         "stock": {
@@ -389,14 +386,14 @@
         }
       }
     },
-    "stock": 35
+    "category1": "Accessories",
+    "images": [
+      "images/products/placeholder.svg"
+    ]
   },
   {
     "color": "Silver",
-    "sizes": [],
     "category0": "MENS",
-    "category2": "Lily Brown",
-    "stock": 42,
     "variants": {
       "Default": {
         "stock": {
@@ -404,21 +401,29 @@
         }
       }
     },
+    "category1": "Accessories",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 29,
-    "_colorOrder": [
-      "Default"
-    ],
     "description": "Authentic Japanese accessories from Lily Brown. Limited Japan-exclusive item.",
+    "sizes": [],
+    "stock": 42,
+    "category2": "Lily Brown",
     "price": "₱1901",
     "name": "U9060",
-    "category1": "Accessories",
-    "available": true
+    "id": 29,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ]
   },
   {
-    "stock": 49,
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Clothing",
+    "category0": "MENS",
+    "color": "Grey",
     "variants": {
       "Default": {
         "stock": {
@@ -426,24 +431,29 @@
         }
       }
     },
-    "sizes": [],
-    "color": "Grey",
-    "category0": "MENS",
     "category2": "WTAPS",
-    "available": true,
+    "stock": 49,
+    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
+    "sizes": [],
     "name": "Bape STA Low",
-    "category1": "Clothing",
-    "id": 30,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
     "price": "₱2018",
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item."
+    "available": true,
+    "id": 30
   },
   {
+    "category2": "Undercover",
+    "stock": 6,
+    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
+    "sizes": [],
+    "category1": "Clothing",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category0": "MENS",
+    "color": "Black",
     "variants": {
       "Default": {
         "stock": {
@@ -451,68 +461,58 @@
         }
       }
     },
-    "stock": 6,
-    "category2": "Undercover",
-    "category0": "MENS",
-    "sizes": [],
-    "color": "Black",
-    "available": true,
-    "name": "AIRism Cotton T-Shirt",
-    "category1": "Clothing",
-    "price": "₱2135",
-    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
     "_colorOrder": [
       "Default"
     ],
+    "available": true,
     "id": 31,
-    "images": [
-      "images/products/placeholder.svg"
-    ]
+    "name": "AIRism Cotton T-Shirt",
+    "price": "₱2135"
   },
   {
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 32,
-    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
     "_colorOrder": [
       "Default"
     ],
-    "price": "₱2252",
-    "category1": "Cosmetics",
-    "name": "Supima Cotton Oversized Tee",
     "available": true,
-    "color": "",
-    "sizes": [],
+    "id": 32,
+    "name": "Supima Cotton Oversized Tee",
+    "price": "₱2252",
     "category2": "Canmake",
-    "category0": "WOMENS",
     "stock": 13,
+    "sizes": [],
+    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Cosmetics",
     "variants": {
       "Default": {
         "stock": {
           "q": 13
         }
       }
-    }
+    },
+    "color": "",
+    "category0": "WOMENS"
   },
   {
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 33,
-    "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
     "_colorOrder": [
       "Default"
     ],
-    "price": "₱2369",
-    "name": "Blocktech Parka",
-    "category1": "Cosmetics",
     "available": true,
-    "color": "",
-    "sizes": [],
-    "category0": "WOMENS",
+    "id": 33,
+    "name": "Blocktech Parka",
+    "price": "₱2369",
     "category2": "Kiss Me",
     "stock": 20,
+    "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
+    "sizes": [],
+    "category1": "Cosmetics",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category0": "WOMENS",
+    "color": "",
     "variants": {
       "Default": {
         "stock": {
@@ -522,10 +522,21 @@
     }
   },
   {
-    "category0": "MENS",
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 34,
+    "name": "Ultra Light Down Vest",
+    "price": "₱2486",
     "category2": "Nike",
+    "stock": 27,
     "sizes": [],
-    "color": "Blue",
+    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
+    "category1": "Shoes",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
     "variants": {
       "Default": {
         "stock": {
@@ -533,34 +544,25 @@
         }
       }
     },
-    "stock": 27,
-    "price": "₱2486",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
-    "id": 34,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "available": true,
-    "name": "Ultra Light Down Vest",
-    "category1": "Shoes"
+    "category0": "MENS",
+    "color": "Blue"
   },
   {
-    "available": true,
-    "name": "Warm Pile Jacket",
-    "category1": "Shoes",
-    "id": 35,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "price": "₱2603",
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
+    "available": true,
+    "id": 35,
+    "name": "Warm Pile Jacket",
+    "price": "₱2603",
+    "category2": "Adidas",
     "stock": 34,
+    "sizes": [],
+    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
+    "category1": "Shoes",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
     "variants": {
       "Default": {
         "stock": {
@@ -568,12 +570,25 @@
         }
       }
     },
-    "sizes": [],
-    "color": "White",
     "category0": "MENS",
-    "category2": "Adidas"
+    "color": "White"
   },
   {
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": false,
+    "id": 36,
+    "name": "V-Neck Cashmere Sweater",
+    "price": "₱2720",
+    "category2": "New Balance",
+    "stock": 41,
+    "sizes": [],
+    "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Shoes",
     "variants": {
       "Default": {
         "stock": {
@@ -581,37 +596,23 @@
         }
       }
     },
-    "stock": 41,
-    "category2": "New Balance",
     "category0": "MENS",
-    "sizes": [],
-    "color": "Beige",
-    "available": false,
-    "category1": "Shoes",
-    "name": "V-Neck Cashmere Sweater",
-    "price": "₱2720",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
-    "id": 36,
-    "images": [
-      "images/products/placeholder.svg"
-    ]
+    "color": "Beige"
   },
   {
-    "available": true,
     "name": "Flannel Check Shirt",
-    "category1": "Clothing",
     "price": "₱2837",
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
     "id": 37,
+    "category1": "Clothing",
     "images": [
       "images/products/placeholder.svg"
     ],
+    "color": "White",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
@@ -619,25 +620,23 @@
         }
       }
     },
-    "stock": 48,
     "category2": "Uniqlo",
-    "category0": "MENS",
+    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
     "sizes": [],
-    "color": "White"
+    "stock": 48
   },
   {
-    "name": "Heattech Extra Warm Crew Neck",
-    "category1": "Clothing",
-    "available": true,
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
+    "id": 38,
     "_colorOrder": [
       "Default"
     ],
+    "available": true,
     "price": "₱2954",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 38,
+    "name": "Heattech Extra Warm Crew Neck",
+    "stock": 5,
+    "sizes": [],
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
+    "category2": "GU",
     "variants": {
       "Default": {
         "stock": {
@@ -645,26 +644,23 @@
         }
       }
     },
-    "stock": 5,
-    "category0": "MENS",
-    "category2": "GU",
     "color": "Brown",
-    "sizes": []
-  },
-  {
-    "category1": "Clothing",
-    "name": "Drake T-Shirt (Japan Drop)",
-    "available": true,
+    "category0": "MENS",
     "images": [
       "images/products/placeholder.svg"
     ],
+    "category1": "Clothing"
+  },
+  {
+    "price": "₱3071",
+    "name": "Drake T-Shirt (Japan Drop)",
     "id": 39,
-    "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item.",
     "_colorOrder": [
       "Default"
     ],
-    "price": "₱3071",
-    "stock": 12,
+    "available": true,
+    "category0": "MENS",
+    "color": "White",
     "variants": {
       "Default": {
         "stock": {
@@ -672,39 +668,50 @@
         }
       }
     },
-    "color": "White",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Clothing",
+    "stock": 12,
+    "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item.",
     "sizes": [],
-    "category0": "MENS",
     "category2": "Supreme"
   },
   {
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 40,
+    "name": "Bogo Hoodie (Japan Exclusive)",
+    "price": "₱3188",
+    "category2": "Nike",
+    "stock": 19,
+    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
+    "sizes": [],
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Shoes",
+    "color": "Pink",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
           "q": 19
         }
       }
-    },
-    "stock": 19,
-    "category2": "Nike",
-    "category0": "MENS",
-    "color": "Pink",
+    }
+  },
+  {
+    "category2": "Adidas",
+    "stock": 26,
     "sizes": [],
+    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
     "category1": "Shoes",
-    "name": "Bogo Hoodie (Japan Exclusive)",
-    "available": true,
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱3188",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 40
-  },
-  {
-    "stock": 26,
     "variants": {
       "Default": {
         "stock": {
@@ -712,24 +719,26 @@
         }
       }
     },
-    "sizes": [],
     "color": "Pink",
-    "category2": "Adidas",
     "category0": "MENS",
-    "available": true,
-    "category1": "Shoes",
-    "name": "PLEATED Skirt",
-    "id": 41,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "price": "₱3305",
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item."
+    "available": true,
+    "id": 41,
+    "name": "PLEATED Skirt",
+    "price": "₱3305"
   },
   {
+    "price": "₱3422",
+    "name": "Mini Flare Skirt (Japan Exclusive)",
+    "id": 42,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "category0": "MENS",
+    "color": "Lavender",
     "variants": {
       "Default": {
         "stock": {
@@ -737,37 +746,16 @@
         }
       }
     },
-    "stock": 0,
-    "category0": "MENS",
-    "category2": "Uniqlo",
-    "color": "Lavender",
-    "sizes": [],
-    "category1": "Clothing",
-    "name": "Mini Flare Skirt (Japan Exclusive)",
-    "available": true,
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱3422",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 42
+    "category1": "Clothing",
+    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
+    "sizes": [],
+    "stock": 0,
+    "category2": "Uniqlo"
   },
   {
-    "available": true,
-    "name": "Frill Tucked Blouse",
-    "category1": "Clothing",
-    "price": "₱3539",
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "id": 43,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
     "variants": {
       "Default": {
         "stock": {
@@ -775,29 +763,38 @@
         }
       }
     },
-    "stock": 0,
     "category0": "MENS",
-    "category2": "GU",
-    "sizes": [],
-    "color": "Black"
-  },
-  {
-    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱3656",
+    "color": "Black",
+    "category1": "Clothing",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 44,
-    "category1": "Cosmetics",
-    "name": "Wool Blend Coat",
-    "available": true,
-    "category2": "Shiseido",
-    "category0": "WOMENS",
-    "color": "",
+    "stock": 0,
     "sizes": [],
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
+    "category2": "GU",
+    "price": "₱3539",
+    "name": "Frill Tucked Blouse",
+    "id": 43,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true
+  },
+  {
+    "id": 44,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "price": "₱3656",
+    "name": "Wool Blend Coat",
+    "stock": 0,
+    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
+    "sizes": [],
+    "category2": "Shiseido",
+    "color": "",
+    "category0": "WOMENS",
     "variants": {
       "Default": {
         "stock": {
@@ -805,14 +802,23 @@
         }
       }
     },
-    "stock": 0
+    "category1": "Cosmetics",
+    "images": [
+      "images/products/placeholder.svg"
+    ]
   },
   {
-    "color": "",
-    "sizes": [],
-    "category2": "SK-II",
-    "category0": "WOMENS",
+    "id": 45,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "price": "₱3773",
+    "name": "Wide Tuck Pants",
     "stock": 0,
+    "sizes": [],
+    "description": "Authentic Japanese cosmetics from SK-II. Limited Japan-exclusive item.",
+    "category2": "SK-II",
     "variants": {
       "Default": {
         "stock": {
@@ -820,24 +826,20 @@
         }
       }
     },
+    "category0": "WOMENS",
+    "color": "",
+    "category1": "Cosmetics",
     "images": [
       "images/products/placeholder.svg"
-    ],
-    "id": 45,
-    "description": "Authentic Japanese cosmetics from SK-II. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱3773",
-    "category1": "Cosmetics",
-    "name": "Wide Tuck Pants",
-    "available": true
+    ]
   },
   {
-    "category2": "G-Shock",
-    "category0": "MENS",
-    "color": "Black",
+    "stock": 11,
+    "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
     "sizes": [],
+    "category2": "G-Shock",
+    "color": "Black",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
@@ -845,36 +847,28 @@
         }
       }
     },
-    "stock": 11,
-    "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱3890",
+    "category1": "Accessories",
     "images": [
       "images/products/placeholder.svg"
     ],
     "id": 46,
-    "category1": "Accessories",
-    "name": "Skincare Set (3-Piece)",
-    "available": false
-  },
-  {
-    "price": "₱4007",
     "_colorOrder": [
       "Default"
     ],
+    "available": false,
+    "price": "₱3890",
+    "name": "Skincare Set (3-Piece)"
+  },
+  {
+    "category2": "Lily Brown",
+    "stock": 0,
     "description": "Authentic Japanese accessories from Lily Brown. Limited Japan-exclusive item.",
-    "id": 47,
+    "sizes": [],
     "images": [
       "images/products/placeholder.svg"
     ],
-    "available": true,
     "category1": "Accessories",
-    "name": "UV Sunscreen SPF50+",
-    "category2": "Lily Brown",
     "category0": "MENS",
-    "sizes": [],
     "color": "Silver",
     "variants": {
       "Default": {
@@ -883,10 +877,30 @@
         }
       }
     },
-    "stock": 0
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 47,
+    "name": "UV Sunscreen SPF50+",
+    "price": "₱4007"
   },
   {
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 48,
+    "name": "Facial Cleansing Oil",
+    "price": "₱4124",
+    "category2": "WTAPS",
     "stock": 0,
+    "sizes": [],
+    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
+    "category1": "Clothing",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
     "variants": {
       "Default": {
         "stock": {
@@ -894,36 +908,25 @@
         }
       }
     },
-    "sizes": [],
     "color": "Grey",
-    "category2": "WTAPS",
-    "category0": "MENS",
-    "available": true,
-    "name": "Facial Cleansing Oil",
-    "category1": "Clothing",
-    "id": 48,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "price": "₱4124",
-    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ]
+    "category0": "MENS"
   },
   {
     "available": true,
-    "category1": "Clothing",
-    "name": "Moisturizing Lotion",
-    "price": "₱4241",
-    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
     "_colorOrder": [
       "Default"
     ],
     "id": 49,
+    "name": "Moisturizing Lotion",
+    "price": "₱4241",
+    "category2": "Undercover",
+    "sizes": [],
+    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
+    "stock": 0,
     "images": [
       "images/products/placeholder.svg"
     ],
+    "category1": "Clothing",
     "variants": {
       "Default": {
         "stock": {
@@ -931,18 +934,16 @@
         }
       }
     },
-    "stock": 0,
-    "category2": "Undercover",
     "category0": "MENS",
-    "sizes": [],
     "color": "Black"
   },
   {
+    "stock": 0,
+    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
     "sizes": [],
-    "color": "",
     "category2": "Canmake",
     "category0": "WOMENS",
-    "stock": 0,
+    "color": "",
     "variants": {
       "Default": {
         "stock": {
@@ -950,32 +951,21 @@
         }
       }
     },
-    "id": 50,
+    "category1": "Cosmetics",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "price": "₱4358",
-    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
+    "id": 50,
     "_colorOrder": [
       "Default"
     ],
     "available": true,
-    "name": "Eye Cream (Japan Exclusive)",
-    "category1": "Cosmetics"
+    "price": "₱4358",
+    "name": "Eye Cream (Japan Exclusive)"
   },
   {
-    "available": true,
-    "name": "DW-5600 Classic",
-    "category1": "Cosmetics",
-    "price": "₱4475",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
-    "id": 51,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
+    "color": "",
+    "category0": "WOMENS",
     "variants": {
       "Default": {
         "stock": {
@@ -983,25 +973,29 @@
         }
       }
     },
-    "stock": 0,
-    "category2": "Kiss Me",
-    "category0": "WOMENS",
-    "sizes": [],
-    "color": ""
-  },
-  {
-    "available": true,
-    "name": "GA-2100 (Japan Exclusive)",
-    "category1": "Shoes",
-    "price": "₱4592",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
-    "id": 52,
     "images": [
       "images/products/placeholder.svg"
     ],
+    "category1": "Cosmetics",
+    "stock": 0,
+    "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
+    "sizes": [],
+    "category2": "Kiss Me",
+    "price": "₱4475",
+    "name": "DW-5600 Classic",
+    "id": 51,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true
+  },
+  {
+    "category1": "Shoes",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "color": "White",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
@@ -1009,16 +1003,20 @@
         }
       }
     },
-    "stock": 0,
     "category2": "Nike",
-    "category0": "MENS",
+    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
     "sizes": [],
-    "color": "White"
+    "stock": 0,
+    "name": "GA-2100 (Japan Exclusive)",
+    "price": "₱4592",
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "id": 52
   },
   {
-    "category2": "Adidas",
     "category0": "MENS",
-    "sizes": [],
     "color": "White",
     "variants": {
       "Default": {
@@ -1027,25 +1025,27 @@
         }
       }
     },
-    "stock": 0,
-    "price": "₱4709",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
-    "id": 53,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "available": true,
+    "category1": "Shoes",
+    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
+    "sizes": [],
+    "stock": 0,
+    "category2": "Adidas",
+    "price": "₱4709",
     "name": "MTG-B2000",
-    "category1": "Shoes"
+    "id": 53,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ]
   },
   {
-    "category2": "New Balance",
-    "category0": "MENS",
-    "color": "Beige",
-    "sizes": [],
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Shoes",
     "variants": {
       "Default": {
         "stock": {
@@ -1053,37 +1053,27 @@
         }
       }
     },
+    "category0": "MENS",
+    "color": "Beige",
+    "category2": "New Balance",
     "stock": 0,
+    "sizes": [],
+    "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
+    "name": "GMW-B5000",
+    "price": "₱4826",
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
-    "price": "₱4826",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 54,
-    "name": "GMW-B5000",
-    "category1": "Shoes",
-    "available": true
+    "available": true,
+    "id": 54
   },
   {
-    "_colorOrder": [
-      "Default"
-    ],
     "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "price": "₱4943",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 55,
-    "name": "DW-6900 Japan Limited",
-    "category1": "Clothing",
-    "available": true,
-    "category0": "MENS",
+    "sizes": [],
+    "stock": 0,
     "category2": "Uniqlo",
     "color": "Olive",
-    "sizes": [],
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
@@ -1091,21 +1081,32 @@
         }
       }
     },
-    "stock": 0
-  },
-  {
-    "available": false,
-    "name": "Pouch Set (3-Piece)",
     "category1": "Clothing",
-    "price": "₱5060",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "id": 56,
     "images": [
       "images/products/placeholder.svg"
     ],
+    "id": 55,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "price": "₱4943",
+    "name": "DW-6900 Japan Limited"
+  },
+  {
+    "id": 56,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": false,
+    "price": "₱5060",
+    "name": "Pouch Set (3-Piece)",
+    "stock": 31,
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
+    "sizes": [],
+    "category2": "GU",
+    "category0": "MENS",
+    "color": "Black",
     "variants": {
       "Default": {
         "stock": {
@@ -1113,44 +1114,45 @@
         }
       }
     },
-    "stock": 31,
-    "category2": "GU",
-    "category0": "MENS",
-    "sizes": [],
-    "color": "Black"
-  },
-  {
-    "id": 57,
+    "category1": "Clothing",
     "images": [
       "images/products/placeholder.svg"
-    ],
-    "price": "₱5177",
-    "_colorOrder": [
-      "Default"
-    ],
+    ]
+  },
+  {
     "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item.",
-    "available": true,
-    "category1": "Clothing",
-    "name": "Canvas Shoulder Bag",
     "sizes": [],
-    "color": "White",
+    "stock": 0,
     "category2": "Supreme",
     "category0": "MENS",
-    "stock": 0,
+    "color": "White",
     "variants": {
       "Default": {
         "stock": {
           "q": 37
         }
       }
-    }
+    },
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Clothing",
+    "id": 57,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "price": "₱5177",
+    "name": "Canvas Shoulder Bag"
   },
   {
-    "sizes": [],
-    "color": "Pink",
-    "category0": "MENS",
-    "category2": "Nike",
-    "stock": 0,
+    "price": "₱5294",
+    "name": "Knitted Beanie",
+    "id": 58,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
     "variants": {
       "Default": {
         "stock": {
@@ -1158,36 +1160,26 @@
         }
       }
     },
-    "id": 58,
+    "color": "Pink",
+    "category0": "MENS",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "price": "₱5294",
+    "category1": "Shoes",
+    "sizes": [],
     "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "available": true,
-    "name": "Knitted Beanie",
-    "category1": "Shoes"
+    "stock": 0,
+    "category2": "Nike"
   },
   {
-    "_colorOrder": [
-      "Default"
-    ],
+    "category2": "Adidas",
+    "stock": 0,
+    "sizes": [],
     "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
-    "price": "₱5411",
+    "category1": "Shoes",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 59,
-    "name": "Leather Gloves",
-    "category1": "Shoes",
-    "available": true,
-    "category0": "MENS",
-    "category2": "Adidas",
-    "color": "Pink",
-    "sizes": [],
     "variants": {
       "Default": {
         "stock": {
@@ -1195,22 +1187,23 @@
         }
       }
     },
-    "stock": 0
-  },
-  {
-    "name": "Silk Scarf (Japan Exclusive)",
-    "category1": "Clothing",
-    "available": true,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 60,
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
+    "category0": "MENS",
+    "color": "Pink",
     "_colorOrder": [
       "Default"
     ],
-    "price": "₱408",
+    "available": true,
+    "id": 59,
+    "name": "Leather Gloves",
+    "price": "₱5411"
+  },
+  {
+    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
+    "sizes": [],
     "stock": 0,
+    "category2": "Uniqlo",
+    "category0": "MENS",
+    "color": "White",
     "variants": {
       "Default": {
         "stock": {
@@ -1218,29 +1211,36 @@
         }
       }
     },
-    "color": "White",
-    "sizes": [],
-    "category0": "MENS",
-    "category2": "Uniqlo"
-  },
-  {
-    "id": 61,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "price": "₱525",
+    "category1": "Clothing",
+    "id": 60,
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
+    "price": "₱408",
+    "name": "Silk Scarf (Japan Exclusive)"
+  },
+  {
     "available": true,
-    "category1": "Clothing",
+    "_colorOrder": [
+      "Default"
+    ],
+    "id": 61,
     "name": "Sweatpants (Japan Drop)",
-    "sizes": [],
-    "color": "Pink",
+    "price": "₱525",
     "category2": "GU",
-    "category0": "MENS",
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
+    "sizes": [],
     "stock": 0,
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Clothing",
+    "color": "Pink",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
@@ -1250,6 +1250,19 @@
     }
   },
   {
+    "name": "Cargo Pants",
+    "price": "₱642",
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 62,
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Cosmetics",
+    "category0": "WOMENS",
+    "color": "",
     "variants": {
       "Default": {
         "stock": {
@@ -1257,29 +1270,27 @@
         }
       }
     },
-    "stock": 0,
     "category2": "Shiseido",
-    "category0": "WOMENS",
-    "color": "",
-    "sizes": [],
-    "category1": "Cosmetics",
-    "name": "Cargo Pants",
-    "available": true,
+    "stock": 0,
     "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
+    "sizes": []
+  },
+  {
     "_colorOrder": [
       "Default"
     ],
-    "price": "₱642",
+    "available": true,
+    "id": 63,
+    "name": "Denim Jacket (Made in Japan)",
+    "price": "₱759",
+    "category2": "SK-II",
+    "stock": 0,
+    "sizes": [],
+    "description": "Authentic Japanese cosmetics from SK-II. Limited Japan-exclusive item.",
+    "category1": "Cosmetics",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 62
-  },
-  {
-    "category0": "WOMENS",
-    "category2": "SK-II",
-    "color": "",
-    "sizes": [],
     "variants": {
       "Default": {
         "stock": {
@@ -1287,34 +1298,20 @@
         }
       }
     },
-    "stock": 0,
-    "description": "Authentic Japanese cosmetics from SK-II. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱759",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 63,
-    "name": "Denim Jacket (Made in Japan)",
-    "category1": "Cosmetics",
-    "available": true
+    "color": "",
+    "category0": "WOMENS"
   },
   {
-    "name": "Ripstop Shorts",
+    "category2": "G-Shock",
+    "stock": 0,
+    "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
+    "sizes": [],
     "category1": "Accessories",
-    "available": true,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 64,
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
-    "price": "₱876",
-    "stock": 0,
+    "category0": "MENS",
+    "color": "Green",
     "variants": {
       "Default": {
         "stock": {
@@ -1322,13 +1319,23 @@
         }
       }
     },
-    "color": "Green",
-    "sizes": [],
-    "category2": "G-Shock",
-    "category0": "MENS"
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 64,
+    "name": "Ripstop Shorts",
+    "price": "₱876"
   },
   {
+    "category2": "Lily Brown",
+    "sizes": [],
+    "description": "Authentic Japanese accessories from Lily Brown. Limited Japan-exclusive item.",
     "stock": 0,
+    "category1": "Accessories",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
     "variants": {
       "Default": {
         "stock": {
@@ -1337,65 +1344,44 @@
       }
     },
     "color": "Silver",
-    "sizes": [],
     "category0": "MENS",
-    "category2": "Lily Brown",
-    "name": "Military Shirt",
-    "category1": "Accessories",
     "available": true,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 65,
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese accessories from Lily Brown. Limited Japan-exclusive item.",
+    "id": 65,
+    "name": "Military Shirt",
     "price": "₱993"
   },
   {
-    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
+    "available": false,
     "_colorOrder": [
       "Default"
     ],
+    "id": 66,
+    "name": "Hooded Down Parka",
     "price": "₱1110",
+    "category2": "WTAPS",
+    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
+    "sizes": [],
+    "stock": 1,
+    "category1": "Clothing",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 66,
-    "category1": "Clothing",
-    "name": "Hooded Down Parka",
-    "available": false,
     "category0": "MENS",
-    "category2": "WTAPS",
     "color": "Grey",
-    "sizes": [],
     "variants": {
       "Default": {
         "stock": {
           "q": 1
         }
       }
-    },
-    "stock": 1
+    }
   },
   {
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
-    "price": "₱1227",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 67,
-    "name": "Merino Wool Crew Neck",
-    "category1": "Clothing",
-    "available": true,
-    "category0": "MENS",
-    "category2": "Undercover",
     "color": "Black",
-    "sizes": [],
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
@@ -1403,35 +1389,64 @@
         }
       }
     },
-    "stock": 0
-  },
-  {
     "images": [
       "images/products/placeholder.svg"
     ],
+    "category1": "Clothing",
+    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
+    "sizes": [],
+    "stock": 0,
+    "category2": "Undercover",
+    "price": "₱1227",
+    "name": "Merino Wool Crew Neck",
+    "id": 67,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ]
+  },
+  {
+    "price": "₱1344",
+    "name": "Crew Socks (5-Pack)",
     "id": 68,
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
-    "price": "₱1344",
-    "name": "Crew Socks (5-Pack)",
-    "category1": "Cosmetics",
     "available": true,
-    "color": "",
-    "sizes": [],
-    "category2": "Canmake",
-    "category0": "WOMENS",
-    "stock": 0,
     "variants": {
       "Default": {
         "stock": {
           "q": 14
         }
       }
-    }
+    },
+    "color": "",
+    "category0": "WOMENS",
+    "category1": "Cosmetics",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "stock": 0,
+    "sizes": [],
+    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
+    "category2": "Canmake"
   },
   {
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 69,
+    "name": "Cotton Linen Shirt",
+    "price": "₱1461",
+    "category2": "Kiss Me",
+    "stock": 0,
+    "sizes": [],
+    "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
+    "category1": "Cosmetics",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
     "variants": {
       "Default": {
         "stock": {
@@ -1439,30 +1454,19 @@
         }
       }
     },
-    "stock": 0,
-    "category0": "WOMENS",
-    "category2": "Kiss Me",
-    "sizes": [],
     "color": "",
+    "category0": "WOMENS"
+  },
+  {
+    "price": "₱1578",
+    "name": "Easy Shorts",
+    "id": 70,
     "available": true,
-    "category1": "Cosmetics",
-    "name": "Cotton Linen Shirt",
-    "price": "₱1461",
-    "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
     "_colorOrder": [
       "Default"
     ],
-    "id": 69,
-    "images": [
-      "images/products/placeholder.svg"
-    ]
-  },
-  {
-    "sizes": [],
     "color": "Green",
     "category0": "MENS",
-    "category2": "Nike",
-    "stock": 0,
     "variants": {
       "Default": {
         "stock": {
@@ -1470,32 +1474,31 @@
         }
       }
     },
-    "id": 70,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "price": "₱1578",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
-    "available": true,
     "category1": "Shoes",
-    "name": "Easy Shorts"
+    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
+    "sizes": [],
+    "stock": 0,
+    "category2": "Nike"
   },
   {
     "available": true,
-    "name": "Longchamp Le Pliage",
-    "category1": "Shoes",
-    "price": "₱1695",
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
     "id": 71,
+    "name": "Longchamp Le Pliage",
+    "price": "₱1695",
+    "category2": "Adidas",
+    "sizes": [],
+    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
+    "stock": 36,
     "images": [
       "images/products/placeholder.svg"
     ],
+    "category1": "Shoes",
     "variants": {
       "Default": {
         "stock": {
@@ -1503,29 +1506,20 @@
         }
       }
     },
-    "stock": 36,
-    "category0": "MENS",
-    "category2": "Adidas",
-    "sizes": [],
-    "color": "White"
+    "color": "White",
+    "category0": "MENS"
   },
   {
+    "category2": "New Balance",
     "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱1812",
+    "sizes": [],
+    "stock": 43,
+    "category1": "Shoes",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 72,
-    "category1": "Shoes",
-    "name": "Anello Backpack",
-    "available": true,
-    "category2": "New Balance",
     "category0": "MENS",
     "color": "Beige",
-    "sizes": [],
     "variants": {
       "Default": {
         "stock": {
@@ -1533,21 +1527,28 @@
         }
       }
     },
-    "stock": 43
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "id": 72,
+    "name": "Anello Backpack",
+    "price": "₱1812"
   },
   {
-    "available": true,
-    "category1": "Clothing",
     "name": "Porter Tanker 2-Way",
     "price": "₱1929",
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
     "id": 73,
+    "category1": "Clothing",
     "images": [
       "images/products/placeholder.svg"
     ],
+    "category0": "MENS",
+    "color": "Navy",
     "variants": {
       "Default": {
         "stock": {
@@ -1555,65 +1556,68 @@
         }
       }
     },
-    "stock": 50,
-    "category0": "MENS",
     "category2": "Uniqlo",
+    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
     "sizes": [],
-    "color": "Navy"
+    "stock": 50
   },
   {
-    "id": 74,
+    "category2": "GU",
+    "sizes": [],
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
+    "stock": 7,
+    "category1": "Clothing",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "price": "₱2046",
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "available": true,
-    "category1": "Clothing",
-    "name": "Muji Labo Coat",
-    "sizes": [],
-    "color": "Brown",
-    "category2": "GU",
-    "category0": "MENS",
-    "stock": 7,
     "variants": {
       "Default": {
         "stock": {
           "q": 7
         }
       }
-    }
-  },
-  {
-    "id": 75,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "price": "₱2163",
+    },
+    "color": "Brown",
+    "category0": "MENS",
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
+    "id": 74,
+    "name": "Muji Labo Coat",
+    "price": "₱2046"
+  },
+  {
+    "stock": 14,
     "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item.",
-    "available": true,
-    "name": "Snow Peak Down Vest",
-    "category1": "Clothing",
     "sizes": [],
+    "category2": "Supreme",
     "color": "White",
     "category0": "MENS",
-    "category2": "Supreme",
-    "stock": 14,
     "variants": {
       "Default": {
         "stock": {
           "q": 14
         }
       }
-    }
+    },
+    "category1": "Clothing",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "id": 75,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "price": "₱2163",
+    "name": "Snow Peak Down Vest"
   },
   {
+    "stock": 21,
+    "sizes": [],
+    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
+    "category2": "Nike",
     "variants": {
       "Default": {
         "stock": {
@@ -1621,28 +1625,33 @@
         }
       }
     },
-    "stock": 21,
-    "category2": "Nike",
     "category0": "MENS",
     "color": "Pink",
-    "sizes": [],
-    "name": "24H Cosme Lip Balm",
     "category1": "Shoes",
-    "available": false,
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
-    "price": "₱2280",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 76
+    "id": 76,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": false,
+    "price": "₱2280",
+    "name": "24H Cosme Lip Balm"
   },
   {
-    "category0": "MENS",
-    "category2": "Adidas",
+    "id": 77,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "price": "₱2397",
+    "name": "Fujiko Lip Oil",
+    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
     "sizes": [],
+    "stock": 28,
+    "category2": "Adidas",
+    "category0": "MENS",
     "color": "Pink",
     "variants": {
       "Default": {
@@ -1651,34 +1660,21 @@
         }
       }
     },
-    "stock": 28,
-    "price": "₱2397",
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "id": 77,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "available": true,
-    "name": "Fujiko Lip Oil",
     "category1": "Shoes"
   },
   {
-    "available": true,
-    "category1": "Clothing",
+    "price": "₱2514",
     "name": "Excel Eyebrow Powder",
     "id": 78,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "price": "₱2514",
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
     "_colorOrder": [
       "Default"
     ],
-    "stock": 35,
+    "available": true,
+    "category0": "MENS",
+    "color": "Lavender",
     "variants": {
       "Default": {
         "stock": {
@@ -1686,12 +1682,27 @@
         }
       }
     },
+    "category1": "Clothing",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "stock": 35,
+    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
     "sizes": [],
-    "color": "Lavender",
-    "category2": "Uniqlo",
-    "category0": "MENS"
+    "category2": "Uniqlo"
   },
   {
+    "name": "Kate Liquid Eyeliner",
+    "price": "₱2631",
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 79,
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Clothing",
     "variants": {
       "Default": {
         "stock": {
@@ -1699,25 +1710,24 @@
         }
       }
     },
-    "stock": 42,
-    "category2": "GU",
-    "category0": "MENS",
     "color": "Black",
+    "category0": "MENS",
+    "category2": "GU",
+    "stock": 42,
     "sizes": [],
-    "name": "Kate Liquid Eyeliner",
-    "category1": "Clothing",
-    "available": true,
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "price": "₱2631",
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item."
+  },
+  {
+    "category2": "Shiseido",
+    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
+    "sizes": [],
+    "stock": 49,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 79
-  },
-  {
+    "category1": "Cosmetics",
+    "category0": "WOMENS",
+    "color": "",
     "variants": {
       "Default": {
         "stock": {
@@ -1725,40 +1735,23 @@
         }
       }
     },
-    "stock": 49,
-    "category2": "Shiseido",
-    "category0": "WOMENS",
-    "sizes": [],
-    "color": "",
     "available": true,
-    "category1": "Cosmetics",
-    "name": "Majolica Majorca Mascara",
-    "price": "₱2748",
-    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
     "_colorOrder": [
       "Default"
     ],
     "id": 80,
-    "images": [
-      "images/products/placeholder.svg"
-    ]
+    "name": "Majolica Majorca Mascara",
+    "price": "₱2748"
   },
   {
     "price": "₱2865",
-    "description": "Authentic Japanese cosmetics from SK-II. Limited Japan-exclusive item.",
+    "name": "Nylon Puffer Jacket",
+    "id": 81,
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
-    "id": 81,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "available": true,
-    "name": "Nylon Puffer Jacket",
-    "category1": "Cosmetics",
-    "category2": "SK-II",
     "category0": "WOMENS",
-    "sizes": [],
     "color": "",
     "variants": {
       "Default": {
@@ -1767,10 +1760,16 @@
         }
       }
     },
-    "stock": 6
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Cosmetics",
+    "description": "Authentic Japanese cosmetics from SK-II. Limited Japan-exclusive item.",
+    "sizes": [],
+    "stock": 6,
+    "category2": "SK-II"
   },
   {
-    "stock": 13,
     "variants": {
       "Default": {
         "stock": {
@@ -1778,25 +1777,38 @@
         }
       }
     },
-    "sizes": [],
-    "color": "White",
-    "category2": "G-Shock",
     "category0": "MENS",
-    "available": true,
-    "name": "Ribbed Knit Top",
-    "category1": "Accessories",
-    "id": 82,
+    "color": "White",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "price": "₱2982",
+    "category1": "Accessories",
+    "stock": 13,
+    "sizes": [],
     "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
+    "category2": "G-Shock",
+    "price": "₱2982",
+    "name": "Ribbed Knit Top",
+    "id": 82,
     "_colorOrder": [
       "Default"
-    ]
+    ],
+    "available": true
   },
   {
-    "stock": 20,
+    "name": "Midi Wrap Skirt",
+    "price": "₱3099",
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "id": 83,
+    "category1": "Accessories",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category0": "MENS",
+    "color": "Silver",
     "variants": {
       "Default": {
         "stock": {
@@ -1804,76 +1816,75 @@
         }
       }
     },
-    "sizes": [],
-    "color": "Silver",
     "category2": "Lily Brown",
-    "category0": "MENS",
-    "available": true,
-    "name": "Midi Wrap Skirt",
-    "category1": "Accessories",
-    "id": 83,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "price": "₱3099",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese accessories from Lily Brown. Limited Japan-exclusive item."
+    "description": "Authentic Japanese accessories from Lily Brown. Limited Japan-exclusive item.",
+    "sizes": [],
+    "stock": 20
   },
   {
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 84,
-    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱3216",
-    "category1": "Clothing",
-    "name": "Wool Flared Pants",
-    "available": true,
-    "color": "Grey",
     "sizes": [],
-    "category0": "MENS",
-    "category2": "WTAPS",
+    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
     "stock": 27,
+    "category2": "WTAPS",
     "variants": {
       "Default": {
         "stock": {
           "q": 27
         }
       }
-    }
-  },
-  {
-    "id": 85,
+    },
+    "color": "Grey",
+    "category0": "MENS",
+    "category1": "Clothing",
     "images": [
       "images/products/placeholder.svg"
     ],
+    "id": 84,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "price": "₱3216",
+    "name": "Wool Flared Pants"
+  },
+  {
+    "name": "Belted Trench Coat",
     "price": "₱3333",
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
     "available": true,
-    "name": "Belted Trench Coat",
+    "id": 85,
+    "images": [
+      "images/products/placeholder.svg"
+    ],
     "category1": "Clothing",
-    "sizes": [],
-    "color": "Black",
     "category0": "MENS",
-    "category2": "Undercover",
-    "stock": 34,
+    "color": "Black",
     "variants": {
       "Default": {
         "stock": {
           "q": 34
         }
       }
-    }
+    },
+    "category2": "Undercover",
+    "stock": 34,
+    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
+    "sizes": []
   },
   {
+    "id": 86,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": false,
+    "price": "₱3450",
+    "name": "Patchwork Denim Jacket",
+    "stock": 41,
+    "sizes": [],
+    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
+    "category2": "Canmake",
     "variants": {
       "Default": {
         "stock": {
@@ -1881,64 +1892,53 @@
         }
       }
     },
-    "stock": 41,
-    "category0": "WOMENS",
-    "category2": "Canmake",
     "color": "",
-    "sizes": [],
+    "category0": "WOMENS",
     "category1": "Cosmetics",
-    "name": "Patchwork Denim Jacket",
-    "available": false,
-    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱3450",
     "images": [
       "images/products/placeholder.svg"
-    ],
-    "id": 86
+    ]
   },
   {
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 87,
-    "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱3567",
     "category1": "Cosmetics",
-    "name": "Oversized Hoodie (Japan Exclusive)",
-    "available": true,
-    "color": "",
-    "sizes": [],
-    "category2": "Kiss Me",
-    "category0": "WOMENS",
-    "stock": 48,
     "variants": {
       "Default": {
         "stock": {
           "q": 48
         }
       }
-    }
+    },
+    "color": "",
+    "category0": "WOMENS",
+    "category2": "Kiss Me",
+    "stock": 48,
+    "sizes": [],
+    "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
+    "name": "Oversized Hoodie (Japan Exclusive)",
+    "price": "₱3567",
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 87
   },
   {
-    "available": true,
     "name": "Carpenter Pants",
-    "category1": "Shoes",
-    "id": 88,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
     "price": "₱3684",
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
-    "stock": 5,
+    "available": true,
+    "id": 88,
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Shoes",
+    "category0": "MENS",
+    "color": "Red",
     "variants": {
       "Default": {
         "stock": {
@@ -1946,51 +1946,38 @@
         }
       }
     },
-    "sizes": [],
-    "color": "Red",
-    "category0": "MENS",
-    "category2": "Nike"
+    "category2": "Nike",
+    "stock": 5,
+    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
+    "sizes": []
   },
   {
-    "id": 89,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "price": "₱3801",
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
     "available": true,
-    "category1": "Shoes",
+    "id": 89,
     "name": "Graphic T-Shirt",
-    "sizes": [],
-    "color": "White",
-    "category0": "MENS",
+    "price": "₱3801",
     "category2": "Adidas",
     "stock": 12,
+    "sizes": [],
+    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Shoes",
     "variants": {
       "Default": {
         "stock": {
           "q": 12
         }
       }
-    }
+    },
+    "color": "White",
+    "category0": "MENS"
   },
   {
-    "available": true,
-    "category1": "Shoes",
-    "name": "Work Jacket",
-    "id": 90,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "price": "₱3918",
-    "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "stock": 19,
     "variants": {
       "Default": {
         "stock": {
@@ -1998,28 +1985,29 @@
         }
       }
     },
-    "sizes": [],
     "color": "Beige",
     "category0": "MENS",
-    "category2": "New Balance"
-  },
-  {
-    "price": "₱4035",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "id": 91,
+    "category1": "Shoes",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "available": true,
-    "name": "Kyoto Matcha Set (Limited)",
-    "category1": "Clothing",
-    "category2": "Uniqlo",
-    "category0": "MENS",
     "sizes": [],
-    "color": "Black",
+    "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
+    "stock": 19,
+    "category2": "New Balance",
+    "price": "₱3918",
+    "name": "Work Jacket",
+    "id": 90,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ]
+  },
+  {
+    "sizes": [],
+    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
+    "stock": 26,
+    "category2": "Uniqlo",
     "variants": {
       "Default": {
         "stock": {
@@ -2027,25 +2015,31 @@
         }
       }
     },
-    "stock": 26
-  },
-  {
-    "price": "₱4152",
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "id": 92,
+    "category0": "MENS",
+    "color": "Black",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "available": true,
-    "name": "Sake Tasting Set",
     "category1": "Clothing",
+    "id": 91,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "price": "₱4035",
+    "name": "Kyoto Matcha Set (Limited)"
+  },
+  {
     "category2": "GU",
-    "category0": "MENS",
+    "stock": 33,
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
     "sizes": [],
+    "category1": "Clothing",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
     "color": "Black",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
@@ -2053,12 +2047,20 @@
         }
       }
     },
-    "stock": 33
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 92,
+    "name": "Sake Tasting Set",
+    "price": "₱4152"
   },
   {
-    "category2": "Supreme",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Clothing",
     "category0": "MENS",
-    "sizes": [],
     "color": "White",
     "variants": {
       "Default": {
@@ -2067,26 +2069,32 @@
         }
       }
     },
+    "category2": "Supreme",
+    "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item.",
+    "sizes": [],
     "stock": 40,
+    "name": "Japanese Snack Box (20pc)",
     "price": "₱4269",
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item.",
-    "id": 93,
+    "id": 93
+  },
+  {
+    "name": "Premium Gyokuro Tea",
+    "price": "₱4386",
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "id": 94,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "available": true,
-    "category1": "Clothing",
-    "name": "Japanese Snack Box (20pc)"
-  },
-  {
+    "category1": "Shoes",
     "color": "Pink",
-    "sizes": [],
-    "category2": "Nike",
     "category0": "MENS",
-    "stock": 47,
     "variants": {
       "Default": {
         "stock": {
@@ -2094,20 +2102,27 @@
         }
       }
     },
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 94,
+    "category2": "Nike",
+    "stock": 47,
     "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
+    "sizes": []
+  },
+  {
     "_colorOrder": [
       "Default"
     ],
-    "price": "₱4386",
+    "available": true,
+    "id": 95,
+    "name": "Dashi Stock Set",
+    "price": "₱4503",
+    "category2": "Adidas",
+    "stock": 4,
+    "sizes": [],
+    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
     "category1": "Shoes",
-    "name": "Premium Gyokuro Tea",
-    "available": true
-  },
-  {
+    "images": [
+      "images/products/placeholder.svg"
+    ],
     "variants": {
       "Default": {
         "stock": {
@@ -2115,38 +2130,18 @@
         }
       }
     },
-    "stock": 4,
     "category0": "MENS",
-    "category2": "Adidas",
-    "color": "Pink",
-    "sizes": [],
-    "category1": "Shoes",
-    "name": "Dashi Stock Set",
-    "available": true,
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
-    "price": "₱4503",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 95
+    "color": "Pink"
   },
   {
+    "category2": "Uniqlo",
+    "stock": 11,
+    "sizes": [],
+    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
     "category1": "Clothing",
-    "name": "Champion Reverse Weave Hoodie",
-    "available": false,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 96,
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱4620",
-    "stock": 11,
     "variants": {
       "Default": {
         "stock": {
@@ -2155,16 +2150,23 @@
       }
     },
     "color": "White",
-    "sizes": [],
     "category0": "MENS",
-    "category2": "Uniqlo"
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": false,
+    "id": 96,
+    "name": "Champion Reverse Weave Hoodie",
+    "price": "₱4620"
   },
   {
-    "color": "Pink",
-    "sizes": [],
-    "category0": "MENS",
-    "category2": "GU",
-    "stock": 18,
+    "price": "₱4737",
+    "name": "Karrimor Shoulder Bag",
+    "id": 97,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
     "variants": {
       "Default": {
         "stock": {
@@ -2172,58 +2174,54 @@
         }
       }
     },
+    "category0": "MENS",
+    "color": "Pink",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 97,
+    "category1": "Clothing",
+    "stock": 18,
+    "sizes": [],
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
+    "category2": "GU"
+  },
+  {
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "price": "₱4737",
-    "category1": "Clothing",
-    "name": "Karrimor Shoulder Bag",
-    "available": true
-  },
-  {
-    "category0": "WOMENS",
+    "id": 98,
+    "name": "Snow Peak Titanium Mug",
+    "price": "₱4854",
     "category2": "Shiseido",
-    "color": "",
+    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
     "sizes": [],
+    "stock": 25,
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Cosmetics",
+    "color": "",
+    "category0": "WOMENS",
     "variants": {
       "Default": {
         "stock": {
           "q": 25
         }
       }
-    },
-    "stock": 25,
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
-    "price": "₱4854",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 98,
-    "name": "Snow Peak Titanium Mug",
-    "category1": "Cosmetics",
-    "available": true
+    }
   },
   {
-    "name": "Mont-bell Down Jacket",
-    "category1": "Cosmetics",
-    "available": true,
+    "category2": "SK-II",
     "description": "Authentic Japanese cosmetics from SK-II. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱4971",
+    "sizes": [],
+    "stock": 32,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 99,
+    "category1": "Cosmetics",
+    "color": "",
+    "category0": "WOMENS",
     "variants": {
       "Default": {
         "stock": {
@@ -2231,17 +2229,19 @@
         }
       }
     },
-    "stock": 32,
-    "category2": "SK-II",
-    "category0": "WOMENS",
-    "color": "",
-    "sizes": []
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "id": 99,
+    "name": "Mont-bell Down Jacket",
+    "price": "₱4971"
   },
   {
-    "category2": "G-Shock",
-    "category0": "MENS",
     "sizes": [],
-    "color": "Blue",
+    "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
+    "stock": 39,
+    "category2": "G-Shock",
     "variants": {
       "Default": {
         "stock": {
@@ -2249,37 +2249,34 @@
         }
       }
     },
-    "stock": 39,
-    "price": "₱5088",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
-    "id": 100,
+    "color": "Blue",
+    "category0": "MENS",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "available": true,
     "category1": "Accessories",
+    "id": 100,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "price": "₱5088",
     "name": "Asics Tiger Me... (Japan Exclusive)"
   },
   {
-    "description": "Authentic Japanese accessories from Lily Brown. Limited Japan-exclusive item.",
+    "id": 101,
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
     "price": "₱5205",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 101,
-    "category1": "Accessories",
     "name": "Air Max 97 (Japan Exclusive)",
-    "available": true,
-    "category2": "Lily Brown",
-    "category0": "MENS",
-    "color": "Silver",
+    "description": "Authentic Japanese accessories from Lily Brown. Limited Japan-exclusive item.",
     "sizes": [],
+    "stock": 46,
+    "category2": "Lily Brown",
+    "color": "Silver",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
@@ -2287,22 +2284,21 @@
         }
       }
     },
-    "stock": 46
-  },
-  {
-    "name": "Dunk High Retro",
-    "category1": "Clothing",
-    "available": true,
+    "category1": "Accessories",
     "images": [
       "images/products/placeholder.svg"
-    ],
+    ]
+  },
+  {
+    "price": "₱5322",
+    "name": "Dunk High Retro",
     "id": 102,
-    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
-    "price": "₱5322",
-    "stock": 3,
+    "category0": "MENS",
+    "color": "Grey",
     "variants": {
       "Default": {
         "stock": {
@@ -2310,39 +2306,55 @@
         }
       }
     },
-    "color": "Grey",
-    "sizes": [],
-    "category2": "WTAPS",
-    "category0": "MENS"
-  },
-  {
-    "name": "Air Jordan 1 Low",
-    "category1": "Clothing",
-    "available": true,
-    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱5439",
     "images": [
       "images/products/placeholder.svg"
     ],
+    "category1": "Clothing",
+    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
+    "sizes": [],
+    "stock": 3,
+    "category2": "WTAPS"
+  },
+  {
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
     "id": 103,
+    "name": "Air Jordan 1 Low",
+    "price": "₱5439",
+    "category2": "Undercover",
+    "stock": 10,
+    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
+    "sizes": [],
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Clothing",
+    "color": "Black",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
           "q": 10
         }
       }
-    },
-    "stock": 10,
-    "category0": "MENS",
-    "category2": "Undercover",
-    "color": "Black",
-    "sizes": []
+    }
   },
   {
+    "id": 104,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "price": "₱436",
+    "name": "Blazer Mid '77",
     "stock": 17,
+    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
+    "sizes": [],
+    "category2": "Canmake",
+    "category0": "WOMENS",
+    "color": "",
     "variants": {
       "Default": {
         "stock": {
@@ -2350,40 +2362,18 @@
         }
       }
     },
-    "color": "",
-    "sizes": [],
-    "category2": "Canmake",
-    "category0": "WOMENS",
-    "category1": "Cosmetics",
-    "name": "Blazer Mid '77",
-    "available": true,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 104,
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
-    "price": "₱436"
+    "category1": "Cosmetics"
   },
   {
-    "price": "₱553",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
-    "id": 105,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "available": true,
     "category1": "Cosmetics",
-    "name": "Air Force 1 Mid",
-    "category0": "WOMENS",
-    "category2": "Kiss Me",
-    "sizes": [],
     "color": "",
+    "category0": "WOMENS",
     "variants": {
       "Default": {
         "stock": {
@@ -2391,48 +2381,49 @@
         }
       }
     },
-    "stock": 24
-  },
-  {
-    "name": "Ultraboost 22",
-    "category1": "Shoes",
-    "available": false,
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
+    "category2": "Kiss Me",
+    "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
+    "sizes": [],
+    "stock": 24,
+    "name": "Air Force 1 Mid",
+    "price": "₱553",
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
+    "id": 105
+  },
+  {
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": false,
+    "id": 106,
+    "name": "Ultraboost 22",
     "price": "₱670",
+    "category2": "Nike",
+    "stock": 31,
+    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
+    "sizes": [],
+    "category1": "Shoes",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 106,
+    "category0": "MENS",
+    "color": "Black",
     "variants": {
       "Default": {
         "stock": {
           "q": 31
         }
       }
-    },
-    "stock": 31,
-    "category0": "MENS",
-    "category2": "Nike",
-    "color": "Black",
-    "sizes": []
+    }
   },
   {
-    "name": "NMD_R1 Primeknit",
-    "category1": "Shoes",
-    "available": true,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 107,
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
-    "price": "₱787",
-    "stock": 38,
+    "category1": "Shoes",
     "variants": {
       "Default": {
         "stock": {
@@ -2440,13 +2431,28 @@
         }
       }
     },
+    "category0": "MENS",
     "color": "White",
-    "sizes": [],
     "category2": "Adidas",
-    "category0": "MENS"
+    "sizes": [],
+    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
+    "stock": 38,
+    "name": "NMD_R1 Primeknit",
+    "price": "₱787",
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "id": 107
   },
   {
-    "stock": 45,
+    "price": "₱904",
+    "name": "Superstar (Japan Edition)",
+    "id": 108,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
     "variants": {
       "Default": {
         "stock": {
@@ -2454,40 +2460,25 @@
         }
       }
     },
-    "sizes": [],
-    "color": "Beige",
     "category0": "MENS",
-    "category2": "New Balance",
-    "available": true,
+    "color": "Beige",
     "category1": "Shoes",
-    "name": "Superstar (Japan Edition)",
-    "id": 108,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "price": "₱904",
+    "sizes": [],
     "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ]
+    "stock": 45,
+    "category2": "New Balance"
   },
   {
     "price": "₱1021",
+    "name": "Gazelle (Made in Japan)",
+    "id": 109,
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "id": 109,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "available": true,
-    "name": "Gazelle (Made in Japan)",
-    "category1": "Clothing",
-    "category2": "Uniqlo",
-    "category0": "MENS",
-    "sizes": [],
-    "color": "Beige",
     "variants": {
       "Default": {
         "stock": {
@@ -2495,14 +2486,31 @@
         }
       }
     },
-    "stock": 2
+    "color": "Beige",
+    "category0": "MENS",
+    "category1": "Clothing",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "sizes": [],
+    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
+    "stock": 2,
+    "category2": "Uniqlo"
   },
   {
+    "id": 110,
+    "_colorOrder": [
+      "Default"
+    ],
+    "available": true,
+    "price": "₱1138",
+    "name": "Forum Low",
+    "stock": 9,
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
     "sizes": [],
-    "color": "Brown",
     "category2": "GU",
     "category0": "MENS",
-    "stock": 9,
+    "color": "Brown",
     "variants": {
       "Default": {
         "stock": {
@@ -2510,32 +2518,22 @@
         }
       }
     },
-    "id": 110,
+    "category1": "Clothing",
     "images": [
       "images/products/placeholder.svg"
-    ],
-    "price": "₱1138",
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "available": true,
-    "category1": "Clothing",
-    "name": "Forum Low"
+    ]
   },
   {
-    "category1": "Clothing",
-    "name": "550 (Japan Exclusive)",
-    "available": true,
+    "category2": "Supreme",
+    "stock": 16,
     "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱1255",
+    "sizes": [],
+    "category1": "Clothing",
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 111,
+    "category0": "MENS",
+    "color": "White",
     "variants": {
       "Default": {
         "stock": {
@@ -2543,69 +2541,71 @@
         }
       }
     },
-    "stock": 16,
-    "category0": "MENS",
-    "category2": "Supreme",
-    "color": "White",
-    "sizes": []
-  },
-  {
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "id": 112,
     "_colorOrder": [
       "Default"
     ],
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
+    "available": true,
+    "id": 111,
+    "name": "550 (Japan Exclusive)",
+    "price": "₱1255"
+  },
+  {
+    "id": 112,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
     "price": "₱1372",
     "name": "574 Classic",
-    "category1": "Shoes",
-    "available": true,
-    "color": "Pink",
+    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
     "sizes": [],
+    "stock": 23,
     "category2": "Nike",
     "category0": "MENS",
-    "stock": 23,
+    "color": "Pink",
     "variants": {
       "Default": {
         "stock": {
           "q": 23
         }
       }
-    }
-  },
-  {
+    },
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 113,
+    "category1": "Shoes"
+  },
+  {
     "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱1489",
-    "name": "990v5 Made in Japan",
-    "category1": "Shoes",
-    "available": true,
-    "color": "Pink",
     "sizes": [],
-    "category0": "MENS",
-    "category2": "Adidas",
     "stock": 30,
+    "category2": "Adidas",
+    "color": "Pink",
+    "category0": "MENS",
     "variants": {
       "Default": {
         "stock": {
           "q": 30
         }
       }
-    }
+    },
+    "images": [
+      "images/products/placeholder.svg"
+    ],
+    "category1": "Shoes",
+    "id": 113,
+    "available": true,
+    "_colorOrder": [
+      "Default"
+    ],
+    "price": "₱1489",
+    "name": "990v5 Made in Japan"
   },
   {
-    "category0": "MENS",
-    "category2": "Uniqlo",
-    "sizes": [],
-    "color": "Lavender",
+    "category1": "Clothing",
+    "images": [
+      "images/products/placeholder.svg"
+    ],
     "variants": {
       "Default": {
         "stock": {
@@ -2613,37 +2613,32 @@
         }
       }
     },
+    "color": "Lavender",
+    "category0": "MENS",
+    "category2": "Uniqlo",
     "stock": 37,
-    "price": "₱1606",
+    "sizes": [],
     "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
+    "name": "U9060",
+    "price": "₱1606",
     "_colorOrder": [
       "Default"
     ],
-    "id": 114,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
     "available": true,
-    "name": "U9060",
-    "category1": "Clothing"
+    "id": 114
   },
   {
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
+    "name": "Bape STA Low",
+    "price": "₱1723",
     "_colorOrder": [
       "Default"
     ],
-    "price": "₱1723",
+    "available": true,
+    "id": 115,
     "images": [
       "images/products/placeholder.svg"
     ],
-    "id": 115,
-    "name": "Bape STA Low",
     "category1": "Clothing",
-    "available": true,
-    "category0": "MENS",
-    "category2": "GU",
-    "color": "Black",
-    "sizes": [],
     "variants": {
       "Default": {
         "stock": {
@@ -2651,6 +2646,11 @@
         }
       }
     },
-    "stock": 44
+    "category0": "MENS",
+    "color": "Black",
+    "category2": "GU",
+    "stock": 44,
+    "sizes": [],
+    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item."
   }
 ]
