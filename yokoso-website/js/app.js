@@ -439,11 +439,10 @@ function renderGoogleButton() {
 }
 function triggerGoogleSignIn() {
   var cid = localStorage.getItem('google_client_id');
-  if (!cid) { return showCartNotification('Google Client ID not configured.'); }
-  if (typeof google === 'undefined' || !google.accounts) {
-    return showCartNotification('Google library loading. Please tap Sign in with Google again.');
-  }
-  // Try OAuth token client (works on most browsers)
+  if (!cid) { showCartNotification('Google Client ID not configured.'); return; }
+  if (typeof google === 'undefined') { showCartNotification('Google not loaded. Tap again.'); return; }
+  if (!google.accounts) { showCartNotification('Google accounts not ready. Tap again.'); return; }
+  // Try OAuth token client
   if (google.accounts.oauth2) {
     try {
       var tc = google.accounts.oauth2.initTokenClient({
@@ -458,17 +457,19 @@ function triggerGoogleSignIn() {
             }).catch(function(e) { showCartNotification('Google sign-in error: ' + e.message); });
           }
         },
-        error_callback: function(e) { if (e.type !== 'popup_closed') showCartNotification('Google sign-in cancelled or failed.'); }
+        error_callback: function(e) {
+          if (e.type !== 'popup_closed' && e.type !== 'popup_blocked') showCartNotification('Google sign-in cancelled or failed.');
+        }
       });
       tc.requestAccessToken({ prompt: 'select_account' });
       return;
-    } catch(e) { showCartNotification('Google sign-in error: ' + e.message); return; }
+    } catch(e) { showCartNotification('Google oauth error: ' + e.message); return; }
   }
-  // Fallback: try One Tap prompt
+  // Fallback: One Tap prompt
   if (google.accounts.id) {
     try { google.accounts.id.prompt(); return; } catch(e) {}
   }
-  showCartNotification('Google sign-in unavailable. Use email/password instead.');
+  showCartNotification('Google not available. Use email/password.');
 }
 function initSocialLogin() {
   var cid = localStorage.getItem('google_client_id');
