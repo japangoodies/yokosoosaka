@@ -232,7 +232,7 @@ function switchAdminTab(tab) {
   if (tab === 'categories') renderCategoryManagement();
   if (tab === 'orders') loadOrders();
   if (tab === 'users') loadUsers();
-  if (tab === 'config') { applyProxyUrl(); var gti = document.getElementById('githubTokenInput'); if (gti) gti.value = localStorage.getItem('github_token') || ''; var ast = document.getElementById('autoSyncToggle'); if (ast) ast.checked = localStorage.getItem('autoSyncEnabled') === 'true'; var mui = document.getElementById('messengerUrlInput'); if (mui) mui.value = categoriesConfig.messengerUrl || ''; var ccn = document.getElementById('cloudinaryCloudName'); if (ccn) ccn.value = categoriesConfig.cloudinaryCloudName || ''; var cup = document.getElementById('cloudinaryUploadPreset'); if (cup) cup.value = categoriesConfig.cloudinaryUploadPreset || ''; var tbt = document.getElementById('telegramBotToken'); if (tbt) tbt.value = localStorage.getItem('telegram_bot_token') || ''; var tci = document.getElementById('telegramChatId'); if (tci) tci.value = localStorage.getItem('telegram_chat_id') || ''; }
+  if (tab === 'config') { applyProxyUrl(); var gti = document.getElementById('githubTokenInput'); if (gti) gti.value = localStorage.getItem('github_token') || ''; var ast = document.getElementById('autoSyncToggle'); if (ast) ast.checked = localStorage.getItem('autoSyncEnabled') === 'true'; var mui = document.getElementById('messengerUrlInput'); if (mui) mui.value = categoriesConfig.messengerUrl || ''; var ccn = document.getElementById('cloudinaryCloudName'); if (ccn) ccn.value = categoriesConfig.cloudinaryCloudName || ''; var cup = document.getElementById('cloudinaryUploadPreset'); if (cup) cup.value = categoriesConfig.cloudinaryUploadPreset || ''; var tbt = document.getElementById('telegramBotToken'); if (tbt) tbt.value = localStorage.getItem('telegram_bot_token') || ''; var tci = document.getElementById('telegramChatId'); if (tci) tci.value = localStorage.getItem('telegram_chat_id') || ''; var gci = document.getElementById('googleClientId'); if (gci) gci.value = localStorage.getItem('google_client_id') || ''; var fai = document.getElementById('facebookAppId'); if (fai) fai.value = localStorage.getItem('facebook_app_id') || ''; }
 }
 function loadUsers() {
   var list = document.getElementById('usersList');
@@ -397,6 +397,76 @@ function saveTelegramConfig() {
   status.textContent = 'Saved!';
   setTimeout(function() { status.textContent = ''; }, 2000);
   showCartNotification('Telegram settings saved.');
+}
+
+function saveSocialLoginConfig() {
+  var gci = document.getElementById('googleClientId');
+  var fai = document.getElementById('facebookAppId');
+  var status = document.getElementById('socialLoginStatus');
+  if (!gci || !fai || !status) return;
+  var gv = gci.value.trim();
+  var fv = fai.value.trim();
+  if (gv) localStorage.setItem('google_client_id', gv); else localStorage.removeItem('google_client_id');
+  if (fv) localStorage.setItem('facebook_app_id', fv); else localStorage.removeItem('facebook_app_id');
+  status.textContent = 'Saved!';
+  setTimeout(function() { status.textContent = ''; }, 2000);
+  showCartNotification('Social login settings saved.');
+  initSocialLogin();
+}
+
+function handleSocialLogin(provider, email, name, sub) {
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/accounts/social-login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ provider: provider, email: email, name: name, sub: sub })
+  }).then(function(r) { return r.json(); }).then(function(j) {
+    if (!j.ok || !j.contact) { showCartNotification('Social login failed: ' + (j.error || '')); return; }
+    saveSession({ name: j.name, contact: j.contact, email: j.email || '', address: j.address || '', admin: j.admin || false });
+    closeAccountModal();
+    showCartNotification('Logged in as ' + j.name);
+    if (j.admin) showAdminPanel();
+  }).catch(function(e) {
+    showCartNotification('Social login error: ' + (e.message || ''));
+  });
+}
+
+function initSocialLogin() {
+  var cid = localStorage.getItem('google_client_id');
+  if (typeof google !== 'undefined' && google.accounts && google.accounts.id && cid) {
+    try {
+      google.accounts.id.initialize({
+        client_id: cid,
+        callback: function(resp) {
+          if (!resp || !resp.credential) return;
+          try {
+            var payload = JSON.parse(atob(resp.credential.split('.')[1]));
+            if (payload.email && payload.name && payload.sub) {
+              handleSocialLogin('google', payload.email, payload.name, payload.sub);
+            }
+          } catch(e) { console.error('Google login parse error:', e); }
+        }
+      });
+      google.accounts.id.renderButton(document.querySelector('.g_id_signin'), { type: 'standard', size: 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: 280 });
+    } catch(e) { setTimeout(initSocialLogin, 1000); }
+  } else if (cid && typeof google === 'undefined') {
+    setTimeout(initSocialLogin, 1000);
+  }
+  var fid = localStorage.getItem('facebook_app_id');
+  if (typeof FB !== 'undefined' && fid) {
+    try { FB.init({ appId: fid, cookie: true, xfbml: true, version: 'v18.0' }); } catch(e) {}
+  }
+}
+setTimeout(initSocialLogin, 500);
+
+function onFacebookLogin() {
+  if (typeof FB === 'undefined') return;
+  FB.api('/me', { fields: 'name,email,id' }, function(resp) {
+    if (!resp || resp.error) { console.error('Facebook API error:', resp && resp.error); return; }
+    if (resp.name && resp.id) {
+      handleSocialLogin('facebook', resp.email || resp.id + '@facebook.com', resp.name, resp.id);
+    }
+  });
 }
 
 function sendTelegramNotification(message) {
