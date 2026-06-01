@@ -76,15 +76,7 @@ function openAccountModal() {
     requestAnimationFrame(function() {
       var el = document.getElementById('loginContact');
       if (el) el.focus();
-      var cid = localStorage.getItem('google_client_id');
-      if (typeof google !== 'undefined' && google.accounts && google.accounts.id && cid) {
-        var gc = document.getElementById('googleButtonContainer');
-        if (gc) { gc.style.display = 'flex'; gc.style.justifyContent = 'center'; gc.style.width = '100%'; }
-        var w = Math.min(280, Math.max(200, (window.innerWidth * 0.65)));
-        if (gc && !gc.hasChildNodes()) {
-          google.accounts.id.renderButton(gc, { type: 'standard', size: 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: w });
-        }
-      }
+      renderGoogleButton();
     });
   }
 }
@@ -436,6 +428,26 @@ function handleSocialLogin(provider, email, name, sub) {
   });
 }
 
+function renderGoogleButton() {
+  var cid = localStorage.getItem('google_client_id');
+  if (!cid) return;
+  var gc = document.getElementById('googleButtonContainer');
+  if (!gc) return;
+  gc.innerHTML = '';
+  gc.style.cssText = 'display:flex!important;justify-content:center!important;width:100%!important;overflow:visible!important';
+  var isMobile = window.innerWidth < 480;
+  var opts = { type: 'standard', size: isMobile ? 'medium' : 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: isMobile ? 220 : 280 };
+  var tries = 0;
+  (function attempt() {
+    tries++;
+    if (tries > 25) return;
+    if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+      try { google.accounts.id.renderButton(gc, opts); } catch(e) { setTimeout(attempt, 200); }
+    } else {
+      setTimeout(attempt, 200);
+    }
+  })();
+}
 function initSocialLogin() {
   var cid = localStorage.getItem('google_client_id');
   if (typeof google !== 'undefined' && google.accounts && google.accounts.id && cid) {
