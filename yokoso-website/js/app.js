@@ -175,6 +175,54 @@ function handleLogout() {
   }
   showCartNotification('Logged out' + (name ? ', ' + name : '') + '.');
 }
+function showCustomerOrders() {
+  closeAccountModal();
+  var overlay = document.getElementById('customerOrdersModal');
+  var list = document.getElementById('customerOrdersList');
+  if (!overlay || !list) return;
+  overlay.style.display = 'flex';
+  list.innerHTML = 'Loading...';
+  if (!currentUser || !currentUser.email) { list.innerHTML = '<div style="color:#888;padding:20px;text-align:center">No email on file.</div>'; return; }
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/orders?customerEmail=' + encodeURIComponent(currentUser.email) + '&limit=100')
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      var orders = j.docs || [];
+      if (!orders.length) { list.innerHTML = '<div style="color:#888;padding:20px;text-align:center">No orders yet.</div>'; return; }
+      var html = orders.map(function(o) {
+        var items = [];
+        try { items = JSON.parse(o.items || '[]'); } catch(e) {}
+        var itemsHtml = items.map(function(i) {
+          return '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px;border-bottom:1px solid #f0f0f0">' +
+            '<span>' + escapeHtml(i.name) + (i.color ? ' (' + escapeHtml(i.color) + ')' : '') + (i.size && i.size !== 'q' ? '/' + i.size : '') + ' x' + i.qty + '</span>' +
+            '<span>\u20b1' + (i.price * i.qty).toFixed(2) + '</span></div>';
+        }).join('');
+        var statusColors = { pending: '#f59e0b', 'deposit-paid': '#3b82f6', confirmed: '#22c55e', cancelled: '#ef4444' };
+        var statusColor = statusColors[o.status] || '#888';
+        return '<div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;margin-bottom:10px;background:#fafafa">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+          '<strong style="font-size:14px">' + escapeHtml(o.poNumber || '') + '</strong>' +
+          '<span style="font-size:12px;background:' + statusColor + ';color:#fff;padding:2px 8px;border-radius:10px">' + escapeHtml(o.status || '') + '</span></div>' +
+          '<div style="font-size:12px;color:#666;margin-bottom:6px">' + (o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '') + '</div>' +
+          itemsHtml +
+          '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:bold;padding-top:4px;margin-top:4px;border-top:2px solid #e0e0e0">' +
+          '<span>Total</span><span>' + escapeHtml(o.total || '') + '</span></div>' +
+          (o.deposit ? '<div style="display:flex;justify-content:space-between;font-size:12px;color:#666">' +
+          '<span>Deposit</span><span>' + escapeHtml(o.deposit) + '</span></div>' : '') +
+          '</div>';
+      }).join('');
+      list.innerHTML = html;
+    })
+    .catch(function(e) { list.innerHTML = '<div style="color:#c00;padding:20px;text-align:center">Error loading orders: ' + escapeHtml(e.message || '') + '</div>'; });
+}
+function closeCustomerOrders() {
+  var overlay = document.getElementById('customerOrdersModal');
+  if (overlay) overlay.style.display = 'none';
+}
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 // ---- END ACCOUNT ----
 
 // ---- ADMIN USERS ----

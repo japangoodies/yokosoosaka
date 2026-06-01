@@ -527,9 +527,18 @@
           <div class="account-detail account-detail-label" id="accountDetailContact"></div>
           <div class="account-detail account-detail-address" id="accountDetailEmail"></div>
           <div class="account-detail account-detail-address" id="accountDetailAddress"></div>
+          <button class="account-btn-secondary" onclick="showCustomerOrders()" style="margin-bottom:8px;background:#f0f0f0;color:#333;border:1px solid #ccc;padding:8px 16px;border-radius:4px;cursor:pointer;width:100%;font-size:14px">My Orders</button>
           <button class="account-btn-primary account-btn-logout" onclick="handleLogout()">Logout</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div id="customerOrdersModal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeCustomerOrders()">
+    <div style="background:#fff;border-radius:8px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;margin:40px auto;padding:20px;position:relative">
+      <button onclick="closeCustomerOrders()" style="position:absolute;top:10px;right:14px;border:none;background:none;font-size:1.5rem;cursor:pointer">&times;</button>
+      <h3 style="margin:0 0 16px">My Orders</h3>
+      <div id="customerOrdersList" style="min-height:60px">Loading...</div>
     </div>
   </div>
 

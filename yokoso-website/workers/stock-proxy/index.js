@@ -620,8 +620,10 @@ async function handleRequest(request, env) {
       docs.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
       const url = new URL(request.url);
       const filterStatus = url.searchParams.get('status') || '';
+      const filterEmail = url.searchParams.get('customerEmail') || '';
       let filtered = docs;
       if (filterStatus && filterStatus !== 'all') filtered = docs.filter(d => d.status === filterStatus);
+      if (filterEmail) filtered = filtered.filter(function(d) { return d.customerEmail === filterEmail; });
       const page = Math.max(1, parseInt(url.searchParams.get('page')) || 1);
       const limit = Math.min(200, Math.max(1, parseInt(url.searchParams.get('limit')) || 50));
       const total = filtered.length;
