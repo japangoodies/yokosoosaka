@@ -503,10 +503,8 @@
           </div>
           <button class="account-btn-primary" onclick="handleLogin()">Login</button>
           <div id="accountLoginError" class="account-error"></div>
-          <div style="margin-top:12px;border-top:1px solid #e0e0e0;padding-top:12px">
-            <div id="googleButtonContainer" style="text-align:center"></div>
-
-          </div>
+          <div class="account-divider">or continue with</div>
+          <div id="googleButtonContainer" style="text-align:center"></div>
         </div>
         <div id="accountRegisterForm" style="display:none">
           <div class="account-form-group">
@@ -542,7 +540,7 @@
           <div class="account-detail account-detail-label" id="accountDetailContact"></div>
           <div class="account-detail account-detail-address" id="accountDetailEmail"></div>
           <div class="account-detail account-detail-address" id="accountDetailAddress"></div>
-          <button class="account-btn-secondary" onclick="showCustomerOrders()" style="margin-bottom:8px;background:#f0f0f0;color:#333;border:1px solid #ccc;padding:8px 16px;border-radius:4px;cursor:pointer;width:100%;font-size:14px">My Orders</button>
+          <button class="account-my-orders-btn" onclick="showCustomerOrders()">My Orders</button>
           <button class="account-btn-primary account-btn-logout" onclick="handleLogout()">Logout</button>
         </div>
       </div>
