@@ -319,6 +319,7 @@ function loadDepositConfig() {
   fetch('maintenance.json?_=' + Date.now()).then(function(r) { return r.json(); }).then(function(d) {
     if (d && typeof d.depositPercent === 'number') depositPercent = d.depositPercent;
     if (d && d.adminEmail && !localStorage.getItem('yokoso_admin_email')) adminEmail = d.adminEmail;
+    if (d && d.googleClientId) localStorage.setItem('google_client_id', d.googleClientId);
   }).catch(function() {});
 }
 
@@ -404,11 +405,43 @@ function saveSocialLoginConfig() {
   var gci = document.getElementById('googleClientId');
   var status = document.getElementById('socialLoginStatus');
   if (!gci || !status) return;
-  if (gci.value.trim()) localStorage.setItem('google_client_id', gci.value.trim()); else localStorage.removeItem('google_client_id');
-  status.textContent = 'Saved!';
-  setTimeout(function() { status.textContent = ''; }, 2000);
-  showCartNotification('Social login settings saved.');
+  var val = gci.value.trim();
+  if (val) localStorage.setItem('google_client_id', val); else localStorage.removeItem('google_client_id');
+  status.textContent = 'Saved locally. Syncing to GitHub...';
+  status.style.color = '#888';
   initSocialLogin();
+  var token = localStorage.getItem('github_token');
+  if (!token) { status.textContent = 'Saved locally only (no GitHub token).'; setTimeout(function() { status.textContent = ''; }, 3000); return; }
+  fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_MAINTENANCE_PATH, {
+    headers: { 'Authorization': 'token ' + token }
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function(data) {
+    var content = decodeURIComponent(escape(atob(data.content)));
+    var mainObj = JSON.parse(content);
+    mainObj.googleClientId = val;
+    var newContent = JSON.stringify(mainObj, null, 2);
+    var encoded = btoa(unescape(encodeURIComponent(newContent)));
+    return fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_MAINTENANCE_PATH, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'Update Google Client ID', content: encoded, sha: data.sha, branch: GITHUB_BRANCH })
+    });
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    status.textContent = 'Saved to GitHub ✓';
+    status.style.color = '#28a745';
+    setTimeout(function() { status.textContent = ''; }, 3000);
+    showCartNotification('Social login settings saved to GitHub.');
+  })
+  .catch(function(e) {
+    status.textContent = 'Saved locally. GitHub sync: ' + e.message;
+    setTimeout(function() { status.textContent = ''; }, 3000);
+  });
 }
 
 function handleSocialLogin(provider, email, name, sub) {
@@ -3705,6 +3738,7 @@ var GITHUB_OWNER = 'japangoodies';
 var GITHUB_REPO = 'yokosoosaka';
 var GITHUB_PATH = 'yokoso-website/data/products.json';
 var GITHUB_CATEGORIES_PATH = 'yokoso-website/data/categories.json';
+var GITHUB_MAINTENANCE_PATH = 'yokoso-website/maintenance.json';
 var GITHUB_BRANCH = 'main';
 
 
