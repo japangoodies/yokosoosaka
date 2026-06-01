@@ -460,27 +460,39 @@ function initSocialLogin() {
   } else if (cid && typeof google === 'undefined') {
     setTimeout(initSocialLogin, 1000);
   }
-  var fid = localStorage.getItem('facebook_app_id');
-  if (typeof FB !== 'undefined' && FB.init && fid) {
-    try {
-      FB.init({ appId: fid, cookie: true, xfbml: false, version: 'v18.0' });
-    } catch(e) {}
-  } else if (fid) {
-    setTimeout(initSocialLogin, 1000);
-  }
 }
 function facebookLoginClick() {
   var fid = localStorage.getItem('facebook_app_id');
   if (!fid) { showCartNotification('Facebook App ID not configured.'); return; }
-  if (typeof FB === 'undefined' || !FB.login) { showCartNotification('Facebook SDK not loaded yet.'); return; }
-  FB.login(function(resp) {
-    if (!resp || resp.status !== 'connected') { showCartNotification('Facebook login cancelled.'); return; }
-    FB.api('/me', { fields: 'name,email,id' }, function(me) {
-      if (me && !me.error && me.name && me.id) {
-        handleSocialLogin('facebook', me.email || me.id + '@facebook.com', me.name, me.id);
-      }
+  var redirectUri = window.location.protocol + '//' + window.location.host + window.location.pathname;
+  var fbUrl = 'https://www.facebook.com/v18.0/dialog/oauth?client_id=' + encodeURIComponent(fid) + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&response_type=token&scope=public_profile&state=facebook_login';
+  window.location.href = fbUrl;
+}
+
+function handleFacebookRedirect() {
+  if (window.location.hash && window.location.hash.indexOf('access_token=') !== -1) {
+    var hash = window.location.hash.substring(1);
+    var params = {};
+    hash.split('&').forEach(function(pair) {
+      var parts = pair.split('=');
+      if (parts.length === 2) params[parts[0]] = parts[1];
     });
-  }, { scope: 'public_profile' });
+    if (params.access_token) {
+      var origHash = window.location.hash;
+      window.location.hash = '';
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      fetch('https://graph.facebook.com/me?fields=name,id&access_token=' + encodeURIComponent(params.access_token))
+        .then(function(r) { return r.json(); })
+        .then(function(me) {
+          if (me && !me.error && me.name && me.id) {
+            handleSocialLogin('facebook', me.id + '@facebook.com', me.name, me.id);
+          } else {
+            showCartNotification('Facebook login failed: ' + (me.error && me.error.message || 'unknown error'));
+          }
+        })
+        .catch(function(e) { showCartNotification('Facebook API error: ' + (e.message || '')); });
+    }
+  }
 }
 setTimeout(initSocialLogin, 500);
 
@@ -4545,6 +4557,7 @@ loadProducts(function() {
   updateAccountUI();
   loadDepositConfig();
   parseURLParams();
+  handleFacebookRedirect();
   if (currentUser && currentUser.admin) showAdminPanel();
   renderMessengerLink();
   renderFilters();
