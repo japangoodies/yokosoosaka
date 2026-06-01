@@ -239,7 +239,7 @@ function switchAdminTab(tab) {
   if (tab === 'categories') renderCategoryManagement();
   if (tab === 'orders') loadOrders();
   if (tab === 'users') loadUsers();
-  if (tab === 'config') { applyProxyUrl(); var gti = document.getElementById('githubTokenInput'); if (gti) gti.value = localStorage.getItem('github_token') || ''; var ast = document.getElementById('autoSyncToggle'); if (ast) ast.checked = localStorage.getItem('autoSyncEnabled') === 'true'; var mui = document.getElementById('messengerUrlInput'); if (mui) mui.value = categoriesConfig.messengerUrl || ''; var ccn = document.getElementById('cloudinaryCloudName'); if (ccn) ccn.value = categoriesConfig.cloudinaryCloudName || ''; var cup = document.getElementById('cloudinaryUploadPreset'); if (cup) cup.value = categoriesConfig.cloudinaryUploadPreset || ''; var tbt = document.getElementById('telegramBotToken'); if (tbt) tbt.value = localStorage.getItem('telegram_bot_token') || ''; var tci = document.getElementById('telegramChatId'); if (tci) tci.value = localStorage.getItem('telegram_chat_id') || ''; var gci = document.getElementById('googleClientId'); if (gci) gci.value = localStorage.getItem('google_client_id') || ''; var fai = document.getElementById('facebookAppId'); if (fai) fai.value = localStorage.getItem('facebook_app_id') || ''; var fas = document.getElementById('facebookAppSecret'); if (fas) fas.value = localStorage.getItem('facebook_app_secret') || ''; }
+  if (tab === 'config') { applyProxyUrl(); var gti = document.getElementById('githubTokenInput'); if (gti) gti.value = localStorage.getItem('github_token') || ''; var ast = document.getElementById('autoSyncToggle'); if (ast) ast.checked = localStorage.getItem('autoSyncEnabled') === 'true'; var mui = document.getElementById('messengerUrlInput'); if (mui) mui.value = categoriesConfig.messengerUrl || ''; var ccn = document.getElementById('cloudinaryCloudName'); if (ccn) ccn.value = categoriesConfig.cloudinaryCloudName || ''; var cup = document.getElementById('cloudinaryUploadPreset'); if (cup) cup.value = categoriesConfig.cloudinaryUploadPreset || ''; var tbt = document.getElementById('telegramBotToken'); if (tbt) tbt.value = localStorage.getItem('telegram_bot_token') || ''; var tci = document.getElementById('telegramChatId'); if (tci) tci.value = localStorage.getItem('telegram_chat_id') || ''; var gci = document.getElementById('googleClientId'); if (gci) gci.value = localStorage.getItem('google_client_id') || ''; }
 }
 function loadUsers() {
   var list = document.getElementById('usersList');
@@ -408,13 +408,9 @@ function saveTelegramConfig() {
 
 function saveSocialLoginConfig() {
   var gci = document.getElementById('googleClientId');
-  var fai = document.getElementById('facebookAppId');
-  var fas = document.getElementById('facebookAppSecret');
   var status = document.getElementById('socialLoginStatus');
-  if (!gci || !fai || !fas || !status) return;
+  if (!gci || !status) return;
   if (gci.value.trim()) localStorage.setItem('google_client_id', gci.value.trim()); else localStorage.removeItem('google_client_id');
-  if (fai.value.trim()) localStorage.setItem('facebook_app_id', fai.value.trim()); else localStorage.removeItem('facebook_app_id');
-  if (fas.value.trim()) localStorage.setItem('facebook_app_secret', fas.value.trim()); else localStorage.removeItem('facebook_app_secret');
   status.textContent = 'Saved!';
   setTimeout(function() { status.textContent = ''; }, 2000);
   showCartNotification('Social login settings saved.');
@@ -461,49 +457,7 @@ function initSocialLogin() {
     setTimeout(initSocialLogin, 1000);
   }
 }
-function facebookLoginClick() {
-  var fid = localStorage.getItem('facebook_app_id');
-  if (!fid) { showCartNotification('Facebook App ID not configured.'); return; }
-  var fos = localStorage.getItem('facebook_app_secret');
-  if (!fos) { showCartNotification('Facebook App Secret not configured in admin Config.'); return; }
-  var redirectUri = window.location.protocol + '//' + window.location.host + window.location.pathname;
-  var fbUrl = 'https://www.facebook.com/v18.0/dialog/oauth?client_id=' + encodeURIComponent(fid) + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&response_type=code&state=facebook_login';
-  window.location.href = fbUrl;
-}
 
-function handleFacebookRedirect() {
-  var params = {};
-  var qs = window.location.search && window.location.search.substring(1);
-  if (qs) {
-    qs.split('&').forEach(function(pair) {
-      var parts = pair.split('=');
-      if (parts.length === 2) params[parts[0]] = decodeURIComponent(parts[1]);
-    });
-  }
-  if (params.code && params.state === 'facebook_login') {
-    var redirectUri = window.location.protocol + '//' + window.location.host + window.location.pathname;
-    var base = STOCK_PROXY_URL.replace(/\/+$/, '');
-    history.replaceState(null, '', window.location.pathname);
-    fetch(base + '/auth/facebook/callback', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        code: params.code,
-        redirectUri: redirectUri,
-        appId: localStorage.getItem('facebook_app_id'),
-        appSecret: localStorage.getItem('facebook_app_secret')
-      })
-    }).then(function(r) { return r.json(); }).then(function(j) {
-      if (j.ok && j.name && j.id) {
-        handleSocialLogin('facebook', j.id + '@facebook.com', j.name, j.id);
-      } else {
-        showCartNotification('Facebook login failed: ' + (j.error || 'unknown'));
-      }
-    }).catch(function(e) {
-      showCartNotification('Facebook login error: ' + (e.message || ''));
-    });
-  }
-}
 setTimeout(initSocialLogin, 500);
 
 function sendTelegramNotification(message) {
@@ -4567,7 +4521,6 @@ loadProducts(function() {
   updateAccountUI();
   loadDepositConfig();
   parseURLParams();
-  handleFacebookRedirect();
   if (currentUser && currentUser.admin) showAdminPanel();
   renderMessengerLink();
   renderFilters();
