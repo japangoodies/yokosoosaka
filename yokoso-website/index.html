@@ -366,6 +366,15 @@
             <span id="proxyStatus" style="font-size:12px;color:#888"></span>
           </div>
         </div>
+        <div class="admin-social-login-config" style="padding:12px 20px;background:#f8f9fa;border-bottom:1px solid #dee2e6">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <strong style="font-size:14px">Social Login</strong>
+            <input type="text" id="googleClientId" placeholder="Google Client ID" style="padding:6px 10px;border:1px solid #ccc;border-radius:4px;flex:1;min-width:200px;font-size:13px">
+            <input type="text" id="facebookAppId" placeholder="Facebook App ID" style="padding:6px 10px;border:1px solid #ccc;border-radius:4px;flex:0 1 160px;min-width:100px;font-size:13px">
+            <button type="button" onclick="saveSocialLoginConfig()" style="padding:6px 14px;background:#2e7d32;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px">Save</button>
+            <span id="socialLoginStatus" style="font-size:12px;color:#888"></span>
+          </div>
+        </div>
         <div class="admin-email-config" style="padding:12px 20px;background:#f8f9fa">
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
             <strong style="font-size:14px">Admin Email (for orders)</strong>
@@ -449,6 +458,14 @@
 
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://connect.facebook.net/en_US/sdk.js" async defer crossorigin="anonymous"></script>
+  <script>
+  window.fbAsyncInit = function() {
+    var fid = localStorage.getItem('facebook_app_id');
+    if (fid) { try { FB.init({ appId: fid, cookie: true, xfbml: true, version: 'v18.0' }); } catch(e) {} }
+  };
+  </script>
   <script src="maintenance.js"></script>
   <script src="js/app.js?v=20260603"></script>
 <script>
@@ -492,6 +509,13 @@
           </div>
           <button class="account-btn-primary" onclick="handleLogin()">Login</button>
           <div id="accountLoginError" class="account-error"></div>
+          <div style="margin-top:12px;border-top:1px solid #e0e0e0;padding-top:12px">
+            <div id="g_id_onload" style="display:none"></div>
+            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-width="280"></div>
+            <div style="margin-top:8px;text-align:center">
+              <div class="fb-login-button" data-width="280" data-size="large" data-button-type="login_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false" data-scope="public_profile,email" data-onlogin="onFacebookLogin"></div>
+            </div>
+          </div>
         </div>
         <div id="accountRegisterForm" style="display:none">
           <div class="account-form-group">

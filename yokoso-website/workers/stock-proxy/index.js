@@ -360,6 +360,58 @@ async function handleRequest(request, env) {
       return new Response(JSON.stringify({ ok: true, name: body.name, address: body.address, contact: body.contact, email: body.email || '', admin: false }), { headers: corsHeaders(origin) });
     }
 
+    // POST /accounts/social-login
+    if (request.method === 'POST' && parts.length === 2 && parts[0] === 'accounts' && parts[1] === 'social-login') {
+      const body = await request.json();
+      if (!body.email || !body.name || !body.provider || !body.sub) {
+        return new Response(JSON.stringify({ error: 'email, name, provider, and sub required' }), { status: 400, headers: corsHeaders(origin) });
+      }
+      const contact = body.provider + '_' + body.sub;
+      const existing = await firestoreGet(`accounts/${encodeURIComponent(contact)}`).catch(() => null);
+      if (existing && existing.fields) {
+        const acct = parseAccountDoc(existing);
+        return new Response(JSON.stringify({ ok: true, ...acct }), { headers: corsHeaders(origin) });
+      }
+      const byEmail = await (async function() {
+        const data = await firestoreGet('accounts').catch(() => null);
+        if (!data || !data.documents) return null;
+        for (const d of data.documents) {
+          const a = parseAccountDoc(d);
+          if (a && a.email === body.email) return a;
+        }
+        return null;
+      })();
+      if (byEmail) {
+        const updUrl = `${FIRESTORE_BASE}/accounts/${encodeURIComponent(byEmail.contact)}?key=${API_KEY}&updateMask.fieldPaths=contact&updateMask.fieldPaths=email`;
+        await fetchWithRetry(updUrl, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fields: { contact: { stringValue: contact }, email: { stringValue: body.email } } })
+        }).catch(() => {});
+        const acct = { ...byEmail, contact: contact };
+        return new Response(JSON.stringify({ ok: true, ...acct }), { headers: corsHeaders(origin) });
+      }
+      const passwordHash = await hashPassword(Math.random().toString(36).slice(2));
+      const url = `${FIRESTORE_BASE}/accounts?key=${API_KEY}&documentId=${encodeURIComponent(contact)}`;
+      const resp = await fetchWithRetry(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: {
+          name: { stringValue: body.name },
+          address: { stringValue: '' },
+          contact: { stringValue: contact },
+          email: { stringValue: body.email },
+          passwordHash: { stringValue: passwordHash },
+          admin: { stringValue: 'false' }
+        } })
+      });
+      if (!resp.ok) {
+        const text = await resp.text().catch(() => '');
+        throw new Error(`Firestore create social account: HTTP ${resp.status} ${text}`);
+      }
+      return new Response(JSON.stringify({ ok: true, name: body.name, address: '', contact: contact, email: body.email, admin: false }), { headers: corsHeaders(origin) });
+    }
+
     // POST /accounts/login
     if (request.method === 'POST' && parts.length === 2 && parts[0] === 'accounts' && parts[1] === 'login') {
       const body = await request.json();
