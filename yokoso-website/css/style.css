@@ -28,8 +28,8 @@ body {
 
 /* Header */
 .header {
-  background: #F8C361;
-  border-bottom: 1px solid #f0f0f2;
+  background: #fff;
+  border-bottom: 1px solid #e8e8ed;
   position: sticky;
   top: 0;
   z-index: 100;
