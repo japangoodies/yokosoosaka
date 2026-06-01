@@ -76,7 +76,7 @@ function openAccountModal() {
     requestAnimationFrame(function() {
       var el = document.getElementById('loginContact');
       if (el) el.focus();
-      renderGoogleButton();
+      requestAnimationFrame(function() { renderGoogleButton(); });
     });
   }
 }
@@ -433,20 +433,18 @@ function renderGoogleButton() {
   if (!cid) return;
   var gc = document.getElementById('googleButtonContainer');
   if (!gc) return;
-  gc.innerHTML = '';
-  gc.style.cssText = 'display:flex!important;justify-content:center!important;width:100%!important;overflow:visible!important';
-  var isMobile = window.innerWidth < 480;
-  var opts = { type: 'standard', size: isMobile ? 'medium' : 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: isMobile ? 220 : 280 };
-  var tries = 0;
-  (function attempt() {
-    tries++;
-    if (tries > 25) return;
+  if (gc.hasChildNodes()) return;
+  gc.style.cssText = 'display:flex!important;justify-content:center!important;width:100%!important;min-height:45px;position:relative';
+  function tryRender() {
     if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-      try { google.accounts.id.renderButton(gc, opts); } catch(e) { setTimeout(attempt, 200); }
+      try {
+        google.accounts.id.renderButton(gc, { type: 'standard', size: 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: 260 });
+      } catch(e) { gc.innerHTML = ''; setTimeout(tryRender, 500); }
     } else {
-      setTimeout(attempt, 200);
+      setTimeout(tryRender, 500);
     }
-  })();
+  }
+  tryRender();
 }
 function initSocialLogin() {
   var cid = localStorage.getItem('google_client_id');
