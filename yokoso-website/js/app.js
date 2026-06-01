@@ -239,7 +239,7 @@ function switchAdminTab(tab) {
   if (tab === 'categories') renderCategoryManagement();
   if (tab === 'orders') loadOrders();
   if (tab === 'users') loadUsers();
-  if (tab === 'config') { applyProxyUrl(); var gti = document.getElementById('githubTokenInput'); if (gti) gti.value = localStorage.getItem('github_token') || ''; var ast = document.getElementById('autoSyncToggle'); if (ast) ast.checked = localStorage.getItem('autoSyncEnabled') === 'true'; var mui = document.getElementById('messengerUrlInput'); if (mui) mui.value = categoriesConfig.messengerUrl || ''; var ccn = document.getElementById('cloudinaryCloudName'); if (ccn) ccn.value = categoriesConfig.cloudinaryCloudName || ''; var cup = document.getElementById('cloudinaryUploadPreset'); if (cup) cup.value = categoriesConfig.cloudinaryUploadPreset || ''; var tbt = document.getElementById('telegramBotToken'); if (tbt) tbt.value = localStorage.getItem('telegram_bot_token') || ''; var tci = document.getElementById('telegramChatId'); if (tci) tci.value = localStorage.getItem('telegram_chat_id') || ''; var gci = document.getElementById('googleClientId'); if (gci) gci.value = localStorage.getItem('google_client_id') || ''; var fai = document.getElementById('facebookAppId'); if (fai) fai.value = localStorage.getItem('facebook_app_id') || ''; }
+  if (tab === 'config') { applyProxyUrl(); var gti = document.getElementById('githubTokenInput'); if (gti) gti.value = localStorage.getItem('github_token') || ''; var ast = document.getElementById('autoSyncToggle'); if (ast) ast.checked = localStorage.getItem('autoSyncEnabled') === 'true'; var mui = document.getElementById('messengerUrlInput'); if (mui) mui.value = categoriesConfig.messengerUrl || ''; var ccn = document.getElementById('cloudinaryCloudName'); if (ccn) ccn.value = categoriesConfig.cloudinaryCloudName || ''; var cup = document.getElementById('cloudinaryUploadPreset'); if (cup) cup.value = categoriesConfig.cloudinaryUploadPreset || ''; var tbt = document.getElementById('telegramBotToken'); if (tbt) tbt.value = localStorage.getItem('telegram_bot_token') || ''; var tci = document.getElementById('telegramChatId'); if (tci) tci.value = localStorage.getItem('telegram_chat_id') || ''; var gci = document.getElementById('googleClientId'); if (gci) gci.value = localStorage.getItem('google_client_id') || ''; var fai = document.getElementById('facebookAppId'); if (fai) fai.value = localStorage.getItem('facebook_app_id') || ''; var fas = document.getElementById('facebookAppSecret'); if (fas) fas.value = localStorage.getItem('facebook_app_secret') || ''; }
 }
 function loadUsers() {
   var list = document.getElementById('usersList');
@@ -409,12 +409,12 @@ function saveTelegramConfig() {
 function saveSocialLoginConfig() {
   var gci = document.getElementById('googleClientId');
   var fai = document.getElementById('facebookAppId');
+  var fas = document.getElementById('facebookAppSecret');
   var status = document.getElementById('socialLoginStatus');
-  if (!gci || !fai || !status) return;
-  var gv = gci.value.trim();
-  var fv = fai.value.trim();
-  if (gv) localStorage.setItem('google_client_id', gv); else localStorage.removeItem('google_client_id');
-  if (fv) localStorage.setItem('facebook_app_id', fv); else localStorage.removeItem('facebook_app_id');
+  if (!gci || !fai || !fas || !status) return;
+  if (gci.value.trim()) localStorage.setItem('google_client_id', gci.value.trim()); else localStorage.removeItem('google_client_id');
+  if (fai.value.trim()) localStorage.setItem('facebook_app_id', fai.value.trim()); else localStorage.removeItem('facebook_app_id');
+  if (fas.value.trim()) localStorage.setItem('facebook_app_secret', fas.value.trim()); else localStorage.removeItem('facebook_app_secret');
   status.textContent = 'Saved!';
   setTimeout(function() { status.textContent = ''; }, 2000);
   showCartNotification('Social login settings saved.');
@@ -464,34 +464,44 @@ function initSocialLogin() {
 function facebookLoginClick() {
   var fid = localStorage.getItem('facebook_app_id');
   if (!fid) { showCartNotification('Facebook App ID not configured.'); return; }
+  var fos = localStorage.getItem('facebook_app_secret');
+  if (!fos) { showCartNotification('Facebook App Secret not configured in admin Config.'); return; }
   var redirectUri = window.location.protocol + '//' + window.location.host + window.location.pathname;
-  var fbUrl = 'https://www.facebook.com/v18.0/dialog/oauth?client_id=' + encodeURIComponent(fid) + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&response_type=token&scope=public_profile&state=facebook_login';
+  var fbUrl = 'https://www.facebook.com/v18.0/dialog/oauth?client_id=' + encodeURIComponent(fid) + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&response_type=code&state=facebook_login';
   window.location.href = fbUrl;
 }
 
 function handleFacebookRedirect() {
-  if (window.location.hash && window.location.hash.indexOf('access_token=') !== -1) {
-    var hash = window.location.hash.substring(1);
-    var params = {};
-    hash.split('&').forEach(function(pair) {
+  var params = {};
+  var qs = window.location.search && window.location.search.substring(1);
+  if (qs) {
+    qs.split('&').forEach(function(pair) {
       var parts = pair.split('=');
-      if (parts.length === 2) params[parts[0]] = parts[1];
+      if (parts.length === 2) params[parts[0]] = decodeURIComponent(parts[1]);
     });
-    if (params.access_token) {
-      var origHash = window.location.hash;
-      window.location.hash = '';
-      history.replaceState(null, '', window.location.pathname + window.location.search);
-      fetch('https://graph.facebook.com/me?fields=name,id&access_token=' + encodeURIComponent(params.access_token))
-        .then(function(r) { return r.json(); })
-        .then(function(me) {
-          if (me && !me.error && me.name && me.id) {
-            handleSocialLogin('facebook', me.id + '@facebook.com', me.name, me.id);
-          } else {
-            showCartNotification('Facebook login failed: ' + (me.error && me.error.message || 'unknown error'));
-          }
-        })
-        .catch(function(e) { showCartNotification('Facebook API error: ' + (e.message || '')); });
-    }
+  }
+  if (params.code && params.state === 'facebook_login') {
+    var redirectUri = window.location.protocol + '//' + window.location.host + window.location.pathname;
+    var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+    history.replaceState(null, '', window.location.pathname);
+    fetch(base + '/auth/facebook/callback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code: params.code,
+        redirectUri: redirectUri,
+        appId: localStorage.getItem('facebook_app_id'),
+        appSecret: localStorage.getItem('facebook_app_secret')
+      })
+    }).then(function(r) { return r.json(); }).then(function(j) {
+      if (j.ok && j.name && j.id) {
+        handleSocialLogin('facebook', j.id + '@facebook.com', j.name, j.id);
+      } else {
+        showCartNotification('Facebook login failed: ' + (j.error || 'unknown'));
+      }
+    }).catch(function(e) {
+      showCartNotification('Facebook login error: ' + (e.message || ''));
+    });
   }
 }
 setTimeout(initSocialLogin, 500);
