@@ -460,12 +460,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://connect.facebook.net/en_US/sdk.js" async defer crossorigin="anonymous"></script>
-  <script>
-  window.fbAsyncInit = function() {
-    var fid = localStorage.getItem('facebook_app_id');
-    if (fid) { try { FB.init({ appId: fid, cookie: true, xfbml: true, version: 'v18.0' }); } catch(e) {} }
-  };
-  </script>
   <script src="maintenance.js"></script>
   <script src="js/app.js?v=20260603"></script>
 <script>
@@ -512,8 +506,8 @@
           <div style="margin-top:12px;border-top:1px solid #e0e0e0;padding-top:12px">
             <div id="g_id_onload" style="display:none"></div>
             <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-width="280"></div>
-            <div style="margin-top:8px;text-align:center">
-              <div class="fb-login-button" data-width="280" data-size="large" data-button-type="login_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false" data-scope="public_profile,email" data-onlogin="onFacebookLogin"></div>
+            <div style="margin-top:8px;text-align:center" id="fbLoginContainer">
+              <div class="fb-login-button" data-width="280" data-size="large" data-button-type="login_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false" data-scope="public_profile,email"></div>
             </div>
           </div>
         </div>

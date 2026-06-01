@@ -453,8 +453,21 @@ function initSocialLogin() {
     setTimeout(initSocialLogin, 1000);
   }
   var fid = localStorage.getItem('facebook_app_id');
-  if (typeof FB !== 'undefined' && fid) {
-    try { FB.init({ appId: fid, cookie: true, xfbml: true, version: 'v18.0' }); } catch(e) {}
+  if (typeof FB !== 'undefined' && FB.init && fid) {
+    try {
+      FB.init({ appId: fid, cookie: true, xfbml: true, version: 'v18.0' });
+      FB.Event.subscribe('auth.statusChange', function(resp) {
+        if (resp.status === 'connected' && resp.authResponse) {
+          FB.api('/me', { fields: 'name,email,id' }, function(me) {
+            if (me && !me.error && me.name && me.id) {
+              handleSocialLogin('facebook', me.email || me.id + '@facebook.com', me.name, me.id);
+            }
+          });
+        }
+      });
+    } catch(e) {}
+  } else if (fid) {
+    setTimeout(initSocialLogin, 1000);
   }
 }
 setTimeout(initSocialLogin, 500);
