@@ -76,7 +76,7 @@ function openAccountModal() {
     requestAnimationFrame(function() {
       var el = document.getElementById('loginContact');
       if (el) el.focus();
-      requestAnimationFrame(function() { renderGoogleButton(); });
+      renderGoogleButton();
     });
   }
 }
@@ -429,22 +429,44 @@ function handleSocialLogin(provider, email, name, sub) {
 }
 
 function renderGoogleButton() {
-  var cid = localStorage.getItem('google_client_id');
-  if (!cid) return;
   var gc = document.getElementById('googleButtonContainer');
   if (!gc) return;
-  if (gc.hasChildNodes()) return;
-  gc.style.cssText = 'display:flex!important;justify-content:center!important;width:100%!important;min-height:45px;position:relative';
-  function tryRender() {
-    if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-      try {
-        google.accounts.id.renderButton(gc, { type: 'standard', size: 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: 260 });
-      } catch(e) { gc.innerHTML = ''; setTimeout(tryRender, 500); }
-    } else {
-      setTimeout(tryRender, 500);
+  gc.innerHTML = '<button type="button" id="customGoogleBtn" style="display:inline-flex;align-items:center;gap:10px;padding:10px 24px;border:1px solid #dadce0;border-radius:20px;background:#fff;color:#3c4043;font-size:14px;font-weight:500;font-family:Roboto,Helvetica,Arial,sans-serif;cursor:pointer;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,0.08)">' +
+    '<svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.163-1.84H9v3.482h4.844a4.14 4.14 0 0 1-1.796 2.716v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>' +
+    'Sign in with Google</button>';
+  gc.style.cssText = 'display:flex!important;justify-content:center!important;width:100%!important';
+  document.getElementById('customGoogleBtn')?.addEventListener('click', triggerGoogleSignIn);
+}
+var _googleTokenClient = null;
+function triggerGoogleSignIn() {
+  var cid = localStorage.getItem('google_client_id');
+  if (!cid) return;
+  if (typeof google === 'undefined' || !google.accounts) return;
+  if (!google.accounts.oauth2) { return showCartNotification('Google library not ready. Try again.'); }
+  try {
+    if (!_googleTokenClient) {
+      _googleTokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: cid,
+        scope: 'openid email profile',
+        callback: function(tokenResponse) {
+          if (tokenResponse.access_token) {
+            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: { Authorization: 'Bearer ' + tokenResponse.access_token }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(user) {
+              if (user.email && user.name && user.sub) {
+                handleSocialLogin('google', user.email, user.name, user.sub);
+              }
+            })
+            .catch(function(e) { showCartNotification('Google sign-in error: ' + e.message); });
+          }
+        },
+        error_callback: function(e) { showCartNotification('Google sign-in cancelled or failed.'); }
+      });
     }
-  }
-  tryRender();
+    _googleTokenClient.requestAccessToken({ prompt: 'select_account' });
+  } catch(e) { showCartNotification('Google sign-in error: ' + e.message); }
 }
 function initSocialLogin() {
   var cid = localStorage.getItem('google_client_id');
