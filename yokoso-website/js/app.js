@@ -76,7 +76,13 @@ function openAccountModal() {
     requestAnimationFrame(function() {
       var el = document.getElementById('loginContact');
       if (el) el.focus();
-      if (typeof FB !== 'undefined' && FB.XFBML) { try { FB.XFBML.parse(); } catch(e) {} }
+      var cid = localStorage.getItem('google_client_id');
+      if (typeof google !== 'undefined' && google.accounts && google.accounts.id && cid) {
+        var gc = document.getElementById('googleButtonContainer');
+        if (gc && !gc.hasChildNodes()) {
+          google.accounts.id.renderButton(gc, { type: 'standard', size: 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: 280 });
+        }
+      }
     });
   }
 }
@@ -448,7 +454,8 @@ function initSocialLogin() {
           } catch(e) { console.error('Google login parse error:', e); }
         }
       });
-      google.accounts.id.renderButton(document.querySelector('.g_id_signin'), { type: 'standard', size: 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: 280 });
+      var gc = document.getElementById('googleButtonContainer');
+      if (gc) google.accounts.id.renderButton(gc, { type: 'standard', size: 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: 280 });
     } catch(e) { setTimeout(initSocialLogin, 1000); }
   } else if (cid && typeof google === 'undefined') {
     setTimeout(initSocialLogin, 1000);
@@ -456,32 +463,26 @@ function initSocialLogin() {
   var fid = localStorage.getItem('facebook_app_id');
   if (typeof FB !== 'undefined' && FB.init && fid) {
     try {
-      FB.init({ appId: fid, cookie: true, xfbml: true, version: 'v18.0' });
-      FB.Event.subscribe('auth.statusChange', function(resp) {
-        if (resp.status === 'connected' && resp.authResponse) {
-          FB.api('/me', { fields: 'name,email,id' }, function(me) {
-            if (me && !me.error && me.name && me.id) {
-              handleSocialLogin('facebook', me.email || me.id + '@facebook.com', me.name, me.id);
-            }
-          });
-        }
-      });
+      FB.init({ appId: fid, cookie: true, xfbml: false, version: 'v18.0' });
     } catch(e) {}
   } else if (fid) {
     setTimeout(initSocialLogin, 1000);
   }
 }
-setTimeout(initSocialLogin, 500);
-
-function onFacebookLogin() {
-  if (typeof FB === 'undefined') return;
-  FB.api('/me', { fields: 'name,email,id' }, function(resp) {
-    if (!resp || resp.error) { console.error('Facebook API error:', resp && resp.error); return; }
-    if (resp.name && resp.id) {
-      handleSocialLogin('facebook', resp.email || resp.id + '@facebook.com', resp.name, resp.id);
-    }
-  });
+function facebookLoginClick() {
+  var fid = localStorage.getItem('facebook_app_id');
+  if (!fid) { showCartNotification('Facebook App ID not configured.'); return; }
+  if (typeof FB === 'undefined' || !FB.login) { showCartNotification('Facebook SDK not loaded yet.'); return; }
+  FB.login(function(resp) {
+    if (!resp || resp.status !== 'connected') { showCartNotification('Facebook login cancelled.'); return; }
+    FB.api('/me', { fields: 'name,email,id' }, function(me) {
+      if (me && !me.error && me.name && me.id) {
+        handleSocialLogin('facebook', me.email || me.id + '@facebook.com', me.name, me.id);
+      }
+    });
+  }, { scope: 'public_profile,email' });
 }
+setTimeout(initSocialLogin, 500);
 
 function sendTelegramNotification(message) {
   var token = localStorage.getItem('telegram_bot_token');

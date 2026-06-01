@@ -504,10 +504,12 @@
           <button class="account-btn-primary" onclick="handleLogin()">Login</button>
           <div id="accountLoginError" class="account-error"></div>
           <div style="margin-top:12px;border-top:1px solid #e0e0e0;padding-top:12px">
-            <div id="g_id_onload" style="display:none"></div>
-            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-width="280"></div>
-            <div style="margin-top:8px;text-align:center" id="fbLoginContainer">
-              <div class="fb-login-button" data-width="280" data-size="large" data-button-type="login_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false" data-scope="public_profile,email"></div>
+            <div id="googleButtonContainer" style="text-align:center"></div>
+            <div style="margin-top:8px;text-align:center">
+              <button onclick="facebookLoginClick()" id="fbLoginBtn" style="width:280px;max-width:100%;height:44px;background:#1877f2;color:#fff;border:none;border-radius:6px;font-size:15px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+                Login with Facebook
+              </button>
             </div>
           </div>
         </div>
