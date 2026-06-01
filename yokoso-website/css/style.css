@@ -1844,7 +1844,7 @@ body {
 }
 .account-toggle:hover { color: #e94560; }
 
-/* Account Modal */
+/* Account Modal - Modern */
 .account-modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -1853,57 +1853,74 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 .account-modal {
   background: #fff;
-  border-radius: 12px;
-  padding: 2rem;
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
   width: 90%;
-  max-width: 400px;
+  max-width: 380px;
   position: relative;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+  animation: modalFadeIn 0.25s ease;
+}
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 .account-modal-close {
   position: absolute;
   top: 0.8rem;
   right: 1rem;
-  background: none;
+  background: #f0f0f0;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   cursor: pointer;
-  color: #888;
+  color: #666;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
 }
+.account-modal-close:hover { background: #e0e0e0; }
 .account-tabs {
   display: flex;
   gap: 0;
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid #eee;
+  background: #f3f3f7;
+  border-radius: 12px;
+  padding: 4px;
 }
 .account-tab {
   flex: 1;
   padding: 0.6rem 1rem;
   background: none;
   border: none;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   color: #888;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  transition: color 0.2s, border-color 0.2s;
+  border-radius: 10px;
+  transition: all 0.2s;
 }
 .account-tab.active {
-  color: #e94560;
-  border-bottom-color: #e94560;
+  color: #1a1a2e;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 .account-form-group {
   margin-bottom: 1rem;
 }
 .account-form-group label {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: #555;
   margin-bottom: 0.3rem;
@@ -1911,17 +1928,21 @@ body {
 .account-form-group input,
 .account-form-group textarea {
   width: 100%;
-  padding: 0.65rem 0.8rem;
+  padding: 0.7rem 0.85rem;
   border: 2px solid #e8e8ed;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 0.9rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   font-family: inherit;
+  background: #fafafa;
+  box-sizing: border-box;
 }
 .account-form-group input:focus,
 .account-form-group textarea:focus {
   border-color: #e94560;
+  box-shadow: 0 0 0 3px rgba(233,69,96,0.1);
+  background: #fff;
 }
 .account-btn-primary {
   width: 100%;
@@ -1929,14 +1950,15 @@ body {
   background: #e94560;
   color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
   margin-top: 0.5rem;
 }
 .account-btn-primary:hover { background: #d63851; }
+.account-btn-primary:active { transform: scale(0.98); }
 .account-btn-logout { background: #666; margin-top: 1rem; }
 .account-btn-logout:hover { background: #555; }
 .account-error {
@@ -1944,12 +1966,74 @@ body {
   color: #c62828;
   margin-top: 0.5rem;
   min-height: 1.2em;
+  text-align: center;
 }
-.account-profile { text-align: center; }
-.account-avatar { margin-bottom: 0.8rem; }
-.account-detail { font-size: 1rem; font-weight: 600; margin-bottom: 0.2rem; }
-.account-detail-label { font-size: 0.85rem; color: #888; font-weight: 400; }
-.account-detail-address { font-size: 0.85rem; color: #666; font-weight: 400; margin-top: 0.3rem; }
+.account-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 1rem 0 0.8rem;
+  color: #bbb;
+  font-size: 0.8rem;
+}
+.account-divider::before,
+.account-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e8e8ed;
+}
+.account-profile {
+  text-align: center;
+  padding: 0.5rem 0;
+}
+.account-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e94560, #c62840);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  box-shadow: 0 4px 14px rgba(233,69,96,0.3);
+}
+.account-avatar svg { fill: #fff; }
+.account-detail {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  color: #1a1a2e;
+}
+.account-detail-label {
+  font-size: 0.85rem;
+  color: #888;
+  font-weight: 400;
+}
+.account-detail-address {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 400;
+  margin-top: 0.3rem;
+}
+.account-my-orders-btn {
+  width: 100%;
+  padding: 0.7rem;
+  background: #fff;
+  color: #333;
+  border: 2px solid #e8e8ed;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 0.5rem;
+}
+.account-my-orders-btn:hover {
+  border-color: #e94560;
+  color: #e94560;
+  background: #fff5f7;
+}
 
 /* Checkout Modal */
 .checkout-modal-overlay {
