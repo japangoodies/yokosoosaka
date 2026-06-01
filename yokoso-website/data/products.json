@@ -67,7 +67,7 @@
     ],
     "description": "test",
     "sizes": [],
-    "stock": 56,
+    "stock": 55,
     "category2": "Nike",
     "price": "₱5,200",
     "name": "Air Max 97 (Japan Exclusive)",
@@ -351,7 +351,7 @@
     "variants": {
       "Default": {
         "stock": {
-          "q": 28
+          "q": 27
         }
       }
     },
@@ -1303,7 +1303,7 @@
   },
   {
     "category2": "G-Shock",
-    "stock": 0,
+    "stock": 36,
     "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
     "sizes": [],
     "category1": "Accessories",
@@ -1315,7 +1315,7 @@
     "variants": {
       "Default": {
         "stock": {
-          "q": 36
+          "q": 35
         }
       }
     },
