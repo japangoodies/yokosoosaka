@@ -43,6 +43,42 @@ function loadSession() {
   } catch(e) {}
 }
 function saveSession(u) { currentUser = u; localStorage.setItem('yokoso_account', JSON.stringify(u)); updateAccountUI(); }
+
+function promptForPhone(contact) {
+  var modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:360px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.2);text-align:center">' +
+    '<h3 style="margin:0 0 8px;font-size:1.1rem">Enter Contact Number</h3>' +
+    '<p style="margin:0 0 16px;font-size:0.85rem;color:#666">Please provide your contact number to complete your profile.</p>' +
+    '<input type="tel" id="phonePromptInput" placeholder="09123456789" style="width:100%;padding:10px 12px;border:2px solid #e8e8ed;border-radius:8px;font-size:1rem;box-sizing:border-box;margin-bottom:12px">' +
+    '<button id="phonePromptSave" style="width:100%;padding:10px;background:#e94560;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer">Save</button>' +
+    '<button id="phonePromptSkip" style="width:100%;padding:8px;background:none;border:none;color:#888;font-size:0.85rem;cursor:pointer;margin-top:6px">Skip</button></div>';
+  document.body.appendChild(modal);
+  document.getElementById('phonePromptInput').focus();
+  document.getElementById('phonePromptSave').onclick = function() {
+    var phone = document.getElementById('phonePromptInput').value.trim();
+    if (!phone) return;
+    document.getElementById('phonePromptSave').textContent = 'Saving...';
+    document.getElementById('phonePromptSave').disabled = true;
+    savePhone(contact, phone, function() { modal.remove(); }, function() { document.getElementById('phonePromptSave').textContent = 'Save'; document.getElementById('phonePromptSave').disabled = false; });
+  };
+  document.getElementById('phonePromptSkip').onclick = function() { modal.remove(); };
+}
+
+function savePhone(contact, phone, cb, errCb) {
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/accounts/update-profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ contact: contact, phone: phone })
+  }).then(function(r) { return r.json(); }).then(function(j) {
+    if (j.ok && currentUser) { currentUser.phone = phone; saveSession(currentUser); showCartNotification('Contact saved!'); }
+    if (cb) cb();
+  }).catch(function(e) {
+    showCartNotification('Failed to save contact: ' + e.message);
+    if (errCb) errCb(); else if (cb) cb();
+  });
+}
 function clearSession() { currentUser = null; localStorage.removeItem('yokoso_account'); updateAccountUI(); }
 function proxyAccountUrl(path) { var base = STOCK_PROXY_URL.replace(/\/+$/, ''); return base + '/accounts/' + path.replace(/^\//, ''); }
 function updateAccountUI() {
@@ -52,9 +88,15 @@ function updateAccountUI() {
   if (currentUser) {
     loggedOut.style.display = 'none'; loggedIn.style.display = 'block';
     var dn = document.getElementById('accountDetailName'); if (dn) dn.textContent = currentUser.name || '';
-    var dc = document.getElementById('accountDetailContact'); if (dc) dc.textContent = currentUser.contact || '';
+    var dc = document.getElementById('accountDetailContact'); if (dc) dc.textContent = currentUser.phone || currentUser.contact || '';
     var de = document.getElementById('accountDetailEmail'); if (de) de.textContent = currentUser.email || '';
     var da = document.getElementById('accountDetailAddress'); if (da) da.textContent = currentUser.address || '';
+    if (dc) {
+      var editBtn = dc.nextElementSibling;
+      if (editBtn && editBtn.classList.contains('account-edit-contact')) {
+        editBtn.style.display = currentUser.contact && currentUser.contact.indexOf('_') !== -1 ? 'inline-block' : 'none';
+      }
+    }
   } else {
     loggedOut.style.display = 'block'; loggedIn.style.display = 'none';
   }
@@ -459,10 +501,12 @@ function handleSocialLogin(provider, email, name, sub) {
     body: JSON.stringify({ provider: provider, email: email, name: name, sub: sub })
   }).then(function(r) { return r.json(); }).then(function(j) {
     if (!j.ok || !j.contact) { showCartNotification('Social login failed: ' + (j.error || '')); return; }
-    saveSession({ name: j.name, contact: j.contact, email: j.email || '', address: j.address || '', admin: j.admin || false });
+    var isSocialContact = j.contact && j.contact.indexOf('_') !== -1;
+    saveSession({ name: j.name, contact: j.contact, email: j.email || '', address: j.address || '', admin: j.admin || false, phone: j.phone || '' });
     closeAccountModal();
     showCartNotification('Logged in as ' + j.name);
     if (j.admin) showAdminPanel();
+    if (isSocialContact && !j.phone) { promptForPhone(j.contact); }
   }).catch(function(e) {
     showCartNotification('Social login error: ' + (e.message || ''));
   });
@@ -751,7 +795,7 @@ function saveOrder() {
       items: items,
       customerName: (currentUser && currentUser.name) || '',
       customerEmail: (currentUser && currentUser.email) || '',
-      customerContact: (currentUser && currentUser.contact) || '',
+      customerContact: (currentUser && (currentUser.phone || currentUser.contact)) || '',
       total: '₱' + total.toFixed(2),
       deposit: '₱' + deposit.toFixed(2)
     })

@@ -131,7 +131,7 @@ function parseAccountDoc(doc) {
   for (const [key, val] of Object.entries(doc.fields)) {
     fields[key] = val.stringValue || val.integerValue || '';
   }
-  return fields.contact ? { name: fields.name || '', address: fields.address || '', contact: fields.contact, email: fields.email || '', admin: fields.admin === 'true' } : null;
+  return fields.contact ? { name: fields.name || '', address: fields.address || '', contact: fields.contact, email: fields.email || '', admin: fields.admin === 'true', phone: fields.phone || '' } : null;
 }
 
 function orderField(size) {
@@ -475,6 +475,33 @@ async function handleRequest(request, env) {
         return new Response(JSON.stringify({ error: 'Account not found' }), { status: 404, headers: corsHeaders(origin) });
       }
       return new Response(JSON.stringify({ ok: true, admin: newAdmin === 'true' }), { headers: corsHeaders(origin) });
+    }
+
+    // POST /accounts/update-profile — update phone, name, address
+    if (request.method === 'POST' && parts.length === 2 && parts[0] === 'accounts' && parts[1] === 'update-profile') {
+      const body = await request.json();
+      if (!body.contact) {
+        return new Response(JSON.stringify({ error: 'contact required' }), { status: 400, headers: corsHeaders(origin) });
+      }
+      const fields = {};
+      if (body.phone !== undefined) fields.phone = { stringValue: String(body.phone) };
+      if (body.name !== undefined) fields.name = { stringValue: String(body.name) };
+      if (body.address !== undefined) fields.address = { stringValue: String(body.address) };
+      const fieldPaths = Object.keys(fields);
+      if (fieldPaths.length === 0) {
+        return new Response(JSON.stringify({ error: 'No fields to update' }), { status: 400, headers: corsHeaders(origin) });
+      }
+      const updUrl = `${FIRESTORE_BASE}/accounts/${encodeURIComponent(body.contact)}?key=${API_KEY}&${fieldPaths.map(f => 'updateMask.fieldPaths=' + f).join('&')}`;
+      const resp = await fetchWithRetry(updUrl, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields })
+      });
+      if (!resp.ok) {
+        const text = await resp.text().catch(() => '');
+        throw new Error(`Update profile: HTTP ${resp.status} ${text}`);
+      }
+      return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders(origin) });
     }
 
     // DELETE /accounts/:contact
