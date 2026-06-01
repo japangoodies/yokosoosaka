@@ -79,8 +79,10 @@ function openAccountModal() {
       var cid = localStorage.getItem('google_client_id');
       if (typeof google !== 'undefined' && google.accounts && google.accounts.id && cid) {
         var gc = document.getElementById('googleButtonContainer');
+        if (gc) { gc.style.display = 'flex'; gc.style.justifyContent = 'center'; gc.style.width = '100%'; }
+        var w = Math.min(280, Math.max(200, (window.innerWidth * 0.65)));
         if (gc && !gc.hasChildNodes()) {
-          google.accounts.id.renderButton(gc, { type: 'standard', size: 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: 280 });
+          google.accounts.id.renderButton(gc, { type: 'standard', size: 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: w });
         }
       }
     });
@@ -450,8 +452,6 @@ function initSocialLogin() {
           } catch(e) { console.error('Google login parse error:', e); }
         }
       });
-      var gc = document.getElementById('googleButtonContainer');
-      if (gc) google.accounts.id.renderButton(gc, { type: 'standard', size: 'large', theme: 'outline', text: 'sign_in_with', shape: 'rectangular', width: 280 });
     } catch(e) { setTimeout(initSocialLogin, 1000); }
   } else if (cid && typeof google === 'undefined') {
     setTimeout(initSocialLogin, 1000);
