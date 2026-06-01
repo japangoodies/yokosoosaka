@@ -2693,11 +2693,13 @@ function openFullscreen() {
   var track = document.createElement('div');
   track.style.cssText = 'position:relative;width:100%;height:100%;display:flex;flex-direction:column;';
   var h = window.innerHeight;
+  var slides = [];
   for (var i = 0; i < currentModalImages.length; i++) {
     var slide = document.createElement('div');
     slide.style.cssText = 'height:' + h + 'px;display:flex;align-items:center;justify-content:center;flex-shrink:0;';
     var img = document.createElement('img');
-    img.src = currentModalImages[i];
+    img.dataset.src = currentModalImages[i];
+    if (Math.abs(i - currentImageIndex) <= 1) img.src = currentModalImages[i];
     img.style.cssText = 'max-width:100vw;max-height:100vh;object-fit:contain;user-select:none;transition:transform 0.1s;transform-origin:0 0';
     img._scale = 1; img._tx = 0; img._ty = 0;
     img.addEventListener('touchstart', function(e) {
@@ -2754,9 +2756,11 @@ function openFullscreen() {
       }
       this._pinchDist = null;
     }, { passive: true });
+    slides.push(img);
     slide.appendChild(img);
     track.appendChild(slide);
   }
+  ov._slides = slides;
   track.style.transform = 'translate3d(0,' + (-currentImageIndex * h) + 'px,0)';
   ov.appendChild(track);
   var closeBtn = document.createElement('button');
@@ -2825,6 +2829,15 @@ function getFullscreenTrack() {
   return ov ? ov.firstElementChild : document.getElementById('fullscreenTrack');
 }
 
+function loadSlideImages(idx) {
+  var ov = document.getElementById('liveFullscreen');
+  if (!ov || !ov._slides) return;
+  for (var i = Math.max(0, idx - 1); i <= Math.min(currentModalImages.length - 1, idx + 1); i++) {
+    var img = ov._slides[i];
+    if (img && !img.src && img.dataset.src) img.src = img.dataset.src;
+  }
+}
+
 // Fullscreen swipe / drag
 (function() {
   var viewer = document.getElementById('fullscreenViewer');
@@ -2840,6 +2853,7 @@ function getFullscreenTrack() {
     if (next < 0 || next >= currentModalImages.length) return;
     currentImageIndex = next;
     updateCounter();
+    loadSlideImages(next);
     var h = window.innerHeight;
     var tr = getFullscreenTrack();
     if (!tr) return;
@@ -2917,6 +2931,7 @@ document.addEventListener('keydown', e => {
       if (currentImageIndex > 0) {
         currentImageIndex--;
         updateCounter();
+        loadSlideImages(currentImageIndex);
         var tr = getFullscreenTrack();
         if (tr) {
           var h2 = window.innerHeight;
@@ -2930,6 +2945,7 @@ document.addEventListener('keydown', e => {
       if (currentImageIndex < currentModalImages.length - 1) {
         currentImageIndex++;
         updateCounter();
+        loadSlideImages(currentImageIndex);
         var tr = getFullscreenTrack();
         if (tr) {
           var h2 = window.innerHeight;
