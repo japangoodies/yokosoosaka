@@ -195,7 +195,7 @@ function showCustomerOrders() {
         var items = [];
         try { items = JSON.parse(o.items || '[]'); } catch(e) {}
         var itemsHtml = items.map(function(i) {
-          var ip = parseFloat(i.price);
+          var ip = parseFloat(String(i.price || '').replace(/[^0-9.\-]/g, ''));
           if (isNaN(ip)) ip = 0;
           return '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px;border-bottom:1px solid #f0f0f0">' +
             '<span>' + escapeHtml(i.name) + (i.color ? ' (' + escapeHtml(i.color) + ')' : '') + (i.size && i.size !== 'q' ? '/' + i.size : '') + ' x' + i.qty + '</span>' +
@@ -203,9 +203,9 @@ function showCustomerOrders() {
         }).join('');
         var statusColors = { pending: '#f59e0b', 'deposit-paid': '#3b82f6', confirmed: '#22c55e', cancelled: '#ef4444' };
         var statusColor = statusColors[o.status] || '#888';
-        var totalVal = parseFloat(o.total);
-        if (isNaN(totalVal)) totalVal = items.reduce(function(s, it) { return s + (parseFloat(it.price) || 0) * (it.qty || 0); }, 0);
-        var depVal = parseFloat(o.deposit);
+        var totalVal = parseFloat(String(o.total || '').replace(/[^0-9.\-]/g, ''));
+        if (isNaN(totalVal)) totalVal = items.reduce(function(s, it) { return s + (parseFloat(String(it.price || '').replace(/[^0-9.\-]/g, '')) || 0) * (it.qty || 0); }, 0);
+        var depVal = parseFloat(String(o.deposit || '').replace(/[^0-9.\-]/g, ''));
         return '<div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;margin-bottom:10px;background:#fafafa">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
           '<strong style="font-size:14px">' + escapeHtml(o.poNumber || '') + '</strong>' +
