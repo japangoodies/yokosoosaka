@@ -437,35 +437,37 @@ function renderGoogleButton() {
   gc.style.cssText = 'display:flex!important;justify-content:center!important;width:100%!important';
   document.getElementById('customGoogleBtn')?.addEventListener('click', triggerGoogleSignIn);
 }
-var _googleTokenClient = null;
+var _googleLoading = false;
 function triggerGoogleSignIn() {
   var cid = localStorage.getItem('google_client_id');
-  if (!cid) return;
-  if (typeof google === 'undefined' || !google.accounts) return;
-  if (!google.accounts.oauth2) { return showCartNotification('Google library not ready. Try again.'); }
-  try {
-    if (!_googleTokenClient) {
-      _googleTokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: cid,
-        scope: 'openid email profile',
-        callback: function(tokenResponse) {
-          if (tokenResponse.access_token) {
-            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-              headers: { Authorization: 'Bearer ' + tokenResponse.access_token }
-            })
-            .then(function(r) { return r.json(); })
-            .then(function(user) {
-              if (user.email && user.name && user.sub) {
-                handleSocialLogin('google', user.email, user.name, user.sub);
-              }
-            })
-            .catch(function(e) { showCartNotification('Google sign-in error: ' + e.message); });
-          }
-        },
-        error_callback: function(e) { showCartNotification('Google sign-in cancelled or failed.'); }
-      });
+  if (!cid) { return showCartNotification('Google Client ID not configured.'); }
+  if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+    if (!_googleLoading) {
+      _googleLoading = true;
+      var s = document.createElement('script');
+      s.src = 'https://accounts.google.com/gsi/client';
+      s.onload = function() { _googleLoading = false; triggerGoogleSignIn(); };
+      s.onerror = function() { _googleLoading = false; showCartNotification('Failed to load Google library.'); };
+      document.head.appendChild(s);
     }
-    _googleTokenClient.requestAccessToken({ prompt: 'select_account' });
+    return showCartNotification('Loading Google...');
+  }
+  try {
+    var tc = google.accounts.oauth2.initTokenClient({
+      client_id: cid,
+      scope: 'openid email profile',
+      callback: function(resp) {
+        if (resp.access_token) {
+          fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: 'Bearer ' + resp.access_token }
+          }).then(function(r) { return r.json(); }).then(function(u) {
+            if (u.email && u.name && u.sub) handleSocialLogin('google', u.email, u.name, u.sub);
+          }).catch(function(e) { showCartNotification('Google sign-in error: ' + e.message); });
+        }
+      },
+      error_callback: function(e) { showCartNotification('Google sign-in cancelled or failed.'); }
+    });
+    tc.requestAccessToken({ prompt: 'select_account' });
   } catch(e) { showCartNotification('Google sign-in error: ' + e.message); }
 }
 function initSocialLogin() {
