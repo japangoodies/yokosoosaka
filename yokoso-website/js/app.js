@@ -437,38 +437,38 @@ function renderGoogleButton() {
   gc.style.cssText = 'display:flex!important;justify-content:center!important;width:100%!important';
   document.getElementById('customGoogleBtn')?.addEventListener('click', triggerGoogleSignIn);
 }
-var _googleLoading = false;
 function triggerGoogleSignIn() {
   var cid = localStorage.getItem('google_client_id');
   if (!cid) { return showCartNotification('Google Client ID not configured.'); }
-  if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
-    if (!_googleLoading) {
-      _googleLoading = true;
-      var s = document.createElement('script');
-      s.src = 'https://accounts.google.com/gsi/client';
-      s.onload = function() { _googleLoading = false; triggerGoogleSignIn(); };
-      s.onerror = function() { _googleLoading = false; showCartNotification('Failed to load Google library.'); };
-      document.head.appendChild(s);
-    }
-    return showCartNotification('Loading Google...');
+  if (typeof google === 'undefined' || !google.accounts) {
+    return showCartNotification('Google library loading. Please tap Sign in with Google again.');
   }
-  try {
-    var tc = google.accounts.oauth2.initTokenClient({
-      client_id: cid,
-      scope: 'openid email profile',
-      callback: function(resp) {
-        if (resp.access_token) {
-          fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-            headers: { Authorization: 'Bearer ' + resp.access_token }
-          }).then(function(r) { return r.json(); }).then(function(u) {
-            if (u.email && u.name && u.sub) handleSocialLogin('google', u.email, u.name, u.sub);
-          }).catch(function(e) { showCartNotification('Google sign-in error: ' + e.message); });
-        }
-      },
-      error_callback: function(e) { showCartNotification('Google sign-in cancelled or failed.'); }
-    });
-    tc.requestAccessToken({ prompt: 'select_account' });
-  } catch(e) { showCartNotification('Google sign-in error: ' + e.message); }
+  // Try OAuth token client (works on most browsers)
+  if (google.accounts.oauth2) {
+    try {
+      var tc = google.accounts.oauth2.initTokenClient({
+        client_id: cid,
+        scope: 'openid email profile',
+        callback: function(resp) {
+          if (resp.access_token) {
+            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: { Authorization: 'Bearer ' + resp.access_token }
+            }).then(function(r) { return r.json(); }).then(function(u) {
+              if (u.email && u.name && u.sub) handleSocialLogin('google', u.email, u.name, u.sub);
+            }).catch(function(e) { showCartNotification('Google sign-in error: ' + e.message); });
+          }
+        },
+        error_callback: function(e) { if (e.type !== 'popup_closed') showCartNotification('Google sign-in cancelled or failed.'); }
+      });
+      tc.requestAccessToken({ prompt: 'select_account' });
+      return;
+    } catch(e) { showCartNotification('Google sign-in error: ' + e.message); return; }
+  }
+  // Fallback: try One Tap prompt
+  if (google.accounts.id) {
+    try { google.accounts.id.prompt(); return; } catch(e) {}
+  }
+  showCartNotification('Google sign-in unavailable. Use email/password instead.');
 }
 function initSocialLogin() {
   var cid = localStorage.getItem('google_client_id');
