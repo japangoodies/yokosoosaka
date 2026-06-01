@@ -5,10 +5,11 @@
 Pushed by user `noobita019`
 
 ## Hosting
-Migrated from GitHub Pages → **Cloudflare Pages** (May 31, 2026)
+Migrated from GitHub Pages → **Cloudflare Pages** (May 31, 2026 → present)
 - Production: `https://japangoodies.pages.dev`
-- Worker: `yokoso-stock-proxy` (unchanged)
+- Worker: `yokoso-stock-proxy` (`https://yokoso-stock-proxy.shayera019.workers.dev`)
 - Auto-deploy: GitHub → Cloudflare Pages (on push to `main`, root dir `yokoso-website`)
+- Worker must be redeployed manually from Cloudflare Dashboard (not auto-deployed)
 
 ## Firebase
 Project: `japan-goodies` (Firestore), collection `yokoso`, doc `products`
@@ -101,12 +102,51 @@ Now also syncs `data/categories.json` automatically
 - `yokoso-website/maintenance.json` — Maintenance settings
 - `yokoso-website/manifest.json` — PWA manifest (app name, icons, theme_color #d32f2f)
 - `yokoso-website/sw.js` — PWA service worker (cache-first for assets, network-first for data)
-- `yokoso-website/images/app-icon-192.png` — PWA icon (192x192, from logo)
-- `yokoso-website/images/app-icon-512.png` — PWA icon (512x512, from logo)
+- `yokoso-website/images/app-icon-192.png` — PWA icon (192x192)
+- `yokoso-website/images/app-icon-512.png` — PWA icon (512x512)
+- `yokoso-website/images/Japan.png` — Site logo
+- `yokoso-website/images/logo.jpg` — Old logo
 - `yokoso-website/workers/stock-proxy/index.js` — Cloudflare Worker (stock proxy + orders API)
 
-## Test Files (can be cleaned up)
-- `yokoso-website/test-*.html` — Various test files created during debugging
+## Session History (Jun 02, 2026)
+
+### Fix: Google Sign-In invisible/trimmed on mobile
+- **Problem**: GIS `renderButton` (iframe) rendered before modal was laid out on mobile, causing 0-dimension iframe or clipping
+- **Attempt 1**: Double `requestAnimationFrame` + retry loop — still broken
+- **Attempt 2**: Removed width calc, used `size:'large'` with 260px — still broken
+- **Final fix**: Replaced GIS iframe entirely with custom HTML button (SVG Google logo) + `google.accounts.oauth2.initTokenClient()` + `requestAccessToken()` for OAuth popup flow. Button always visible immediately, no iframe needed.
+- **Files**: `js/app.js`
+
+### Debug: Google Sign-In "no response" on mobile
+- **Problem**: Clicking the custom button did nothing. Root cause: `google_client_id` only in desktop's localStorage — not synced to mobile.
+- **Fix**: Added `googleClientId` field to `maintenance.json`. Page load now fetches it from server and saves to localStorage (all devices). Config tab "Save" button also pushes to `maintenance.json` on GitHub via `POST /accounts/update-profile` worker endpoint.
+- **Files**: `maintenance.json`, `js/app.js`, `workers/stock-proxy/index.js`
+
+### Fix: My Orders modal — fullscreen + scroll lock
+- **Changed**: `#customerOrdersModal` from a card (`max-width:600px;max-height:80vh`) to fullscreen (`position:fixed;top:0;left:0;right:0;bottom:0;background:#fff`). Added `body.style.overflow='hidden'` on open, restored on close.
+- **Files**: `index.html`, `js/app.js`
+
+### Fix: NaN prices in My Orders
+- **Problem**: `o.total` and `o.deposit` stored as `"₱1,500.00"` (with peso sign). `parseFloat()` returned NaN.
+- **Fix**: Sanitize with `.replace(/[^0-9.\-]/g, '')` before `parseFloat`. Fallback to summing item prices if total is invalid.
+- **Files**: `js/app.js`
+
+### Removed: Fullscreen pinch-zoom and double-tap zoom
+- **Removed**: All `touchstart`/`touchmove`/`touchend` zoom handlers from `openFullscreen()`. Images now display at `object-fit:contain` without zoom.
+- **Files**: `js/app.js`
+
+### Added: Phone number prompt after Google login
+- **Problem**: Google login provides email/name but no phone number. Contact was set to auto-generated `google_{sub}`.
+- **Fix**: After Google login, if contact is a social-login placeholder (contains `_`) and no `phone` field exists, show a modal prompt for contact number. Saves to new `phone` field via `POST /accounts/update-profile` worker endpoint. "Edit Contact" button shown in account view for social login users. Checkout uses `currentUser.phone || currentUser.contact`.
+- **Files**: `js/app.js`, `workers/stock-proxy/index.js`, `index.html`
+
+### Changed: Header background white
+- **CSS**: `.header` background from `#F8C361` to `#fff`
+- **Files**: `css/style.css`
+
+### Changed: Logo from `logo.jpg` to `Japan.png`
+- Updated image source in `index.html` and `index.test.html`
+- **Files**: `index.html`, `index.test.html`, `images/Japan.png`
 
 ## Session History (May 31, 2026)
 
