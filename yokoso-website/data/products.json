@@ -91,7 +91,7 @@
     "variants": {
       "Default": {
         "stock": {
-          "q": 8
+          "q": 7
         }
       }
     },
@@ -103,7 +103,7 @@
     ],
     "color": "White",
     "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
-    "stock": 8
+    "stock": 6
   },
   {
     "category1": "Shoes",
