@@ -369,6 +369,8 @@ function loadDepositConfig() {
     if (d && typeof d.depositPercent === 'number') depositPercent = d.depositPercent;
     if (d && d.adminEmail && !localStorage.getItem('yokoso_admin_email')) adminEmail = d.adminEmail;
     if (d && d.googleClientId) localStorage.setItem('google_client_id', d.googleClientId);
+    if (d && d.telegramBotToken) localStorage.setItem('telegram_bot_token', d.telegramBotToken);
+    if (d && d.telegramChatId) localStorage.setItem('telegram_chat_id', d.telegramChatId);
   }).catch(function() {});
 }
 
@@ -445,9 +447,44 @@ function saveTelegramConfig() {
   else localStorage.removeItem('telegram_bot_token');
   if (chatId) localStorage.setItem('telegram_chat_id', chatId);
   else localStorage.removeItem('telegram_chat_id');
-  status.textContent = 'Saved!';
-  setTimeout(function() { status.textContent = ''; }, 2000);
-  showCartNotification('Telegram settings saved.');
+  status.textContent = 'Saved locally. Syncing to GitHub...';
+  status.style.color = '#888';
+  var ghToken = localStorage.getItem('github_token');
+  if (!ghToken) { status.textContent = 'Saved locally only (no GitHub token).'; setTimeout(function() { status.textContent = ''; }, 3000); return; }
+  fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_MAINTENANCE_PATH, {
+    headers: { 'Authorization': 'token ' + ghToken }
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function(data) {
+    var content = decodeURIComponent(escape(atob(data.content)));
+    var mainObj = JSON.parse(content);
+    if (token) mainObj.telegramBotToken = token; else delete mainObj.telegramBotToken;
+    if (chatId) mainObj.telegramChatId = chatId; else delete mainObj.telegramChatId;
+    var newContent = JSON.stringify(mainObj, null, 2);
+    var encoded = btoa(unescape(encodeURIComponent(newContent)));
+    return fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_MAINTENANCE_PATH, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + ghToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'Update Telegram config', content: encoded, sha: data.sha })
+    });
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function() {
+    status.textContent = 'Saved & synced to GitHub!';
+    status.style.color = '#2e7d32';
+    setTimeout(function() { status.textContent = ''; }, 3000);
+  })
+  .catch(function(err) {
+    status.textContent = 'Sync failed: ' + (err.message || '');
+    status.style.color = '#e94560';
+    setTimeout(function() { status.textContent = ''; }, 4000);
+  });
 }
 
 function saveSocialLoginConfig() {
