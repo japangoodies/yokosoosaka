@@ -2298,6 +2298,18 @@ body {
 .loading-spinner span { margin-top: 12px; color: #888; font-size: 0.85rem; }
 
 /* Per-Group Product Carousels */
+.group-carousels {
+  padding: 1rem 1.5rem 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: none;
+}
+.group-carousels.active {
+  display: block;
+}
+@media (max-width: 768px) {
+  .group-carousels { padding: 0.5rem 0.75rem 0; }
+}
 .group-section {
   margin-bottom: 2.5rem;
   scroll-margin-top: 100px;

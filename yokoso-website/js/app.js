@@ -1868,6 +1868,16 @@ function renderBrandFilter() {
 
 
 
+function updateGroupCarousels() {
+  var gc = document.getElementById('groupCarousels');
+  if (!gc) return;
+  if (currentGroup === 'all' && currentCategory === 'all' && currentBrand === 'all' && !currentSearch) {
+    gc.classList.add('active');
+  } else {
+    gc.classList.remove('active');
+  }
+}
+
 function selectGroup(name) {
   currentGroup = name;
   currentCategory = 'all';
@@ -1904,8 +1914,8 @@ function selectGroup(name) {
 }
 
 function renderGroupCarousels() {
-  var grid = document.getElementById('productGrid');
-  if (!grid) return;
+  var container = document.getElementById('groupCarousels');
+  if (!container) return;
   var groups = getGroups();
   var html = '';
   groups.forEach(function(g) {
@@ -1952,15 +1962,15 @@ function renderGroupCarousels() {
       '</div>' +
       '<div class="group-product-carousel">' + cardsHtml + '</div></div>';
   });
-  grid.innerHTML = html;
-  grid.querySelectorAll('.group-product-carousel .product-card').forEach(function(card) {
+  container.innerHTML = html;
+  container.querySelectorAll('.group-product-carousel .product-card').forEach(function(card) {
     card.addEventListener('click', function(e) {
       if (e.target.closest('.add-to-cart-btn')) return;
       var id = parseInt(this.dataset.id);
       if (!isNaN(id)) openProduct(id);
     });
   });
-  grid.querySelectorAll('.group-product-carousel .add-to-cart-btn').forEach(function(btn) {
+  container.querySelectorAll('.group-product-carousel .add-to-cart-btn').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
       var id = parseInt(this.dataset.id);
@@ -1968,7 +1978,7 @@ function renderGroupCarousels() {
       if (!isNaN(id)) addToCart(id, color);
     });
   });
-  grid.querySelectorAll('.group-view-all-btn').forEach(function(btn) {
+  container.querySelectorAll('.group-view-all-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       selectGroup(btn.dataset.group);
     });
@@ -1980,12 +1990,7 @@ if (cc) {
   cc.addEventListener('click', function(e) {
     var btn = e.target.closest('.carousel-group-btn');
     if (!btn) return;
-    var groupName = btn.dataset.group;
-    var sectionId = 'group-section-' + groupName.replace(/\s+/g, '-');
-    var section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    selectGroup(btn.dataset.group);
   });
 }
 
@@ -2036,15 +2041,6 @@ function renderProducts() {
   var spinner = document.getElementById('loadingSpinner');
   if (spinner) spinner.classList.add('active');
   var empty = document.getElementById('emptyState');
-
-  // No filters active → show per-group product carousels
-  if (currentGroup === 'all' && currentCategory === 'all' && currentBrand === 'all' && !currentSearch) {
-    empty.style.display = 'none';
-    renderGroupCarousels();
-    if (spinner) spinner.classList.remove('active');
-    return;
-  }
-
   var filtered = products.filter(function(p) { return p.available !== false; });
   if (currentGroup !== 'all') {
     filtered = filtered.filter(function(p) { return p.category0 === currentGroup; });
@@ -2138,6 +2134,7 @@ function renderProducts() {
     grid.appendChild(pag);
   }
   if (spinner) spinner.classList.remove('active');
+  updateGroupCarousels();
 }
 
 function goToPage(newPage) {
@@ -4747,6 +4744,7 @@ loadProducts(function() {
   if (currentUser && currentUser.admin) showAdminPanel();
   renderMessengerLink();
   renderFilters();
+  renderGroupCarousels();
   renderProducts();
   updateCartBadge();
 });
