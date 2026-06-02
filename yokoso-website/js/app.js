@@ -2665,6 +2665,8 @@ function openModal(product) {
           _modalImages.map(function(img, i) {
             return '<img class="modal-strip-img" data-index="' + i + '" src="' + img + '" style="height:500px;width:100%;flex:0 0 100%;object-fit:contain;background:#fff;cursor:pointer;scroll-snap-align:start" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
           }).join('') +
+          (_modalImages.length > 1 ? '<button id="modalStripPrev" style="position:absolute;left:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">‹</button>' : '') +
+          (_modalImages.length > 1 ? '<button id="modalStripNext" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">›</button>' : '') +
           '</div>' +
         '</div>' +
         '<div style="padding:24px 32px 32px">' +
@@ -2702,6 +2704,23 @@ function openModal(product) {
       var closeBtn = overlay.querySelector('button');
       if (closeBtn) closeBtn.classList.add('modal-close-mobile');
     }
+    (function() {
+      var stripPrev = document.getElementById('modalStripPrev');
+      var stripNext = document.getElementById('modalStripNext');
+      var stripContainer = document.getElementById('modalMediaContainer');
+      if (stripPrev && stripContainer) {
+        stripPrev.addEventListener('click', function(e) {
+          e.stopPropagation();
+          stripContainer.scrollBy({ left: -stripContainer.clientWidth, behavior: 'smooth' });
+        });
+      }
+      if (stripNext && stripContainer) {
+        stripNext.addEventListener('click', function(e) {
+          e.stopPropagation();
+          stripContainer.scrollBy({ left: stripContainer.clientWidth, behavior: 'smooth' });
+        });
+      }
+    })();
     lockBody();
     try { history.pushState({modal: true}, '', '#modal'); } catch (e) {}
   } catch (e) {
