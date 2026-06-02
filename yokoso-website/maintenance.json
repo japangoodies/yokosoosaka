@@ -31,5 +31,7 @@
   ],
   "depositPercent": 50,
   "adminEmail": "shayera019@gmail.com",
-  "googleClientId": "768529751498-vhf5ooreo5gpharq340t3jnd59ie007k.apps.googleusercontent.com"
+  "googleClientId": "768529751498-vhf5ooreo5gpharq340t3jnd59ie007k.apps.googleusercontent.com",
+  "telegramBotToken": "8891063963:AAEG6OcADaA8HNLybu1WEkHOzSTlQy5JYgU",
+  "telegramChatId": "8425160688"
 }
