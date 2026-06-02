@@ -8,14 +8,14 @@
       "Red"
     ],
     "description": "test",
-    "stock": 55,
+    "stock": 53,
     "category1": "Shoes",
     "category0": "MENS",
     "variants": {
       "Green": {
         "stock": {
           "6": 0,
-          "7": 2,
+          "7": 1,
           "8": 5,
           "9": 5
         },
