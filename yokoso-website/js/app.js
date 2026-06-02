@@ -1903,78 +1903,6 @@ function selectGroup(name) {
   renderProducts();
 }
 
-function renderGroupCarousels() {
-  var container = document.getElementById('groupCarousels');
-  if (!container) return;
-  var groups = getGroups();
-  var html = '';
-  groups.forEach(function(g) {
-    var groupName = typeof g === 'string' ? g : g.name;
-    var sectionId = 'group-section-' + groupName.replace(/\s+/g, '-');
-    var groupProducts = products.filter(function(p) {
-      return p.available !== false && p.category0 === groupName;
-    });
-    if (groupProducts.length === 0) return;
-    var cardsHtml = groupProducts.map(function(p) {
-      var variantColors = getVariantColors(p);
-      var firstColor = variantColors.length ? variantColors[0] : 'Default';
-      var colorChips = '';
-      if (variantColors.length > 1) {
-        colorChips = '<div class="product-color-chips">' + variantColors.map(function(c) {
-          return '<span class="color-chip" title="' + c + '">' + c + '</span>';
-        }).join('') + '</div>';
-      } else if (variantColors.length === 1 && variantColors[0] !== 'Default') {
-        colorChips = '<div class="product-color-chips"><span class="color-chip">' + variantColors[0] + '</span></div>';
-      }
-      var totalAvail = getTotalStock(p.id);
-      var stockLabel = totalAvail > 3 ? 'In Stock' : totalAvail > 0 ? 'Only ' + totalAvail + ' left' : 'Out of Stock';
-      var stockClass = totalAvail > 0 ? 'in-stock' : 'out-of-stock';
-      var firstMedia = p.images?.[0] || 'images/products/placeholder.svg';
-      var mediaHtml = isVideoUrl(firstMedia) ?
-        '<div class="product-image product-image-video"><span class="video-play-icon">▶</span></div>' :
-        '<img class="product-img" src="' + firstMedia + '" alt="' + p.name + '" loading="lazy" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
-      return '<div class="product-card" data-id="' + p.id + '">' +
-        mediaHtml +
-        '<div class="product-info">' +
-        (p.category0 ? '<div class="product-group">' + p.category0 + '</div>' : '') +
-        '<div class="product-category">' + p.category1 + '</div>' +
-        colorChips +
-        '<div class="product-name" onclick="openProduct(' + p.id + ')">' + p.name + '</div>' +
-        '<div class="product-price">' + p.price + '</div>' +
-        '<div class="product-stock ' + stockClass + '">' + stockLabel + '</div>' +
-        (!hasSizes(p) && totalAvail > 0 ? '<button class="add-to-cart-btn" data-id="' + p.id + '" data-color="' + firstColor.replace(/'/g, "\\'") + '">Add to Cart</button>' : '') +
-        '</div></div>';
-    }).join('');
-    html += '<div class="group-section" id="' + sectionId + '">' +
-      '<div class="group-section-header">' +
-      '<span class="group-section-title">' + groupName + '</span>' +
-      '<button class="group-view-all-btn" data-group="' + groupName.replace(/"/g, '&quot;') + '">View All</button>' +
-      '</div>' +
-      '<div class="group-product-carousel">' + cardsHtml + '</div></div>';
-  });
-  container.innerHTML = html;
-  container.querySelectorAll('.group-product-carousel .product-card').forEach(function(card) {
-    card.addEventListener('click', function(e) {
-      if (e.target.closest('.add-to-cart-btn')) return;
-      var id = parseInt(this.dataset.id);
-      if (!isNaN(id)) openProduct(id);
-    });
-  });
-  container.querySelectorAll('.group-product-carousel .add-to-cart-btn').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      var id = parseInt(this.dataset.id);
-      var color = this.dataset.color || '';
-      if (!isNaN(id)) addToCart(id, color);
-    });
-  });
-  container.querySelectorAll('.group-view-all-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      selectGroup(btn.dataset.group);
-    });
-  });
-}
-
 var cc = document.getElementById('categoryCarousel');
 if (cc) {
   cc.addEventListener('click', function(e) {
@@ -4733,7 +4661,6 @@ loadProducts(function() {
   if (currentUser && currentUser.admin) showAdminPanel();
   renderMessengerLink();
   renderFilters();
-  renderGroupCarousels();
   renderProducts();
   updateCartBadge();
 });
