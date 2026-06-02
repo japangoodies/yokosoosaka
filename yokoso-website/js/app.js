@@ -1868,16 +1868,6 @@ function renderBrandFilter() {
 
 
 
-function updateGroupCarousels() {
-  var gc = document.getElementById('groupCarousels');
-  if (!gc) return;
-  if (currentGroup === 'all' && currentCategory === 'all' && currentBrand === 'all' && !currentSearch) {
-    gc.classList.add('active');
-  } else {
-    gc.classList.remove('active');
-  }
-}
-
 function selectGroup(name) {
   currentGroup = name;
   currentCategory = 'all';
@@ -2134,7 +2124,6 @@ function renderProducts() {
     grid.appendChild(pag);
   }
   if (spinner) spinner.classList.remove('active');
-  updateGroupCarousels();
 }
 
 function goToPage(newPage) {

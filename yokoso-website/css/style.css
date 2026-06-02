@@ -2302,10 +2302,6 @@ body {
   padding: 1rem 1.5rem 0;
   max-width: 1400px;
   margin: 0 auto;
-  display: none;
-}
-.group-carousels.active {
-  display: block;
 }
 @media (max-width: 768px) {
   .group-carousels { padding: 0.5rem 0.75rem 0; }
