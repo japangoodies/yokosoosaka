@@ -1199,6 +1199,8 @@ function migrateCategoriesConfig(cfg) {
   }
   cfg.groups.forEach(function(g) {
     if (!cfg.subcategoryMap[g.name]) cfg.subcategoryMap[g.name] = [];
+    if (g.image && !g.images) { g.images = [g.image]; delete g.image; }
+    if (!g.images) g.images = [];
   });
   if (!cfg.brands) cfg.brands = [];
   if (!cfg.colors) cfg.colors = [];
@@ -1211,8 +1213,8 @@ function migrateCategoriesConfig(cfg) {
 
 let categoriesConfig = migrateCategoriesConfig({
   groups: [
-    { name: "MENS", image: "" },
-    { name: "WOMENS", image: "" }
+    { name: "MENS", images: [] },
+    { name: "WOMENS", images: [] }
   ],
   subcategoryMap: {
     "MENS": ["Shoes", "Clothing"],
@@ -1581,7 +1583,13 @@ function loadCategories() {
           var userGroups = parsed.groups || [];
           userGroups.forEach(function(ug) {
             var fg = fileGroups.find(function(g) { return g.name === ug.name; });
-            if (fg && !fg.image && ug.image) fg.image = ug.image;
+            if (fg && (!fg.images || !fg.images.length)) {
+              if (ug.images && ug.images.length) {
+                fg.images = ug.images.slice();
+              } else if (ug.image) {
+                fg.images = [ug.image];
+              }
+            }
           });
           // Merge subcategoryMap from localStorage (user may have added new subcategories)
           if (parsed.subcategoryMap) {
@@ -1810,11 +1818,31 @@ function renderCarousel() {
   if (!container) return;
   if (document.body.classList.contains('catalog-mode')) return;
   var groups = getGroups();
+  if (window._carouselIntervals) {
+    window._carouselIntervals.forEach(clearInterval);
+  }
+  window._carouselIntervals = [];
   container.innerHTML = groups.map(function(g) {
     var active = currentGroup === g.name ? ' active' : '';
-    var imgStyle = g.image ? ' style="background-image:url(' + g.image + ');background-size:cover;background-position:center"' : '';
-    return '<button class="carousel-group-btn' + active + '" data-group="' + g.name + '"' + imgStyle + '><span class="carousel-group-label">' + g.name + '</span></button>';
+    var images = g.images && g.images.length ? g.images : [];
+    var slidesHtml = images.map(function(img, i) {
+      return '<div class="carousel-group-slide' + (i === 0 ? ' active' : '') + '" style="background-image:url(' + img + ');background-size:cover;background-position:center"></div>';
+    }).join('');
+    return '<button class="carousel-group-btn' + active + '" data-group="' + g.name + '">' +
+      '<div class="carousel-group-slides">' + slidesHtml + '</div>' +
+      '<span class="carousel-group-label">' + g.name + '</span></button>';
   }).join('');
+  container.querySelectorAll('.carousel-group-btn').forEach(function(btn) {
+    var slides = btn.querySelectorAll('.carousel-group-slide');
+    if (slides.length < 2) return;
+    var idx = 0;
+    var interval = setInterval(function() {
+      slides[idx].classList.remove('active');
+      idx = (idx + 1) % slides.length;
+      slides[idx].classList.add('active');
+    }, 3000);
+    window._carouselIntervals.push(interval);
+  });
 }
 
 function renderBrandFilter() {
@@ -1840,17 +1868,124 @@ function renderBrandFilter() {
 
 
 
+function selectGroup(name) {
+  currentGroup = name;
+  currentCategory = 'all';
+  currentBrand = 'all';
+  mainPage = 1;
+  document.body.classList.add('catalog-mode');
+  var ch = document.getElementById('catalogHeader');
+  if (ch) ch.style.display = 'block';
+  var ct = document.getElementById('catalogTitle');
+  if (ct) {
+    ct.textContent = name;
+    ct.style.cursor = 'pointer';
+    ct.onclick = function() {
+      currentGroup = 'all';
+      currentCategory = 'all';
+      currentBrand = 'all';
+      document.body.classList.remove('catalog-mode');
+      if (ch) ch.style.display = 'none';
+      var cc2 = document.getElementById('categoryCarousel');
+      if (cc2) cc2.style.display = '';
+      history.pushState({}, '', window.location.pathname);
+      renderSubcategoryFilter();
+      renderBrandFilter();
+      mainPage = 1;
+      renderProducts();
+    };
+  }
+  var cc = document.getElementById('categoryCarousel');
+  if (cc) cc.style.display = 'none';
+  history.pushState({ group: name }, '', '?group=' + encodeURIComponent(name));
+  renderSubcategoryFilter();
+  renderBrandFilter();
+  renderProducts();
+}
+
+function renderGroupCarousels() {
+  var grid = document.getElementById('productGrid');
+  if (!grid) return;
+  var groups = getGroups();
+  var html = '';
+  groups.forEach(function(g) {
+    var groupName = typeof g === 'string' ? g : g.name;
+    var sectionId = 'group-section-' + groupName.replace(/\s+/g, '-');
+    var groupProducts = products.filter(function(p) {
+      return p.available !== false && p.category0 === groupName;
+    });
+    if (groupProducts.length === 0) return;
+    var cardsHtml = groupProducts.map(function(p) {
+      var variantColors = getVariantColors(p);
+      var firstColor = variantColors.length ? variantColors[0] : 'Default';
+      var colorChips = '';
+      if (variantColors.length > 1) {
+        colorChips = '<div class="product-color-chips">' + variantColors.map(function(c) {
+          return '<span class="color-chip" title="' + c + '">' + c + '</span>';
+        }).join('') + '</div>';
+      } else if (variantColors.length === 1 && variantColors[0] !== 'Default') {
+        colorChips = '<div class="product-color-chips"><span class="color-chip">' + variantColors[0] + '</span></div>';
+      }
+      var totalAvail = getTotalStock(p.id);
+      var stockLabel = totalAvail > 3 ? 'In Stock' : totalAvail > 0 ? 'Only ' + totalAvail + ' left' : 'Out of Stock';
+      var stockClass = totalAvail > 0 ? 'in-stock' : 'out-of-stock';
+      var firstMedia = p.images?.[0] || 'images/products/placeholder.svg';
+      var mediaHtml = isVideoUrl(firstMedia) ?
+        '<div class="product-image product-image-video"><span class="video-play-icon">▶</span></div>' :
+        '<img class="product-img" src="' + firstMedia + '" alt="' + p.name + '" loading="lazy" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
+      return '<div class="product-card" data-id="' + p.id + '">' +
+        mediaHtml +
+        '<div class="product-info">' +
+        (p.category0 ? '<div class="product-group">' + p.category0 + '</div>' : '') +
+        '<div class="product-category">' + p.category1 + '</div>' +
+        colorChips +
+        '<div class="product-name" onclick="openProduct(' + p.id + ')">' + p.name + '</div>' +
+        '<div class="product-price">' + p.price + '</div>' +
+        '<div class="product-stock ' + stockClass + '">' + stockLabel + '</div>' +
+        (!hasSizes(p) && totalAvail > 0 ? '<button class="add-to-cart-btn" data-id="' + p.id + '" data-color="' + firstColor.replace(/'/g, "\\'") + '">Add to Cart</button>' : '') +
+        '</div></div>';
+    }).join('');
+    html += '<div class="group-section" id="' + sectionId + '">' +
+      '<div class="group-section-header">' +
+      '<span class="group-section-title">' + groupName + '</span>' +
+      '<button class="group-view-all-btn" data-group="' + groupName.replace(/"/g, '&quot;') + '">View All</button>' +
+      '</div>' +
+      '<div class="group-product-carousel">' + cardsHtml + '</div></div>';
+  });
+  grid.innerHTML = html;
+  grid.querySelectorAll('.group-product-carousel .product-card').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+      if (e.target.closest('.add-to-cart-btn')) return;
+      var id = parseInt(this.dataset.id);
+      if (!isNaN(id)) openProduct(id);
+    });
+  });
+  grid.querySelectorAll('.group-product-carousel .add-to-cart-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var id = parseInt(this.dataset.id);
+      var color = this.dataset.color || '';
+      if (!isNaN(id)) addToCart(id, color);
+    });
+  });
+  grid.querySelectorAll('.group-view-all-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      selectGroup(btn.dataset.group);
+    });
+  });
+}
+
 var cc = document.getElementById('categoryCarousel');
 if (cc) {
   cc.addEventListener('click', function(e) {
     var btn = e.target.closest('.carousel-group-btn');
     if (!btn) return;
     var groupName = btn.dataset.group;
-    var sp = document.getElementById('loadingSpinner');
-    if (sp) sp.classList.add('active');
-    setTimeout(function() {
-      window.location.href = '?group=' + encodeURIComponent(groupName);
-    }, 100);
+    var sectionId = 'group-section-' + groupName.replace(/\s+/g, '-');
+    var section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   });
 }
 
@@ -1901,6 +2036,15 @@ function renderProducts() {
   var spinner = document.getElementById('loadingSpinner');
   if (spinner) spinner.classList.add('active');
   var empty = document.getElementById('emptyState');
+
+  // No filters active → show per-group product carousels
+  if (currentGroup === 'all' && currentCategory === 'all' && currentBrand === 'all' && !currentSearch) {
+    empty.style.display = 'none';
+    renderGroupCarousels();
+    if (spinner) spinner.classList.remove('active');
+    return;
+  }
+
   var filtered = products.filter(function(p) { return p.available !== false; });
   if (currentGroup !== 'all') {
     filtered = filtered.filter(function(p) { return p.category0 === currentGroup; });
@@ -4300,19 +4444,29 @@ function renderGroupImagePreview() {
   var targetSelect = document.getElementById('groupImageTarget');
   if (!container || !targetSelect) return;
   var groups = getGroups();
-  targetSelect.innerHTML = '<option value="">Set image for...</option>' + groups.map(function(g) {
-    return '<option value="' + g.name + '">' + g.name + '</option>';
+  targetSelect.innerHTML = '<option value="">Add image to...</option>' + groups.map(function(g) {
+    return '<option value="' + g.name + '">' + g.name + ' (' + (g.images ? g.images.length : 0) + ' images)</option>';
   }).join('');
   container.innerHTML = groups.map(function(g) {
-    var imgHtml = g.image ? '<img src="' + g.image + '" style="width:100px;height:100px;object-fit:cover;border-radius:8px;cursor:pointer" title="Click to remove ' + g.name + ' image" data-group-image="' + g.name + '">' : '';
-    return imgHtml ? '<div style="text-align:center"><div style="font-size:0.7rem;color:#aaa;margin-bottom:2px">' + g.name + '</div>' + imgHtml + '</div>' : '';
+    var imgs = (g.images || []);
+    if (!imgs.length) return '';
+    var imgsHtml = imgs.map(function(img, i) {
+      return '<div style="position:relative;display:inline-block;margin:4px">' +
+        '<img src="' + img + '" style="width:80px;height:80px;object-fit:cover;border-radius:6px;display:block">' +
+        '<button class="group-img-remove" data-group="' + g.name + '" data-index="' + i + '" style="position:absolute;top:-4px;right:-4px;width:20px;height:20px;border-radius:50%;border:none;background:#e94560;color:#fff;font-size:12px;line-height:20px;text-align:center;cursor:pointer;padding:0">×</button></div>';
+    }).join('');
+    return '<div style="margin-bottom:8px"><div style="font-size:0.75rem;font-weight:600;color:#555;margin-bottom:4px">' + g.name + '</div><div style="display:flex;flex-wrap:wrap">' + imgsHtml + '</div></div>';
   }).join('');
-  container.querySelectorAll('[data-group-image]').forEach(function(img) {
-    img.addEventListener('click', function() {
-      var gn = this.dataset.groupImage;
-      if (confirm('Remove image for ' + gn + '?')) {
-        var grp = categoriesConfig.groups.find(function(g) { return g.name === gn; });
-        if (grp) { grp.image = ''; saveCategoriesConfig(); renderGroupImagePreview(); renderCarousel(); }
+  container.querySelectorAll('.group-img-remove').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var gn = this.dataset.group;
+      var idx = parseInt(this.dataset.index);
+      var grp = categoriesConfig.groups.find(function(g) { return g.name === gn; });
+      if (grp && grp.images && grp.images.length > idx) {
+        grp.images.splice(idx, 1);
+        saveCategoriesConfig();
+        renderGroupImagePreview();
+        renderCarousel();
       }
     });
   });
@@ -4333,7 +4487,7 @@ if (giInput) giInput.addEventListener('change', function(e) {
   var targetGroup = groupTargetSelect.value;
   resizeImage(file, 400, 0.7, function(dataUrl) {
     var grp = categoriesConfig.groups.find(function(g) { return g.name === targetGroup; });
-    if (grp) grp.image = dataUrl;
+    if (grp) grp.images.push(dataUrl);
     saveCategoriesConfig();
     renderGroupImagePreview();
     renderCarousel();
@@ -4348,7 +4502,7 @@ if (giUrl) giUrl.addEventListener('change', function() {
   if (url) {
     var targetGroup = groupTargetSelect.value;
     var grp = categoriesConfig.groups.find(function(g) { return g.name === targetGroup; });
-    if (grp) grp.image = url;
+    if (grp) grp.images.push(url);
     saveCategoriesConfig();
     renderGroupImagePreview();
     renderCarousel();
@@ -4431,7 +4585,7 @@ if (agb) agb.addEventListener('click', function() {
   var val = input.value.trim();
   if (!val) return;
   if ((categoriesConfig.groups || []).some(function(g) { return g.name === val; })) return;
-  categoriesConfig.groups.push({ name: val, image: '' });
+  categoriesConfig.groups.push({ name: val, images: [] });
   categoriesConfig.subcategoryMap[val] = [];
   input.value = '';
   saveCategoriesConfig();
@@ -4561,11 +4715,19 @@ function parseURLParams() {
       ct.textContent = group;
       ct.style.cursor = 'pointer';
       ct.onclick = function() {
+        currentGroup = 'all';
         currentCategory = 'all';
         currentBrand = 'all';
+        document.body.classList.remove('catalog-mode');
+        var ch2 = document.getElementById('catalogHeader');
+        if (ch2) ch2.style.display = 'none';
+        var cc2 = document.getElementById('categoryCarousel');
+        if (cc2) cc2.style.display = '';
+        history.pushState({}, '', window.location.pathname);
         renderSubcategoryFilter();
         renderBrandFilter();
-  mainPage = 1; renderProducts();
+        mainPage = 1;
+        renderProducts();
       };
     }
     var cc = document.getElementById('categoryCarousel');
