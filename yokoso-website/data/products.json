@@ -108,7 +108,7 @@
     "stock": 6
   },
   {
-    "stock": 15,
+    "stock": 14,
     "category1": "Shoes",
     "sizes": [],
     "images": [
@@ -119,7 +119,7 @@
     "variants": {
       "Default": {
         "stock": {
-          "q": 14
+          "q": 13
         }
       }
     },
