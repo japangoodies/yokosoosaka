@@ -4850,6 +4850,7 @@ function renderAnalyticsTopProducts(productSales) {
   var fB = el.getAttribute('data-fb') || '';
   var fCl = el.getAttribute('data-fcl') || '';
   var fSz = el.getAttribute('data-fsz') || '';
+  var fSold = el.getAttribute('data-fsold') === '1';
 
   var filtered = all.filter(function(p) {
     if (searchVal && p.name.toLowerCase().indexOf(searchVal) === -1) return false;
@@ -4858,6 +4859,7 @@ function renderAnalyticsTopProducts(productSales) {
     if (fB && p.b !== fB) return false;
     if (fCl && p.cl !== fCl) return false;
     if (fSz && (!p.sz || p.sz.indexOf(fSz) === -1)) return false;
+    if (fSold && p.qty === 0) return false;
     return true;
   });
   var maxQty = filtered.length && filtered[0].qty;
@@ -4875,8 +4877,10 @@ function renderAnalyticsTopProducts(productSales) {
     '<div style="display:flex;gap:6px;margin-bottom:6px">' +
     '<input type="text" id="analyticsProductFilter" placeholder="Search products..." value="' + escapeHtml(searchVal) + '" oninput="filterAnalyticsAttr(\'q\',this)" style="padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;flex:1;font-size:0.8rem">' +
     '</div>' +
-    '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' +
     opt('fg', 'Group', lists.g) + opt('fc1', 'Subcategory', lists.c1) + opt('fb', 'Brand', lists.b) + opt('fcl', 'Color', lists.cl) + opt('fsz', 'Size', lists.sz) +
+    '<label style="display:flex;align-items:center;gap:4px;color:#aaa;font-size:0.75rem;cursor:pointer;user-select:none;margin-left:4px">' +
+    '<input type="checkbox"' + (el.getAttribute('data-fsold') === '1' ? ' checked' : '') + ' onchange="filterAnalyticsSoldToggle()"> Only sold</label>' +
     '</div></div>';
   html += '<table class="analytics-table"><thead><tr><th class="rank">#</th><th>Product</th><th class="num">Price</th><th class="num">Orig. Price</th><th class="num">Qty Sold</th><th class="num">Revenue</th><th class="num">Profit</th></tr></thead><tbody>';
   filtered.forEach(function(p, i) {
@@ -4924,6 +4928,13 @@ function filterAnalyticsAttr(attr, el) {
   rebuildAnalyticsProductsTable(container);
 }
 
+function filterAnalyticsSoldToggle() {
+  var container = document.getElementById('analyticsTopProducts');
+  var cb = container.querySelector('input[type="checkbox"][onchange="filterAnalyticsSoldToggle()"]');
+  container.setAttribute('data-fsold', cb && cb.checked ? '1' : '0');
+  rebuildAnalyticsProductsTable(container);
+}
+
 function rebuildAnalyticsProductsTable(container) {
   var raw = container.getAttribute('data-items');
   if (!raw) return;
@@ -4934,6 +4945,7 @@ function rebuildAnalyticsProductsTable(container) {
   var fB = container.getAttribute('data-fb') || '';
   var fCl = container.getAttribute('data-fcl') || '';
   var fSz = container.getAttribute('data-fsz') || '';
+  var fSold = container.getAttribute('data-fsold') === '1';
   var filtered = all.filter(function(p) {
     if (searchVal && p.name.toLowerCase().indexOf(searchVal) === -1) return false;
     if (fG && p.g !== fG) return false;
@@ -4941,6 +4953,7 @@ function rebuildAnalyticsProductsTable(container) {
     if (fB && p.b !== fB) return false;
     if (fCl && p.cl !== fCl) return false;
     if (fSz && (!p.sz || p.sz.indexOf(fSz) === -1)) return false;
+    if (fSold && p.qty === 0) return false;
     return true;
   });
   var maxQty = filtered.length && filtered[0].qty;
