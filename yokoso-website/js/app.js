@@ -5067,35 +5067,42 @@ function renderAnalyticsLowStock() {
 }
 
 function exportAnalyticsCSV() {
-  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
-  fetch(base + '/orders?limit=10000&_=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(j) {
-      var orders = Array.isArray(j) ? j : (j.docs || []);
-      var cutoff = parseAnalyticsPeriod();
-      if (cutoff) { orders = orders.filter(function(o) { return new Date(o.createdAt).getTime() >= cutoff; }); }
-      var rows = [['PO#','Date','Customer','Contact','Email','Status','Product','Color','Size','Qty','Unit Price','Total','Deposit']];
-      orders.forEach(function(o) {
-        var items = []; try { items = JSON.parse(o.items || '[]'); } catch(e) {}
-        var created = o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '';
-        var status = o.status || '';
-        if (items.length === 0) {
-          rows.push([o.id || o.poNumber || '', created, o.customerName || '', o.customerContact || '', o.customerEmail || '', status, '', '', '', '', '', o.total || '', o.deposit || '']);
-        } else {
-          items.forEach(function(i) {
-            rows.push([o.id || o.poNumber || '', created, o.customerName || '', o.customerContact || '', o.customerEmail || '', status, i.name || '', i.color || '', i.size || '', i.qty || 1, i.price || '', o.total || '', o.deposit || '']);
-          });
-        }
-      });
-      var csv = rows.map(function(r) { return r.map(function(c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
-      var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'analytics_' + new Date().toISOString().slice(0,10) + '.csv';
-      a.click();
-      showCartNotification('Analytics exported to CSV.');
-    })
-    .catch(function(e) { showCartNotification('Export error: ' + (e.message || '')); });
+  var el = document.getElementById('analyticsTopProducts');
+  var raw = el && el.getAttribute('data-items');
+  if (!raw) { showCartNotification('No analytics data yet. Load analytics first.'); return; }
+  var all = JSON.parse(raw);
+  var searchVal = (el.getAttribute('data-filter') || '').toLowerCase();
+  var fG = el.getAttribute('data-fg') || '';
+  var fC1 = el.getAttribute('data-fc1') || '';
+  var fB = el.getAttribute('data-fb') || '';
+  var fCl = el.getAttribute('data-fcl') || '';
+  var fSz = el.getAttribute('data-fsz') || '';
+  var fSold = el.getAttribute('data-fsold') === '1';
+  var filtered = all.filter(function(p) {
+    if (searchVal && p.name.toLowerCase().indexOf(searchVal) === -1) return false;
+    if (fG && p.g !== fG) return false;
+    if (fC1 && p.c1 !== fC1) return false;
+    if (fB && p.b !== fB) return false;
+    if (fCl && p.cl !== fCl) return false;
+    if (fSz && (!p.sz || p.sz.indexOf(fSz) === -1)) return false;
+    if (fSold && p.qty === 0) return false;
+    return true;
+  });
+  var rows = [['Product','Group','Subcategory','Brand','Price','Original Price','Qty Sold','Revenue','Profit']];
+  filtered.forEach(function(p) {
+    var pn = parseFloat(String(p.price).replace(/[^0-9.\-]/g, ''));
+    var on = parseFloat(String(p.originalPrice).replace(/[^0-9.\-]/g, ''));
+    var pd = isNaN(pn) ? (p.price || '') : pn.toFixed(2);
+    var od = isNaN(on) ? (p.originalPrice || '') : on.toFixed(2);
+    rows.push([p.name, p.g, p.c1, p.b, pd, od, p.qty, p.revenue.toFixed(2), (p.profit || 0).toFixed(2)]);
+  });
+  var csv = rows.map(function(r) { return r.map(function(c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+  var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'product_sales_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  showCartNotification('Product sales exported to CSV.');
 }
 // ---- END ANALYTICS ----
 
