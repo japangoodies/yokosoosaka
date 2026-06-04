@@ -4816,21 +4816,39 @@ function renderAnalyticsTopProducts(productSales) {
   var el = document.getElementById('analyticsTopProducts');
   var all = (products || []).map(function(p) {
     var sale = productSales[p.name] || { qty: 0, revenue: 0, profit: 0 };
-    return { name: p.name, price: p.price || '', originalPrice: p.originalPrice || '', qty: sale.qty, revenue: sale.revenue, profit: sale.profit || 0 };
+    return { name: p.name, price: p.price || '', originalPrice: p.originalPrice || '', qty: sale.qty, revenue: sale.revenue, profit: sale.profit || 0, g: p.category0 || '', c: p.category1 || '' };
   });
   Object.keys(productSales).forEach(function(k) {
     if (!all.some(function(a) { return a.name === k; }))
-      all.push({ name: k, price: '', originalPrice: '', qty: productSales[k].qty, revenue: productSales[k].revenue, profit: productSales[k].profit || 0 });
+      all.push({ name: k, price: '', originalPrice: '', qty: productSales[k].qty, revenue: productSales[k].revenue, profit: productSales[k].profit || 0, g: '', c: '' });
   });
   all.sort(function(a, b) { return b.qty - a.qty; });
   if (!all.length) { el.innerHTML = '<div class="analytics-placeholder">No products found.</div>'; return; }
   el.setAttribute('data-items', JSON.stringify(all));
 
-  var filterVal = (el.getAttribute('data-filter') || '').toLowerCase();
-  var filtered = filterVal ? all.filter(function(p) { return p.name.toLowerCase().indexOf(filterVal) !== -1; }) : all;
+  var searchVal = (el.getAttribute('data-filter') || '').toLowerCase();
+  var catVal = el.getAttribute('data-catfilter') || '';
+
+  // Build unique category list from products
+  var catSet = {};
+  (products || []).forEach(function(p) {
+    if (p.category0) catSet[p.category0] = true;
+  });
+  var catList = Object.keys(catSet).sort();
+
+  var filtered = all.filter(function(p) {
+    if (searchVal && p.name.toLowerCase().indexOf(searchVal) === -1) return false;
+    if (catVal && p.g !== catVal) return false;
+    return true;
+  });
   var maxQty = filtered.length && filtered[0].qty;
-  var html = '<div class="analytics-filter-wrap" style="margin-bottom:10px">' +
-    '<input type="text" id="analyticsProductFilter" placeholder="Filter products..." value="' + escapeHtml(filterVal) + '" oninput="filterAnalyticsProducts(this)" style="padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;width:100%;font-size:0.8rem">' +
+  var catOpts = '<option value="">All Categories</option>';
+  catList.forEach(function(g) {
+    catOpts += '<option value="' + escapeHtml(g) + '"' + (catVal === g ? ' selected' : '') + '>' + escapeHtml(g) + '</option>';
+  });
+  var html = '<div class="analytics-filter-wrap" style="margin-bottom:10px;display:flex;gap:8px">' +
+    '<input type="text" id="analyticsProductFilter" placeholder="Search products..." value="' + escapeHtml(searchVal) + '" oninput="filterAnalyticsProducts(this)" style="padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;flex:1;font-size:0.8rem">' +
+    '<select id="analyticsProductCatFilter" onchange="filterAnalyticsProductsCat(this)" style="padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;font-size:0.8rem">' + catOpts + '</select>' +
     '</div>';
   html += '<table class="analytics-table"><thead><tr><th class="rank">#</th><th>Product</th><th class="num">Price</th><th class="num">Orig. Price</th><th class="num">Qty Sold</th><th class="num">Revenue</th><th class="num">Profit</th></tr></thead><tbody>';
   filtered.forEach(function(p, i) {
@@ -4841,7 +4859,7 @@ function renderAnalyticsTopProducts(productSales) {
     var od = isNaN(on) ? (p.originalPrice || '—') : '₱' + on.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     html += '<tr>' +
       '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + escapeHtml(p.name) + (p.qty > 0 ? '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div>' : '') + '</td>' +
+      '<td>' + escapeHtml(p.name) + '<br><span style="font-size:0.7rem;color:#888">' + (p.g ? escapeHtml(p.g) + (p.c ? ' / ' + escapeHtml(p.c) : '') : '') + '</span>' + (p.qty > 0 ? '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div>' : '') + '</td>' +
       '<td class="num">' + pd + '</td>' +
       '<td class="num">' + od + '</td>' +
       '<td class="num">' + p.qty + '</td>' +
@@ -4855,13 +4873,29 @@ function renderAnalyticsTopProducts(productSales) {
 function filterAnalyticsProducts(input) {
   var el = document.getElementById('analyticsTopProducts');
   el.setAttribute('data-filter', input.value);
+  rebuildAnalyticsProductsTable(el);
+}
+
+function filterAnalyticsProductsCat(sel) {
+  var el = document.getElementById('analyticsTopProducts');
+  el.setAttribute('data-catfilter', sel.value);
+  rebuildAnalyticsProductsTable(el);
+}
+
+function rebuildAnalyticsProductsTable(el) {
   var raw = el.getAttribute('data-items');
   if (!raw) return;
   var all = JSON.parse(raw);
-  var val = input.value.toLowerCase();
-  var filtered = val ? all.filter(function(p) { return p.name.toLowerCase().indexOf(val) !== -1; }) : all;
+  var searchVal = (el.getAttribute('data-filter') || '').toLowerCase();
+  var catVal = el.getAttribute('data-catfilter') || '';
+  var filtered = all.filter(function(p) {
+    if (searchVal && p.name.toLowerCase().indexOf(searchVal) === -1) return false;
+    if (catVal && p.g !== catVal) return false;
+    return true;
+  });
   var maxQty = filtered.length && filtered[0].qty;
   var tbody = el.querySelector('table tbody');
+  var thead = el.querySelector('table thead');
   if (!tbody) return;
   tbody.innerHTML = '';
   filtered.forEach(function(p, i) {
@@ -4872,7 +4906,7 @@ function filterAnalyticsProducts(input) {
     var od = isNaN(on) ? (p.originalPrice || '—') : '₱' + on.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     var tr = document.createElement('tr');
     tr.innerHTML = '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + escapeHtml(p.name) + (p.qty > 0 ? '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div>' : '') + '</td>' +
+      '<td>' + escapeHtml(p.name) + (p.g ? '<br><span style="font-size:0.7rem;color:#888">' + escapeHtml(p.g) + (p.c ? ' / ' + escapeHtml(p.c) : '') + '</span>' : '') + (p.qty > 0 ? '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div>' : '') + '</td>' +
       '<td class="num">' + pd + '</td>' +
       '<td class="num">' + od + '</td>' +
       '<td class="num">' + p.qty + '</td>' +
