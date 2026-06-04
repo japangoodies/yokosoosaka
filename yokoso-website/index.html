@@ -654,5 +654,13 @@
       <div class="checkout-copied" id="checkoutCopied">Copied!</div>
     </div>
   </div>
+  <div id="installBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;padding:12px 16px;z-index:99999;align-items:center;gap:12px;border-top:1px solid #333">
+    <div style="flex:1;color:#eee;font-size:14px">
+      <strong>JapanGoodies</strong><br>
+      <span style="font-size:12px;color:#aaa">Install app for a better experience</span>
+    </div>
+    <button onclick="dismissInstallBanner()" style="background:none;border:none;color:#888;font-size:20px;cursor:pointer;padding:4px 8px">✕</button>
+    <button onclick="installApp()" style="background:#e94560;border:none;color:#fff;padding:8px 18px;border-radius:6px;cursor:pointer;font-weight:600;font-size:14px">Install</button>
+  </div>
 </body>
 </html>

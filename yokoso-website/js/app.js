@@ -4986,3 +4986,28 @@ loadProducts(function() {
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function() {});
 }
+
+// PWA install prompt
+var deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  var banner = document.getElementById('installBanner');
+  if (banner) banner.style.display = 'flex';
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function() {
+    deferredPrompt = null;
+    var banner = document.getElementById('installBanner');
+    if (banner) banner.style.display = 'none';
+  });
+}
+
+function dismissInstallBanner() {
+  deferredPrompt = null;
+  var banner = document.getElementById('installBanner');
+  if (banner) banner.style.display = 'none';
+}
