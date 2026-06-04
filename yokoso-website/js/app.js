@@ -290,7 +290,7 @@ function loadUsers() {
   if (!list) return;
   list.innerHTML = 'Loading...';
   var base = STOCK_PROXY_URL.replace(/\/+$/, '');
-  fetch(base + '/accounts')
+  fetch(base + '/accounts?_=' + Date.now())
     .then(function(r) { return r.json(); })
     .then(function(users) {
       if (!Array.isArray(users) || users.length === 0) {
