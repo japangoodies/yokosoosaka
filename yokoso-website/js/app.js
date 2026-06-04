@@ -1284,6 +1284,7 @@ let editingId = null;
 let currentCategory = 'all';
 let currentSearch = '';
 let selectedImagesData = [];
+let variantImagesData = {};
 let currentModalImages = [];
 let currentImageIndex = 0;
 var scrollPos = 0, bodyLocked = false;
@@ -2802,13 +2803,19 @@ function selectModalColor(el, color) {
   // Update images to reflect selected color
   var p = _modalProduct;
   if (p) {
-    // Keep full product images (color variant picks its index)
-    var allImgs = (Array.isArray(p.images) && p.images.length > 0) ? p.images : [p.image || 'images/products/placeholder.svg'];
-    _modalImages = allImgs.slice();
-    var colors = getVariantColors(p);
-    var colorIdx = colors.indexOf(color);
-    _modalImageIdx = Math.min(colorIdx, _modalImages.length - 1);
-    if (_modalImageIdx < 0) _modalImageIdx = 0;
+    // Use per-variant images if available, otherwise fall back to product-level images
+    var variant = p.variants && p.variants[color];
+    if (variant && variant.images && variant.images.length > 0) {
+      _modalImages = variant.images.slice();
+      _modalImageIdx = 0;
+    } else {
+      var allImgs = (Array.isArray(p.images) && p.images.length > 0) ? p.images : [p.image || 'images/products/placeholder.svg'];
+      _modalImages = allImgs.slice();
+      var colors = getVariantColors(p);
+      var colorIdx = colors.indexOf(color);
+      _modalImageIdx = Math.min(colorIdx, _modalImages.length - 1);
+      if (_modalImageIdx < 0) _modalImageIdx = 0;
+    }
     var mediaContainer = document.getElementById('modalMediaContainer');
     if (mediaContainer) {
       mediaContainer.innerHTML = _modalImages.map(function(img, idx) {
@@ -3383,6 +3390,18 @@ function updateBrandDropdown() {
   }).join('');
 }
 
+function renderVariantImagePreview(vi) {
+  var preview = document.querySelector('.variant-image-preview[data-vi="' + vi + '"]');
+  if (!preview) return;
+  var imgs = variantImagesData[vi] || [];
+  if (imgs.length === 0) {
+    preview.innerHTML = '';
+    return;
+  }
+  preview.innerHTML = imgs.map(function(src, idx) {
+    return '<span style="position:relative;display:inline-block;margin:2px"><img src="' + src + '" style="width:50px;height:50px;object-fit:cover;border-radius:4px;border:1px solid #ddd"><button type="button" class="btn-variant-remove-image" data-vi="' + vi + '" data-idx="' + idx + '" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;border:none;background:#dc3545;color:#fff;font-size:12px;line-height:1;cursor:pointer;padding:0">×</button></span>';
+  }).join('');
+}
 function renderVariantsEditor() {
   var container = document.getElementById('formVariantsContainer');
   if (!container) return;
@@ -3424,6 +3443,9 @@ function renderVariantsEditor() {
         return '<label class="vs-row" style="display:inline-flex;align-items:center;gap:4px;margin:2px 6px 2px 0;font-size:0.8rem;white-space:nowrap"><input type="checkbox" class="vs-size" value="' + s + '"' + checked + '> ' + s + ' <input type="number" class="vs-stock" value="' + stockVal + '" min="0" style="width:40px;padding:2px 4px;border:1px solid #ddd;border-radius:4px;font-size:0.75rem"></label>';
       }).join('');
     }
+    // Update variant image preview
+    var vi = r.dataset.vi;
+    if (vi !== undefined) renderVariantImagePreview(vi);
     // Remove button
     var rmBtn = r.querySelector('.variant-remove-btn');
     if (rmBtn) rmBtn.style.display = rows.length > 1 ? 'inline-block' : 'none';
@@ -3439,6 +3461,7 @@ function resetForm() {
   var depEl = document.getElementById('formDeposit');
   if (depEl) depEl.value = '';
   selectedImagesData = [];
+  variantImagesData = {};
   renderImagePreview();
   // Reset variant editor to one empty row
   var container = document.getElementById('formVariantsContainer');
@@ -3447,7 +3470,7 @@ function resetForm() {
     var sizesHtml = allSizes.map(function(s) {
       return '<label class="vs-row" style="display:inline-flex;align-items:center;gap:4px;margin:2px 6px 2px 0;font-size:0.8rem;white-space:nowrap"><input type="checkbox" class="vs-size" value="' + s + '"> ' + s + ' <input type="number" class="vs-stock" value="5" min="0" style="width:40px;padding:2px 4px;border:1px solid #ddd;border-radius:4px;font-size:0.75rem"></label>';
     }).join('');
-    container.innerHTML = '<div class="variant-row" data-vi="0"><select class="form-variant-color" required><option value="">Select color...</option></select><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:none">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div></div>';
+    container.innerHTML = '<div class="variant-row" data-vi="0"><select class="form-variant-color" required><option value="">Select color...</option></select><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:none">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this color:</label><div class="variant-image-preview" data-vi="0"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
   }
   renderVariantsEditor();
 }
@@ -3465,6 +3488,7 @@ function populateForm(product) {
   document.getElementById('formCategory2').value = product.category2 || '';
   // Build variant rows from product.variants
   var container = document.getElementById('formVariantsContainer');
+  variantImagesData = {};
   if (container && product.variants) {
     var colors = Object.keys(product.variants);
     if (colors.length === 0) colors = [''];
@@ -3475,8 +3499,13 @@ function populateForm(product) {
         var stockVal = v.stock && v.stock[s] !== undefined ? v.stock[s] : 5;
         return '<label class="vs-row" style="display:inline-flex;align-items:center;gap:4px;margin:2px 6px 2px 0;font-size:0.8rem;white-space:nowrap"><input type="checkbox" class="vs-size" value="' + s + '"' + checked + '> ' + s + ' <input type="number" class="vs-stock" value="' + stockVal + '" min="0" style="width:40px;padding:2px 4px;border:1px solid #ddd;border-radius:4px;font-size:0.75rem"></label>';
       }).join('');
-      return '<div class="variant-row" data-vi="' + i + '"><select class="form-variant-color" required><option value="">Select color...</option></select><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:' + (colors.length > 1 ? 'inline-block' : 'none') + '">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div></div>';
+      return '<div class="variant-row" data-vi="' + i + '"><select class="form-variant-color" required><option value="">Select color...</option></select><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:' + (colors.length > 1 ? 'inline-block' : 'none') + '">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this color:</label><div class="variant-image-preview" data-vi="' + i + '"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
     }).join('');
+    // Load per-variant images
+    colors.forEach(function(c, i) {
+      var v = product.variants[c] || {};
+      variantImagesData[i] = (v.images || []).slice();
+    });
     renderVariantsEditor();
     // Now set selected color values
     container.querySelectorAll('.variant-row').forEach(function(r, i) {
@@ -3541,7 +3570,10 @@ if (pf) pf.addEventListener('submit', function(e) {
           stock[cb.value] = parseInt(st ? st.value : 5) || 0;
         }
       });
+      var vi = r.dataset.vi;
+      var vImages = variantImagesData[vi] || [];
       variants[color] = { sizes: sizes, stock: stock };
+      if (vImages.length > 0) variants[color].images = vImages;
     });
   }
   if (Object.keys(variants).length === 0) { alert('Please add at least one color variant.'); return; }
@@ -3617,6 +3649,29 @@ if (pf) pf.addEventListener('submit', function(e) {
 var fcb = document.getElementById('formCancelBtn');
 if (fcb) fcb.addEventListener('click', resetForm);
 
+// Variant image upload handler (delegation)
+document.addEventListener('change', function(e) {
+  var input = e.target.closest('.variant-image-input');
+  if (!input) return;
+  var row = input.closest('.variant-row');
+  if (!row) return;
+  var vi = row.dataset.vi;
+  var files = Array.from(input.files);
+  var pending = files.length;
+  if (pending === 0) return;
+  if (!variantImagesData[vi]) variantImagesData[vi] = [];
+  files.forEach(function(file) {
+    resizeImage(file, 800, 0.8, function(dataUrl) {
+      variantImagesData[vi].push(dataUrl);
+      pending--;
+      if (pending === 0) {
+        renderVariantImagePreview(vi);
+        input.value = '';
+      }
+    });
+  });
+});
+
 // Add variant
 var avb = document.getElementById('addVariantBtn');
 if (avb) avb.addEventListener('click', function() {
@@ -3630,8 +3685,9 @@ if (avb) avb.addEventListener('click', function() {
   var div = document.createElement('div');
   div.className = 'variant-row';
   div.dataset.vi = idx;
-  div.innerHTML = '<select class="form-variant-color" required><option value="">Select color...</option></select><button type="button" class="btn btn-danger btn-sm variant-remove-btn">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div>';
+  div.innerHTML = '<select class="form-variant-color" required><option value="">Select color...</option></select><button type="button" class="btn btn-danger btn-sm variant-remove-btn">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this color:</label><div class="variant-image-preview" data-vi="' + idx + '"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
   container.appendChild(div);
+  variantImagesData[idx] = [];
   renderVariantsEditor();
 });
 
@@ -3648,6 +3704,25 @@ document.addEventListener('click', function(e) {
       } else {
         alert('At least one color variant is required.');
       }
+    }
+  }
+  // Variant add image button
+  var addImgBtn = e.target.closest('.variant-add-image-btn');
+  if (addImgBtn) {
+    var row = addImgBtn.closest('.variant-row');
+    if (row) {
+      var input = row.querySelector('.variant-image-input');
+      if (input) input.click();
+    }
+  }
+  // Variant remove image
+  var rmImgBtn = e.target.closest('.btn-variant-remove-image');
+  if (rmImgBtn) {
+    var vi = rmImgBtn.dataset.vi;
+    var idx = parseInt(rmImgBtn.dataset.idx);
+    if (vi !== undefined && variantImagesData[vi]) {
+      variantImagesData[vi].splice(idx, 1);
+      renderVariantImagePreview(vi);
     }
   }
 });
