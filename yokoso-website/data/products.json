@@ -82,27 +82,73 @@
   },
   {
     "color": "White",
-    "price": "₱4,800",
-    "deposit": "1000",
-    "category2": "Nike",
-    "category1": "Shoes",
-    "originalPrice": "5500",
-    "name": "Dunk High Retro",
+    "price": "980",
+    "deposit": "250",
+    "category2": "Uniqlo",
+    "category1": "Clothing",
+    "originalPrice": "975",
+    "name": "Jersey Pleated Half Pants",
     "_colorOrder": [
-      "Red"
+      "OFF WHITE",
+      "BLACK",
+      "BEIGE"
     ],
     "stock": 6,
-    "category0": "KIDS",
-    "description": "test",
+    "category0": "WOMENS",
+    "description": "FOR JULY ETA\nPrice down!\nUNIQLO Jersey Pleated Half Pants\n250 DP TO SECURE ITEM",
     "id": 17,
     "variants": {
-      "Red": {
-        "sizes": [],
-        "stock": {}
+      "OFF WHITE": {
+        "sizes": [
+          "S",
+          "M",
+          "L",
+          "XL"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5
+        }
+      },
+      "BLACK": {
+        "sizes": [
+          "S",
+          "M",
+          "L",
+          "XL"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5
+        }
+      },
+      "BEIGE": {
+        "sizes": [
+          "S",
+          "M",
+          "L",
+          "XL"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5
+        }
       }
     },
     "images": [
-      "images/products/placeholder.svg"
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780574289/xihcdrhmaolftp8uabzu.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780574289/dxx0ymz1r2rtq0ga6tgy.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780574289/ojzeu3vrbps4wluwkxbm.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780574289/o7czdkkovlob49alnzyv.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780574289/x3b0xpqgadswudgn7jtp.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780574289/a1q8wwrg0j3jlhhislbo.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780574289/waecgkrloagrxj1wpyrk.jpg"
     ],
     "available": true,
     "sizes": []
