@@ -4814,21 +4814,72 @@ function renderAnalyticsRevenueChart(dailyRevenue) {
 
 function renderAnalyticsTopProducts(productSales) {
   var el = document.getElementById('analyticsTopProducts');
-  var sorted = Object.keys(productSales).map(function(k) { return { name: k, qty: productSales[k].qty, revenue: productSales[k].revenue, profit: productSales[k].profit || 0 }; }).sort(function(a, b) { return b.qty - a.qty; });
-  if (!sorted.length) { el.innerHTML = '<div class="analytics-placeholder">No product sales yet.</div>'; return; }
-  var maxQty = sorted[0].qty;
-  var html = '<table class="analytics-table"><thead><tr><th class="rank">#</th><th>Product</th><th class="num">Qty Sold</th><th class="num">Revenue</th><th class="num">Profit</th></tr></thead><tbody>';
-  sorted.slice(0, 20).forEach(function(p, i) {
+  var all = (products || []).map(function(p) {
+    var sale = productSales[p.name] || { qty: 0, revenue: 0, profit: 0 };
+    return { name: p.name, price: p.price || '', originalPrice: p.originalPrice || '', qty: sale.qty, revenue: sale.revenue, profit: sale.profit || 0 };
+  });
+  Object.keys(productSales).forEach(function(k) {
+    if (!all.some(function(a) { return a.name === k; }))
+      all.push({ name: k, price: '', originalPrice: '', qty: productSales[k].qty, revenue: productSales[k].revenue, profit: productSales[k].profit || 0 });
+  });
+  all.sort(function(a, b) { return b.qty - a.qty; });
+  if (!all.length) { el.innerHTML = '<div class="analytics-placeholder">No products found.</div>'; return; }
+  el.setAttribute('data-items', JSON.stringify(all));
+
+  var filterVal = (el.getAttribute('data-filter') || '').toLowerCase();
+  var filtered = filterVal ? all.filter(function(p) { return p.name.toLowerCase().indexOf(filterVal) !== -1; }) : all;
+  var maxQty = filtered.length && filtered[0].qty;
+  var html = '<div class="analytics-filter-wrap" style="margin-bottom:10px">' +
+    '<input type="text" id="analyticsProductFilter" placeholder="Filter products..." value="' + escapeHtml(filterVal) + '" oninput="filterAnalyticsProducts(this)" style="padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;width:100%;font-size:0.8rem">' +
+    '</div>';
+  html += '<table class="analytics-table"><thead><tr><th class="rank">#</th><th>Product</th><th class="num">Price</th><th class="num">Orig. Price</th><th class="num">Qty Sold</th><th class="num">Revenue</th><th class="num">Profit</th></tr></thead><tbody>';
+  filtered.forEach(function(p, i) {
     var pct = maxQty > 0 ? (p.qty / maxQty * 100) : 0;
+    var pn = parseFloat(String(p.price).replace(/[^0-9.\-]/g, ''));
+    var on = parseFloat(String(p.originalPrice).replace(/[^0-9.\-]/g, ''));
+    var pd = isNaN(pn) ? (p.price || '—') : '₱' + pn.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    var od = isNaN(on) ? (p.originalPrice || '—') : '₱' + on.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     html += '<tr>' +
       '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + escapeHtml(p.name) + '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div></td>' +
+      '<td>' + escapeHtml(p.name) + (p.qty > 0 ? '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div>' : '') + '</td>' +
+      '<td class="num">' + pd + '</td>' +
+      '<td class="num">' + od + '</td>' +
       '<td class="num">' + p.qty + '</td>' +
       '<td class="num">₱' + p.revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td>' +
       '<td class="num" style="color:' + (p.profit >= 0 ? '#4caf50' : '#c62828') + '">₱' + p.profit.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td></tr>';
   });
   html += '</tbody></table>';
   el.innerHTML = html;
+}
+
+function filterAnalyticsProducts(input) {
+  var el = document.getElementById('analyticsTopProducts');
+  el.setAttribute('data-filter', input.value);
+  var raw = el.getAttribute('data-items');
+  if (!raw) return;
+  var all = JSON.parse(raw);
+  var val = input.value.toLowerCase();
+  var filtered = val ? all.filter(function(p) { return p.name.toLowerCase().indexOf(val) !== -1; }) : all;
+  var maxQty = filtered.length && filtered[0].qty;
+  var tbody = el.querySelector('table tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  filtered.forEach(function(p, i) {
+    var pct = maxQty > 0 ? (p.qty / maxQty * 100) : 0;
+    var pn = parseFloat(String(p.price).replace(/[^0-9.\-]/g, ''));
+    var on = parseFloat(String(p.originalPrice).replace(/[^0-9.\-]/g, ''));
+    var pd = isNaN(pn) ? (p.price || '—') : '₱' + pn.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    var od = isNaN(on) ? (p.originalPrice || '—') : '₱' + on.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="rank">' + (i + 1) + '</td>' +
+      '<td>' + escapeHtml(p.name) + (p.qty > 0 ? '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div>' : '') + '</td>' +
+      '<td class="num">' + pd + '</td>' +
+      '<td class="num">' + od + '</td>' +
+      '<td class="num">' + p.qty + '</td>' +
+      '<td class="num">₱' + p.revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td>' +
+      '<td class="num" style="color:' + (p.profit >= 0 ? '#4caf50' : '#c62828') + '">₱' + p.profit.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td>';
+    tbody.appendChild(tr);
+  });
 }
 
 function renderAnalyticsTopCustomers(customerData) {
