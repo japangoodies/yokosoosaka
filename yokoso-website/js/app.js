@@ -785,7 +785,8 @@ function showCopied() {
 }
 
 function messageOrderDetails() {
-  window.open('https://m.me/yokosoosaka', '_blank');
+  var url = (categoriesConfig && categoriesConfig.messengerUrl) || 'https://m.me/103933895457769';
+  window.open(url, '_blank');
 }
 
 function emailOrderDetails() {
@@ -1123,7 +1124,8 @@ function depositPaidOrder(poNumber) {
               saveProducts();
               renderProducts();
               showCartNotification('Deposit marked paid: ' + poNumber);
-              var depositMsg = '<b>Deposit Paid!</b>\n\nOrder: ' + poNumber + '\nCustomer: ' + (order.customerName || 'N/A') + '\nContact: ' + (order.customerContact || 'N/A') + '\nDeposit: ' + (order.deposit || '') + '\nTotal: ' + (order.total || '');
+              var depositItems = []; try { depositItems = JSON.parse(order.items || '[]'); } catch(e) {}
+              var depositMsg = '<b>Deposit Paid!</b>\n\nOrder: ' + poNumber + '\nCustomer: ' + (order.customerName || 'N/A') + '\nContact: ' + (order.customerContact || 'N/A') + '\nItems:\n' + depositItems.map(function(i) { return '  \u2022 ' + i.name + ' x' + i.qty + ' = \u20b1' + ((parseFloat(String(i.price || '').replace(/[^0-9.\-]/g, '')) || 0) * i.qty).toFixed(2); }).join('\n') + '\n\nDeposit: ' + (order.deposit || '') + '\nTotal: ' + (order.total || '');
               sendTelegramNotification(depositMsg);
               loadOrders();
             })
@@ -1145,7 +1147,8 @@ function confirmOrder(poNumber) {
           .then(function(r) { return r.json(); })
           .then(function(order) {
             if (order && !order.error) {
-              var msg = '<b>Order Confirmed!</b>\n\nPO: ' + poNumber + '\nCustomer: ' + (order.customerName || 'N/A') + '\nContact: ' + (order.customerContact || 'N/A') + '\nTotal: ' + (order.total || '') + '\nDeposit: ' + (order.deposit || '');
+              var confirmItems = []; try { confirmItems = JSON.parse(order.items || '[]'); } catch(e) {}
+              var msg = '<b>Order Confirmed!</b>\n\nPO: ' + poNumber + '\nCustomer: ' + (order.customerName || 'N/A') + '\nContact: ' + (order.customerContact || 'N/A') + '\nItems:\n' + confirmItems.map(function(i) { return '  \u2022 ' + i.name + ' x' + i.qty + ' = \u20b1' + ((parseFloat(String(i.price || '').replace(/[^0-9.\-]/g, '')) || 0) * i.qty).toFixed(2); }).join('\n') + '\n\nTotal: ' + (order.total || '') + '\nDeposit: ' + (order.deposit || '');
               sendTelegramNotification(msg);
             }
           }).catch(function() {});
