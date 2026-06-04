@@ -4648,7 +4648,7 @@ function loadAnalytics() {
       renderAnalytics(orders);
     })
     .catch(function(e) {
-      ['analyticsTotalRevenue','analyticsTotalOrders','analyticsAvgOrder','analyticsProductsSold'].forEach(function(id) {
+      ['analyticsTotalRevenue','analyticsTotalOrders','analyticsAvgOrder','analyticsProductsSold','analyticsTotalProfit'].forEach(function(id) {
         var el = document.getElementById(id); if (el) el.textContent = 'Error';
       });
       ['analyticsStatusBreakdown','analyticsRevenueChart','analyticsTopProducts','analyticsTopCustomers','analyticsCategorySales','analyticsLowStock'].forEach(function(id) {
@@ -4682,6 +4682,9 @@ function renderAnalytics(orders) {
   var avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
   var productsSold = 0;
   var productSales = {};
+  var customerData = {};
+  var dailyRevenue = {};
+  var categorySales = {};
   var totalProfit = 0;
 
   // Build lookup of originalPrice by product name
