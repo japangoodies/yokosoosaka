@@ -3549,6 +3549,10 @@ if (pf) pf.addEventListener('submit', function(e) {
   var category1 = document.getElementById('formCategory1').value;
   var category2 = document.getElementById('formCategory2').value;
   var price = document.getElementById('formPrice').value.trim();
+  if (price && price.indexOf('₱') !== 0) {
+    var num = parseFloat(price.replace(/[^0-9.]/g, ''));
+    if (!isNaN(num)) price = '₱' + num.toLocaleString('en-PH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
   var description = document.getElementById('formDesc').value.trim();
   if (!name || !category0 || !category1 || !category2 || !price || !description) return;
 
@@ -3819,6 +3823,29 @@ if (fi) fi.addEventListener('change', e => {
     }
   });
   e.target.value = '';
+});
+
+// Auto-add ₱ prefix to price input
+var fpEl = document.getElementById('formPrice');
+if (fpEl) fpEl.addEventListener('input', function(e) {
+  var val = this.value;
+  if (val && val.indexOf('₱') !== 0) {
+    this.value = '₱' + val.replace(/[^0-9.,]/g, '');
+  }
+});
+var fopEl = document.getElementById('formOriginalPrice');
+if (fopEl) fopEl.addEventListener('input', function(e) {
+  var val = this.value;
+  if (val && val.indexOf('₱') !== 0) {
+    this.value = '₱' + val.replace(/[^0-9.,]/g, '');
+  }
+});
+var fdpEl = document.getElementById('formDeposit');
+if (fdpEl) fdpEl.addEventListener('input', function(e) {
+  var val = this.value;
+  if (val && val.indexOf('₱') !== 0) {
+    this.value = '₱' + val.replace(/[^0-9.,]/g, '');
+  }
 });
 
 // Import/Export
