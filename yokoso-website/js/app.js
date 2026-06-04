@@ -282,6 +282,7 @@ function switchAdminTab(tab) {
   if (tab === 'categories') renderCategoryManagement();
   if (tab === 'orders') loadOrders();
   if (tab === 'users') loadUsers();
+  if (tab === 'analytics') loadAnalytics();
   if (tab === 'config') { applyProxyUrl(); var gti = document.getElementById('githubTokenInput'); if (gti) gti.value = localStorage.getItem('github_token') || ''; var ast = document.getElementById('autoSyncToggle'); if (ast) ast.checked = localStorage.getItem('autoSyncEnabled') === 'true'; var mui = document.getElementById('messengerUrlInput'); if (mui) mui.value = categoriesConfig.messengerUrl || ''; var ccn = document.getElementById('cloudinaryCloudName'); if (ccn) ccn.value = categoriesConfig.cloudinaryCloudName || ''; var cup = document.getElementById('cloudinaryUploadPreset'); if (cup) cup.value = categoriesConfig.cloudinaryUploadPreset || ''; var tbt = document.getElementById('telegramBotToken'); if (tbt) tbt.value = localStorage.getItem('telegram_bot_token') || ''; var tci = document.getElementById('telegramChatId'); if (tci) tci.value = localStorage.getItem('telegram_chat_id') || ''; var gci = document.getElementById('googleClientId'); if (gci) gci.value = localStorage.getItem('google_client_id') || ''; }
 }
 function loadUsers() {
@@ -4621,6 +4622,293 @@ if (bmc) bmc.addEventListener('change', function(e) {
     slides[idx].classList.add('active');
   }, 5000);
 })();
+
+// ---- ANALYTICS & REPORTS ----
+function parseAnalyticsPeriod() {
+  var val = document.getElementById('analyticsPeriod').value;
+  if (val === 'all') return 0;
+  var days = val === '1y' ? 365 : parseInt(val);
+  return Date.now() - days * 24 * 60 * 60 * 1000;
+}
+
+function loadAnalytics() {
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/orders?limit=10000&_=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      var orders = Array.isArray(j) ? j : (j.docs || []);
+      var cutoff = parseAnalyticsPeriod();
+      if (cutoff) { orders = orders.filter(function(o) { return new Date(o.createdAt).getTime() >= cutoff; }); }
+      renderAnalytics(orders);
+    })
+    .catch(function(e) {
+      ['analyticsTotalRevenue','analyticsTotalOrders','analyticsAvgOrder','analyticsProductsSold'].forEach(function(id) {
+        var el = document.getElementById(id); if (el) el.textContent = 'Error';
+      });
+      ['analyticsStatusBreakdown','analyticsRevenueChart','analyticsTopProducts','analyticsTopCustomers','analyticsCategorySales','analyticsLowStock'].forEach(function(id) {
+        var el = document.getElementById(id); if (el) el.innerHTML = '<div class="analytics-placeholder">Error loading analytics: ' + escapeHtml(e.message || '') + '</div>';
+      });
+    });
+}
+
+function renderAnalytics(orders) {
+  var confirmed = orders.filter(function(o) { return o.status === 'confirmed'; });
+  var depositPaid = orders.filter(function(o) { return o.status === 'deposit_paid'; });
+  var pending = orders.filter(function(o) { return o.status === 'pending'; });
+  var cancelled = orders.filter(function(o) { return o.status === 'cancelled'; });
+
+  // Parse order totals
+  var allValues = [];
+  var confirmedValues = [];
+  confirmed.forEach(function(o) {
+    var v = parseFloat(String(o.total || '').replace(/[^0-9.\-]/g, ''));
+    if (isNaN(v)) { var items = []; try { items = JSON.parse(o.items || '[]'); } catch(e) {} v = items.reduce(function(s, it) { return s + (parseFloat(String(it.price || '').replace(/[^0-9.\-]/g, '')) || 0) * (it.qty || 0); }, 0); }
+    if (v > 0) { allValues.push(v); confirmedValues.push({ order: o, value: v }); }
+  });
+  depositPaid.forEach(function(o) {
+    var v = parseFloat(String(o.total || '').replace(/[^0-9.\-]/g, ''));
+    if (isNaN(v)) { var items = []; try { items = JSON.parse(o.items || '[]'); } catch(e) {} v = items.reduce(function(s, it) { return s + (parseFloat(String(it.price || '').replace(/[^0-9.\-]/g, '')) || 0) * (it.qty || 0); }, 0); }
+    if (v > 0) allValues.push(v);
+  });
+
+  var totalRevenue = allValues.reduce(function(s, v) { return s + v; }, 0);
+  var totalOrders = orders.length - cancelled.length;
+  var avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+  var productsSold = 0;
+  var productSales = {};
+  var customerData = {};
+  var dailyRevenue = {};
+  var categorySales = {};
+
+  orders.forEach(function(o) {
+    if (o.status === 'cancelled') return;
+    var items = []; try { items = JSON.parse(o.items || '[]'); } catch(e) {}
+    items.forEach(function(it) {
+      var qty = parseInt(it.qty, 10) || 1;
+      var price = parseFloat(String(it.price || '').replace(/[^0-9.\-]/g, '')) || 0;
+      productsSold += qty;
+      var pname = it.name || 'Unknown';
+      if (!productSales[pname]) productSales[pname] = { qty: 0, revenue: 0 };
+      productSales[pname].qty += qty;
+      productSales[pname].revenue += price * qty;
+
+      var cat = o.customerName || 'Unknown';
+      // Category sales
+      if (it.category1) {
+        if (!categorySales[it.category1]) categorySales[it.category1] = { qty: 0, revenue: 0, orders: {} };
+        categorySales[it.category1].qty += qty;
+        categorySales[it.category1].revenue += price * qty;
+        categorySales[it.category1].orders[o.id || o.poNumber] = true;
+      }
+    });
+
+    if (o.customerName || o.customerEmail) {
+      var ckey = o.customerEmail || o.customerName || 'unknown';
+      if (!customerData[ckey]) { customerData[ckey] = { name: o.customerName || o.customerEmail || 'Unknown', email: o.customerEmail || '', contact: o.customerContact || '', orders: 0, total: 0 }; }
+      customerData[ckey].orders++;
+      var oval = parseFloat(String(o.total || '').replace(/[^0-9.\-]/g, ''));
+      if (isNaN(oval)) {
+        var oitems = []; try { oitems = JSON.parse(o.items || '[]'); } catch(e) {}
+        oval = oitems.reduce(function(s, it) { return s + (parseFloat(String(it.price || '').replace(/[^0-9.\-]/g, '')) || 0) * (it.qty || 0); }, 0);
+      }
+      customerData[ckey].total += oval;
+    }
+
+    if (o.createdAt) {
+      var d = new Date(o.createdAt);
+      var dateKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      var oval2 = parseFloat(String(o.total || '').replace(/[^0-9.\-]/g, ''));
+      if (isNaN(oval2)) {
+        var oitems2 = []; try { oitems2 = JSON.parse(o.items || '[]'); } catch(e) {}
+        oval2 = oitems2.reduce(function(s, it) { return s + (parseFloat(String(it.price || '').replace(/[^0-9.\-]/g, '')) || 0) * (it.qty || 0); }, 0);
+      }
+      if (!dailyRevenue[dateKey]) dailyRevenue[dateKey] = 0;
+      dailyRevenue[dateKey] += oval2;
+    }
+  });
+
+  // Render summary cards
+  document.getElementById('analyticsTotalRevenue').textContent = '₱' + totalRevenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  document.getElementById('analyticsTotalOrders').textContent = totalOrders;
+  document.getElementById('analyticsAvgOrder').textContent = '₱' + avgOrder.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  document.getElementById('analyticsProductsSold').textContent = productsSold;
+
+  // Order status breakdown
+  renderAnalyticsStatus(pending.length, depositPaid.length, confirmed.length, cancelled.length);
+
+  // Revenue over time
+  renderAnalyticsRevenueChart(dailyRevenue);
+
+  // Top selling products
+  renderAnalyticsTopProducts(productSales);
+
+  // Top customers
+  renderAnalyticsTopCustomers(customerData);
+
+  // Category sales
+  renderAnalyticsCategorySales(categorySales);
+
+  // Low stock alerts
+  renderAnalyticsLowStock();
+}
+
+function renderAnalyticsStatus(pending, depositPaid, confirmed, cancelled) {
+  var el = document.getElementById('analyticsStatusBreakdown');
+  var total = pending + depositPaid + confirmed + cancelled;
+  if (!total) { el.innerHTML = '<div class="analytics-placeholder">No orders yet.</div>'; return; }
+  var items = [
+    { label: 'Pending', count: pending, color: '#f57f17' },
+    { label: 'Deposit Paid', count: depositPaid, color: '#1976d2' },
+    { label: 'Confirmed', count: confirmed, color: '#2e7d32' },
+    { label: 'Cancelled', count: cancelled, color: '#c62828' }
+  ];
+  var html = '';
+  items.forEach(function(item) {
+    var pct = total > 0 ? (item.count / total * 100) : 0;
+    html += '<div class="analytics-bar-wrapper">' +
+      '<span class="analytics-bar-label"><span class="analytics-status-dot" style="background:' + item.color + '"></span>' + item.label + '</span>' +
+      '<div class="analytics-bar-track"><div class="analytics-bar-fill" style="width:' + pct + '%;background:' + item.color + '"></div></div>' +
+      '<span class="analytics-bar-value">' + item.count + ' (' + pct.toFixed(1) + '%)</span></div>';
+  });
+  el.innerHTML = html;
+}
+
+function renderAnalyticsRevenueChart(dailyRevenue) {
+  var el = document.getElementById('analyticsRevenueChart');
+  var dates = Object.keys(dailyRevenue).sort();
+  if (!dates.length) { el.innerHTML = '<div class="analytics-placeholder">No revenue data yet.</div>'; return; }
+  var maxRev = 0;
+  dates.forEach(function(d) { if (dailyRevenue[d] > maxRev) maxRev = dailyRevenue[d]; });
+  var html = dates.slice(-30).map(function(d) {
+    var rev = dailyRevenue[d];
+    var pct = maxRev > 0 ? (rev / maxRev * 100) : 0;
+    return '<div class="analytics-bar-wrapper">' +
+      '<span class="analytics-bar-label" style="flex-basis:85px;font-size:0.7rem">' + d.slice(5) + '</span>' +
+      '<div class="analytics-bar-track"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#4caf50"></div></div>' +
+      '<span class="analytics-bar-value" style="font-size:0.7rem">₱' + rev.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</span></div>';
+  }).reverse().join('');
+  if (dates.length > 30) html = '<div style="font-size:0.7rem;color:#888;margin-bottom:6px">Showing last 30 days</div>' + html;
+  el.innerHTML = html;
+}
+
+function renderAnalyticsTopProducts(productSales) {
+  var el = document.getElementById('analyticsTopProducts');
+  var sorted = Object.keys(productSales).map(function(k) { return { name: k, qty: productSales[k].qty, revenue: productSales[k].revenue }; }).sort(function(a, b) { return b.qty - a.qty; });
+  if (!sorted.length) { el.innerHTML = '<div class="analytics-placeholder">No product sales yet.</div>'; return; }
+  var maxQty = sorted[0].qty;
+  var html = '<table class="analytics-table"><thead><tr><th class="rank">#</th><th>Product</th><th class="num">Qty Sold</th><th class="num">Revenue</th></tr></thead><tbody>';
+  sorted.slice(0, 20).forEach(function(p, i) {
+    var pct = maxQty > 0 ? (p.qty / maxQty * 100) : 0;
+    html += '<tr>' +
+      '<td class="rank">' + (i + 1) + '</td>' +
+      '<td>' + escapeHtml(p.name) + '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div></td>' +
+      '<td class="num">' + p.qty + '</td>' +
+      '<td class="num">₱' + p.revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+function renderAnalyticsTopCustomers(customerData) {
+  var el = document.getElementById('analyticsTopCustomers');
+  var sorted = Object.keys(customerData).map(function(k) { return customerData[k]; }).sort(function(a, b) { return b.total - a.total; });
+  if (!sorted.length) { el.innerHTML = '<div class="analytics-placeholder">No customer data yet.</div>'; return; }
+  var html = '<table class="analytics-table"><thead><tr><th class="rank">#</th><th>Customer</th><th class="num">Orders</th><th class="num">Total Spent</th></tr></thead><tbody>';
+  sorted.slice(0, 10).forEach(function(c, i) {
+    html += '<tr>' +
+      '<td class="rank">' + (i + 1) + '</td>' +
+      '<td>' + escapeHtml(c.name) + (c.email ? '<br><span style="font-size:0.7rem;color:#888">' + escapeHtml(c.email) + '</span>' : '') + '</td>' +
+      '<td class="num">' + c.orders + '</td>' +
+      '<td class="num">₱' + c.total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+function renderAnalyticsCategorySales(categorySales) {
+  var el = document.getElementById('analyticsCategorySales');
+  var sorted = Object.keys(categorySales).map(function(k) { return { name: k, qty: categorySales[k].qty, revenue: categorySales[k].revenue, orders: Object.keys(categorySales[k].orders).length }; }).sort(function(a, b) { return b.revenue - a.revenue; });
+  if (!sorted.length) { el.innerHTML = '<div class="analytics-placeholder">No category sales yet.</div>'; return; }
+  var maxRev = sorted[0].revenue;
+  var html = '';
+  sorted.forEach(function(c) {
+    var pct = maxRev > 0 ? (c.revenue / maxRev * 100) : 0;
+    html += '<div class="analytics-bar-wrapper">' +
+      '<span class="analytics-bar-label">' + escapeHtml(c.name) + '</span>' +
+      '<div class="analytics-bar-track"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#ab47bc"></div></div>' +
+      '<span class="analytics-bar-value" style="font-size:0.75rem">₱' + c.revenue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</span></div>';
+  });
+  el.innerHTML = html;
+}
+
+function renderAnalyticsLowStock() {
+  var el = document.getElementById('analyticsLowStock');
+  var lowItems = [];
+  products.forEach(function(p) {
+    if (p.variants) {
+      for (var c in p.variants) {
+        var v = p.variants[c];
+        if (v.stock) {
+          for (var s in v.stock) {
+            if (v.stock[s] <= 3) {
+              lowItems.push({ product: p, color: c, size: s, stock: v.stock[s] });
+            }
+          }
+        }
+      }
+    } else {
+      var total = getTotalStock(p.id);
+      if (total <= 3) {
+        lowItems.push({ product: p, color: '', size: '', stock: total });
+      }
+    }
+  });
+  lowItems.sort(function(a, b) { return a.stock - b.stock; });
+  if (!lowItems.length) { el.innerHTML = '<div style="text-align:center;padding:14px;color:#4caf50;font-size:0.85rem">✅ All products have sufficient stock.</div>'; return; }
+  var html = '';
+  lowItems.slice(0, 30).forEach(function(item) {
+    var label = escapeHtml(item.product.name);
+    if (item.color) label += ' (' + escapeHtml(item.color) + (item.size ? '/' + item.size : '') + ')';
+    var qtyClass = item.stock === 0 ? 'empty' : 'low';
+    html += '<div class="analytics-stock-item">' +
+      '<span class="analytics-stock-name">' + label + '</span>' +
+      '<span class="analytics-stock-qty ' + qtyClass + '">' + item.stock + '</span></div>';
+  });
+  el.innerHTML = html;
+}
+
+function exportAnalyticsCSV() {
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/orders?limit=10000&_=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      var orders = Array.isArray(j) ? j : (j.docs || []);
+      var cutoff = parseAnalyticsPeriod();
+      if (cutoff) { orders = orders.filter(function(o) { return new Date(o.createdAt).getTime() >= cutoff; }); }
+      var rows = [['PO#','Date','Customer','Contact','Email','Status','Product','Color','Size','Qty','Unit Price','Total','Deposit']];
+      orders.forEach(function(o) {
+        var items = []; try { items = JSON.parse(o.items || '[]'); } catch(e) {}
+        var created = o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '';
+        var status = o.status || '';
+        if (items.length === 0) {
+          rows.push([o.id || o.poNumber || '', created, o.customerName || '', o.customerContact || '', o.customerEmail || '', status, '', '', '', '', '', o.total || '', o.deposit || '']);
+        } else {
+          items.forEach(function(i) {
+            rows.push([o.id || o.poNumber || '', created, o.customerName || '', o.customerContact || '', o.customerEmail || '', status, i.name || '', i.color || '', i.size || '', i.qty || 1, i.price || '', o.total || '', o.deposit || '']);
+          });
+        }
+      });
+      var csv = rows.map(function(r) { return r.map(function(c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+      var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'analytics_' + new Date().toISOString().slice(0,10) + '.csv';
+      a.click();
+      showCartNotification('Analytics exported to CSV.');
+    })
+    .catch(function(e) { showCartNotification('Export error: ' + (e.message || '')); });
+}
+// ---- END ANALYTICS ----
 
 // ---- INIT ----
 function parseURLParams() {
