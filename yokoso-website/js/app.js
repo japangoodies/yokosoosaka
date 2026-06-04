@@ -2705,7 +2705,7 @@ function openModal(product) {
       '<button onclick="closeLiveModal()" style="position:absolute;top:12px;right:16px;background:rgba(0,0,0,0.06);border:none;font-size:24px;cursor:pointer;color:#666;z-index:10;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">×</button>' +
       '<div style="display:flex;flex-direction:column">' +
         '<div style="position:relative">' +
-          '<div id="modalMediaContainer" style="display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;height:500px">' +
+          '<div id="modalMediaContainer" style="position:relative;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;height:500px">' +
           _modalImages.map(function(img, i) {
             return '<img class="modal-strip-img" data-index="' + i + '" src="' + img + '" style="height:500px;width:100%;flex:0 0 100%;object-fit:contain;background:#fff;cursor:pointer;scroll-snap-align:start" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
           }).join('') +
@@ -2821,6 +2821,13 @@ function selectModalColor(el, color) {
       mediaContainer.innerHTML = _modalImages.map(function(img, idx) {
         return '<img class="modal-strip-img" data-index="' + idx + '" src="' + img + '" style="height:500px;width:100%;flex:0 0 100%;object-fit:contain;background:#fff;cursor:pointer;scroll-snap-align:start" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
       }).join('');
+      if (_modalImages.length > 1) {
+        mediaContainer.insertAdjacentHTML('beforeend', '<button id="modalStripPrev" style="position:absolute;left:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">‹</button><button id="modalStripNext" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">›</button>');
+        var sp = document.getElementById('modalStripPrev');
+        var sn = document.getElementById('modalStripNext');
+        if (sp) sp.addEventListener('click', function(e) { e.stopPropagation(); mediaContainer.scrollBy({ left: -mediaContainer.clientWidth, behavior: 'smooth' }); });
+        if (sn) sn.addEventListener('click', function(e) { e.stopPropagation(); mediaContainer.scrollBy({ left: mediaContainer.clientWidth, behavior: 'smooth' }); });
+      }
       mediaContainer.scrollTo({ left: mediaContainer.clientWidth * _modalImageIdx, behavior: 'smooth' });
     }
     // Update sizes for this color
