@@ -74,29 +74,14 @@
     },
     {
       "name": "WOMENS",
-      "images": [
-        "images/carousel/womens1.jpg",
-        "images/carousel/womens2.jpg",
-        "images/carousel/womens3.jpg",
-        "images/carousel/womens4.jpg"
-      ]
+      "images": []
     },
     {
-      "images": [
-        "images/carousel/kids1.jpg",
-        "images/carousel/kids2.jpg",
-        "images/carousel/kids3.jpg",
-        "images/carousel/kids4.jpg"
-      ],
+      "images": [],
       "name": "KIDS"
     },
     {
-      "images": [
-        "images/carousel/foods1.jpg",
-        "images/carousel/foods2.jpg",
-        "images/carousel/foods3.jpg",
-        "images/carousel/foods4.jpg"
-      ],
+      "images": [],
       "name": "FOODS",
       "image": ""
     }
