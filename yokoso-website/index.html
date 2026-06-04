@@ -137,6 +137,7 @@
           <button class="admin-tab-btn" data-tab="products">Products</button>
           <button class="admin-tab-btn" data-tab="categories">Categories</button>
           <button class="admin-tab-btn" data-tab="users">Users</button>
+          <button class="admin-tab-btn" data-tab="analytics">Analytics</button>
           <button class="admin-tab-btn" data-tab="config">Config</button>
           <button class="btn btn-secondary" id="backToPublicBtn">Back</button>
         </div>
@@ -336,6 +337,76 @@
           <h3>Registered Users</h3>
           <div id="usersList" style="font-size:0.85rem;color:#ccc">
             <p style="color:#888">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-tab-content" id="tab-analytics" style="display:none">
+        <div class="admin-analytics">
+          <div class="analytics-header">
+            <h3>Analytics &amp; Reports</h3>
+            <div class="analytics-controls">
+              <select id="analyticsPeriod" onchange="loadAnalytics()">
+                <option value="all">All Time</option>
+                <option value="7d">Last 7 Days</option>
+                <option value="30d">Last 30 Days</option>
+                <option value="90d">Last 90 Days</option>
+                <option value="1y">This Year</option>
+              </select>
+              <button type="button" onclick="loadAnalytics()" class="btn btn-primary btn-sm">Refresh</button>
+              <button type="button" onclick="exportAnalyticsCSV()" class="btn btn-secondary btn-sm">Export CSV</button>
+            </div>
+          </div>
+
+          <div class="analytics-summary">
+            <div class="analytics-card">
+              <div class="analytics-card-label">Total Revenue</div>
+              <div class="analytics-card-value" id="analyticsTotalRevenue">—</div>
+            </div>
+            <div class="analytics-card">
+              <div class="analytics-card-label">Total Orders</div>
+              <div class="analytics-card-value" id="analyticsTotalOrders">—</div>
+            </div>
+            <div class="analytics-card">
+              <div class="analytics-card-label">Avg Order Value</div>
+              <div class="analytics-card-value" id="analyticsAvgOrder">—</div>
+            </div>
+            <div class="analytics-card">
+              <div class="analytics-card-label">Products Sold</div>
+              <div class="analytics-card-value" id="analyticsProductsSold">—</div>
+            </div>
+          </div>
+
+          <div class="analytics-grid">
+            <div class="analytics-section">
+              <h4><span class="section-icon">📊</span> Order Status</h4>
+              <div id="analyticsStatusBreakdown" class="analytics-placeholder">Loading...</div>
+            </div>
+            <div class="analytics-section">
+              <h4><span class="section-icon">📈</span> Revenue Over Time</h4>
+              <div id="analyticsRevenueChart" class="analytics-placeholder">Loading...</div>
+            </div>
+          </div>
+
+          <div class="analytics-section">
+            <h4><span class="section-icon">🏆</span> Top Selling Products</h4>
+            <div id="analyticsTopProducts" class="analytics-placeholder">Loading...</div>
+          </div>
+
+          <div class="analytics-grid">
+            <div class="analytics-section">
+              <h4><span class="section-icon">👤</span> Top Customers</h4>
+              <div id="analyticsTopCustomers" class="analytics-placeholder">Loading...</div>
+            </div>
+            <div class="analytics-section">
+              <h4><span class="section-icon">📂</span> Sales by Category</h4>
+              <div id="analyticsCategorySales" class="analytics-placeholder">Loading...</div>
+            </div>
+          </div>
+
+          <div class="analytics-section">
+            <h4><span class="section-icon">⚠️</span> Low Stock Alerts</h4>
+            <div id="analyticsLowStock" class="analytics-placeholder">Loading...</div>
           </div>
         </div>
       </div>
