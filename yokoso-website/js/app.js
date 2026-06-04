@@ -2673,8 +2673,8 @@ function openModal(product) {
     
     var variantColors = getVariantColors(product);
     var firstColor = variantColors.length ? variantColors[0] : null;
-    var firstVariant = firstColor && product.variants && product.variants[firstColor];
-    _modalImages = (firstVariant && firstVariant.images && firstVariant.images.length > 0) ? firstVariant.images.slice() : ((Array.isArray(product.images) && product.images.length > 0) ? product.images.slice() : [product.image || 'images/products/placeholder.svg']);
+    // Default: show all product-level images (no color filter)
+    _modalImages = (Array.isArray(product.images) && product.images.length > 0) ? product.images.slice() : [product.image || 'images/products/placeholder.svg'];
     _modalImageIdx = 0;
     _modalSelectedColor = firstColor;
     _modalSelectedSize = null;
@@ -2792,9 +2792,8 @@ function selectModalColor(el, color) {
   _modalSelectedSize = null;
   var p = _modalProduct;
   if (p) {
-    // Update images to reflect selected color
+    // If color has bound images, switch to those; otherwise show all product-level images
     var variant = p.variants && p.variants[color];
-    var oldLen = _modalImages.length;
     if (variant && variant.images && variant.images.length > 0) {
       _modalImages = variant.images.slice();
     } else {
