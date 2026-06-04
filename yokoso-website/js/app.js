@@ -4814,42 +4814,70 @@ function renderAnalyticsRevenueChart(dailyRevenue) {
 
 function renderAnalyticsTopProducts(productSales) {
   var el = document.getElementById('analyticsTopProducts');
+  // Collect unique filter values from all products
+  var uniq = { g: {}, c1: {}, b: {}, cl: {}, sz: {} };
+  (products || []).forEach(function(p) {
+    if (p.category0) uniq.g[p.category0] = true;
+    if (p.category1) uniq.c1[p.category1] = true;
+    if (p.category2) uniq.b[p.category2] = true;
+    var color = p.color || '';
+    if (color) uniq.cl[color] = true;
+    if (p.variants) { Object.keys(p.variants).forEach(function(c) { uniq.cl[c] = true; }); }
+    (categoriesConfig.sizes || []).forEach(function(s) { uniq.sz[s] = true; });
+  });
+  var lists = { g: Object.keys(uniq.g).sort(), c1: Object.keys(uniq.c1).sort(), b: Object.keys(uniq.b).sort(), cl: Object.keys(uniq.cl).sort(), sz: Object.keys(uniq.sz).sort() };
+
   var all = (products || []).map(function(p) {
     var sale = productSales[p.name] || { qty: 0, revenue: 0, profit: 0 };
-    return { name: p.name, price: p.price || '', originalPrice: p.originalPrice || '', qty: sale.qty, revenue: sale.revenue, profit: sale.profit || 0, g: p.category0 || '', c: p.category1 || '' };
+    // Collect all sizes this product has across variants
+    var pSizes = (categoriesConfig.sizes || []).filter(function(s) {
+      if (!p.variants) return false;
+      return Object.keys(p.variants).some(function(c) { return (p.variants[c].sizes || []).indexOf(s) !== -1; });
+    });
+    return { name: p.name, price: p.price || '', originalPrice: p.originalPrice || '', qty: sale.qty, revenue: sale.revenue, profit: sale.profit || 0, g: p.category0 || '', c1: p.category1 || '', b: p.category2 || '', cl: p.color || '', sz: pSizes };
   });
   Object.keys(productSales).forEach(function(k) {
     if (!all.some(function(a) { return a.name === k; }))
-      all.push({ name: k, price: '', originalPrice: '', qty: productSales[k].qty, revenue: productSales[k].revenue, profit: productSales[k].profit || 0, g: '', c: '' });
+      all.push({ name: k, price: '', originalPrice: '', qty: productSales[k].qty, revenue: productSales[k].revenue, profit: productSales[k].profit || 0, g: '', c1: '', b: '', cl: '', sz: [] });
   });
   all.sort(function(a, b) { return b.qty - a.qty; });
   if (!all.length) { el.innerHTML = '<div class="analytics-placeholder">No products found.</div>'; return; }
   el.setAttribute('data-items', JSON.stringify(all));
 
   var searchVal = (el.getAttribute('data-filter') || '').toLowerCase();
-  var catVal = el.getAttribute('data-catfilter') || '';
-
-  // Build unique category list from products
-  var catSet = {};
-  (products || []).forEach(function(p) {
-    if (p.category0) catSet[p.category0] = true;
-  });
-  var catList = Object.keys(catSet).sort();
+  var fG = el.getAttribute('data-fg') || '';
+  var fC1 = el.getAttribute('data-fc1') || '';
+  var fB = el.getAttribute('data-fb') || '';
+  var fCl = el.getAttribute('data-fcl') || '';
+  var fSz = el.getAttribute('data-fsz') || '';
 
   var filtered = all.filter(function(p) {
     if (searchVal && p.name.toLowerCase().indexOf(searchVal) === -1) return false;
-    if (catVal && p.g !== catVal) return false;
+    if (fG && p.g !== fG) return false;
+    if (fC1 && p.c1 !== fC1) return false;
+    if (fB && p.b !== fB) return false;
+    if (fCl && p.cl !== fCl) return false;
+    if (fSz && (!p.sz || p.sz.indexOf(fSz) === -1)) return false;
     return true;
   });
   var maxQty = filtered.length && filtered[0].qty;
-  var catOpts = '<option value="">All Categories</option>';
-  catList.forEach(function(g) {
-    catOpts += '<option value="' + escapeHtml(g) + '"' + (catVal === g ? ' selected' : '') + '>' + escapeHtml(g) + '</option>';
-  });
-  var html = '<div class="analytics-filter-wrap" style="margin-bottom:10px;display:flex;gap:8px">' +
-    '<input type="text" id="analyticsProductFilter" placeholder="Search products..." value="' + escapeHtml(searchVal) + '" oninput="filterAnalyticsProducts(this)" style="padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;flex:1;font-size:0.8rem">' +
-    '<select id="analyticsProductCatFilter" onchange="filterAnalyticsProductsCat(this)" style="padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;font-size:0.8rem">' + catOpts + '</select>' +
-    '</div>';
+
+  function opt(id, labelKey, list) {
+    var cur = el.getAttribute('data-' + id) || '';
+    var h = '<select id="af_' + id + '" onchange="filterAnalyticsAttr(\'' + id + '\',this)" style="padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;font-size:0.75rem">';
+    h += '<option value="">' + labelKey + '</option>';
+    list.forEach(function(v) { h += '<option value="' + escapeHtml(v) + '"' + (cur === v ? ' selected' : '') + '>' + escapeHtml(v) + '</option>'; });
+    h += '</select>';
+    return h;
+  }
+
+  var html = '<div class="analytics-filter-wrap" style="margin-bottom:10px">' +
+    '<div style="display:flex;gap:6px;margin-bottom:6px">' +
+    '<input type="text" id="analyticsProductFilter" placeholder="Search products..." value="' + escapeHtml(searchVal) + '" oninput="filterAnalyticsAttr(\'q\',this)" style="padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fff;flex:1;font-size:0.8rem">' +
+    '</div>' +
+    '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+    opt('fg', 'Group', lists.g) + opt('fc1', 'Subcategory', lists.c1) + opt('fb', 'Brand', lists.b) + opt('fcl', 'Color', lists.cl) + opt('fsz', 'Size', lists.sz) +
+    '</div></div>';
   html += '<table class="analytics-table"><thead><tr><th class="rank">#</th><th>Product</th><th class="num">Price</th><th class="num">Orig. Price</th><th class="num">Qty Sold</th><th class="num">Revenue</th><th class="num">Profit</th></tr></thead><tbody>';
   filtered.forEach(function(p, i) {
     var pct = maxQty > 0 ? (p.qty / maxQty * 100) : 0;
@@ -4857,45 +4885,66 @@ function renderAnalyticsTopProducts(productSales) {
     var on = parseFloat(String(p.originalPrice).replace(/[^0-9.\-]/g, ''));
     var pd = isNaN(pn) ? (p.price || '—') : '₱' + pn.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     var od = isNaN(on) ? (p.originalPrice || '—') : '₱' + on.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    var tags = [];
+    if (p.g) tags.push(escapeHtml(p.g));
+    if (p.c1) tags.push(escapeHtml(p.c1));
+    if (p.b) tags.push(escapeHtml(p.b));
     html += '<tr>' +
       '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + escapeHtml(p.name) + '<br><span style="font-size:0.7rem;color:#888">' + (p.g ? escapeHtml(p.g) + (p.c ? ' / ' + escapeHtml(p.c) : '') : '') + '</span>' + (p.qty > 0 ? '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div>' : '') + '</td>' +
+      '<td>' + escapeHtml(p.name) + (tags.length ? '<br><span style="font-size:0.7rem;color:#888">' + tags.join(' / ') + '</span>' : '') + (p.qty > 0 ? '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div>' : '') + '</td>' +
       '<td class="num">' + pd + '</td>' +
       '<td class="num">' + od + '</td>' +
       '<td class="num">' + p.qty + '</td>' +
       '<td class="num">₱' + p.revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td>' +
       '<td class="num" style="color:' + (p.profit >= 0 ? '#4caf50' : '#c62828') + '">₱' + p.profit.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td></tr>';
   });
+  // Totals row
+  var tQty = 0, tRev = 0, tProf = 0, tCount = filtered.length;
+  filtered.forEach(function(p) { tQty += p.qty; tRev += p.revenue; tProf += p.profit || 0; });
+  html += '<tfoot><tr style="font-weight:700;border-top:2px solid rgba(255,255,255,0.15)">' +
+    '<td class="rank"></td>' +
+    '<td>' + tCount + ' product' + (tCount !== 1 ? 's' : '') + '</td>' +
+    '<td class="num" style="color:#fff">—</td>' +
+    '<td class="num" style="color:#fff">—</td>' +
+    '<td class="num" style="color:#fff">' + tQty + '</td>' +
+    '<td class="num" style="color:#fff">₱' + tRev.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td>' +
+    '<td class="num" style="color:' + (tProf >= 0 ? '#4caf50' : '#c62828') + '">₱' + tProf.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td></tr></tfoot>';
   html += '</tbody></table>';
   el.innerHTML = html;
 }
 
-function filterAnalyticsProducts(input) {
-  var el = document.getElementById('analyticsTopProducts');
-  el.setAttribute('data-filter', input.value);
-  rebuildAnalyticsProductsTable(el);
+function filterAnalyticsAttr(attr, el) {
+  var container = document.getElementById('analyticsTopProducts');
+  var val = el.value;
+  if (attr === 'q') {
+    container.setAttribute('data-filter', val);
+  } else {
+    container.setAttribute('data-' + attr, val);
+  }
+  rebuildAnalyticsProductsTable(container);
 }
 
-function filterAnalyticsProductsCat(sel) {
-  var el = document.getElementById('analyticsTopProducts');
-  el.setAttribute('data-catfilter', sel.value);
-  rebuildAnalyticsProductsTable(el);
-}
-
-function rebuildAnalyticsProductsTable(el) {
-  var raw = el.getAttribute('data-items');
+function rebuildAnalyticsProductsTable(container) {
+  var raw = container.getAttribute('data-items');
   if (!raw) return;
   var all = JSON.parse(raw);
-  var searchVal = (el.getAttribute('data-filter') || '').toLowerCase();
-  var catVal = el.getAttribute('data-catfilter') || '';
+  var searchVal = (container.getAttribute('data-filter') || '').toLowerCase();
+  var fG = container.getAttribute('data-fg') || '';
+  var fC1 = container.getAttribute('data-fc1') || '';
+  var fB = container.getAttribute('data-fb') || '';
+  var fCl = container.getAttribute('data-fcl') || '';
+  var fSz = container.getAttribute('data-fsz') || '';
   var filtered = all.filter(function(p) {
     if (searchVal && p.name.toLowerCase().indexOf(searchVal) === -1) return false;
-    if (catVal && p.g !== catVal) return false;
+    if (fG && p.g !== fG) return false;
+    if (fC1 && p.c1 !== fC1) return false;
+    if (fB && p.b !== fB) return false;
+    if (fCl && p.cl !== fCl) return false;
+    if (fSz && (!p.sz || p.sz.indexOf(fSz) === -1)) return false;
     return true;
   });
   var maxQty = filtered.length && filtered[0].qty;
-  var tbody = el.querySelector('table tbody');
-  var thead = el.querySelector('table thead');
+  var tbody = container.querySelector('table tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
   filtered.forEach(function(p, i) {
@@ -4904,9 +4953,13 @@ function rebuildAnalyticsProductsTable(el) {
     var on = parseFloat(String(p.originalPrice).replace(/[^0-9.\-]/g, ''));
     var pd = isNaN(pn) ? (p.price || '—') : '₱' + pn.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     var od = isNaN(on) ? (p.originalPrice || '—') : '₱' + on.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    var tags = [];
+    if (p.g) tags.push(escapeHtml(p.g));
+    if (p.c1) tags.push(escapeHtml(p.c1));
+    if (p.b) tags.push(escapeHtml(p.b));
     var tr = document.createElement('tr');
     tr.innerHTML = '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + escapeHtml(p.name) + (p.g ? '<br><span style="font-size:0.7rem;color:#888">' + escapeHtml(p.g) + (p.c ? ' / ' + escapeHtml(p.c) : '') + '</span>' : '') + (p.qty > 0 ? '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div>' : '') + '</td>' +
+      '<td>' + escapeHtml(p.name) + (tags.length ? '<br><span style="font-size:0.7rem;color:#888">' + tags.join(' / ') + '</span>' : '') + (p.qty > 0 ? '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div>' : '') + '</td>' +
       '<td class="num">' + pd + '</td>' +
       '<td class="num">' + od + '</td>' +
       '<td class="num">' + p.qty + '</td>' +
@@ -4914,6 +4967,22 @@ function rebuildAnalyticsProductsTable(el) {
       '<td class="num" style="color:' + (p.profit >= 0 ? '#4caf50' : '#c62828') + '">₱' + p.profit.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td>';
     tbody.appendChild(tr);
   });
+  // Totals row
+  var tQty = 0, tRev = 0, tProf = 0, tCount = filtered.length;
+  filtered.forEach(function(p) { tQty += p.qty; tRev += p.revenue; tProf += p.profit || 0; });
+  var tfoot = container.querySelector('table tfoot');
+  if (!tfoot) {
+    tfoot = document.createElement('tfoot');
+    container.querySelector('table').appendChild(tfoot);
+  }
+  tfoot.innerHTML = '<tr style="font-weight:700;border-top:2px solid rgba(255,255,255,0.15)">' +
+    '<td class="rank"></td>' +
+    '<td>' + tCount + ' product' + (tCount !== 1 ? 's' : '') + '</td>' +
+    '<td class="num" style="color:#fff">—</td>' +
+    '<td class="num" style="color:#fff">—</td>' +
+    '<td class="num" style="color:#fff">' + tQty + '</td>' +
+    '<td class="num" style="color:#fff">₱' + tRev.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td>' +
+    '<td class="num" style="color:' + (tProf >= 0 ? '#4caf50' : '#c62828') + '">₱' + tProf.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td></tr>';
 }
 
 function renderAnalyticsTopCustomers(customerData) {
