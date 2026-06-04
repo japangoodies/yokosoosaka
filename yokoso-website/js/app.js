@@ -826,6 +826,8 @@ function saveOrder() {
   });
   var total = getCartTotal();
   var deposit = getDepositAmount();
+  var orderTotalStr = '₱' + total.toFixed(2);
+  var orderDepositStr = '₱' + deposit.toFixed(2);
   fetch(base + '/orders/create', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -835,8 +837,8 @@ function saveOrder() {
       customerName: (currentUser && currentUser.name) || '',
       customerEmail: (currentUser && currentUser.email) || '',
       customerContact: (currentUser && (currentUser.phone || currentUser.contact)) || '',
-      total: '₱' + total.toFixed(2),
-      deposit: '₱' + deposit.toFixed(2)
+      total: orderTotalStr,
+      deposit: orderDepositStr
     })
   }).then(function(r) {
     r.text().then(function(body) {
@@ -845,7 +847,7 @@ function saveOrder() {
         showCartNotification('Order save failed (HTTP ' + r.status + ')');
       } else {
         showCartNotification('Order saved!');
-        var orderMsg = '<b>New Order!</b>\n\nPO: ' + _checkoutPO + '\nCustomer: ' + ((currentUser && currentUser.name) || 'N/A') + '\nEmail: ' + ((currentUser && currentUser.email) || 'N/A') + '\nContact: ' + ((currentUser && currentUser.contact) || 'N/A') + '\nItems:\n' + items.map(function(i) { return '  \u2022 ' + i.name + ' (' + (i.color || '') + (i.size && i.size !== 'q' ? ', ' + i.size : '') + ') x' + i.qty + ' = \u20b1' + (i.price * i.qty).toFixed(2); }).join('\n') + '\n\nTotal: ' + getCartTotal().toFixed(2) + '\nDeposit: ' + getDepositAmount().toFixed(2);
+        var orderMsg = '<b>New Order!</b>\n\nPO: ' + _checkoutPO + '\nCustomer: ' + ((currentUser && currentUser.name) || 'N/A') + '\nEmail: ' + ((currentUser && currentUser.email) || 'N/A') + '\nContact: ' + ((currentUser && currentUser.contact) || 'N/A') + '\nItems:\n' + items.map(function(i) { return '  \u2022 ' + i.name + ' (' + (i.color || '') + (i.size && i.size !== 'q' ? ', ' + i.size : '') + ') x' + i.qty + ' = \u20b1' + (i.price * i.qty).toFixed(2); }).join('\n') + '\n\nTotal: ' + orderTotalStr + '\nDeposit: ' + orderDepositStr;
         sendTelegramNotification(orderMsg);
       }
     });
