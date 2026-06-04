@@ -2618,6 +2618,13 @@ function closeLiveModal() {
   if (el) { el.remove(); unlockBody(); if (location.hash === '#modal') history.back(); }
 }
 
+function modalStripNav(dir) {
+  var c = document.getElementById('modalMediaContainer');
+  if (c) {
+    c.scrollBy({ left: dir * c.clientWidth, behavior: 'smooth' });
+  }
+}
+
 var _orderSnapshot = null;
 
 var _modalImages = [];
@@ -2667,7 +2674,7 @@ function openModal(product) {
     var variantColors = getVariantColors(product);
     var firstColor = variantColors.length ? variantColors[0] : null;
     var firstVariant = firstColor && product.variants && product.variants[firstColor];
-    _modalImages = (firstVariant && firstVariant.images && firstVariant.images.length > 0) ? firstVariant.images.slice() : (Array.isArray(product.images) && product.images.length > 0 ? product.images : [product.image || 'images/products/placeholder.svg']);
+    _modalImages = (firstVariant && firstVariant.images && firstVariant.images.length > 0) ? firstVariant.images.slice() : ((Array.isArray(product.images) && product.images.length > 0) ? product.images.slice() : [product.image || 'images/products/placeholder.svg']);
     _modalImageIdx = 0;
     _modalSelectedColor = firstColor;
     _modalSelectedSize = null;
@@ -2710,8 +2717,8 @@ function openModal(product) {
             return '<img class="modal-strip-img" data-index="' + i + '" src="' + img + '" style="height:500px;width:100%;flex:0 0 100%;object-fit:contain;background:#fff;cursor:pointer;scroll-snap-align:start" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
           }).join('') +
           '</div>' +
-          (_modalImages.length > 1 ? '<button id="modalStripPrev" style="position:absolute;left:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">‹</button>' : '') +
-          (_modalImages.length > 1 ? '<button id="modalStripNext" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">›</button>' : '') +
+          (_modalImages.length > 1 ? '<button id="modalStripPrev" onclick="modalStripNav(-1)" style="position:absolute;left:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">‹</button>' : '') +
+          (_modalImages.length > 1 ? '<button id="modalStripNext" onclick="modalStripNav(1)" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">›</button>' : '') +
         '</div>' +
         '<div style="padding:24px 32px 32px">' +
           '<h2 style="font-size:20px;margin:0 0 4px;line-height:1.3">' + (product.name || '') + '</h2>' +
@@ -2748,23 +2755,6 @@ function openModal(product) {
       var closeBtn = overlay.querySelector('button');
       if (closeBtn) closeBtn.classList.add('modal-close-mobile');
     }
-    (function() {
-      var stripPrev = document.getElementById('modalStripPrev');
-      var stripNext = document.getElementById('modalStripNext');
-      var stripContainer = document.getElementById('modalMediaContainer');
-      if (stripPrev && stripContainer) {
-        stripPrev.addEventListener('click', function(e) {
-          e.stopPropagation();
-          stripContainer.scrollBy({ left: -stripContainer.clientWidth, behavior: 'smooth' });
-        });
-      }
-      if (stripNext && stripContainer) {
-        stripNext.addEventListener('click', function(e) {
-          e.stopPropagation();
-          stripContainer.scrollBy({ left: stripContainer.clientWidth, behavior: 'smooth' });
-        });
-      }
-    })();
     lockBody();
     try { history.pushState({modal: true}, '', '#modal'); } catch (e) {}
   } catch (e) {
@@ -2828,18 +2818,7 @@ function selectModalColor(el, color) {
         if (oldPrev) oldPrev.remove();
         if (oldNext) oldNext.remove();
         if (_modalImages.length > 1) {
-          var prevBtn = document.createElement('button');
-          prevBtn.id = 'modalStripPrev';
-          prevBtn.innerHTML = '‹';
-          prevBtn.style.cssText = 'position:absolute;left:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)';
-          var nextBtn = document.createElement('button');
-          nextBtn.id = 'modalStripNext';
-          nextBtn.innerHTML = '›';
-          nextBtn.style.cssText = 'position:absolute;right:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)';
-          parent.appendChild(prevBtn);
-          parent.appendChild(nextBtn);
-          prevBtn.addEventListener('click', function(e) { e.stopPropagation(); mediaContainer.scrollBy({ left: -mediaContainer.clientWidth, behavior: 'smooth' }); });
-          nextBtn.addEventListener('click', function(e) { e.stopPropagation(); mediaContainer.scrollBy({ left: mediaContainer.clientWidth, behavior: 'smooth' }); });
+          parent.insertAdjacentHTML('beforeend', '<button id="modalStripPrev" onclick="modalStripNav(-1)" style="position:absolute;left:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">‹</button><button id="modalStripNext" onclick="modalStripNav(1)" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">›</button>');
         }
       }
       mediaContainer.scrollTo({ left: mediaContainer.clientWidth * _modalImageIdx, behavior: 'smooth' });
