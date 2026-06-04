@@ -729,7 +729,7 @@ function placeOrder() {
   var actionsEl = document.getElementById('checkoutActions');
   var noteEl = document.getElementById('checkoutNote');
   if (headerEl) headerEl.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="#2e7d32" stroke="none"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><h3 style="margin:0">Order Submitted!</h3>';
-  if (noteEl) noteEl.textContent = 'Please pay the deposit amount to proceed with your order.';
+  if (noteEl) noteEl.innerHTML = 'Please <strong>message us to confirm stock availability</strong> before paying the deposit. Stock is reserved only after deposit is confirmed.';
   if (actionsEl) {
     actionsEl.innerHTML =
       '<button class="checkout-btn checkout-btn-copy" onclick="copyOrderDetails()">📋 Copy Order Details</button>' +
@@ -758,7 +758,7 @@ function getOrderText() {
   });
   var total = snap.total || getCartTotal();
   var deposit = snap.deposit || getDepositAmount();
-  lines.push('', 'Total: ₱' + total.toFixed(2), 'Deposit: ₱' + deposit.toFixed(2), '', 'Please pay the deposit amount to proceed with your order.');
+  lines.push('', 'Total: ₱' + total.toFixed(2), 'Deposit: ₱' + deposit.toFixed(2), '', 'Please message us to confirm stock availability before paying the deposit.');
   return lines.join('\n');
 }
 
