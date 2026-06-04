@@ -55,6 +55,9 @@ Now also syncs `data/categories.json` automatically
 - Uploaded via admin panel → resized to 800px JPEG (quality 0.8) → stored as base64 data URLs in product data
 - Stored inline in `data/products.json` → committed to repo via auto-sync
 - Each image ~80-150KB as base64; repo stays under limits for typical pasabuy scale
+- **Per-color-variant images**: Each variant can have its own `images` array (stored as `product.variants["Red"].images`)
+  - Upload via admin product form → each variant row has its own "+ Upload Images" button + thumbnail previews
+  - Stored inline in variant data, saved/loaded with the rest of the product
 
 ## Recent Architecture Changes
 - **Category hierarchy restructured**: Added `category0` (Group) field to products, new `categoriesConfig` format with `groups` + `subcategoryMap`
@@ -83,8 +86,13 @@ Now also syncs `data/categories.json` automatically
 
 ## Modal
 - Dynamic modal created in `openModal()` at click-time
-- Image carousel with dots, prev/next buttons (`‹` `›`)
-- `img#modalMainImg` created in HTML string, click handler sets `currentModalImages` + `currentImageIndex` then calls `openFullscreen()` directly
+- Horizontal scrollable image strip (`#modalMediaContainer`) with `scroll-snap-type: x mandatory`
+  - All product-level images shown by default
+  - When a color swatch is clicked (`selectModalColor`), strip rebuilds with that color's bound images (if any), or stays on product images
+  - Prev/next buttons (`#modalStripPrev`/`#modalStripNext`) scroll the strip by one width
+  - Native swipe left/right on mobile
+- Clicking any image sets `currentModalImages = _modalImages.slice()` + `currentImageIndex` → opens `openFullscreen()`
+- Image upload per variant in admin form via `variantImagesData` global keyed by `data-vi`
 
 ## Mobile CSS
 - Header search bar compact (0.4rem/0.75rem padding/font)
@@ -93,7 +101,7 @@ Now also syncs `data/categories.json` automatically
 - Admin categories grid stacks to single column
 
 ## Known Files
-- `yokoso-website/js/app.js` — All logic (~3700 lines)
+- `yokoso-website/js/app.js` — All logic (~5300 lines)
 - `yokoso-website/index.html` — Page structure, now with PWA manifest + apple-touch-icon
 - `yokoso-website/css/style.css` — Styles (carousel, header search, product group badge)
 - `yokoso-website/data/products.json` — Committed product data (with `category0` field)
@@ -199,6 +207,35 @@ Now also syncs `data/categories.json` automatically
 - **HTML updated**: manifest link, apple-touch-icon, theme-color meta
 - **JS updated**: service worker registration at end of init
 - **Service worker**: cache-first for static assets, network-first for `data/*.json` and API calls
+
+## Session History (Jun 04, 2026)
+
+### Added: Per-color-variant image upload and display
+- **Problem**: All images were at product level — no way to match images to specific color variants
+- **Fix**: Added `variantImagesData` global + per-variant image upload UI in admin form
+  - Each variant row has "+ Upload Images" button, thumbnail previews, remove button
+  - Images stored as `variants["Red"].images` in product data
+  - Form submit saves variant images; `populateForm` loads them on edit
+  - `renderVariantImagePreview()` renders thumbnails; event delegation handles upload/remove
+- **Files**: `js/app.js`
+
+### Added: Auto-₱ prefix to price fields
+- **Fix**: Price, Original Price, and Deposit inputs auto-add `₱` prefix as user types
+- **Files**: `js/app.js`
+
+### Fixed: Modal prev/next buttons and image navigation
+- **Problem**: Buttons disappeared when switching colors; fullscreen didn't show all images
+- **Fix**: Restored scrollable horizontal strip (`#modalMediaContainer`) with `scroll-snap-type: x mandatory`
+  - Default: shows all product-level images
+  - Color swatch: rebuilds strip with that color's bound images (if any), or stays on product-level
+  - `modalStripNav(dir)` scrolls strip; buttons show/hide based on count
+  - Click image → fullscreen with the same image set, vertical swipe
+- **Files**: `js/app.js`
+
+### Fixed: Out-of-bounds `_modalImageIdx` on color switch
+- **Problem**: Switching from a color with many images to one with fewer caused broken image
+- **Fix**: `_modalImageIdx` resets to 0 on color switch; strip scrolls to start
+- **Files**: `js/app.js`
 
 ## Credentials
 - Admin password: `amped2016`
