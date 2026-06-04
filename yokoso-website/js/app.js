@@ -2681,7 +2681,22 @@ function openModal(product) {
     var variantColors = getVariantColors(product);
     var firstColor = variantColors.length ? variantColors[0] : null;
     var firstVariant = firstColor && product.variants && product.variants[firstColor];
-    _modalImages = (firstVariant && firstVariant.images && firstVariant.images.length > 0) ? firstVariant.images.slice() : ((Array.isArray(product.images) && product.images.length > 0) ? product.images.slice() : [product.image || 'images/products/placeholder.svg']);
+    // Collect all images from both product level and all variants, deduplicated
+    var allImgs = [];
+    if (Array.isArray(product.images)) allImgs = allImgs.concat(product.images);
+    if (product.image && allImgs.indexOf(product.image) === -1) allImgs.push(product.image);
+    if (product.variants) {
+      for (var c in product.variants) {
+        var v = product.variants[c];
+        if (v && Array.isArray(v.images)) {
+          v.images.forEach(function(img) { if (allImgs.indexOf(img) === -1) allImgs.push(img); });
+        }
+      }
+    }
+    if (allImgs.length === 0) allImgs = ['images/products/placeholder.svg'];
+    // Filter out placeholders if real images exist
+    var realImgs = allImgs.filter(function(img) { return img.indexOf('placeholder') === -1; });
+    _modalImages = realImgs.length > 0 ? realImgs : allImgs;
     _modalImageIdx = 0;
     _modalSelectedColor = firstColor;
     _modalSelectedSize = null;
@@ -2794,33 +2809,13 @@ function selectModalColor(el, color) {
   }
   _modalSelectedColor = color;
   _modalSelectedSize = null;
-  // Update images to reflect selected color
   var p = _modalProduct;
   if (p) {
-    // Use per-variant images if available, otherwise fall back to product-level images
-    var variant = p.variants && p.variants[color];
-    if (variant && variant.images && variant.images.length > 0) {
-      _modalImages = variant.images.slice();
-      _modalImageIdx = 0;
-    } else {
-      var allImgs = (Array.isArray(p.images) && p.images.length > 0) ? p.images : [p.image || 'images/products/placeholder.svg'];
-      _modalImages = allImgs.slice();
-      var colors = getVariantColors(p);
-      var colorIdx = colors.indexOf(color);
-      _modalImageIdx = Math.min(colorIdx, _modalImages.length - 1);
-      if (_modalImageIdx < 0) _modalImageIdx = 0;
-    }
+    // Images stay the same regardless of color - all images from product + variants are shown
     var mainImg = document.getElementById('modalMainImage');
     if (mainImg) {
       mainImg.src = _modalImages[_modalImageIdx];
-      mainImg.dataset.index = _modalImageIdx;
     }
-    var counter = document.getElementById('modalImgCounter');
-    if (counter) counter.textContent = (_modalImageIdx + 1) + ' / ' + _modalImages.length;
-    var prev = document.getElementById('modalStripPrev');
-    var next = document.getElementById('modalStripNext');
-    if (prev) prev.style.display = _modalImageIdx <= 0 ? 'none' : 'flex';
-    if (next) next.style.display = _modalImageIdx >= _modalImages.length - 1 ? 'none' : 'flex';
     // Update sizes for this color
     var vSizes = getVariantSizes(p, color);
     var sizeContainer = document.getElementById('modalSizesContainer');
