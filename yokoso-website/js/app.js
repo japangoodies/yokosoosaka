@@ -3482,6 +3482,8 @@ function populateForm(product) {
     });
   }
   document.getElementById('formPrice').value = product.price;
+  var origEl = document.getElementById('formOriginalPrice');
+  if (origEl) origEl.value = product.originalPrice || '';
   var depEl = document.getElementById('formDeposit');
   if (depEl) depEl.value = product.deposit !== undefined ? product.deposit : '';
   document.getElementById('formDesc').value = product.description;
@@ -3554,12 +3556,15 @@ if (pf) pf.addEventListener('submit', function(e) {
 
   function finish(images) {
     var deposit = document.getElementById('formDeposit') ? document.getElementById('formDeposit').value.trim() : '';
+    var originalPrice = document.getElementById('formOriginalPrice') ? document.getElementById('formOriginalPrice').value.trim() : '';
     var savedId;
     if (editingId) {
       var idx = products.findIndex(function(p) { return p.id === editingId; });
       if (idx !== -1) {
         var upd = { name: name, category0: category0, category1: category1, category2: category2, variants: variants, _colorOrder: colorOrder, price: price, description: description, images: images, available: document.getElementById('formAvailable').checked };
         if (deposit) upd.deposit = deposit;
+        if (originalPrice) upd.originalPrice = originalPrice;
+        else delete upd.originalPrice;
         products[idx] = Object.assign({}, products[idx], upd);
       }
       savedId = editingId;
@@ -3568,6 +3573,7 @@ if (pf) pf.addEventListener('submit', function(e) {
       var newId = maxId + 1;
       var newProd = { id: newId, name: name, category0: category0, category1: category1, category2: category2, variants: variants, _colorOrder: colorOrder, price: price, description: description, images: images, available: document.getElementById('formAvailable').checked };
       if (deposit) newProd.deposit = deposit;
+      if (originalPrice) newProd.originalPrice = originalPrice;
       products.push(newProd);
       savedId = newId;
     }
@@ -4676,9 +4682,16 @@ function renderAnalytics(orders) {
   var avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
   var productsSold = 0;
   var productSales = {};
-  var customerData = {};
-  var dailyRevenue = {};
-  var categorySales = {};
+  var totalProfit = 0;
+
+  // Build lookup of originalPrice by product name
+  var origPriceMap = {};
+  (products || []).forEach(function(p) {
+    if (p.originalPrice) {
+      var op = parseFloat(String(p.originalPrice).replace(/[^0-9.\-]/g, ''));
+      if (!isNaN(op)) origPriceMap[p.name] = op;
+    }
+  });
 
   orders.forEach(function(o) {
     if (o.status === 'cancelled') return;
@@ -4688,9 +4701,12 @@ function renderAnalytics(orders) {
       var price = parseFloat(String(it.price || '').replace(/[^0-9.\-]/g, '')) || 0;
       productsSold += qty;
       var pname = it.name || 'Unknown';
-      if (!productSales[pname]) productSales[pname] = { qty: 0, revenue: 0 };
+      if (!productSales[pname]) productSales[pname] = { qty: 0, revenue: 0, profit: 0 };
       productSales[pname].qty += qty;
       productSales[pname].revenue += price * qty;
+      var origPrice = origPriceMap[pname] || 0;
+      productSales[pname].profit += (price - origPrice) * qty;
+      totalProfit += (price - origPrice) * qty;
 
       var cat = o.customerName || 'Unknown';
       // Category sales
@@ -4732,6 +4748,8 @@ function renderAnalytics(orders) {
   document.getElementById('analyticsTotalOrders').textContent = totalOrders;
   document.getElementById('analyticsAvgOrder').textContent = '₱' + avgOrder.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   document.getElementById('analyticsProductsSold').textContent = productsSold;
+  var profitEl = document.getElementById('analyticsTotalProfit');
+  if (profitEl) profitEl.textContent = '₱' + totalProfit.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   // Order status breakdown
   renderAnalyticsStatus(pending.length, depositPaid.length, confirmed.length, cancelled.length);
@@ -4793,17 +4811,18 @@ function renderAnalyticsRevenueChart(dailyRevenue) {
 
 function renderAnalyticsTopProducts(productSales) {
   var el = document.getElementById('analyticsTopProducts');
-  var sorted = Object.keys(productSales).map(function(k) { return { name: k, qty: productSales[k].qty, revenue: productSales[k].revenue }; }).sort(function(a, b) { return b.qty - a.qty; });
+  var sorted = Object.keys(productSales).map(function(k) { return { name: k, qty: productSales[k].qty, revenue: productSales[k].revenue, profit: productSales[k].profit || 0 }; }).sort(function(a, b) { return b.qty - a.qty; });
   if (!sorted.length) { el.innerHTML = '<div class="analytics-placeholder">No product sales yet.</div>'; return; }
   var maxQty = sorted[0].qty;
-  var html = '<table class="analytics-table"><thead><tr><th class="rank">#</th><th>Product</th><th class="num">Qty Sold</th><th class="num">Revenue</th></tr></thead><tbody>';
+  var html = '<table class="analytics-table"><thead><tr><th class="rank">#</th><th>Product</th><th class="num">Qty Sold</th><th class="num">Revenue</th><th class="num">Profit</th></tr></thead><tbody>';
   sorted.slice(0, 20).forEach(function(p, i) {
     var pct = maxQty > 0 ? (p.qty / maxQty * 100) : 0;
     html += '<tr>' +
       '<td class="rank">' + (i + 1) + '</td>' +
       '<td>' + escapeHtml(p.name) + '<div class="analytics-bar-track" style="margin-top:3px;height:6px"><div class="analytics-bar-fill" style="width:' + pct + '%;background:#e94560;height:6px"></div></div></td>' +
       '<td class="num">' + p.qty + '</td>' +
-      '<td class="num">₱' + p.revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td></tr>';
+      '<td class="num">₱' + p.revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td>' +
+      '<td class="num" style="color:' + (p.profit >= 0 ? '#4caf50' : '#c62828') + '">₱' + p.profit.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td></tr>';
   });
   html += '</tbody></table>';
   el.innerHTML = html;
