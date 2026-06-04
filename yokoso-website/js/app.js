@@ -822,7 +822,7 @@ function saveOrder() {
   if (!cart || cart.length === 0) return;
   var base = STOCK_PROXY_URL.replace(/\/+$/, '');
   var items = cart.map(function(item) {
-    return { id: item.id, name: item.name, color: item.color || '', size: item.size || '', qty: item.qty, price: item.price };
+    return { id: item.id, name: item.name, color: item.color || '', size: item.size || '', qty: item.qty, price: parseFloat(String(item.price || '').replace(/[^0-9.\-]/g, '')) || 0 };
   });
   var total = getCartTotal();
   var deposit = getDepositAmount();
