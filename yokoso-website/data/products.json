@@ -141,7 +141,10 @@
       "OFF WHITE"
     ],
     "images": [
-      "images/products/placeholder.svg"
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780574600/xogjlw7zzyn1jhlynyc8.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780574600/efjd02t452nggfopfcbt.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780574600/bcgopj5i3au8e5gwm835.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1780574601/lf80amg08lz7prkdve7e.jpg"
     ],
     "deposit": "250",
     "stock": 6,
