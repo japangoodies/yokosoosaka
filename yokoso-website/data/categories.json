@@ -34,7 +34,8 @@
   ],
   "subcategoryBrands": {
     "Clothing": [
-      "Uniqlo"
+      "Uniqlo",
+      "GU"
     ],
     "Shoes": [
       "Nike",
@@ -45,7 +46,8 @@
       "New Balance",
       "Asics",
       "Uniqlo",
-      "GU"
+      "GU",
+      "Crocs"
     ]
   },
   "proxyUrl": "https://yokoso-stock-proxy.shayera019.workers.dev",
