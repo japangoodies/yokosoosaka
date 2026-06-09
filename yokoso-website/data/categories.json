@@ -6,7 +6,8 @@
     "BLACK",
     "BROWN",
     "BLUE",
-    "GRAY"
+    "GRAY",
+    "WHITE"
   ],
   "subcategoryMap": {
     "FOODS": [
