@@ -2053,8 +2053,8 @@ function renderProducts() {
     var stockClass = totalAvail > 0 ? 'in-stock' : 'out-of-stock';
     var firstMedia = p.images?.[0] || 'images/products/placeholder.svg';
     var mediaHtml = isVideoUrl(firstMedia) ?
-      '<div class="product-image product-image-video"><span class="video-play-icon">▶</span></div>' :
-      '<img class="product-image" src="' + firstMedia + '" alt="' + p.name + '" loading="lazy" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
+      '<div class="product-image-wrap"><div class="product-image product-image-video"><span class="video-play-icon">▶</span></div></div>' :
+      '<div class="product-image-wrap"><span class="skeleton"></span><img class="product-image" src="' + firstMedia + '" alt="' + p.name + '" loading="lazy" onload="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();" onerror="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}"></div>';
     return '<div class="product-card" data-id="' + p.id + '">' +
       mediaHtml +
       '<div class="product-info">' +
@@ -5284,3 +5284,66 @@ function dismissInstallBanner() {
   var banner = document.getElementById('installBanner');
   if (banner) banner.style.display = 'none';
 }
+
+/* Back to Top Button */
+(function() {
+  var btn = document.createElement('button');
+  btn.className = 'back-to-top';
+  btn.innerHTML = '&#9650;';
+  btn.setAttribute('aria-label', 'Back to top');
+  btn.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  document.body.appendChild(btn);
+  var ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        btn.classList.toggle('visible', window.scrollY > 400);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+})();
+
+/* Toast Notifications */
+(function() {
+  var c = document.createElement('div');
+  c.className = 'toast-container';
+  c.id = 'toastContainer';
+  document.body.appendChild(c);
+})();
+function showToast(text, type, duration) {
+  var c = document.getElementById('toastContainer');
+  if (!c) return;
+  var t = document.createElement('div');
+  t.className = 'toast ' + (type || 'info');
+  t.textContent = text;
+  c.appendChild(t);
+  requestAnimationFrame(function() { t.classList.add('show'); });
+  setTimeout(function() {
+    t.classList.remove('show');
+    setTimeout(function() { t.remove(); }, 300);
+  }, duration || 3000);
+}
+
+/* Newsletter Form Validation */
+(function() {
+  var form = document.getElementById('newsletterForm');
+  var msg = document.getElementById('newsletterMsg');
+  if (!form) return;
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var email = document.getElementById('newsletterEmail');
+    var val = (email && email.value || '').trim();
+    if (!val) { showMsg('Please enter your email.', false); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) { showMsg('Please enter a valid email address.', false); return; }
+    showMsg('Thanks for subscribing! 🎌', true);
+    email.value = '';
+  });
+  function showMsg(text, ok) {
+    if (!msg) return;
+    msg.textContent = text;
+    msg.className = 'footer-newsletter-msg ' + (ok ? 'success' : 'error');
+    if (ok) { setTimeout(function() { msg.textContent = ''; msg.className = 'footer-newsletter-msg'; }, 4000); }
+  }
+})();
