@@ -326,11 +326,11 @@ function toggleAdminRole(contact) {
     .then(function(r) { return r.json(); })
     .then(function(j) {
       if (j.ok) {
-        alert('Admin role ' + (j.admin ? 'granted' : 'removed') + ' for ' + contact + '!');
+        showToast('Admin role ' + (j.admin ? 'granted' : 'removed') + ' for ' + contact + '!', 'success');
         loadUsers();
-      } else { alert(j.error || 'Failed to toggle admin role.'); }
+      } else { showToast(j.error || 'Failed to toggle admin role.', 'error'); }
     })
-    .catch(function() { alert('Network error.'); });
+    .catch(function() { showToast('Network error.', 'error'); });
 }
 function deleteUser(contact) {
   if (!confirm('Are you sure you want to delete user ' + contact + '? This cannot be undone.')) return;
@@ -339,23 +339,23 @@ function deleteUser(contact) {
     .then(function(r) { return r.json(); })
     .then(function(j) {
       if (j.ok) {
-        alert('User ' + contact + ' deleted.');
+        showToast('User ' + contact + ' deleted.', 'success');
         loadUsers();
-      } else { alert(j.error || 'Failed to delete user.'); }
+      } else { showToast(j.error || 'Failed to delete user.', 'error'); }
     })
-    .catch(function() { alert('Network error.'); });
+    .catch(function() { showToast('Network error.', 'error'); });
 }
 function resetPassword(contact) {
   var newPass = prompt('Enter new password for ' + contact + ':');
-  if (!newPass || newPass.trim().length < 4) { alert('Password must be at least 4 characters.'); return; }
+  if (!newPass || newPass.trim().length < 4) { showToast('Password must be at least 4 characters.', 'error'); return; }
   var base = STOCK_PROXY_URL.replace(/\/+$/, '');
   fetch(base + '/accounts/' + encodeURIComponent(contact) + '/reset-password', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({password:newPass.trim()}) })
     .then(function(r) { return r.json(); })
     .then(function(j) {
-      if (j.ok) { alert('Password reset successfully for ' + contact + '!'); loadUsers(); }
-      else { alert(j.error || 'Failed to reset password.'); }
+      if (j.ok) { showToast('Password reset successfully for ' + contact + '!', 'success'); loadUsers(); }
+      else { showToast(j.error || 'Failed to reset password.', 'error'); }
     })
-    .catch(function() { alert('Network error.'); });
+    .catch(function() { showToast('Network error.', 'error'); });
 }
 // ---- END ADMIN USERS ----
 
@@ -967,7 +967,7 @@ function showOrderDetail(poNumber) {
   fetch(base + '/orders/' + encodeURIComponent(poNumber) + '?_=' + Date.now())
     .then(function(r) { return r.json(); })
     .then(function(order) {
-      if (!order || order.error) { alert('Order not found.'); return; }
+      if (!order || order.error) { showToast('Order not found.', 'info'); return; }
       var items = [];
       try { items = JSON.parse(order.items || '[]'); } catch(e) {}
       var statusColor = '';
@@ -1033,7 +1033,7 @@ function showOrderDetail(poNumber) {
       var closeBtn = overlay.querySelector('.order-modal-close');
       if (closeBtn) closeBtn.addEventListener('click', function() { overlay.remove(); });
     })
-    .catch(function(e) { alert('Error loading order: ' + (e.message || '')); });
+    .catch(function(e) { showToast('Error loading order: ' + (e.message || ''), 'error'); });
 }
 
 function addOrderActionBtn(container, label, color, onClick) {
@@ -2417,7 +2417,7 @@ function addToCart(productId, color, size) {
   if (!size) {
     // non-sized product
     var avail = getVariantStock(p, color, 'q');
-    if (avail <= 0) { alert('This item is out of stock.'); return; }
+    if (avail <= 0) { showToast('This item is out of stock.', 'error'); return; }
     var key = cartKey(productId, color, null);
     var existing = cart.find(function(item) { return cartKey(item.id, item.color, item.size) === key; });
     if (existing) {
@@ -2440,7 +2440,7 @@ function addToCart(productId, color, size) {
     return;
   }
   var avail = getVariantStock(p, color, size);
-  if (avail <= 0) { alert('Color ' + color + ', size ' + size + ' is out of stock.'); return; }
+  if (avail <= 0) { showToast('Color ' + color + ', size ' + size + ' is out of stock.', 'error'); return; }
   var key = cartKey(productId, color, size);
   var existing = cart.find(function(item) { return cartKey(item.id, item.color, item.size) === key; });
   if (existing) {
@@ -2520,7 +2520,7 @@ function updateCartQty(productId, delta, color, size) {
   var avail = p ? getVariantStock(p, item.color, item.size || 'q') : 0;
   var newQty = item.qty + delta;
   if (newQty <= 0) { removeFromCart(productId, item.color, item.size); return; }
-  if (delta > 0 && delta > avail) { alert('Not enough stock for ' + (item.color || '') + (item.size ? '/' + item.size : '') + '.'); return; }
+  if (delta > 0 && delta > avail) { showToast('Not enough stock for ' + (item.color || '') + (item.size ? '/' + item.size : '') + '.', 'error'); return; }
   if (delta > 0) {
     deductVariantStock(p, item.color, item.size || 'q', delta);
   } else {
@@ -2902,8 +2902,8 @@ function addToCartFromModal(productId) {
   var p = products.find(function(x) { return x.id === productId; });
   if (!p) return;
   if (hasSizes(p)) {
-    if (!_modalSelectedColor) { alert('Please select a color first.'); return; }
-    if (!_modalSelectedSize) { alert('Please select a size first.'); return; }
+    if (!_modalSelectedColor) { showToast('Please select a color first.', 'info'); return; }
+    if (!_modalSelectedSize) { showToast('Please select a size first.', 'info'); return; }
     addToCart(productId, _modalSelectedColor, _modalSelectedSize);
   } else {
     var color = _modalSelectedColor || getVariantColors(p)[0] || '';
@@ -3569,7 +3569,7 @@ if (pf) pf.addEventListener('submit', function(e) {
       if (vImages.length > 0) variants[color].images = vImages;
     });
   }
-  if (Object.keys(variants).length === 0) { alert('Please add at least one color variant.'); return; }
+  if (Object.keys(variants).length === 0) { showToast('Please add at least one color variant.', 'error'); return; }
   var colorOrder = [];
   container.querySelectorAll('.variant-row').forEach(function(r) {
     var sel = r.querySelector('.form-variant-color');
@@ -3633,7 +3633,7 @@ if (pf) pf.addEventListener('submit', function(e) {
   Promise.all(toUpload.map(function(src) { return uploadImage(src); })).then(function(urls) {
     finish(urls.concat(keep));
   }).catch(function() {
-    alert('Failed to upload one or more images. Please try again.');
+    showToast('Failed to upload one or more images. Please try again.', 'error');
     submitBtn.disabled = false;
     submitBtn.textContent = origText;
   });
@@ -3695,7 +3695,7 @@ document.addEventListener('click', function(e) {
         row.remove();
         renderVariantsEditor();
       } else {
-        alert('At least one color variant is required.');
+        showToast('At least one color variant is required.', 'error');
       }
     }
   }
@@ -3886,10 +3886,10 @@ if (ifi) ifi.addEventListener('change', e => {
         renderAdminList();
         renderFilters();
         renderProducts();
-        alert('Products imported successfully!');
+        showToast('Products imported successfully!', 'success');
       }
     } catch {
-      alert('Invalid JSON file. Please export a valid products file first.');
+      showToast('Invalid JSON file. Please export a valid products file first.', 'error');
     }
   };
   reader.readAsText(file);
@@ -4020,7 +4020,7 @@ function showAdminPanel() {
     return;
   }
   if (!currentUser.admin) {
-    alert('This account does not have admin access.');
+    showToast('This account does not have admin access.', 'error');
     return;
   }
   // Release expired orders (older than 24h)
@@ -4503,7 +4503,7 @@ var groupTargetSelect = document.getElementById('groupImageTarget');
 
 var ugiBtn = document.getElementById('uploadGroupImageBtn');
 if (ugiBtn) ugiBtn.addEventListener('click', function() {
-  if (!groupTargetSelect || !groupTargetSelect.value) { alert('Select a group first.'); return; }
+  if (!groupTargetSelect || !groupTargetSelect.value) { showToast('Select a group first.', 'info'); return; }
   document.getElementById('groupImageInput').click();
 });
 
@@ -4570,7 +4570,7 @@ function renderBrandLogoPreview() {
 var uploadBrandLogoBtn = document.getElementById('uploadBrandLogoBtn');
 if (uploadBrandLogoBtn) uploadBrandLogoBtn.addEventListener('click', function() {
   var picker = document.getElementById('brandLogoPicker');
-  if (!picker || !picker.value) { alert('Select a brand first.'); return; }
+  if (!picker || !picker.value) { showToast('Select a brand first.', 'info'); return; }
   document.getElementById('brandLogoInput').click();
 });
 
