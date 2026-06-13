@@ -71,6 +71,10 @@
 
   <section class="products">
     <div class="container">
+      <div id="breadcrumb" class="breadcrumb"></div>
+      <div class="favorites-bar">
+        <button id="favFilterBtn" class="fav-filter-btn" onclick="toggleShowFavorites()">♥ Favorites</button>
+      </div>
       <div class="product-grid" id="productGrid"></div>
       <div class="loading-spinner active" id="loadingSpinner"><div class="spinner"></div><span>Loading products...</span></div>
       <div class="empty-state" id="emptyState">
@@ -119,6 +123,13 @@
     <div class="container">
       <h2>About JapanGoodies</h2>
       <p>Your one-stop shop for authentic Japanese products — from fashion and sneakers to cosmetics and lifestyle goods. We source directly from Japan and deliver to you worldwide.</p>
+    </div>
+  </section>
+
+  <section class="recently-viewed" id="recentlyViewedSection" style="display:none;">
+    <div class="container">
+      <h3 class="rv-title">Recently Viewed</h3>
+      <div class="rv-grid"></div>
     </div>
   </section>
 
