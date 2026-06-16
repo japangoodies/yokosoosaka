@@ -3186,19 +3186,33 @@ function openFullscreen() {
     var pinching = false;
     var initialDist = 0;
     var initialZoom = 1;
+    var panX = 0, panY = 0;
+    var panStartX = 0, panStartY = 0;
+    var panStartTouchX = 0, panStartTouchY = 0;
+    var isPanning = false;
+    var wasPanning = false;
     theImg.style.transition = 'transform 0.2s ease';
     theImg.style.transformOrigin = 'center center';
+    function applyZoom() {
+      if (zoomLevel > 1) {
+        theImg.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoomLevel + ')';
+      } else {
+        panX = 0; panY = 0;
+        theImg.style.transform = 'scale(1)';
+      }
+    }
     theSlide.addEventListener('click', function(e) {
+      if (wasPanning) { wasPanning = false; return; }
       var now = Date.now();
       if (now - lastTap < 300) {
         zoomLevel = zoomLevel > 1 ? 1 : 3;
-        theImg.style.transform = 'scale(' + zoomLevel + ')';
+        applyZoom();
         lastTap = 0;
       } else {
         lastTap = now;
         if (zoomLevel > 1) {
           zoomLevel = 1;
-          theImg.style.transform = 'scale(1)';
+          applyZoom();
           lastTap = 0;
         }
       }
@@ -3214,6 +3228,13 @@ function openFullscreen() {
         );
         initialZoom = zoomLevel;
         theImg.style.transition = 'none';
+      } else if (e.touches.length === 1 && zoomLevel > 1) {
+        isPanning = true;
+        panStartTouchX = e.touches[0].clientX;
+        panStartTouchY = e.touches[0].clientY;
+        panStartX = panX;
+        panStartY = panY;
+        theImg.style.transition = 'none';
       }
     }, { passive: false });
     theSlide.addEventListener('touchmove', function(e) {
@@ -3225,7 +3246,14 @@ function openFullscreen() {
           e.touches[0].clientY - e.touches[1].clientY
         );
         zoomLevel = Math.max(1, Math.min(5, initialZoom * (dist / initialDist)));
-        theImg.style.transform = 'scale(' + zoomLevel + ')';
+        applyZoom();
+      } else if (isPanning && e.touches.length === 1) {
+        e.preventDefault();
+        var dx = e.touches[0].clientX - panStartTouchX;
+        var dy = e.touches[0].clientY - panStartTouchY;
+        panX = panStartX + dx;
+        panY = panStartY + dy;
+        theImg.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoomLevel + ')';
       }
     }, { passive: false });
     theSlide.addEventListener('touchend', function(e) {
@@ -3236,9 +3264,45 @@ function openFullscreen() {
           theImg.style.transition = 'transform 0.2s ease';
           if (zoomLevel < 1.5) {
             zoomLevel = 1;
-            theImg.style.transform = 'scale(1)';
+            applyZoom();
           }
           initialDist = 0;
+        }
+      }
+      if (isPanning) {
+        isPanning = false;
+        theImg.style.transition = 'transform 0.2s ease';
+        if (Math.abs(panX - panStartX) > 5 || Math.abs(panY - panStartY) > 5) {
+          wasPanning = true;
+        }
+      }
+    });
+    theSlide.addEventListener('mousedown', function(e) {
+      if (zoomLevel > 1 && e.button === 0) {
+        isPanning = true;
+        panStartTouchX = e.clientX;
+        panStartTouchY = e.clientY;
+        panStartX = panX;
+        panStartY = panY;
+        theImg.style.transition = 'none';
+        e.preventDefault();
+      }
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (isPanning) {
+        var dx = e.clientX - panStartTouchX;
+        var dy = e.clientY - panStartTouchY;
+        panX = panStartX + dx;
+        panY = panStartY + dy;
+        theImg.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoomLevel + ')';
+      }
+    });
+    document.addEventListener('mouseup', function(e) {
+      if (isPanning) {
+        isPanning = false;
+        theImg.style.transition = 'transform 0.2s ease';
+        if (Math.abs(panX - panStartX) > 5 || Math.abs(panY - panStartY) > 5) {
+          wasPanning = true;
         }
       }
     });
