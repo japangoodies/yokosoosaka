@@ -2785,7 +2785,7 @@ var _colorHexMap = {
   brown:'#6d4c41',lavender:'#b39ddb',navy:'#1a237e',olive:'#7cb342',
   yellow:'#fdd835',orange:'#fb8c00',purple:'#8e24aa',gold:'#f9a825',
   tan:'#d2b48c',cream:'#fff8e1',charcoal:'#37474f',indigo:'#3949ab',
-  coral:'#ff7043',teal:'#00897b',maroon:'#6d1a36',default:'#bbb'
+  coral:'#ff7043',teal:'#00897b',maroon:'#6d1a36',violet:'#9c27b0',default:'#bbb'
 };
 function colorToHex(name) {
   var n = (name || '').toLowerCase().trim();
@@ -2861,9 +2861,10 @@ function openModal(product) {
         var isActive = c === firstColor;
         var circleBorder = isActive ? '1.5px solid #e94560' : '1.5px solid rgba(0,0,0,0.2)';
         var activeClass = isActive ? ' modal-color-active' : '';
-        return '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:40px" onclick="selectModalColor(this,\'' + c.replace(/'/g, "\\'") + '\')">' +
+        var label = c.length > 10 ? c.substring(0, 8) + '..' : c;
+        return '<div style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;width:42px" onclick="selectModalColor(this,\'' + c.replace(/'/g, "\\'") + '\')">' +
           '<button class="modal-color-btn' + activeClass + '" data-color="' + c + '" style="' + bgStyle + ';border:' + circleBorder + '"></button>' +
-          '<span style="font-size:0.55rem;color:' + (isActive ? '#e94560' : '#888') + ';font-weight:' + (isActive ? '600' : '400') + ';white-space:nowrap">' + c + '</span>' +
+          '<span style="font-size:0.5rem;color:' + (isActive ? '#e94560' : '#888') + ';font-weight:' + (isActive ? '600' : '400') + ';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:42px;display:block;text-align:center" title="' + c + '">' + label + '</span>' +
           '</div>';
       }).join('') + '</div>';
     }
