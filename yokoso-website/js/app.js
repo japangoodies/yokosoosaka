@@ -3232,6 +3232,8 @@ function openFullscreen() {
           var dx = e.touches[0].clientX - e.touches[1].clientX;
           var dy = e.touches[0].clientY - e.touches[1].clientY;
           imgEl._lastPinchDist = Math.sqrt(dx * dx + dy * dy);
+          imgEl._pinchCX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          imgEl._pinchCY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
         } else if (e.touches.length === 1 && imgEl._zoom > 1) {
           imgEl._dragging = false;
           imgEl._startX = e.touches[0].clientX - imgEl._panX;
@@ -3247,13 +3249,26 @@ function openFullscreen() {
           var dx = e.touches[0].clientX - e.touches[1].clientX;
           var dy = e.touches[0].clientY - e.touches[1].clientY;
           var dist = Math.sqrt(dx * dx + dy * dy);
+          var cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          var cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
           if (imgEl._lastPinchDist > 0) {
+            var oldZoom = imgEl._zoom;
             var scale = dist / imgEl._lastPinchDist;
-            imgEl._zoom = Math.min(Math.max(imgEl._zoom * scale, 1), 5);
-            if (imgEl._zoom === 1) { imgEl._panX = 0; imgEl._panY = 0; }
+            var newZoom = Math.min(Math.max(oldZoom * scale, 1), 5);
+            if (newZoom > 1) {
+              var ratio = newZoom / oldZoom;
+              imgEl._panX = cx - ratio * (cx - imgEl._panX);
+              imgEl._panY = cy - ratio * (cy - imgEl._panY);
+            } else {
+              imgEl._panX = 0;
+              imgEl._panY = 0;
+            }
+            imgEl._zoom = newZoom;
             applyZoom(imgEl);
           }
           imgEl._lastPinchDist = dist;
+          imgEl._pinchCX = cx;
+          imgEl._pinchCY = cy;
         } else if (e.touches.length === 1 && imgEl._zoom > 1) {
           e.preventDefault();
           imgEl._dragging = true;
