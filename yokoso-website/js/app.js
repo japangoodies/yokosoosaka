@@ -1918,10 +1918,7 @@ function renderBrandFilter() {
 function scrollToTop() {
   var grid = document.getElementById('productGrid');
   if (!grid) return;
-  var header = document.querySelector('.header');
-  var offset = header ? header.offsetHeight : 0;
-  var top = grid.getBoundingClientRect().top + window.scrollY - offset - 10;
-  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function selectGroup(name) {
