@@ -1095,11 +1095,12 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 2px solid rgba(0,0,0,0.12);
+  border: 1.5px solid rgba(0,0,0,0.2);
   cursor: pointer;
   transition: all 0.15s;
   padding: 0;
   display: block;
+  overflow: hidden;
 }
 
 .modal-color-btn:hover {

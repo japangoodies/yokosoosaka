@@ -2827,8 +2827,8 @@ function getColorParts(name) {
 function colorBtnBg(name) {
   var parts = getColorParts(name);
   if (parts.length === 1) return 'background:' + parts[0];
-  var step = Math.round(100 / parts.length);
-  var stops = parts.map(function(h, i) { return h + ' ' + (i * step) + '% ' + ((i + 1) * step) + '%'; });
+  var deg = Math.round(360 / parts.length);
+  var stops = parts.map(function(h, i) { return h + ' ' + (i * deg) + 'deg ' + ((i + 1) * deg) + 'deg'; });
   return 'background:conic-gradient(' + stops.join(',') + ')';
 }
 function isLightColor(hex) {
@@ -2856,15 +2856,14 @@ function openModal(product) {
     // Color picker
     var colorPickerHtml = '';
     if (variantColors.length > 1 || (variantColors.length === 1 && variantColors[0] !== 'Default')) {
-      colorPickerHtml = '<div style="display:flex;flex-wrap:wrap;gap:12px 8px;margin-bottom:12px" id="modalColorContainer">' + variantColors.map(function(c) {
-        var hex = colorToHex(c);
-        var circleBorder = isLightColor(hex) ? '2px solid rgba(0,0,0,0.15)' : '2px solid transparent';
-        if (c === firstColor) circleBorder = '3px solid #e94560';
-        var activeClass = c === firstColor ? ' modal-color-active' : '';
+      colorPickerHtml = '<div style="display:flex;flex-wrap:wrap;gap:10px 6px;margin-bottom:12px" id="modalColorContainer">' + variantColors.map(function(c) {
         var bgStyle = colorBtnBg(c);
-        return '<div style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer" onclick="selectModalColor(this,\'' + c.replace(/'/g, "\\'") + '\')">' +
+        var isActive = c === firstColor;
+        var circleBorder = isActive ? '1.5px solid #e94560' : '1.5px solid rgba(0,0,0,0.2)';
+        var activeClass = isActive ? ' modal-color-active' : '';
+        return '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:40px" onclick="selectModalColor(this,\'' + c.replace(/'/g, "\\'") + '\')">' +
           '<button class="modal-color-btn' + activeClass + '" data-color="' + c + '" style="' + bgStyle + ';border:' + circleBorder + '"></button>' +
-          '<span style="font-size:0.65rem;color:' + (c === firstColor ? '#e94560' : '#888') + ';font-weight:' + (c === firstColor ? '600' : '400') + '">' + c + '</span>' +
+          '<span style="font-size:0.55rem;color:' + (isActive ? '#e94560' : '#888') + ';font-weight:' + (isActive ? '600' : '400') + ';white-space:nowrap">' + c + '</span>' +
           '</div>';
       }).join('') + '</div>';
     }
@@ -2948,7 +2947,7 @@ function selectModalColor(el, color) {
       var c = b.dataset.color;
       var hex = colorToHex(c);
       var isLight = isLightColor(hex);
-      b.style.border = c === color ? '3px solid #e94560' : (isLight ? '2px solid rgba(0,0,0,0.15)' : '2px solid transparent');
+      b.style.border = c === color ? '1.5px solid #e94560' : '1.5px solid rgba(0,0,0,0.2)';
       b.classList.toggle('modal-color-active', c === color);
     });
     container.querySelectorAll('span').forEach(function(s) {
