@@ -1922,9 +1922,7 @@ function scrollToTop() {
     if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;
   }
-  var header = document.querySelector('.header');
-  var offset = header ? header.offsetHeight : 0;
-  var top = first.getBoundingClientRect().top + window.scrollY - offset - 5;
+  var top = first.getBoundingClientRect().top + window.scrollY;
   window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 }
 
