@@ -2788,7 +2788,48 @@ var _colorHexMap = {
   coral:'#ff7043',teal:'#00897b',maroon:'#6d1a36',default:'#bbb'
 };
 function colorToHex(name) {
-  return _colorHexMap[(name || '').toLowerCase()] || _colorHexMap.default;
+  var n = (name || '').toLowerCase().trim();
+  if (_colorHexMap[n]) return _colorHexMap[n];
+  var parts = n.split(/\s*&\s*|\s*\/\s*|\s*\+\s*/);
+  if (parts.length > 1) {
+    var r = 0, g = 0, b = 0, count = 0;
+    parts.forEach(function(p) {
+      var hex = _colorHexMap[p.trim()];
+      if (hex) {
+        var c = hex.replace('#','');
+        r += parseInt(c.substr(0,2),16);
+        g += parseInt(c.substr(2,2),16);
+        b += parseInt(c.substr(4,2),16);
+        count++;
+      }
+    });
+    if (count > 0) {
+      r = Math.round(r / count); g = Math.round(g / count); b = Math.round(b / count);
+      return '#' + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+    }
+  }
+  var hash = 0;
+  for (var i = 0; i < n.length; i++) { hash = n.charCodeAt(i) + ((hash << 5) - hash); }
+  var hue = Math.abs(hash) % 360;
+  return 'hsl(' + hue + ', 65%, 45%)';
+}
+function getColorParts(name) {
+  var n = (name || '').toLowerCase().trim();
+  if (_colorHexMap[n]) return [_colorHexMap[n]];
+  var parts = n.split(/\s*&\s*|\s*\/\s*|\s*\+\s*/);
+  var hexes = [];
+  parts.forEach(function(p) {
+    var hex = _colorHexMap[p.trim()];
+    if (hex) hexes.push(hex);
+  });
+  return hexes.length > 1 ? hexes : [_colorHexMap.default];
+}
+function colorBtnBg(name) {
+  var parts = getColorParts(name);
+  if (parts.length === 1) return 'background:' + parts[0];
+  var step = Math.round(100 / parts.length);
+  var stops = parts.map(function(h, i) { return h + ' ' + (i * step) + '% ' + ((i + 1) * step) + '%'; });
+  return 'background:conic-gradient(' + stops.join(',') + ')';
 }
 function isLightColor(hex) {
   var c = hex.replace('#','');
@@ -2820,8 +2861,9 @@ function openModal(product) {
         var circleBorder = isLightColor(hex) ? '2px solid rgba(0,0,0,0.15)' : '2px solid transparent';
         if (c === firstColor) circleBorder = '3px solid #e94560';
         var activeClass = c === firstColor ? ' modal-color-active' : '';
+        var bgStyle = colorBtnBg(c);
         return '<div style="display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer" onclick="selectModalColor(this,\'' + c.replace(/'/g, "\\'") + '\')">' +
-          '<button class="modal-color-btn' + activeClass + '" data-color="' + c + '" style="background:' + hex + ';border:' + circleBorder + '"></button>' +
+          '<button class="modal-color-btn' + activeClass + '" data-color="' + c + '" style="' + bgStyle + ';border:' + circleBorder + '"></button>' +
           '<span style="font-size:0.65rem;color:' + (c === firstColor ? '#e94560' : '#888') + ';font-weight:' + (c === firstColor ? '600' : '400') + '">' + c + '</span>' +
           '</div>';
       }).join('') + '</div>';
