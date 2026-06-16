@@ -3160,53 +3160,135 @@ function openFullscreen() {
   if (old) old.remove();
   var ov = document.createElement('div');
   ov.id = 'liveFullscreen';
-  ov.style.cssText = 'display:flex!important;position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:#fff!important;z-index:99999!important;';
+  ov.style.cssText = 'display:flex!important;position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:#000!important;z-index:99999!important;overflow:hidden;';
   document.body.appendChild(ov);
   var track = document.createElement('div');
   track.style.cssText = 'position:relative;width:100%;height:100%;display:flex;flex-direction:column;';
   var h = window.innerHeight;
   var slides = [];
-  var zoomStates = [];
   for (var i = 0; i < currentModalImages.length; i++) {
     var slide = document.createElement('div');
-    slide.style.cssText = 'height:' + h + 'px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden';
+    slide.style.cssText = 'height:' + h + 'px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative;touch-action:none;';
     var img = document.createElement('img');
     img.dataset.src = currentModalImages[i];
     if (Math.abs(i - currentImageIndex) <= 1) img.src = currentModalImages[i];
-    img.style.cssText = 'max-width:100vw;max-height:100vh;object-fit:contain;user-select:none;transition:transform 0.2s ease;cursor:zoom-in';
-    zoomStates[i] = false;
-    var lastTap = 0;
-    img.addEventListener('click', function(idx, imgEl) {
+    img.style.cssText = 'max-width:100vw;max-height:100vh;object-fit:contain;user-select:none;transform-origin:0 0;cursor:zoom-in;transition:transform 0.15s ease;will-change:transform;';
+    img._zoom = 1;
+    img._panX = 0;
+    img._panY = 0;
+    img._lastPinchDist = 0;
+    img._dragging = false;
+    img._startX = 0;
+    img._startY = 0;
+
+    img.addEventListener('click', function(imgEl) {
       return function(e) {
-        var now = Date.now();
-        if (now - lastTap < 400) {
-          zoomStates[idx] = !zoomStates[idx];
-          imgEl.style.transform = zoomStates[idx] ? 'scale(2)' : 'scale(1)';
-          imgEl.style.cursor = zoomStates[idx] ? 'zoom-out' : 'zoom-in';
-          e.stopPropagation();
+        if (imgEl._dragging) return;
+        if (imgEl._zoom > 1) {
+          imgEl._zoom = 1; imgEl._panX = 0; imgEl._panY = 0;
         } else {
-          lastTap = now;
+          var rect = imgEl.getBoundingClientRect();
+          var cx = e.clientX - rect.left;
+          var cy = e.clientY - rect.top;
+          imgEl._zoom = 2.5;
+          imgEl._panX = -(cx * 1.5);
+          imgEl._panY = -(cy * 1.5);
+        }
+        applyZoom(imgEl);
+      };
+    }(img));
+
+    img.addEventListener('dblclick', function(imgEl) {
+      return function(e) {
+        e.preventDefault();
+        if (imgEl._zoom > 1) {
+          imgEl._zoom = 1; imgEl._panX = 0; imgEl._panY = 0;
+        } else {
+          var rect = imgEl.getBoundingClientRect();
+          var cx = e.clientX - rect.left;
+          var cy = e.clientY - rect.top;
+          imgEl._zoom = 2.5;
+          imgEl._panX = -(cx * 1.5);
+          imgEl._panY = -(cy * 1.5);
+        }
+        applyZoom(imgEl);
+      };
+    }(img));
+
+    img.addEventListener('wheel', function(imgEl) {
+      return function(e) {
+        e.preventDefault();
+        var delta = e.deltaY > 0 ? -0.3 : 0.3;
+        var newZoom = Math.min(Math.max(imgEl._zoom + delta, 1), 5);
+        if (newZoom === 1) { imgEl._panX = 0; imgEl._panY = 0; }
+        imgEl._zoom = newZoom;
+        applyZoom(imgEl);
+      };
+    }(img), { passive: false });
+
+    img.addEventListener('touchstart', function(imgEl) {
+      return function(e) {
+        if (e.touches.length === 2) {
+          var dx = e.touches[0].clientX - e.touches[1].clientX;
+          var dy = e.touches[0].clientY - e.touches[1].clientY;
+          imgEl._lastPinchDist = Math.sqrt(dx * dx + dy * dy);
+        } else if (e.touches.length === 1 && imgEl._zoom > 1) {
+          imgEl._dragging = false;
+          imgEl._startX = e.touches[0].clientX - imgEl._panX;
+          imgEl._startY = e.touches[0].clientY - imgEl._panY;
         }
       };
-    }(i, img));
+    }(img));
+
+    img.addEventListener('touchmove', function(imgEl) {
+      return function(e) {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          var dx = e.touches[0].clientX - e.touches[1].clientX;
+          var dy = e.touches[0].clientY - e.touches[1].clientY;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (imgEl._lastPinchDist > 0) {
+            var scale = dist / imgEl._lastPinchDist;
+            imgEl._zoom = Math.min(Math.max(imgEl._zoom * scale, 1), 5);
+            if (imgEl._zoom === 1) { imgEl._panX = 0; imgEl._panY = 0; }
+            applyZoom(imgEl);
+          }
+          imgEl._lastPinchDist = dist;
+        } else if (e.touches.length === 1 && imgEl._zoom > 1) {
+          e.preventDefault();
+          imgEl._dragging = true;
+          imgEl._panX = e.touches[0].clientX - imgEl._startX;
+          imgEl._panY = e.touches[0].clientY - imgEl._startY;
+          applyZoom(imgEl);
+        }
+      };
+    }(img));
+
+    img.addEventListener('touchend', function(imgEl) {
+      return function(e) {
+        imgEl._lastPinchDist = 0;
+        if (imgEl._zoom <= 1) { imgEl._panX = 0; imgEl._panY = 0; applyZoom(imgEl); }
+        setTimeout(function() { imgEl._dragging = false; }, 50);
+      };
+    }(img));
+
     slides.push(img);
     slide.appendChild(img);
     track.appendChild(slide);
   }
   ov._slides = slides;
-  ov._zoom = zoomStates;
   track.style.transform = 'translate3d(0,' + (-currentImageIndex * h) + 'px,0)';
   ov.appendChild(track);
   var closeBtn = document.createElement('button');
   closeBtn.textContent = '\u00D7';
-  closeBtn.style.cssText = 'position:fixed!important;top:16px!important;right:20px!important;background:rgba(0,0,0,0.08)!important;border:none!important;color:#333!important;font-size:2rem!important;width:44px!important;height:44px!important;border-radius:50%!important;cursor:pointer!important;z-index:999999!important;display:flex!important;align-items:center!important;justify-content:center!important;';
+  closeBtn.style.cssText = 'position:fixed!important;top:16px!important;right:20px!important;background:rgba(255,255,255,0.9)!important;border:none!important;color:#333!important;font-size:2rem!important;width:44px!important;height:44px!important;border-radius:50%!important;cursor:pointer!important;z-index:999999!important;display:flex!important;align-items:center!important;justify-content:center!important;';
   closeBtn.onclick = closeFullscreen;
   closeBtn.addEventListener('touchstart', function(e) { e.stopPropagation(); closeFullscreen(); });
   closeBtn.addEventListener('touchend', function(e) { e.preventDefault(); });
   ov.appendChild(closeBtn);
   var counter = document.createElement('div');
   counter.id = 'fsCounter';
-  counter.style.cssText = 'position:fixed!important;top:20px!important;left:50%!important;transform:translateX(-50%)!important;color:rgba(0,0,0,0.5)!important;font-size:0.85rem!important;z-index:10!important;pointer-events:none!important;';
+  counter.style.cssText = 'position:fixed!important;top:20px!important;left:50%!important;transform:translateX(-50%)!important;color:rgba(255,255,255,0.7)!important;font-size:0.85rem!important;z-index:10!important;pointer-events:none!important;';
   counter.textContent = (currentImageIndex + 1) + ' / ' + currentModalImages.length;
   ov.appendChild(counter);
   ov.addEventListener('click', function(e) { if (e.target === this) closeFullscreen(); });
@@ -3214,6 +3296,10 @@ function openFullscreen() {
   try { history.pushState({fullscreen: true}, '', '#fullscreen'); } catch (e) {}
 }
 
+function applyZoom(imgEl) {
+  imgEl.style.transform = 'translate(' + imgEl._panX + 'px,' + imgEl._panY + 'px) scale(' + imgEl._zoom + ')';
+  imgEl.style.cursor = imgEl._zoom > 1 ? 'grab' : 'zoom-in';
+}
 function closeFullscreen() {
   var ov = document.getElementById('liveFullscreen');
   if (ov) ov.remove();
