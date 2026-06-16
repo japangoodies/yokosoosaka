@@ -2740,7 +2740,7 @@ function openModalFullscreen() {
     currentModalImages = _modalImages.slice();
     currentImageIndex = _modalImageIdx;
     document.title = 'FS:' + currentModalImages.length;
-    openFullscreen(!!_modalSelectedColor);
+    openFullscreen();
   } catch (e) {
     console.error('openModalFullscreen error:', e);
   }
@@ -2919,7 +2919,7 @@ function openModal(product) {
         if (isNaN(idx)) idx = 0;
         currentModalImages = _modalImages.slice();
         currentImageIndex = idx;
-        openFullscreen(!!_modalSelectedColor);
+        openFullscreen();
       }
       if (e.target === this) closeLiveModal();
     });
@@ -3154,7 +3154,7 @@ if (pm) pm.addEventListener('click', e => {
 var mc = document.querySelector('#productModal .modal-close');
 if (mc) mc.addEventListener('click', closeModal);
 // Fullscreen image viewer
-function openFullscreen(withZoom) {
+function openFullscreen() {
   if (currentModalImages.length === 0) return;
   var old = document.getElementById('liveFullscreen');
   if (old) old.remove();
@@ -3163,137 +3163,22 @@ function openFullscreen(withZoom) {
   ov.style.cssText = 'display:flex!important;position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:#fff!important;z-index:99999!important;overflow:hidden;';
   document.body.appendChild(ov);
   var track = document.createElement('div');
-  track.style.cssText = 'position:relative;width:100%;height:100%;display:flex;flex-direction:column;';
-  var h = window.innerHeight;
+  track.style.cssText = 'position:relative;width:100%;height:100%;display:flex;flex-direction:row;';
+  var w = window.innerWidth;
   var slides = [];
   for (var i = 0; i < currentModalImages.length; i++) {
     var slide = document.createElement('div');
-    slide.style.cssText = 'height:' + h + 'px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative;' + (withZoom ? 'touch-action:none;' : '');
+    slide.style.cssText = 'width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative;';
     var img = document.createElement('img');
     img.dataset.src = currentModalImages[i];
     if (Math.abs(i - currentImageIndex) <= 1) img.src = currentModalImages[i];
-    img.style.cssText = 'max-width:100vw;max-height:100vh;object-fit:contain;user-select:none;' + (withZoom ? 'transform-origin:center center;cursor:zoom-in;transition:transform 0.15s ease;will-change:transform;' : '');
-    if (withZoom) {
-      img._zoom = 1;
-      img._panX = 0;
-      img._panY = 0;
-      img._lastPinchDist = 0;
-      img._dragging = false;
-      img._startX = 0;
-      img._startY = 0;
-
-      img.addEventListener('click', function(imgEl) {
-        return function(e) {
-          if (imgEl._dragging) return;
-          if (imgEl._zoom > 1) {
-            imgEl._zoom = 1; imgEl._panX = 0; imgEl._panY = 0;
-          } else {
-            var rect = imgEl.getBoundingClientRect();
-            var cx = e.clientX - rect.left - rect.width / 2;
-            var cy = e.clientY - rect.top - rect.height / 2;
-            imgEl._zoom = 2.5;
-            imgEl._panX = -cx * 1.5;
-            imgEl._panY = -cy * 1.5;
-          }
-          applyZoom(imgEl);
-        };
-      }(img));
-
-      img.addEventListener('dblclick', function(imgEl) {
-        return function(e) {
-          e.preventDefault();
-          if (imgEl._zoom > 1) {
-            imgEl._zoom = 1; imgEl._panX = 0; imgEl._panY = 0;
-          } else {
-            var rect = imgEl.getBoundingClientRect();
-            var cx = e.clientX - rect.left - rect.width / 2;
-            var cy = e.clientY - rect.top - rect.height / 2;
-            imgEl._zoom = 2.5;
-            imgEl._panX = -cx * 1.5;
-            imgEl._panY = -cy * 1.5;
-          }
-          applyZoom(imgEl);
-        };
-      }(img));
-
-      img.addEventListener('wheel', function(imgEl) {
-        return function(e) {
-          e.preventDefault();
-          var rect = imgEl.getBoundingClientRect();
-          var mx = e.clientX - rect.left - rect.width / 2;
-          var my = e.clientY - rect.top - rect.height / 2;
-          var oldZoom = imgEl._zoom;
-          var delta = e.deltaY > 0 ? -0.3 : 0.3;
-          var newZoom = Math.min(Math.max(oldZoom + delta, 1), 3);
-          var ratio = newZoom / oldZoom;
-          imgEl._panX = mx - ratio * (mx - imgEl._panX);
-          imgEl._panY = my - ratio * (my - imgEl._panY);
-          imgEl._zoom = newZoom;
-          applyZoom(imgEl);
-        };
-      }(img), { passive: false });
-
-      img.addEventListener('touchstart', function(imgEl) {
-        return function(e) {
-          if (e.touches.length === 2) {
-            var dx = e.touches[0].clientX - e.touches[1].clientX;
-            var dy = e.touches[0].clientY - e.touches[1].clientY;
-            imgEl._lastPinchDist = Math.sqrt(dx * dx + dy * dy);
-          } else if (e.touches.length === 1 && imgEl._zoom > 1) {
-            imgEl._dragging = false;
-            imgEl._startX = e.touches[0].clientX - imgEl._panX;
-            imgEl._startY = e.touches[0].clientY - imgEl._panY;
-          }
-        };
-      }(img));
-
-      img.addEventListener('touchmove', function(imgEl) {
-        return function(e) {
-          if (e.touches.length === 2) {
-            e.preventDefault();
-            var dx = e.touches[0].clientX - e.touches[1].clientX;
-            var dy = e.touches[0].clientY - e.touches[1].clientY;
-            var dist = Math.sqrt(dx * dx + dy * dy);
-            var cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-            var cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-            if (imgEl._lastPinchDist > 0) {
-              var oldZoom = imgEl._zoom;
-              var scale = dist / imgEl._lastPinchDist;
-              var newZoom = Math.min(Math.max(oldZoom * scale, 1), 3);
-              var rect = imgEl.getBoundingClientRect();
-              var mx = cx - rect.left - rect.width / 2;
-              var my = cy - rect.top - rect.height / 2;
-              var ratio = newZoom / oldZoom;
-              imgEl._panX = mx - ratio * (mx - imgEl._panX);
-              imgEl._panY = my - ratio * (my - imgEl._panY);
-              imgEl._zoom = newZoom;
-              applyZoom(imgEl);
-            }
-            imgEl._lastPinchDist = dist;
-          } else if (e.touches.length === 1 && imgEl._zoom > 1) {
-            e.preventDefault();
-            imgEl._dragging = true;
-            imgEl._panX = e.touches[0].clientX - imgEl._startX;
-            imgEl._panY = e.touches[0].clientY - imgEl._startY;
-            applyZoom(imgEl);
-          }
-        };
-      }(img));
-
-      img.addEventListener('touchend', function(imgEl) {
-        return function(e) {
-          imgEl._lastPinchDist = 0;
-          if (imgEl._zoom <= 1) { imgEl._panX = 0; imgEl._panY = 0; applyZoom(imgEl); }
-          setTimeout(function() { imgEl._dragging = false; }, 50);
-        };
-      }(img));
-    }
+    img.style.cssText = 'max-width:100vw;max-height:100vh;object-fit:contain;user-select:none;';
     slides.push(img);
     slide.appendChild(img);
     track.appendChild(slide);
   }
   ov._slides = slides;
-  track.style.transform = 'translate3d(0,' + (-currentImageIndex * h) + 'px,0)';
+  track.style.transform = 'translate3d(' + (-currentImageIndex * w) + 'px,0,0)';
   ov.appendChild(track);
   var closeBtn = document.createElement('button');
   closeBtn.textContent = '\u00D7';
@@ -3312,10 +3197,6 @@ function openFullscreen(withZoom) {
   try { history.pushState({fullscreen: true}, '', '#fullscreen'); } catch (e) {}
 }
 
-function applyZoom(imgEl) {
-  imgEl.style.transform = 'translate(' + imgEl._panX + 'px,' + imgEl._panY + 'px) scale(' + imgEl._zoom + ')';
-  imgEl.style.cursor = imgEl._zoom > 1 ? 'grab' : 'zoom-in';
-}
 function closeFullscreen() {
   var ov = document.getElementById('liveFullscreen');
   if (ov) ov.remove();
@@ -3346,9 +3227,9 @@ function loadSlideImages(idx) {
   }
 }
 
-// Fullscreen swipe / drag (vertical)
+// Fullscreen swipe / drag (horizontal)
 (function() {
-  var startY = 0;
+  var startX = 0;
   var dragging = false;
   var dragOffset = 0;
 
@@ -3358,28 +3239,21 @@ function loadSlideImages(idx) {
     if (currentModalImages.length < 2) return;
     var next = currentImageIndex + dir;
     if (next < 0 || next >= currentModalImages.length) return;
-    // Reset zoom on current slide
-    var ov = document.getElementById('liveFullscreen');
-    if (ov && ov._zoom && ov._slides) {
-      ov._zoom[currentImageIndex] = false;
-      ov._slides[currentImageIndex].style.transform = 'scale(1)';
-      ov._slides[currentImageIndex].style.cursor = 'zoom-in';
-    }
     currentImageIndex = next;
     updateCounter();
     loadSlideImages(next);
-    var h = window.innerHeight;
+    var w = window.innerWidth;
     var tr = getFullscreenTrack();
     if (!tr) return;
     tr.style.transition = 'transform 0.3s ease';
-    tr.style.transform = 'translate3d(0,' + (-next * h) + 'px,0)';
+    tr.style.transform = 'translate3d(' + (-next * w) + 'px,0,0)';
   }
 
   document.addEventListener('touchstart', function(e) {
     if (!isActive()) return;
     var t = e.touches[0];
     if (!t) return;
-    startY = t.clientY;
+    startX = t.clientX;
     dragOffset = 0;
     dragging = true;
     var tr = getFullscreenTrack();
@@ -3392,16 +3266,16 @@ function loadSlideImages(idx) {
     if (currentModalImages.length < 2) { dragging = false; return; }
     var t = e.touches[0];
     if (!t) return;
-    var dy = t.clientY - startY;
-    var h = window.innerHeight;
-    dragOffset = dy;
+    var dx = t.clientX - startX;
+    var w = window.innerWidth;
+    dragOffset = dx;
     var tr = getFullscreenTrack();
     if (!tr) return;
     tr.style.transition = 'none';
-    var offset = dy * 0.3;
+    var offset = dx * 0.3;
     if (currentImageIndex === 0) offset = Math.min(offset, 0);
     if (currentImageIndex === currentModalImages.length - 1) offset = Math.max(offset, 0);
-    tr.style.transform = 'translate3d(0,' + (-currentImageIndex * h + offset) + 'px,0)';
+    tr.style.transform = 'translate3d(' + (-currentImageIndex * w + offset) + 'px,0,0)';
     e.preventDefault();
   }, { passive: false });
 
@@ -3412,19 +3286,20 @@ function loadSlideImages(idx) {
     if (Math.abs(dragOffset) > 50) {
       nav(dragOffset < 0 ? 1 : -1);
     } else {
-      var h = window.innerHeight;
+      var w = window.innerWidth;
       var tr = getFullscreenTrack();
       if (!tr) return;
       tr.style.transition = 'transform 0.3s ease';
-      tr.style.transform = 'translate3d(0,' + (-currentImageIndex * h) + 'px,0)';
+      tr.style.transform = 'translate3d(' + (-currentImageIndex * w) + 'px,0,0)';
     }
   }, { passive: true });
 
   document.addEventListener('wheel', function(e) {
     if (!isActive()) return;
     if (currentModalImages.length < 2) return;
-    if (Math.abs(e.deltaY) < 20) return;
-    nav(e.deltaY > 0 ? 1 : -1);
+    var delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (Math.abs(delta) < 20) return;
+    nav(delta > 0 ? 1 : -1);
   }, { passive: true });
 })();
 
@@ -3440,34 +3315,30 @@ document.addEventListener('keydown', e => {
     return;
   }
   if (document.getElementById('liveFullscreen')) {
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    if (e.key === 'ArrowLeft') {
       if (currentImageIndex > 0) {
-        var ov6 = document.getElementById('liveFullscreen');
-        if (ov6 && ov6._zoom && ov6._slides) { ov6._zoom[currentImageIndex] = false; ov6._slides[currentImageIndex].style.transform = 'scale(1)'; ov6._slides[currentImageIndex].style.cursor = 'zoom-in'; }
         currentImageIndex--;
         updateCounter();
         loadSlideImages(currentImageIndex);
         var tr = getFullscreenTrack();
         if (tr) {
-          var h2 = window.innerHeight;
+          var w2 = window.innerWidth;
           tr.style.transition = 'transform 0.3s ease';
-          tr.style.transform = 'translate3d(0,' + (-currentImageIndex * h2) + 'px,0)';
+          tr.style.transform = 'translate3d(' + (-currentImageIndex * w2) + 'px,0,0)';
         }
       }
       e.preventDefault();
     }
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    if (e.key === 'ArrowRight') {
       if (currentImageIndex < currentModalImages.length - 1) {
-        var ov7 = document.getElementById('liveFullscreen');
-        if (ov7 && ov7._zoom && ov7._slides) { ov7._zoom[currentImageIndex] = false; ov7._slides[currentImageIndex].style.transform = 'scale(1)'; ov7._slides[currentImageIndex].style.cursor = 'zoom-in'; }
         currentImageIndex++;
         updateCounter();
         loadSlideImages(currentImageIndex);
         var tr = getFullscreenTrack();
         if (tr) {
-          var h2 = window.innerHeight;
+          var w2 = window.innerWidth;
           tr.style.transition = 'transform 0.3s ease';
-          tr.style.transform = 'translate3d(0,' + (-currentImageIndex * h2) + 'px,0)';
+          tr.style.transform = 'translate3d(' + (-currentImageIndex * w2) + 'px,0,0)';
         }
       }
       e.preventDefault();
