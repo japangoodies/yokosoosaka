@@ -2785,7 +2785,7 @@ var _colorHexMap = {
   brown:'#6d4c41',lavender:'#b39ddb',navy:'#1a237e',olive:'#7cb342',
   yellow:'#fdd835',orange:'#fb8c00',purple:'#8e24aa',gold:'#f9a825',
   tan:'#d2b48c',cream:'#fff8e1',charcoal:'#37474f',indigo:'#3949ab',
-  coral:'#ff7043',teal:'#00897b',maroon:'#6d1a36',violet:'#9c27b0',default:'#bbb'
+  coral:'#ff7043',teal:'#00897b',maroon:'#6d1a36',violet:'#9c27b0','off white':'#faf9f6',default:'#bbb'
 };
 function colorToHex(name) {
   var n = (name || '').toLowerCase().trim();
