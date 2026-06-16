@@ -1,5 +1,5 @@
-var CACHE = 'japangoodies-v4';
-var DATA_CACHE = 'japangoodies-data-v4';
+var CACHE = 'japangoodies-v5';
+var DATA_CACHE = 'japangoodies-data-v5';
 
 self.addEventListener('install', function(e) {
   e.waitUntil(
