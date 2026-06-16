@@ -2162,7 +2162,8 @@ function renderProducts() {
     filtered = filtered.filter(function(p) { return favorites.indexOf(p.id) !== -1; });
   }
   var totalFiltered = filtered.length;
-  if (productsShown === 0 || productsShown > totalFiltered) productsShown = mainLimit;
+  if (productsShown === 0) productsShown = mainLimit;
+  if (productsShown > totalFiltered) productsShown = totalFiltered;
   var pageItems = filtered.slice(0, productsShown);
 
   if (filtered.length === 0) {
