@@ -1915,6 +1915,15 @@ function renderBrandFilter() {
 
 
 
+function scrollToTop() {
+  var grid = document.getElementById('productGrid');
+  if (!grid) return;
+  var header = document.querySelector('.header');
+  var offset = header ? header.offsetHeight : 0;
+  var top = grid.getBoundingClientRect().top + window.scrollY - offset - 10;
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
 function selectGroup(name) {
   currentGroup = name;
   currentCategory = 'all';
@@ -1949,10 +1958,7 @@ function selectGroup(name) {
   renderSubcategoryFilter();
   renderBrandFilter();
   renderProducts();
-  setTimeout(function() {
-    var target = document.getElementById('products') || document.getElementById('productGrid');
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 80);
+  setTimeout(function() { scrollToTop(); }, 100);
 }
 
 var cc = document.getElementById('categoryCarousel');
@@ -1977,10 +1983,7 @@ document.addEventListener('click', function(e) {
     renderSubcategoryFilter();
     document.getElementById('brandFilterContainer').innerHTML = '';
     mainPage = 1; renderProducts();
-    setTimeout(function() {
-      var pg = document.getElementById('productGrid');
-      if (pg) pg.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 80);
+    setTimeout(function() { scrollToTop(); }, 100);
     return;
   }
   var subBtn = e.target.closest('#subcategoryFilterContainer .filter-btn');
@@ -1998,10 +2001,7 @@ document.addEventListener('click', function(e) {
     renderSubcategoryFilter();
     renderBrandFilter();
     mainPage = 1; renderProducts();
-    setTimeout(function() {
-      var pg = document.getElementById('productGrid');
-      if (pg) pg.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 80);
+    setTimeout(function() { scrollToTop(); }, 100);
     return;
   }
 });
@@ -2062,6 +2062,7 @@ function resetFilters() {
   history.pushState({}, '', window.location.pathname);
   renderFilters();
   renderProducts();
+  setTimeout(function() { scrollToTop(); }, 100);
 }
 
 function loadMore() {
@@ -2130,6 +2131,7 @@ function selectSubcategory(name) {
   renderSubcategoryFilter();
   renderBrandFilter();
   renderProducts();
+  setTimeout(function() { scrollToTop(); }, 100);
 }
 
 function renderProducts() {
