@@ -1916,14 +1916,7 @@ function renderBrandFilter() {
 
 
 function scrollToTop() {
-  var first = document.querySelector('#productGrid .product-card');
-  if (!first) {
-    var grid = document.getElementById('productGrid');
-    if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    return;
-  }
-  var top = first.getBoundingClientRect().top + window.scrollY;
-  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function selectGroup(name) {
