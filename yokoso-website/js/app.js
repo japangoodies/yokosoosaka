@@ -3172,7 +3172,7 @@ function openFullscreen() {
     var img = document.createElement('img');
     img.dataset.src = currentModalImages[i];
     if (Math.abs(i - currentImageIndex) <= 1) img.src = currentModalImages[i];
-    img.style.cssText = 'max-width:100vw;max-height:100vh;object-fit:contain;user-select:none;transform-origin:0 0;cursor:zoom-in;transition:transform 0.15s ease;will-change:transform;';
+    img.style.cssText = 'max-width:100vw;max-height:100vh;object-fit:contain;user-select:none;transform-origin:center center;cursor:zoom-in;transition:transform 0.15s ease;will-change:transform;';
     img._zoom = 1;
     img._panX = 0;
     img._panY = 0;
@@ -3188,11 +3188,11 @@ function openFullscreen() {
           imgEl._zoom = 1; imgEl._panX = 0; imgEl._panY = 0;
         } else {
           var rect = imgEl.getBoundingClientRect();
-          var cx = e.clientX - rect.left;
-          var cy = e.clientY - rect.top;
+          var cx = e.clientX - rect.left - rect.width / 2;
+          var cy = e.clientY - rect.top - rect.height / 2;
           imgEl._zoom = 2.5;
-          imgEl._panX = -(cx * 1.5);
-          imgEl._panY = -(cy * 1.5);
+          imgEl._panX = -cx * 1.5;
+          imgEl._panY = -cy * 1.5;
         }
         applyZoom(imgEl);
       };
@@ -3205,11 +3205,11 @@ function openFullscreen() {
           imgEl._zoom = 1; imgEl._panX = 0; imgEl._panY = 0;
         } else {
           var rect = imgEl.getBoundingClientRect();
-          var cx = e.clientX - rect.left;
-          var cy = e.clientY - rect.top;
+          var cx = e.clientX - rect.left - rect.width / 2;
+          var cy = e.clientY - rect.top - rect.height / 2;
           imgEl._zoom = 2.5;
-          imgEl._panX = -(cx * 1.5);
-          imgEl._panY = -(cy * 1.5);
+          imgEl._panX = -cx * 1.5;
+          imgEl._panY = -cy * 1.5;
         }
         applyZoom(imgEl);
       };
@@ -3218,9 +3218,15 @@ function openFullscreen() {
     img.addEventListener('wheel', function(imgEl) {
       return function(e) {
         e.preventDefault();
+        var rect = imgEl.getBoundingClientRect();
+        var mx = e.clientX - rect.left - rect.width / 2;
+        var my = e.clientY - rect.top - rect.height / 2;
+        var oldZoom = imgEl._zoom;
         var delta = e.deltaY > 0 ? -0.3 : 0.3;
-        var newZoom = Math.min(Math.max(imgEl._zoom + delta, 1), 5);
-        if (newZoom === 1) { imgEl._panX = 0; imgEl._panY = 0; }
+        var newZoom = Math.min(Math.max(oldZoom + delta, 1), 5);
+        var ratio = newZoom / oldZoom;
+        imgEl._panX = mx - ratio * (mx - imgEl._panX);
+        imgEl._panY = my - ratio * (my - imgEl._panY);
         imgEl._zoom = newZoom;
         applyZoom(imgEl);
       };
@@ -3255,20 +3261,16 @@ function openFullscreen() {
             var oldZoom = imgEl._zoom;
             var scale = dist / imgEl._lastPinchDist;
             var newZoom = Math.min(Math.max(oldZoom * scale, 1), 5);
-            if (newZoom > 1) {
-              var ratio = newZoom / oldZoom;
-              imgEl._panX = cx - ratio * (cx - imgEl._panX);
-              imgEl._panY = cy - ratio * (cy - imgEl._panY);
-            } else {
-              imgEl._panX = 0;
-              imgEl._panY = 0;
-            }
+            var rect = imgEl.getBoundingClientRect();
+            var mx = cx - rect.left - rect.width / 2;
+            var my = cy - rect.top - rect.height / 2;
+            var ratio = newZoom / oldZoom;
+            imgEl._panX = mx - ratio * (mx - imgEl._panX);
+            imgEl._panY = my - ratio * (my - imgEl._panY);
             imgEl._zoom = newZoom;
             applyZoom(imgEl);
           }
           imgEl._lastPinchDist = dist;
-          imgEl._pinchCX = cx;
-          imgEl._pinchCY = cy;
         } else if (e.touches.length === 1 && imgEl._zoom > 1) {
           e.preventDefault();
           imgEl._dragging = true;
