@@ -2187,13 +2187,13 @@ function renderProducts() {
     var stockClass = totalAvail > 0 ? 'in-stock' : 'out-of-stock';
     var firstMedia = p.images?.[0] || 'images/products/placeholder.svg';
     var mediaHtml = isVideoUrl(firstMedia) ?
-      '<div class="product-image-wrap" style="aspect-ratio:5/4"><div class="product-image product-image-video"><span class="video-play-icon">▶</span></div></div>' :
-      '<div class="product-image-wrap" style="aspect-ratio:5/4"><span class="skeleton"></span><img class="product-image" src="' + firstMedia + '" alt="' + p.name + '" loading="lazy" style="object-fit:contain;height:100%" onload="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();" onerror="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}"></div>';
+      '<div class="product-image-wrap"><div class="product-image product-image-video"><span class="video-play-icon">▶</span></div></div>' :
+      '<div class="product-image-wrap"><span class="skeleton"></span><img class="product-image" src="' + firstMedia + '" alt="' + p.name + '" loading="lazy" onload="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();" onerror="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}"></div>';
     return '<div class="product-card" data-id="' + p.id + '">' +
       mediaHtml +
       '<button class="wishlist-btn' + (favorites.indexOf(p.id) !== -1 ? ' active' : '') + '" data-id="' + p.id + '" onclick="toggleFavorite(' + p.id + ', event)" title="Add to favorites">♥</button>' +
       '<button class="quick-view-btn" onclick="event.stopPropagation();openProduct(' + p.id + ')" title="Quick View">👁</button>' +
-      '<div class="product-info"' + (window.innerWidth <= 768 ? ' style="padding:0.25rem 0.5rem"' : '') + '>' +
+      '<div class="product-info">' +
       (p.category0 ? '<div class="product-group">' + p.category0 + '</div>' : '') +
       '<div class="product-category">' + p.category1 + '</div>' +
       brandHtml +
@@ -3938,7 +3938,7 @@ document.addEventListener('change', function(e) {
         renderVariantImagePreview(vi);
         input.value = '';
       }
-    }, [4, 3]);
+    });
   });
 });
 
@@ -4096,7 +4096,7 @@ if (fi) fi.addEventListener('change', e => {
       resizeImage(file, 800, 0.8, function(dataUrl) {
         selectedImagesData.push(dataUrl);
         renderImagePreview();
-      }, [4, 3]);
+      });
     }
   });
   e.target.value = '';
