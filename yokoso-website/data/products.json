@@ -980,7 +980,12 @@
       "D1"
     ],
     "images": [
-      "images/products/placeholder.svg"
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781957826/fmfh78jwtf6qzceqevug.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781957826/mdzohgsoc86u8j3eqzom.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781957826/mwtxhm2nzjow1llm4z8r.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781957826/bezaezfjdeji8xayvzcd.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781957826/fm66nw9glvuxkieo9uhs.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781957826/ert3ugwl1gtj0oukzioc.jpg"
     ],
     "sizes": [],
     "price": "₱750"
