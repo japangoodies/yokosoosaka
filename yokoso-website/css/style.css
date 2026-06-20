@@ -1936,6 +1936,9 @@ body {
   #liveModal #modalMediaContainer img {
     height: 50vh !important;
   }
+  #liveModal div[style*="padding:24px 32px 32px"] {
+    padding: 8px 16px 16px !important;
+  }
   #liveModal .modal-close-mobile {
     position: fixed !important;
     top: 12px !important;
