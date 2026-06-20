@@ -2927,13 +2927,6 @@ function openModal(product) {
       if (card) { card.style.maxWidth = '100%'; card.style.borderRadius = '0'; card.style.maxHeight = '100vh'; }
       var closeBtn = overlay.querySelector('button');
       if (closeBtn) closeBtn.classList.add('modal-close-mobile');
-      var flexCol = overlay.querySelector('[style*="flex-direction:column"]');
-      if (flexCol) {
-        var descDiv = flexCol.lastElementChild;
-        if (descDiv && descDiv.style.padding) {
-          descDiv.style.padding = '12px 16px 24px';
-        }
-      }
     }
     lockBody();
     try { history.pushState({modal: true}, '', '#modal'); } catch (e) {}
