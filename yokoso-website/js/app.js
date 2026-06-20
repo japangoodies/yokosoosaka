@@ -1265,7 +1265,7 @@ let categoriesConfig = migrateCategoriesConfig({
   },
   brands: ["Nike", "Uniqlo", "GU", "Biore", "Onitsuka Tiger", "Heroine Make", "Generic"],
   colors: ["Black", "White", "Navy", "Beige", "Gray"],
-  sizes: ["S", "M", "L", "XL", "6", "7", "8", "9", "10", "11", "12", "One Size", "Free Size"]
+  sizes: ["XS", "S", "M", "L", "XL", "6", "7", "8", "9", "10", "11", "12", "2XL", "3XL", "One Size", "Free Size"]
 });
 
 let currentGroup = 'all';
