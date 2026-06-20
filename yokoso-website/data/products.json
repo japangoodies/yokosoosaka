@@ -756,29 +756,30 @@
   },
   {
     "variants": {
-      "Default": {
-        "stock": {
-          "q": 7
-        }
+      "Black": {
+        "sizes": [],
+        "stock": {}
       }
     },
     "images": [
       "images/products/placeholder.svg"
     ],
     "available": true,
-    "name": "Gazelle (Made in Japan)",
+    "name": "GU LACED UP BALLET SNEAKER",
     "id": 24,
     "sizes": [],
     "stock": 7,
-    "category2": "Uniqlo",
-    "category0": "MENS",
+    "category2": "GU",
+    "category0": "WOMENS",
     "_colorOrder": [
-      "Default"
+      "Black"
     ],
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "price": "₱1316",
+    "description": "FOR AUGUST ETA\nPrice down!\nGU LACED UP BALLET SNEAKER\n🏷️ 850.00 pesos\n250 DP TO SECURE ITEM",
+    "price": "₱850",
     "color": "White",
-    "category1": "Clothing"
+    "category1": "Shoes",
+    "deposit": "₱250",
+    "originalPrice": "₱845"
   },
   {
     "category0": "MENS",
