@@ -636,7 +636,7 @@
       }
     },
     "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
-    "available": false,
+    "available": true,
     "_colorOrder": [
       "Default"
     ],
