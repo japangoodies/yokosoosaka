@@ -1930,7 +1930,10 @@ body {
     max-height: 100vh !important;
     border-radius: 0 !important;
   }
-  #liveModal #modalMainImg {
+  #liveModal #modalMediaContainer {
+    height: 50vh !important;
+  }
+  #liveModal #modalMediaContainer img {
     height: 50vh !important;
   }
   #liveModal .modal-close-mobile {

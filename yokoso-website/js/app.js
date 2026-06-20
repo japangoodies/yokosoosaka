@@ -2927,6 +2927,13 @@ function openModal(product) {
       if (card) { card.style.maxWidth = '100%'; card.style.borderRadius = '0'; card.style.maxHeight = '100vh'; }
       var closeBtn = overlay.querySelector('button');
       if (closeBtn) closeBtn.classList.add('modal-close-mobile');
+      var flexCol = overlay.querySelector('[style*="flex-direction:column"]');
+      if (flexCol) {
+        var descDiv = flexCol.lastElementChild;
+        if (descDiv && descDiv.style.padding) {
+          descDiv.style.padding = '12px 16px 24px';
+        }
+      }
     }
     lockBody();
     try { history.pushState({modal: true}, '', '#modal'); } catch (e) {}
@@ -3163,14 +3170,15 @@ function openFullscreen() {
   track.style.cssText = 'position:relative;width:100%;height:100%;display:flex;flex-direction:column;';
   var w = window.innerWidth;
   var h = window.innerHeight;
+  window._fsSlideH = h;
   var slides = [];
   for (var i = 0; i < currentModalImages.length; i++) {
     var slide = document.createElement('div');
-    slide.style.cssText = 'width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative;';
+    slide.style.cssText = 'width:100vw;height:' + h + 'px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;position:relative;';
     var img = document.createElement('img');
     img.dataset.src = currentModalImages[i];
     if (Math.abs(i - currentImageIndex) <= 1) img.src = currentModalImages[i];
-    img.style.cssText = 'max-width:100vw;max-height:100vh;object-fit:contain;user-select:none;';
+    img.style.cssText = 'max-width:100vw;max-height:' + h + 'px;object-fit:contain;user-select:none;';
     slides.push(img);
     slide.appendChild(img);
     track.appendChild(slide);
@@ -3369,7 +3377,7 @@ function loadSlideImages(idx) {
     currentImageIndex = next;
     updateCounter();
     loadSlideImages(next);
-    var h = window.innerHeight;
+    var h = window._fsSlideH || window.innerHeight;
     var tr = getFullscreenTrack();
     if (!tr) return;
     tr.style.transition = 'transform 0.3s ease';
@@ -3395,7 +3403,7 @@ function loadSlideImages(idx) {
     var t = e.touches[0];
     if (!t) return;
     var dy = t.clientY - startY;
-    var h = window.innerHeight;
+    var h = window._fsSlideH || window.innerHeight;
     dragOffset = dy;
     var tr = getFullscreenTrack();
     if (!tr) return;
@@ -3414,7 +3422,7 @@ function loadSlideImages(idx) {
     if (Math.abs(dragOffset) > 50) {
       nav(dragOffset < 0 ? 1 : -1);
     } else {
-      var h = window.innerHeight;
+      var h = window._fsSlideH || window.innerHeight;
       var tr = getFullscreenTrack();
       if (!tr) return;
       tr.style.transition = 'transform 0.3s ease';
