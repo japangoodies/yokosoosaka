@@ -2,12 +2,10 @@
   "cloudinaryCloudName": "dvpfyxknb",
   "cloudinaryUploadPreset": "japangoodies",
   "sizes": [
+    "XS",
     "S",
     "M",
-    "L",
-    "XL",
-    "2XL",
-    "3XL"
+    "L"
   ],
   "subcategoryBrands": {
     "Shoes": [
