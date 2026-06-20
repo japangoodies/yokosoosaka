@@ -2193,7 +2193,7 @@ function renderProducts() {
       mediaHtml +
       '<button class="wishlist-btn' + (favorites.indexOf(p.id) !== -1 ? ' active' : '') + '" data-id="' + p.id + '" onclick="toggleFavorite(' + p.id + ', event)" title="Add to favorites">♥</button>' +
       '<button class="quick-view-btn" onclick="event.stopPropagation();openProduct(' + p.id + ')" title="Quick View">👁</button>' +
-      '<div class="product-info">' +
+      '<div class="product-info"' + (window.innerWidth <= 768 ? ' style="padding:0.25rem 0.5rem"' : '') + '>' +
       (p.category0 ? '<div class="product-group">' + p.category0 + '</div>' : '') +
       '<div class="product-category">' + p.category1 + '</div>' +
       brandHtml +
