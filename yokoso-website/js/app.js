@@ -1265,7 +1265,7 @@ let categoriesConfig = migrateCategoriesConfig({
   },
   brands: ["Nike", "Uniqlo", "GU", "Biore", "Onitsuka Tiger", "Heroine Make", "Generic"],
   colors: ["Black", "White", "Navy", "Beige", "Gray"],
-  sizes: ["XS", "S", "M", "L", "XL", "6", "7", "8", "9", "10", "11", "12", "2XL", "3XL", "One Size", "Free Size"]
+  sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "5", "5.5", "6", "6.5", "7", "7.5", "8", "8.5", "9", "9.5", "10", "10.5", "11", "11.5", "12", "One Size", "Free Size"]
 });
 
 let currentGroup = 'all';
@@ -1311,14 +1311,19 @@ function getVariantColors(product) {
   return Object.keys(product.variants || {});
 }
 
-var SIZE_ORDER = ["XS","S","M","L","XL","2XL","3XL","6","7","8","9","10","11","12","One Size","Free Size"];
+var ALPHA_SIZE_ORDER = ["XS","S","M","L","XL","2XL","3XL","One Size","Free Size"];
 function getVariantSizes(product, color) {
   var v = getVariant(product, color);
   var sizes = v ? (v.sizes || []) : [];
-  var orderIndex = {};
-  SIZE_ORDER.forEach(function(s, i) { orderIndex[s] = i; });
   return sizes.slice().sort(function(a, b) {
-    return (orderIndex[a] !== undefined ? orderIndex[a] : 999) - (orderIndex[b] !== undefined ? orderIndex[b] : 999);
+    var aIsNum = /^\d+(\.\d+)?$/.test(a);
+    var bIsNum = /^\d+(\.\d+)?$/.test(b);
+    if (aIsNum && bIsNum) return parseFloat(a) - parseFloat(b);
+    if (aIsNum) return 1;
+    if (bIsNum) return -1;
+    var ai = ALPHA_SIZE_ORDER.indexOf(a);
+    var bi = ALPHA_SIZE_ORDER.indexOf(b);
+    return (ai !== -1 ? ai : 999) - (bi !== -1 ? bi : 999);
   });
 }
 
