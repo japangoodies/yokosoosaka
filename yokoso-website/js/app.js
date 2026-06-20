@@ -4018,8 +4018,11 @@ function renderImagePreview() {
   }
   container.innerHTML = selectedImagesData.map((src, i) => {
     var isVideo = isVideoUrl(src);
-    return `<div class="image-wrapper">
+    var isMain = i === 0;
+    return `<div class="image-wrapper" style="${isMain ? 'border:2px solid #d32f2f;border-radius:4px' : ''}">
+      ${isMain ? '<span style="position:absolute;top:2px;left:2px;background:#d32f2f;color:#fff;font-size:11px;padding:1px 6px;border-radius:3px;z-index:2">Main</span>' : ''}
       ${isVideo ? '<video src="' + src + '" muted preload="metadata"></video><span class="video-play-icon">▶</span>' : '<img src="' + src + '">'}
+      <button type="button" class="set-main-image" data-index="${i}" style="${isMain ? 'display:none' : ''}" title="Set as main picture">☆</button>
       <button type="button" class="remove-image" data-index="${i}">×</button>
     </div>`;
   }).join('');
@@ -4027,6 +4030,15 @@ function renderImagePreview() {
     btn.addEventListener('click', () => {
       const idx = parseInt(btn.dataset.index);
       selectedImagesData.splice(idx, 1);
+      renderImagePreview();
+    });
+  });
+  container.querySelectorAll('.set-main-image').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.index);
+      if (idx === 0) return;
+      var item = selectedImagesData.splice(idx, 1)[0];
+      selectedImagesData.unshift(item);
       renderImagePreview();
     });
   });
