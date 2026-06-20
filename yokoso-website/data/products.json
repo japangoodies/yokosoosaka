@@ -492,28 +492,41 @@
   {
     "available": true,
     "variants": {
-      "Default": {
+      "BLUE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "XL",
+          "2XL"
+        ],
         "stock": {
-          "q": 36
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "XL": 5,
+          "2XL": 5
         }
       }
     },
-    "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item.",
+    "description": "FOR AUGUST ETA\nPrice down!\nGU MESH GATHER BALLET SNEAKER\nRed and Black lang po avail colors\nSizes avail: 5-8.5\nNasa caption po size ref\n🏷️ 995.00 pesos\n250 DP TO SECURE ITEM",
     "id": 21,
     "color": "White",
     "_colorOrder": [
-      "Default"
+      "BLUE"
     ],
-    "price": "₱965",
-    "name": "Ultraboost 22",
+    "price": "₱995",
+    "name": "GU MESH GATHER BALLET SNEAKER",
     "sizes": [],
     "images": [
       "images/products/placeholder.svg"
     ],
-    "category0": "MENS",
+    "category0": "WOMENS",
     "stock": 36,
-    "category1": "Clothing",
-    "category2": "Supreme"
+    "category1": "Shoes",
+    "category2": "GU",
+    "deposit": "₱250",
+    "originalPrice": "₱990"
   },
   {
     "sizes": [],
