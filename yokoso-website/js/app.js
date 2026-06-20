@@ -3937,7 +3937,7 @@ document.addEventListener('change', function(e) {
         renderVariantImagePreview(vi);
         input.value = '';
       }
-    });
+    }, [4, 3]);
   });
 });
 
@@ -4036,12 +4036,23 @@ if (aib) aib.addEventListener('click', () => {
   document.getElementById('formImage').click();
 });
 
-function resizeImage(file, maxW, maxQ, cb) {
+function resizeImage(file, maxW, maxQ, cb, aspectRatio) {
   const reader = new FileReader();
   reader.onload = function(ev) {
     const img = new Image();
     img.onload = function() {
-      let w = img.width, h = img.height;
+      let sx = 0, sy = 0, sw = img.width, sh = img.height;
+      if (aspectRatio) {
+        var target = aspectRatio[0] / aspectRatio[1];
+        if (sw / sh > target) {
+          sw = Math.round(sh * target);
+          sx = Math.round((img.width - sw) / 2);
+        } else {
+          sh = Math.round(sw / target);
+          sy = Math.round((img.height - sh) / 2);
+        }
+      }
+      let w = sw, h = sh;
       if (w > maxW || h > maxW) {
         const ratio = Math.min(maxW / w, maxW / h);
         w = Math.round(w * ratio);
@@ -4053,7 +4064,7 @@ function resizeImage(file, maxW, maxQ, cb) {
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, w, h);
-      ctx.drawImage(img, 0, 0, w, h);
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
       cb(canvas.toDataURL('image/jpeg', maxQ));
     };
     img.onerror = function() {
@@ -4084,7 +4095,7 @@ if (fi) fi.addEventListener('change', e => {
       resizeImage(file, 800, 0.8, function(dataUrl) {
         selectedImagesData.push(dataUrl);
         renderImagePreview();
-      });
+      }, [4, 3]);
     }
   });
   e.target.value = '';
