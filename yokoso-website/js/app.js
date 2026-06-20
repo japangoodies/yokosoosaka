@@ -1311,18 +1311,15 @@ function getVariantColors(product) {
   return Object.keys(product.variants || {});
 }
 
+var SIZE_ORDER = ["XS","S","M","L","XL","2XL","3XL","6","7","8","9","10","11","12","One Size","Free Size"];
 function getVariantSizes(product, color) {
   var v = getVariant(product, color);
   var sizes = v ? (v.sizes || []) : [];
-  var order = categoriesConfig.sizes || [];
-  if (order.length > 0) {
-    var orderIndex = {};
-    order.forEach(function(s, i) { orderIndex[s] = i; });
-    sizes = sizes.slice().sort(function(a, b) {
-      return (orderIndex[a] !== undefined ? orderIndex[a] : 999) - (orderIndex[b] !== undefined ? orderIndex[b] : 999);
-    });
-  }
-  return sizes;
+  var orderIndex = {};
+  SIZE_ORDER.forEach(function(s, i) { orderIndex[s] = i; });
+  return sizes.slice().sort(function(a, b) {
+    return (orderIndex[a] !== undefined ? orderIndex[a] : 999) - (orderIndex[b] !== undefined ? orderIndex[b] : 999);
+  });
 }
 
 function getVariantStock(product, color, size) {
