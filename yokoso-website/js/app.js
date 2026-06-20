@@ -1313,7 +1313,16 @@ function getVariantColors(product) {
 
 function getVariantSizes(product, color) {
   var v = getVariant(product, color);
-  return v ? (v.sizes || []) : [];
+  var sizes = v ? (v.sizes || []) : [];
+  var order = categoriesConfig.sizes || [];
+  if (order.length > 0) {
+    var orderIndex = {};
+    order.forEach(function(s, i) { orderIndex[s] = i; });
+    sizes = sizes.slice().sort(function(a, b) {
+      return (orderIndex[a] !== undefined ? orderIndex[a] : 999) - (orderIndex[b] !== undefined ? orderIndex[b] : 999);
+    });
+  }
+  return sizes;
 }
 
 function getVariantStock(product, color, size) {
