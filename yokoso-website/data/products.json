@@ -909,27 +909,28 @@
     "images": [
       "images/products/placeholder.svg"
     ],
-    "category2": "Shiseido",
+    "category2": "Uniqlo",
     "variants": {
-      "Default": {
-        "stock": {
-          "q": 21
-        }
+      "BLACK": {
+        "sizes": [],
+        "stock": {}
       }
     },
-    "category1": "Cosmetics",
+    "category1": "Clothing",
     "id": 26,
     "category0": "WOMENS",
     "stock": 21,
     "color": "",
     "_colorOrder": [
-      "Default"
+      "BLACK"
     ],
     "sizes": [],
     "available": true,
-    "name": "550 (Japan Exclusive)",
-    "price": "₱1550",
-    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item."
+    "name": "UNIQLO WASHABLE KNIT POLO SHIRT",
+    "price": "₱980",
+    "description": "FOR AUGUST ETA\nFlash sale!\nUNIQLO WASHABLE KNIT POLO SHIRT\n🏷️ 980.00 pesos\n250 DP TO SECURE ITEM",
+    "deposit": "₱250",
+    "originalPrice": "₱975"
   },
   {
     "variants": {
