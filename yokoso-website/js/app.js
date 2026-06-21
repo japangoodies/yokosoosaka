@@ -2888,7 +2888,7 @@ function openModal(product) {
         if (isDesignProduct) {
           var isActive = c === firstColor;
           return '<div style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer" onclick="selectModalColor(this,\'' + c.replace(/'/g, "\\'") + '\')">' +
-            '<button class="modal-color-btn' + (isActive ? ' modal-color-active' : '') + '" data-color="' + c + '" style="background:#f0f0f0;border:' + (isActive ? '2px solid #e94560' : '1px solid #ddd') + ';border-radius:6px;padding:4px 10px;font-size:0.75rem;color:#333;cursor:pointer;font-weight:' + (isActive ? '600' : '400') + '">' + c + '</button>' +
+            '<button class="modal-color-btn' + (isActive ? ' modal-color-active' : '') + '" data-color="' + c + '" style="background:#f0f0f0;border:' + (isActive ? '2px solid #e94560' : '1px solid #ddd') + ';border-radius:6px;padding:4px 10px;font-size:0.75rem;color:#333;cursor:pointer;font-weight:' + (isActive ? '600' : '400') + ';width:auto;overflow:visible">' + c + '</button>' +
             '</div>';
         }
         var bgStyle = colorBtnBg(c);
