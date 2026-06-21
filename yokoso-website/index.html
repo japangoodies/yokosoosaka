@@ -218,16 +218,20 @@
                 </div>
               </div>
               <div class="form-group">
-                <label>Color Variants</label>
+                <label>Variants <select id="formVariantMode" style="font-size:0.7rem;padding:1px 4px;border-radius:4px;border:1px solid #ddd;font-weight:400;vertical-align:middle">
+                  <option value="color">Color</option>
+                  <option value="design">Design</option>
+                </select></label>
                 <div id="formVariantsContainer">
                   <div class="variant-row" data-vi="0">
-                    <select class="form-variant-color" required>
+                    <select class="form-variant-color">
                       <option value="">Select color...</option>
                     </select>
+                    <input type="text" class="form-variant-design" style="display:none" placeholder="e.g. D1">
                     <button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:none">×</button>
                   </div>
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm" id="addVariantBtn" style="margin-top:6px">+ Add Color Variant</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="addVariantBtn" style="margin-top:6px">+ Add Variant</button>
               </div>
               <div class="form-row">
                 <div class="form-group">

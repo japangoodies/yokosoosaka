@@ -1257,11 +1257,13 @@ function migrateCategoriesConfig(cfg) {
 let categoriesConfig = migrateCategoriesConfig({
   groups: [
     { name: "MENS", images: [] },
-    { name: "WOMENS", images: [] }
+    { name: "WOMENS", images: [] },
+    { name: "DESIGN", images: [] }
   ],
   subcategoryMap: {
     "MENS": ["Shoes", "Clothing"],
-    "WOMENS": ["Shoes", "Clothing", "Cosmetics"]
+    "WOMENS": ["Shoes", "Clothing", "Cosmetics"],
+    "DESIGN": ["Clothing", "Accessories"]
   },
   brands: ["Nike", "Uniqlo", "GU", "Biore", "Onitsuka Tiger", "Heroine Make", "Generic"],
   colors: ["Black", "White", "Navy", "Beige", "Gray"],
@@ -1662,6 +1664,22 @@ function loadCategories() {
             if (!fetched.brandLogos) fetched.brandLogos = {};
             Object.keys(parsed.brandLogos).forEach(function(b) {
               if (!fetched.brandLogos[b]) fetched.brandLogos[b] = parsed.brandLogos[b];
+            });
+          }
+          // Merge colors, sizes, brands from localStorage (user may have added custom labels)
+          if (parsed.colors) {
+            parsed.colors.forEach(function(c) {
+              if (fetched.colors.indexOf(c) === -1) fetched.colors.push(c);
+            });
+          }
+          if (parsed.sizes) {
+            parsed.sizes.forEach(function(s) {
+              if (fetched.sizes.indexOf(s) === -1) fetched.sizes.push(s);
+            });
+          }
+          if (parsed.brands) {
+            parsed.brands.forEach(function(b) {
+              if (fetched.brands.indexOf(b) === -1) fetched.brands.push(b);
             });
           }
           categoriesConfig = migrateCategoriesConfig(fetched);
@@ -2865,7 +2883,14 @@ function openModal(product) {
     // Color picker
     var colorPickerHtml = '';
     if (variantColors.length > 1 || (variantColors.length === 1 && variantColors[0] !== 'Default')) {
+      var isDesignProduct = (categoriesConfig.colors || []).every(function(col) { return variantColors.indexOf(col) === -1; });
       colorPickerHtml = '<div style="display:flex;flex-wrap:wrap;gap:10px 6px;margin-bottom:12px" id="modalColorContainer">' + variantColors.map(function(c) {
+        if (isDesignProduct) {
+          var isActive = c === firstColor;
+          return '<div style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer" onclick="selectModalColor(this,\'' + c.replace(/'/g, "\\'") + '\')">' +
+            '<button class="modal-color-btn' + (isActive ? ' modal-color-active' : '') + '" data-color="' + c + '" style="background:#f0f0f0;border:' + (isActive ? '2px solid #e94560' : '1px solid #ddd') + ';border-radius:6px;padding:4px 10px;font-size:0.75rem;color:#333;cursor:pointer;font-weight:' + (isActive ? '600' : '400') + '">' + c + '</button>' +
+            '</div>';
+        }
         var bgStyle = colorBtnBg(c);
         var isActive = c === firstColor;
         var circleBorder = isActive ? '1.5px solid #e94560' : '1.5px solid rgba(0,0,0,0.2)';
@@ -3727,6 +3752,32 @@ function renderVariantsEditor() {
     var rmBtn = r.querySelector('.variant-remove-btn');
     if (rmBtn) rmBtn.style.display = rows.length > 1 ? 'inline-block' : 'none';
   });
+  var modeEl = document.getElementById('formVariantMode');
+  if (modeEl) applyVariantMode(modeEl.value);
+}
+
+function applyVariantMode(mode) {
+  var container = document.getElementById('formVariantsContainer');
+  if (!container) return;
+  container.querySelectorAll('.variant-row').forEach(function(r) {
+    var sel = r.querySelector('.form-variant-color');
+    var inp = r.querySelector('.form-variant-design');
+    if (!sel || !inp) return;
+    if (mode === 'design') {
+      sel.style.display = 'none';
+      inp.style.display = 'inline-block';
+      inp.style.width = '140px';
+      inp.style.padding = '4px 6px';
+      inp.style.border = '1px solid #ddd';
+      inp.style.borderRadius = '4px';
+      inp.style.fontSize = '0.8rem';
+      var cur = sel.value;
+      if (cur && !inp.value) inp.value = cur;
+    } else {
+      sel.style.display = 'inline-block';
+      inp.style.display = 'none';
+    }
+  });
 }
 
 function resetForm() {
@@ -3747,7 +3798,7 @@ function resetForm() {
     var sizesHtml = allSizes.map(function(s) {
       return '<label class="vs-row" style="display:inline-flex;align-items:center;gap:4px;margin:2px 6px 2px 0;font-size:0.8rem;white-space:nowrap"><input type="checkbox" class="vs-size" value="' + s + '"> ' + s + ' <input type="number" class="vs-stock" value="5" min="0" style="width:40px;padding:2px 4px;border:1px solid #ddd;border-radius:4px;font-size:0.75rem"></label>';
     }).join('');
-    container.innerHTML = '<div class="variant-row" data-vi="0"><select class="form-variant-color" required><option value="">Select color...</option></select><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:none">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this color:</label><div class="variant-image-preview" data-vi="0"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
+    container.innerHTML = '<div class="variant-row" data-vi="0"><select class="form-variant-color"><option value="">Select color...</option></select><input type="text" class="form-variant-design" style="display:none" placeholder="e.g. D1"><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:none">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this variant:</label><div class="variant-image-preview" data-vi="0"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
   }
   renderVariantsEditor();
 }
@@ -3776,7 +3827,7 @@ function populateForm(product) {
         var stockVal = v.stock && v.stock[s] !== undefined ? v.stock[s] : 5;
         return '<label class="vs-row" style="display:inline-flex;align-items:center;gap:4px;margin:2px 6px 2px 0;font-size:0.8rem;white-space:nowrap"><input type="checkbox" class="vs-size" value="' + s + '"' + checked + '> ' + s + ' <input type="number" class="vs-stock" value="' + stockVal + '" min="0" style="width:40px;padding:2px 4px;border:1px solid #ddd;border-radius:4px;font-size:0.75rem"></label>';
       }).join('');
-      return '<div class="variant-row" data-vi="' + i + '"><select class="form-variant-color" required><option value="">Select color...</option></select><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:' + (colors.length > 1 ? 'inline-block' : 'none') + '">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this color:</label><div class="variant-image-preview" data-vi="' + i + '"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
+      return '<div class="variant-row" data-vi="' + i + '"><select class="form-variant-color"><option value="">Select color...</option></select><input type="text" class="form-variant-design" style="display:none" placeholder="e.g. D1"><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:' + (colors.length > 1 ? 'inline-block' : 'none') + '">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this variant:</label><div class="variant-image-preview" data-vi="' + i + '"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
     }).join('');
     // Load per-variant images
     colors.forEach(function(c, i) {
@@ -3784,13 +3835,23 @@ function populateForm(product) {
       variantImagesData[i] = (v.images || []).slice();
     });
     renderVariantsEditor();
-    // Now set selected color values
+    // Now set selected color/design values
+    var anyDesign = false;
     container.querySelectorAll('.variant-row').forEach(function(r, i) {
       if (i < colors.length) {
         var sel = r.querySelector('.form-variant-color');
         if (sel) sel.value = colors[i];
+        var inp = r.querySelector('.form-variant-design');
+        if (inp) inp.value = colors[i];
+        if (categoriesConfig.colors.indexOf(colors[i]) === -1) anyDesign = true;
       }
     });
+    // Auto-detect mode: if any variant key is not a standard color, switch to design
+    var modeEl = document.getElementById('formVariantMode');
+    if (modeEl) {
+      modeEl.value = anyDesign ? 'design' : 'color';
+      applyVariantMode(modeEl.value);
+    }
   }
   document.getElementById('formPrice').value = product.price;
   var origEl = document.getElementById('formOriginalPrice');
@@ -3834,13 +3895,22 @@ if (pf) pf.addEventListener('submit', function(e) {
   if (!name || !category0 || !category1 || !category2 || !price || !description) return;
 
   // Build variants from editor
+  var modeEl = document.getElementById('formVariantMode');
+  var isDesign = modeEl && modeEl.value === 'design';
   var variants = {};
   var container = document.getElementById('formVariantsContainer');
   if (container) {
     container.querySelectorAll('.variant-row').forEach(function(r) {
-      var sel = r.querySelector('.form-variant-color');
-      if (!sel || !sel.value) return;
-      var color = sel.value;
+      var label;
+      if (isDesign) {
+        var inp = r.querySelector('.form-variant-design');
+        if (!inp || !inp.value.trim()) return;
+        label = inp.value.trim();
+      } else {
+        var sel = r.querySelector('.form-variant-color');
+        if (!sel || !sel.value) return;
+        label = sel.value;
+      }
       var stock = {};
       var sizes = [];
       r.querySelectorAll('.vs-row').forEach(function(sr) {
@@ -3853,15 +3923,20 @@ if (pf) pf.addEventListener('submit', function(e) {
       });
       var vi = r.dataset.vi;
       var vImages = variantImagesData[vi] || [];
-      variants[color] = { sizes: sizes, stock: stock };
-      if (vImages.length > 0) variants[color].images = vImages;
+      variants[label] = { sizes: sizes, stock: stock };
+      if (vImages.length > 0) variants[label].images = vImages;
     });
   }
-  if (Object.keys(variants).length === 0) { showToast('Please add at least one color variant.', 'error'); return; }
+  if (Object.keys(variants).length === 0) { showToast('Please add at least one variant.', 'error'); return; }
   var colorOrder = [];
   container.querySelectorAll('.variant-row').forEach(function(r) {
-    var sel = r.querySelector('.form-variant-color');
-    if (sel && sel.value && variants[sel.value]) colorOrder.push(sel.value);
+    if (isDesign) {
+      var inp = r.querySelector('.form-variant-design');
+      if (inp && inp.value.trim() && variants[inp.value.trim()]) colorOrder.push(inp.value.trim());
+    } else {
+      var sel = r.querySelector('.form-variant-color');
+      if (sel && sel.value && variants[sel.value]) colorOrder.push(sel.value);
+    }
   });
 
   var submitBtn = document.getElementById('formSubmitBtn');
@@ -3906,6 +3981,7 @@ if (pf) pf.addEventListener('submit', function(e) {
       }
     }
     saveProducts();
+    console.log('Form submit: saved product id ' + savedId + ', products count: ' + products.length);
     resetForm();
     renderAdminList();
     renderFilters();
@@ -3966,7 +4042,7 @@ if (avb) avb.addEventListener('click', function() {
   var div = document.createElement('div');
   div.className = 'variant-row';
   div.dataset.vi = idx;
-  div.innerHTML = '<select class="form-variant-color" required><option value="">Select color...</option></select><button type="button" class="btn btn-danger btn-sm variant-remove-btn">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this color:</label><div class="variant-image-preview" data-vi="' + idx + '"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
+  div.innerHTML = '<select class="form-variant-color"><option value="">Select color...</option></select><input type="text" class="form-variant-design" style="display:none" placeholder="e.g. D1"><button type="button" class="btn btn-danger btn-sm variant-remove-btn">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this variant:</label><div class="variant-image-preview" data-vi="' + idx + '"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
   container.appendChild(div);
   variantImagesData[idx] = [];
   renderVariantsEditor();
@@ -4018,6 +4094,13 @@ var fc1 = document.getElementById('formCategory1');
 if (fc1) {
   fc1.addEventListener('change', function() {
     updateBrandDropdown();
+  });
+}
+
+var fvm = document.getElementById('formVariantMode');
+if (fvm) {
+  fvm.addEventListener('change', function() {
+    applyVariantMode(this.value);
   });
 }
 
