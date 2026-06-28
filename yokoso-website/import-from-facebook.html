@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Import from Facebook</title>
+<style>
+  body{font-family:sans-serif;padding:20px;max-width:600px;margin:40px auto;text-align:center}
+  .step{background:#e3f2fd;border-radius:8px;padding:16px;margin:12px 0;text-align:left;font-size:14px}
+  .step-num{display:inline-block;background:#1976d2;color:#fff;border-radius:50%;width:24px;height:24px;text-align:center;line-height:24px;font-size:13px;font-weight:bold;margin-right:8px}
+  code{background:#f5f5f5;padding:2px 6px;border-radius:3px;font-size:13px;border:1px solid #ddd}
+  .bookmarklet-btn{display:inline-block;padding:12px 24px;background:#1976d2;color:#fff;text-decoration:none;border-radius:6px;font-size:15px;font-weight:bold;cursor:move;border:2px dashed rgba(255,255,255,0.5)}
+  .bookmarklet-btn:hover{background:#1565c0}
+  .note{background:#fff8e1;border:1px solid #ffc107;border-radius:6px;padding:12px;margin:12px 0;font-size:13px;color:#856404;text-align:left}
+  .success{background:#e8f5e9;border:1px solid #4caf50;border-radius:6px;padding:16px;margin:12px 0;display:none}
+  .btn{display:inline-block;padding:8px 20px;background:#1976d2;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:14px;text-decoration:none;margin:4px}
+  .btn:hover{background:#1565c0}
+</style>
+</head>
+<body>
+  <h2>📦 Import from Facebook</h2>
+  <p style="color:#666;font-size:14px">One-click import products from your Facebook posts.</p>
+
+  <div style="background:#e8f5e9;border:1px solid #4caf50;border-radius:6px;padding:16px;margin:16px 0;text-align:left">
+    <strong style="color:#2e7d32;font-size:15px">✅ Data received!</strong>
+    <div id="receivedInfo" style="margin-top:8px;font-size:13px;color:#333"></div>
+    <a href="/" class="btn" style="margin-top:12px;display:inline-block" id="goToImportBtn">Go to Admin → Smart Import</a>
+  </div>
+
+  <div class="note" id="setupInstructions">
+    <strong>Setup — 30 seconds:</strong>
+    <ol style="margin:8px 0 0 12px;padding:0">
+      <li style="margin-bottom:6px">Drag the button below to your <strong>bookmarks bar</strong></li>
+      <li style="margin-bottom:6px">Go to any <strong>Facebook product post</strong></li>
+      <li style="margin-bottom:6px">Click the bookmarklet → automatically opens import here</li>
+    </ol>
+  </div>
+
+  <div style="margin:20px 0">
+    <p style="font-size:13px;color:#666;margin-bottom:8px">★ Drag this to your bookmarks bar:</p>
+    <a id="bookmarkletLink" class="bookmarklet-btn" href="">📥 Import to JapanGoodies</a>
+  </div>
+
+  <div style="margin-top:24px;padding-top:16px;border-top:1px solid #eee;font-size:12px;color:#888">
+    <p>Or paste this as the URL of a new bookmark:</p>
+    <code id="bookmarkletCode" style="display:block;padding:8px;margin-top:4px;word-break:break-all;font-size:11px;line-height:1.5;max-height:120px;overflow:auto"></code>
+  </div>
+
+<script>
+(function() {
+  var baseUrl = location.protocol + '//' + location.host;
+
+  // The bookmarklet JS (must be self-contained, no external deps)
+  var bookmarkletFn = [
+    '(function(){',
+    'var d=document;',
+    'var post=d.querySelector(\'[role="article"]\')||d.querySelector(\'.userContentWrapper\')||d.querySelector(\'[data-pagelet="FeedUnit"]\');',
+    'var caption=post?post.innerText||post.textContent:d.body.innerText;',
+    'var imgs=[];',
+    'd.querySelectorAll(\'img[src*="fbcdn"],img[src*="scontent"]\').forEach(function(i){',
+    '  var s=i.src||i.getAttribute(\'data-src\')||\'\';',
+    '  if(s&&imgs.indexOf(s)===-1){imgs.push(s);}',
+    '});',
+    'if(imgs.length===0){',
+    '  d.querySelectorAll(\'a[href*="fbid"] img\').forEach(function(i){',
+    '    var s=i.src||i.getAttribute(\'data-src\')||\'\';',
+    '    if(s&&imgs.indexOf(s)===-1){imgs.push(s);}',
+    '  });',
+    '}',
+    'var data=JSON.stringify({caption:caption,images:imgs,url:location.href});',
+    'window.open("' + baseUrl + '/import-from-facebook#" + encodeURIComponent(data),"yokoso_import");',
+    '})();'
+  ].join('');
+
+  var bookmarkletHref = 'javascript:' + encodeURIComponent(bookmarkletFn).replace(/%[A-F0-9]{2}/g, function(m) {
+    var c = String.fromCharCode(parseInt(m.substring(1), 16));
+    return /[a-zA-Z0-9:%_]/.test(c) ? c : m;
+  });
+
+  var link = document.getElementById('bookmarkletLink');
+  link.href = bookmarkletHref;
+
+  var codeEl = document.getElementById('bookmarkletCode');
+  codeEl.textContent = bookmarkletHref.substring(0, 300) + '...';
+
+  // Check if we received data from bookmarklet
+  var hash = location.hash.substring(1);
+  if (hash) {
+    try {
+      var data = JSON.parse(decodeURIComponent(hash));
+      var info = document.getElementById('receivedInfo');
+      info.innerHTML =
+        '<div><strong>Caption:</strong> ' + (data.caption || '').substring(0, 100) + '...</div>' +
+        '<div><strong>Images:</strong> ' + (data.images || []).length + ' found</div>' +
+        '<div><strong>Post URL:</strong> <a href="' + (data.url || '#') + '" target="_blank" style="color:#1976d2">' + (data.url || '').substring(0, 60) + '...</a></div>';
+
+      // Save to localStorage for the main site to pick up
+      localStorage.setItem('yokoso_import_caption', data.caption || '');
+      localStorage.setItem('yokoso_import_images', JSON.stringify(data.images || []));
+      localStorage.setItem('yokoso_import_url', data.url || '');
+
+      document.getElementById('setupInstructions').style.display = 'none';
+      document.getElementById('goToImportBtn').style.display = 'inline-block';
+    } catch(e) {
+      document.getElementById('receivedInfo').innerHTML = '<span style="color:#f44336">Error parsing data: ' + e.message + '</span>';
+    }
+  } else {
+    document.getElementById('goToImportBtn').style.display = 'none';
+    // Clear any stale data
+    localStorage.removeItem('yokoso_import_caption');
+    localStorage.removeItem('yokoso_import_images');
+    localStorage.removeItem('yokoso_import_url');
+  }
+})();
+</script>
+</body>
+</html>
