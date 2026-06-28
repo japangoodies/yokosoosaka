@@ -104,19 +104,21 @@
   var bookmarkletFn = [
     '(function(){',
     'var d=document,w=window;',
+    'var art=d.querySelector(\'[role="article"]\')||d.body;',
+    'var c=art.cloneNode(!0);',
+    'try{c.querySelectorAll(\'[role="article"]\').forEach(function(e){e.remove()});}catch(e){}',
+    'var caption=(c.innerText||\'\').trim();',
+    'if(!caption)caption=(d.body.innerText||\'\').trim();',
     'var imgs=[],seen={};',
-    'try{d.querySelectorAll(\'img\').forEach(function(i){',
+    'c.querySelectorAll(\'img\').forEach(function(i){',
     '  var s=i.src||i.getAttribute(\'data-src\')||\'\';',
     '  if(!s||seen[s])return;',
     '  if(s.indexOf(\'fbcdn\')===-1&&s.indexOf(\'scontent\')===-1)return;',
+    '  if(i.width&&i.width<50)return;',
     '  seen[s]=1;imgs.push(s);',
-    '})}catch(e){}',
-    'var msg="Images found: "+imgs.length+"\\nPost: "+location.href;',
-    'if(imgs.length===0)msg+="\\n\\nNo product images found. Try clicking the post first to open it.";',
-    'var data=JSON.stringify({images:imgs,url:location.href});',
-    'var tab=w.open("","yokoso_import");',
-    'if(!tab||tab.closed){w.open("' + baseUrl + '/import-from-facebook#" + encodeURIComponent(data),"yokoso_import");}',
-    'else{tab.location="' + baseUrl + '/import-from-facebook#" + encodeURIComponent(data);tab.focus();}',
+    '});',
+    'var data=JSON.stringify({caption:caption,images:imgs,url:location.href});',
+    'w.open("' + baseUrl + '/import-from-facebook#" + encodeURIComponent(data),"yokoso_import");',
     '})();'
   ].join('');
 
@@ -151,9 +153,13 @@
     var url = data.url || '';
     var msg = data.msg || '';
 
-    // Show clipboard instructions
+    // Show clipboard instructions (hide if caption was auto-extracted)
     var msgEl = document.getElementById('clipboardMsg');
-    msgEl.style.display = 'block';
+    if (caption) {
+      msgEl.style.display = 'none';
+    } else {
+      msgEl.style.display = 'block';
+    }
 
     // Show post URL
     document.getElementById('importPostUrl').textContent = url;
