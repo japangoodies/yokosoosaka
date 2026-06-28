@@ -22,164 +22,202 @@
   .btn-sm{padding:4px 10px;font-size:12px}
   .box{border:1px solid #ddd;border-radius:6px;padding:14px;margin-bottom:14px}
   .box-title{font-size:12px;font-weight:600;color:#888;margin-bottom:6px;text-transform:uppercase}
+  .code-box{background:#1e1e1e;color:#d4d4d4;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;line-height:1.5;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin:8px 0}
+  .hl{color:#569cd6}
+  .hl2{color:#ce9178}
+  .hl3{color:#6a9955}
   .bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-  .pill{display:inline-block;background:#e3f2fd;color:#1565c0;border-radius:12px;padding:2px 10px;font-size:12px}
   .setup-box{background:#fff8e1;border:1px solid #ffc107;border-radius:6px;padding:14px;margin-bottom:14px;font-size:13px}
   .setup-box ol{margin:6px 0 0 16px;padding:0}
   .setup-box li{margin-bottom:4px}
-  .bookmarklet-btn{display:inline-block;padding:10px 20px;background:#1976d2;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:bold;cursor:move;border:2px dashed rgba(255,255,255,0.5)}
-  .bookmarklet-btn:hover{background:#1565c0}
-  .status{font-size:13px;padding:8px 12px;border-radius:4px;margin-bottom:12px;display:none}
-  .status-ok{background:#e8f5e9;color:#2e7d32;display:block}
-  .status-err{background:#ffebee;color:#c62828;display:block}
+  .copy-btn{background:#444;color:#fff;border:none;border-radius:3px;padding:4px 12px;cursor:pointer;font-size:11px;float:right}
+  .copy-btn:hover{background:#666}
+  .arrow{color:#1976d2;font-size:18px;margin:0 8px}
+  .badge{display:inline-block;background:#e3f2fd;color:#1565c0;border-radius:12px;padding:2px 10px;font-size:12px;margin-right:6px}
+  hr{border:none;border-top:1px solid #eee;margin:20px 0}
   a{color:#1976d2}
 </style>
 </head>
 <body>
-  <h2>📦 Import from Facebook</h2>
-  <p class="sub">Extract product info from a Facebook post.</p>
+  <h2>Import from Facebook</h2>
+  <p class="sub">Extract product info from a Facebook post into the admin panel.</p>
 
-  <!-- ====== SETUP SECTION (shown when no data) ====== -->
-  <div id="setupSection">
-    <div class="setup-box">
-      <strong>How to use:</strong>
-      <ol>
-        <li><strong>First time:</strong> Drag the blue button below to your bookmarks bar</li>
-        <li>Go to any Facebook product post</li>
-        <li>Click the bookmark → images extracted automatically!</li>
-        <li>Go back to Facebook, <strong>Ctrl+A → Ctrl+C</strong>, then <strong>Ctrl+V</strong> here for the text</li>
-        <li>Click <strong>Parse &amp; Import to Admin</strong></li>
-      </ol>
-    </div>
-
-    <div style="text-align:center;margin:16px 0">
-      <p style="font-size:13px;color:#666">★ Drag this to your bookmarks bar:</p>
-      <a id="bookmarkletLink" class="bookmarklet-btn" href="javascript:alert('Hello!%20URL:%20'+location.href)">📥 Import to JapanGoodies</a>
-    </div>
-
-    <details style="font-size:12px;color:#888;margin-top:16px">
-      <summary>Or install manually (copy-paste bookmark URL)</summary>
-      <textarea id="bookmarkletCode" readonly style="width:100%;height:80px;padding:8px;margin-top:6px;word-break:break-all;font-size:11px;line-height:1.5;border:1px solid #eee;border-radius:4px;resize:none;background:#fafafa"></textarea>
-    </details>
+  <div class="setup-box">
+    <strong>How to use:</strong>
+    <ol>
+      <li>Open the Facebook post in your browser</li>
+      <li>Press <strong>F12</strong> → click <strong>Console</strong> tab</li>
+      <li>Copy the script below, paste it into the Console, press <strong>Enter</strong></li>
+      <li>The data will be copied to your clipboard automatically</li>
+      <li>Come back here and paste (Ctrl+V) into the field below</li>
+      <li>Click <strong>Parse &amp; Import to Admin</strong></li>
+    </ol>
   </div>
 
-  <!-- ====== EDIT SECTION (shown when data received) ====== -->
-  <div id="editSection" style="display:none">
-    <div id="statusMessage" class="status"></div>
+  <details open>
+    <summary style="cursor:pointer;font-weight:600;font-size:15px">Step 1: Copy this Console Script</summary>
+    <div class="code-box" id="consoleScript">
+<span class="hl3">// Paste this into Facebook's Console (F12) on a product post</span>
+<span class="hl">function</span> collectFacebookPost() {
+  <span class="hl">var</span> data = { url: location.href, images: [] };
+  <span class="hl3">// Collect all visible fbcdn images (carousel/main image)</span>
+  <span class="hl">var</span> imgs = document.querySelectorAll(<span class="hl2">'img[src*="fbcdn"], img[src*="scontent"]'</span>);
+  imgs.forEach(<span class="hl">function</span>(img) {
+    <span class="hl">if</span> (img.offsetParent !== <span class="hl">null</span> && img.src) {
+      data.images.push(img.src);
+    }
+  });
+  <span class="hl3">// Try to find the post text</span>
+  <span class="hl">var</span> article = document.querySelector(<span class="hl2">'[role="article"]'</span>);
+  <span class="hl">if</span> (article) data.text = article.textContent.trim();
+  <span class="hl">var</span> str = JSON.stringify(data, <span class="hl">null</span>, <span class="hl">2</span>);
+  copyToClipboard(str);
+  <span class="hl">return</span> str;
+}
 
-    <div class="box">
-      <div class="box-title">Post URL</div>
-      <a id="importPostUrl" href="#" target="_blank" style="font-size:12px;word-break:break-all"></a>
+<span class="hl">function</span> copyToClipboard(str) {
+  <span class="hl">var</span> ta = document.createElement(<span class="hl2">'textarea'</span>);
+  ta.value = str;
+  document.body.appendChild(ta);
+  ta.select();
+  <span class="hl">try</span> { document.execCommand(<span class="hl2">'copy'</span>); } <span class="hl">catch</span> (e) { prompt(<span class="hl2">'Copy failed. Copy this manually:'</span>, str); }
+  document.body.removeChild(ta);
+  console.log(<span class="hl2">'Copied!'</span>);
+}
+
+console.log(collectFacebookPost());
     </div>
+    <p style="font-size:12px;color:#888;margin:6px 0 0">
+      <button class="copy-btn" onclick="copyScript()">Copy Script</button>
+      After pasting into Console, the output will be on your clipboard.
+    </p>
+  </details>
 
-    <div id="clipboardMsg" style="background:#fff8e1;border:1px solid #ffc107;border-radius:6px;padding:12px;margin-bottom:12px;font-size:13px;display:none">
-      <strong>📋 Step:</strong> Go back to the Facebook tab, select all text (<strong>Ctrl+A</strong>), copy (<strong>Ctrl+C</strong>), then <strong>Ctrl+V</strong> here.
-    </div>
+  <hr>
 
-    <div class="field-group">
-      <label>Paste the post text here (Ctrl+V):</label>
-      <textarea id="importCaption" rows="6" placeholder="1. Go back to Facebook tab
-2. Ctrl+A (select all)
-3. Ctrl+C (copy)
-4. Come back here and Ctrl+V (paste)"></textarea>
-    </div>
+  <details open>
+    <summary style="cursor:pointer;font-weight:600;font-size:15px">Step 2: Paste the data here</summary>
+    <p style="font-size:12px;color:#888;margin:6px 0">After running the script, come back here and paste (Ctrl+V):</p>
+    <textarea id="importData" rows="5" placeholder='Paste the copied JSON here...
+Example:
+{
+  "url": "https://www.facebook.com/...",
+  "text": "product description...",
+  "images": ["https://scontent..."]
+}'></textarea>
 
-    <div class="field-group">
-      <label>Image URLs (one per line — right-click each image on Facebook → Copy image address → paste here):</label>
-      <textarea id="importImageUrls" rows="3" placeholder="https://scontent.fmnl1-1.fna.fbcdn.net/...
-https://scontent.fmnl1-2.fna.fbcdn.net/..."></textarea>
+    <div id="previewArea" style="display:none;margin-top:12px">
+      <div class="box">
+        <div class="box-title">Post URL</div>
+        <a id="importPostUrl" href="#" target="_blank" style="font-size:12px;word-break:break-all"></a>
+      </div>
+      <div class="box">
+        <div class="box-title">Caption Preview</div>
+        <div id="importCaption" style="font-size:13px;white-space:pre-wrap;max-height:150px;overflow-y:auto"></div>
+      </div>
+      <div class="box">
+        <div class="box-title">Images</div>
+        <div id="imageCount" style="font-size:12px;color:#888;margin-bottom:6px"></div>
+        <div id="imageGrid" class="img-grid"></div>
+      </div>
     </div>
 
     <div style="margin-top:12px">
-      <button class="btn btn-primary" id="parseAndImportBtn">Parse &amp; Import to Admin</button>
-      <button class="btn btn-secondary" id="skipToAdminBtn">Go to Admin Panel Only</button>
+      <button class="btn btn-primary" id="parseBtn" onclick="parseData()">Parse &amp; Preview</button>
+      <button class="btn btn-primary" id="importBtn" style="display:none" onclick="importToAdmin()">Import to Admin</button>
     </div>
-  </div>
+  </details>
+
+  <hr>
+
+  <details>
+    <summary style="cursor:pointer;font-weight:600;font-size:15px;color:#888">Manual fallback (if Console script doesn't work)</summary>
+    <div class="setup-box" style="margin-top:10px">
+      <ol>
+        <li>On the Facebook post, right-click the image → <strong>Copy image address</strong> → paste below</li>
+        <li>Select all text (Ctrl+A), copy (Ctrl+C), paste below</li>
+        <li>Click <strong>Parse &amp; Import to Admin</strong></li>
+      </ol>
+    </div>
+    <div class="field-group">
+      <label>Image URLs (one per line):</label>
+      <textarea id="manualImageUrls" rows="3" placeholder="https://scontent.fmnl1-1.fna.fbcdn.net/..."></textarea>
+    </div>
+    <div class="field-group">
+      <label>Caption text:</label>
+      <textarea id="manualCaption" rows="6" placeholder="Paste the Facebook post text here..."></textarea>
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn btn-secondary" onclick="manualImport()">Manual Import to Admin</button>
+    </div>
+  </details>
 
 <script>
-(function() {
-  var baseUrl = location.protocol + '//' + location.host;
+function copyScript() {
+  var ta = document.createElement('textarea');
+  ta.value = document.getElementById('consoleScript').textContent;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  alert('Script copied to clipboard! Now go to Facebook, press F12, paste it into Console, and press Enter.');
+}
 
-  // ==================== BOOKMARKLET CODE ====================
-  var codeEl = document.getElementById('bookmarkletCode');
-  codeEl.value = document.getElementById('bookmarkletLink').href;
-
-  // ==================== HANDLE INCOMING DATA ====================
-  var hash = location.hash.substring(1);
-  if (hash) {
-    document.getElementById('setupSection').style.display = 'none';
-    document.getElementById('editSection').style.display = 'block';
-
-    var url = '';
-    var images = [];
-
-    try {
-      var parsed = JSON.parse(decodeURIComponent(hash));
-      if (parsed.url) url = parsed.url;
-      if (parsed.images && Array.isArray(parsed.images)) images = parsed.images;
-    } catch(e) {
-      if (hash.indexOf('url=') === 0) {
-        url = decodeURIComponent(hash.substring(4));
-      }
-    }
-
-    if (url) {
-      document.getElementById('importPostUrl').textContent = url;
-      document.getElementById('importPostUrl').href = url;
-    }
-
-    if (images.length > 0) {
-      document.getElementById('importImageUrls').value = images.join('\n');
-    }
-
-  // ==================== IMAGE TOGGLE ====================
-  window.toggleImage = function(imgEl) {
-    imgEl.classList.toggle('selected');
-  };
-
-  // ==================== PARSE & IMPORT ====================
-  document.getElementById('parseAndImportBtn').addEventListener('click', function() {
-    var caption = document.getElementById('importCaption').value;
-    var imgUrls = document.getElementById('importImageUrls').value;
-    var images = imgUrls.split('\n').map(function(s) { return s.trim(); }).filter(Boolean);
-
-    if (!caption && images.length === 0) {
-      showStatus('Please paste the caption text or add at least one image URL.', 'err');
-      return;
-    }
-
-    localStorage.setItem('yokoso_import_caption', caption || '');
-    localStorage.setItem('yokoso_import_images', JSON.stringify(images));
-    localStorage.setItem('yokoso_import_url', document.getElementById('importPostUrl').textContent || '');
-    localStorage.setItem('yokoso_import_ready', '1');
-
-    showStatus('Data saved! Redirecting to admin panel...', 'ok');
-
-    setTimeout(function() {
-      window.location.href = '/';
-    }, 1000);
-  });
-
-  document.getElementById('skipToAdminBtn').addEventListener('click', function() {
-    window.location.href = '/';
-  });
-
-  // ==================== STATUS HELPER ====================
-  function showStatus(msg, type) {
-    var el = document.getElementById('statusMessage');
-    el.textContent = msg;
-    el.className = 'status status-' + type;
-    el.style.display = 'block';
+function parseData() {
+  var raw = document.getElementById('importData').value.trim();
+  if (!raw) { alert('Paste the data first.'); return; }
+  var data;
+  try {
+    data = JSON.parse(raw);
+  } catch(e) {
+    alert('Invalid JSON. Make sure you copied the full output from the Console script.');
+    return;
   }
-
-  // If no hash data, clear localStorage
-  if (!hash) {
-    localStorage.removeItem('yokoso_import_caption');
-    localStorage.removeItem('yokoso_import_images');
-    localStorage.removeItem('yokoso_import_url');
-    localStorage.removeItem('yokoso_import_ready');
+  if (data.url) {
+    document.getElementById('importPostUrl').textContent = data.url;
+    document.getElementById('importPostUrl').href = data.url;
   }
-})();
+  if (data.text) {
+    document.getElementById('importCaption').textContent = data.text.substring(0, 2000) + (data.text.length > 2000 ? '...' : '');
+  }
+  if (data.images && data.images.length > 0) {
+    document.getElementById('imageCount').textContent = data.images.length + ' images found';
+    var grid = document.getElementById('imageGrid');
+    grid.innerHTML = '';
+    data.images.forEach(function(src) {
+      var img = document.createElement('img');
+      img.src = src;
+      img.className = 'selected';
+      img.onclick = function() { this.classList.toggle('selected'); };
+      grid.appendChild(img);
+    });
+  }
+  document.getElementById('previewArea').style.display = 'block';
+  document.getElementById('importBtn').style.display = 'inline-block';
+  window._importData = data;
+}
+
+function importToAdmin() {
+  var data = window._importData;
+  if (!data) { alert('Parse the data first.'); return; }
+  localStorage.setItem('yokoso_import_caption', data.text || '');
+  localStorage.setItem('yokoso_import_images', JSON.stringify(data.images || []));
+  localStorage.setItem('yokoso_import_url', data.url || '');
+  localStorage.setItem('yokoso_import_ready', '1');
+  window.location.href = '/';
+}
+
+function manualImport() {
+  var caption = document.getElementById('manualCaption').value || '';
+  var urls = document.getElementById('manualImageUrls').value;
+  var images = urls.split('\n').map(function(s) { return s.trim(); }).filter(Boolean);
+  if (!caption && images.length === 0) { alert('Please paste caption text or at least one image URL.'); return; }
+  localStorage.setItem('yokoso_import_caption', caption);
+  localStorage.setItem('yokoso_import_images', JSON.stringify(images));
+  localStorage.setItem('yokoso_import_url', '');
+  localStorage.setItem('yokoso_import_ready', '1');
+  window.location.href = '/';
+}
 </script>
 </body>
 </html>
