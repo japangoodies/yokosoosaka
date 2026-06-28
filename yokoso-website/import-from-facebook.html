@@ -19,108 +19,52 @@
   .btn-primary:hover{background:#1565c0}
   .btn-secondary{background:#f5f5f5;color:#333;border:1px solid #ccc}
   .btn-secondary:hover{background:#eee}
+  .btn-success{background:#2e7d32;color:#fff}
+  .btn-success:hover{background:#1b5e20}
   .btn-sm{padding:4px 10px;font-size:12px}
   .box{border:1px solid #ddd;border-radius:6px;padding:14px;margin-bottom:14px}
   .box-title{font-size:12px;font-weight:600;color:#888;margin-bottom:6px;text-transform:uppercase}
   .code-box{background:#1e1e1e;color:#d4d4d4;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;line-height:1.5;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin:8px 0}
-  .hl{color:#569cd6}
-  .hl2{color:#ce9178}
-  .hl3{color:#6a9955}
-  .bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
   .setup-box{background:#fff8e1;border:1px solid #ffc107;border-radius:6px;padding:14px;margin-bottom:14px;font-size:13px}
   .setup-box ol{margin:6px 0 0 16px;padding:0}
   .setup-box li{margin-bottom:4px}
-  .copy-btn{background:#444;color:#fff;border:none;border-radius:3px;padding:4px 12px;cursor:pointer;font-size:11px;float:right}
-  .copy-btn:hover{background:#666}
-  .arrow{color:#1976d2;font-size:18px;margin:0 8px}
-  .badge{display:inline-block;background:#e3f2fd;color:#1565c0;border-radius:12px;padding:2px 10px;font-size:12px;margin-right:6px}
+  .install-btn{display:inline-block;padding:12px 28px;background:#2e7d32;color:#fff;text-decoration:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;border:none}
+  .install-btn:hover{background:#1b5e20}
   hr{border:none;border-top:1px solid #eee;margin:20px 0}
   a{color:#1976d2}
+  .tag{display:inline-block;background:#e8f5e9;color:#2e7d32;border-radius:4px;padding:1px 8px;font-size:11px;font-weight:600;margin-left:6px}
 </style>
 </head>
 <body>
   <h2>Import from Facebook</h2>
-  <p class="sub">Extract product info from a Facebook post into the admin panel.</p>
+  <p class="sub">Extract product posts from Facebook into the admin panel.</p>
 
   <div class="setup-box">
-    <strong>How to use:</strong>
+    <strong>Step 1: Install the Importer button</strong>
     <ol>
-      <li>Open the Facebook post in your browser</li>
-      <li>Press <strong>F12</strong> → click <strong>Console</strong> tab</li>
-      <li>Copy the script below, paste it into the Console, press <strong>Enter</strong></li>
-      <li>The data will be copied to your clipboard automatically</li>
-      <li>Come back here and paste (Ctrl+V) into the field below</li>
-      <li>Click <strong>Parse &amp; Import to Admin</strong></li>
+      <li>You have Tampermonkey installed ✓</li>
+      <li>Click the green button below → Tampermonkey will ask to install</li>
+      <li>Click <strong>Install</strong> in Tampermonkey's tab</li>
+      <li>Go to any Facebook post → a blue <strong>📥 Import</strong> button appears at bottom-right</li>
+      <li>Click it → data copied to clipboard ✓</li>
     </ol>
   </div>
 
-  <details open>
-    <summary style="cursor:pointer;font-weight:600;font-size:15px">Step 1: Copy this Console Script</summary>
-    <div class="code-box" id="consoleScript">
-<span class="hl3">// Paste this into Facebook's Console (F12) on a product post</span>
-<span class="hl">function</span> collectFacebookPost() {
-  <span class="hl">var</span> data = { url: location.href, images: [], text: <span class="hl2">''</span> };
-  <span class="hl3">// Collect fbcdn images, filter out emojis, deduplicate</span>
-  <span class="hl">var</span> seen = {};
-  document.querySelectorAll(<span class="hl2">'img'</span>).forEach(<span class="hl">function</span>(img) {
-    <span class="hl">if</span> (!img.src) <span class="hl">return</span>;
-    <span class="hl">if</span> (img.src.indexOf(<span class="hl2">'emoji'</span>) > <span class="hl">-1</span>) <span class="hl">return</span>;
-    <span class="hl">if</span> (img.src.indexOf(<span class="hl2">'fbcdn'</span>) === <span class="hl">-1</span> && img.src.indexOf(<span class="hl2">'scontent'</span>) === <span class="hl">-1</span>) <span class="hl">return</span>;
-    <span class="hl">var</span> base = img.src.split(<span class="hl2">'?'</span>)[0];
-    <span class="hl">if</span> (seen[base]) <span class="hl">return</span>;
-    seen[base] = <span class="hl">true</span>;
-    <span class="hl">if</span> (img.offsetParent !== <span class="hl">null</span>) data.images.push(img.src);
-  });
-  <span class="hl3">// Try to find post text from multiple possible containers</span>
-  <span class="hl">var</span> article = document.querySelector(<span class="hl2">'[role="article"]'</span>);
-  <span class="hl">if</span> (article) {
-    <span class="hl">var</span> paragraphs = article.querySelectorAll(<span class="hl2">'p, span, div'</span>);
-    <span class="hl">var</span> texts = [];
-    paragraphs.forEach(<span class="hl">function</span>(el) {
-      <span class="hl">var</span> t = (el.textContent || <span class="hl2">''</span>).trim();
-      <span class="hl">if</span> (t.length > <span class="hl">20</span>) texts.push(t);
-    });
-    <span class="hl">if</span> (texts.length > <span class="hl">0</span>) {
-      data.text = texts.filter(<span class="hl">function</span>(v, i, a) { <span class="hl">return</span> a.indexOf(v) === i; }).join(<span class="hl2">'\n---\n'</span>);
-    } <span class="hl">else</span> {
-      data.text = article.textContent.trim().substring(<span class="hl">0</span>, <span class="hl">2000</span>);
-    }
-  }
-  <span class="hl">var</span> str = JSON.stringify(data, <span class="hl">null</span>, <span class="hl">2</span>);
-  copyToClipboard(str);
-  <span class="hl">return</span> str;
-}
+  <div style="text-align:center;margin:16px 0">
+    <a class="install-btn" href="/japan-goodies-importer.user.js">+ Install Importer Script</a>
+    <p style="font-size:12px;color:#888;margin:8px 0 0">Click the button above, then click <strong>Install</strong> in Tampermonkey's page.</p>
+  </div>
 
-<span class="hl">function</span> copyToClipboard(str) {
-  <span class="hl">var</span> ta = document.createElement(<span class="hl2">'textarea'</span>);
-  ta.value = str;
-  document.body.appendChild(ta);
-  ta.select();
-  <span class="hl">try</span> { document.execCommand(<span class="hl2">'copy'</span>); } <span class="hl">catch</span> (e) { prompt(<span class="hl2">'Copy failed. Copy this manually:'</span>, str); }
-  document.body.removeChild(ta);
-  console.log(<span class="hl2">'Copied!'</span>);
-}
-
-console.log(collectFacebookPost());
-    </div>
-    <p style="font-size:12px;color:#888;margin:6px 0 0">
-      <button class="copy-btn" onclick="copyScript()">Copy Script</button>
-      After pasting into Console, the output will be on your clipboard.
-    </p>
-  </details>
+  <div style="background:#f3e5f5;border:1px solid #ce93d8;border-radius:6px;padding:12px;font-size:13px;margin-bottom:14px">
+    <strong>After install:</strong> Go to a Facebook post → the blue <strong>📥 Import</strong> button appears at bottom-right → click it → come back here and paste below.
+  </div>
 
   <hr>
 
   <details open>
-    <summary style="cursor:pointer;font-weight:600;font-size:15px">Step 2: Paste the data here</summary>
-    <p style="font-size:12px;color:#888;margin:6px 0">After running the script, come back here and paste (Ctrl+V):</p>
-    <textarea id="importData" rows="5" placeholder='Paste the copied JSON here...
-Example:
-{
-  "url": "https://www.facebook.com/...",
-  "text": "product description...",
-  "images": ["https://scontent..."]
-}'></textarea>
+    <summary style="cursor:pointer;font-weight:600;font-size:15px">Step 2: Paste imported data</summary>
+    <p style="font-size:12px;color:#888;margin:6px 0">After clicking 📥 Import on the Facebook post, paste here (Ctrl+V):</p>
+    <textarea id="importData" rows="5" placeholder="Paste here after clicking Import on Facebook..."></textarea>
 
     <div id="previewArea" style="display:none;margin-top:12px">
       <div class="box">
@@ -140,24 +84,24 @@ Example:
 
     <div style="margin-top:12px">
       <button class="btn btn-primary" id="parseBtn" onclick="parseData()">Parse &amp; Preview</button>
-      <button class="btn btn-primary" id="importBtn" style="display:none" onclick="importToAdmin()">Import to Admin</button>
+      <button class="btn btn-success" id="importBtn" style="display:none" onclick="importToAdmin()">Import to Admin</button>
     </div>
   </details>
 
   <hr>
 
   <details>
-    <summary style="cursor:pointer;font-weight:600;font-size:15px;color:#888">Manual fallback (if Console script doesn't work)</summary>
+    <summary style="cursor:pointer;font-weight:600;font-size:15px;color:#888">Manual fallback</summary>
     <div class="setup-box" style="margin-top:10px">
       <ol>
-        <li>On the Facebook post, right-click the image → <strong>Copy image address</strong> → paste below</li>
-        <li>Select all text (Ctrl+A), copy (Ctrl+C), paste below</li>
-        <li>Click <strong>Parse &amp; Import to Admin</strong></li>
+        <li>On Facebook, select all text (Ctrl+A → Ctrl+C)</li>
+        <li>Right-click images → <strong>Copy image address</strong> for each</li>
+        <li>Paste below and click <strong>Manual Import</strong></li>
       </ol>
     </div>
     <div class="field-group">
       <label>Image URLs (one per line):</label>
-      <textarea id="manualImageUrls" rows="3" placeholder="https://scontent.fmnl1-1.fna.fbcdn.net/..."></textarea>
+      <textarea id="manualImageUrls" rows="3" placeholder="https://scontent.fmnl..."></textarea>
     </div>
     <div class="field-group">
       <label>Caption text:</label>
@@ -169,16 +113,6 @@ Example:
   </details>
 
 <script>
-function copyScript() {
-  var ta = document.createElement('textarea');
-  ta.value = document.getElementById('consoleScript').textContent;
-  document.body.appendChild(ta);
-  ta.select();
-  document.execCommand('copy');
-  document.body.removeChild(ta);
-  alert('Script copied to clipboard! Now go to Facebook, press F12, paste it into Console, and press Enter.');
-}
-
 function parseData() {
   var raw = document.getElementById('importData').value.trim();
   if (!raw) { alert('Paste the data first.'); return; }
@@ -186,14 +120,11 @@ function parseData() {
       (raw.charAt(0) === '"' && raw.charAt(raw.length - 1) === '"')) {
     raw = raw.substring(1, raw.length - 1);
   }
-  if (raw.indexOf('\\n') > -1) {
-    raw = raw.replace(/\\n/g, '\n');
-  }
   var data;
   try {
     data = JSON.parse(raw);
   } catch(e) {
-    alert('Invalid JSON. The error was: ' + e.message + '\n\nTip: In the console, type: copy(JSON.stringify(collectFacebookPost())) and press Enter, then paste here.');
+    alert('Invalid JSON. Try clicking Import again on Facebook.\n\nError: ' + e.message);
     return;
   }
   if (data.url) {
