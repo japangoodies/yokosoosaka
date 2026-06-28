@@ -45,8 +45,10 @@
       <strong>How to use:</strong>
       <ol>
         <li><strong>First time:</strong> Drag the blue button below to your bookmarks bar</li>
-        <li>On Facebook, <strong>click a post's date/time</strong> → a popup opens with the full post</li>
-        <li>Click the bookmark → this page opens with data extracted!</li>
+        <li>Go to any Facebook post on <strong>facebook.com/yokosoosaka</strong></li>
+        <li>Click the bookmark → this page opens with <strong>images extracted</strong></li>
+        <li>Go back to Facebook, <strong>copy the post text</strong> (Ctrl+A, Ctrl+C), then paste it here (Ctrl+V)</li>
+        <li>Click <strong>Parse & Import to Admin</strong></li>
       </ol>
     </div>
 
@@ -70,11 +72,16 @@
       <a id="importPostUrl" href="#" target="_blank" style="font-size:12px;word-break:break-all"></a>
     </div>
 
-    <div id="clipboardMsg" style="background:#e3f2fd;border:1px solid #90caf9;border-radius:6px;padding:12px;margin-bottom:12px;font-size:13px"></div>
+    <div id="clipboardMsg" style="background:#fff8e1;border:1px solid #ffc107;border-radius:6px;padding:12px;margin-bottom:12px;font-size:13px;display:none">
+      <strong>📋 Step:</strong> Go back to the Facebook tab, select all text (<strong>Ctrl+A</strong>), copy (<strong>Ctrl+C</strong>), then <strong>Ctrl+V</strong> here.
+    </div>
 
     <div class="field-group">
-      <label>Paste the post text here:</label>
-      <textarea id="importCaption" rows="6" placeholder="Ctrl+V to paste the text from Facebook..."></textarea>
+      <label>Paste the post text here (Ctrl+V):</label>
+      <textarea id="importCaption" rows="6" placeholder="1. Go back to Facebook tab
+2. Ctrl+A (select all)
+3. Ctrl+C (copy)
+4. Come back here and Ctrl+V (paste)"></textarea>
     </div>
 
     <div class="box">
@@ -95,33 +102,19 @@
 
   // ==================== BOOKMARKLET CODE ====================
   var bookmarkletFn = [
-    '(function(){try{',
+    '(function(){',
     'var d=document,w=window;',
-    '// Extract images (reliable - fbcdn URLs are distinctive)',
     'var imgs=[],seen={};',
-    'try{',
-    '  d.querySelectorAll(\'img\').forEach(function(i){',
-    '    var s=i.src||\'\';',
-    '    if(!s||seen[s])return;',
-    '    if(s.indexOf(\'fbcdn\')===-1&&s.indexOf(\'scontent\')===-1)return;',
-    '    if(i.width&&i.width<50)return;',
-    '    seen[s]=!0;imgs.push(s);',
-    '  });',
-    '}catch(ex){}',
-    '// Select & copy page text to clipboard',
-    'var copied=false;',
-    'try{',
-    '  var r=d.createRange();',
-    '  r.selectNodeContents(d.body);',
-    '  var sel=w.getSelection();',
-    '  sel.removeAllRanges();sel.addRange(r);',
-    '  copied=d.execCommand(\'copy\');',
-    '  sel.removeAllRanges();',
-    '}catch(ex){}',
-    'var msg=copied?"✓ Text copied! Just paste below.":"⚠ Could not auto-copy. Select text manually.";',
-    'var data=JSON.stringify({images:imgs,url:location.href,msg:msg});',
+    'try{d.querySelectorAll(\'img\').forEach(function(i){',
+    '  var s=i.src;',
+    '  if(!s||seen[s])return;',
+    '  if(s.indexOf(\'fbcdn\')===-1&&s.indexOf(\'scontent\')===-1)return;',
+    '  if(i.width&&i.width<50)return;',
+    '  seen[s]=1;imgs.push(s);',
+    '})}catch(e){}',
+    'var data=JSON.stringify({images:imgs,url:location.href});',
     'w.open("' + baseUrl + '/import-from-facebook#" + encodeURIComponent(data),"yokoso_import");',
-    '}catch(e){alert("Import error: "+e.message)}})();'
+    '})();'
   ].join('');
 
   var bookmarkletHref = 'javascript:' + encodeURIComponent(bookmarkletFn).replace(/%[A-F0-9]{2}/g, function(m) {
@@ -155,14 +148,9 @@
     var url = data.url || '';
     var msg = data.msg || '';
 
-    // Show clipboard message
+    // Show clipboard instructions
     var msgEl = document.getElementById('clipboardMsg');
-    if (msg) {
-      msgEl.innerHTML = msg + '<br><span style="font-size:12px">Go back to the Facebook tab, then come back here and <strong>Ctrl+V</strong> to paste.</span>';
-      msgEl.style.display = 'block';
-    } else {
-      msgEl.style.display = 'none';
-    }
+    msgEl.style.display = 'block';
 
     // Show post URL
     document.getElementById('importPostUrl').textContent = url;
