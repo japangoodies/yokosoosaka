@@ -70,9 +70,11 @@
       <a id="importPostUrl" href="#" target="_blank" style="font-size:12px;word-break:break-all"></a>
     </div>
 
+    <div id="clipboardMsg" style="background:#e3f2fd;border:1px solid #90caf9;border-radius:6px;padding:12px;margin-bottom:12px;font-size:13px"></div>
+
     <div class="field-group">
-      <label>Raw caption text (edit if needed):</label>
-      <textarea id="importCaption" rows="6"></textarea>
+      <label>Paste the post text here:</label>
+      <textarea id="importCaption" rows="6" placeholder="Ctrl+V to paste the text from Facebook..."></textarea>
     </div>
 
     <div class="box">
@@ -94,27 +96,8 @@
   // ==================== BOOKMARKLET CODE ====================
   var bookmarkletFn = [
     '(function(){try{',
-    'var d=document;',
-    '// Find the product post text by looking for ₱ symbol',
-    'var els=d.querySelectorAll(\'[dir="auto"]\');',
-    'if(els.length<2)els=d.querySelectorAll(\'div\');',
-    'var best=null,bestLen=0;',
-    'for(var i=0;i<els.length;i++){try{',
-    '  var t=els[i].innerText||\'\';',
-    '  if(t.indexOf(\'₱\')!==-1&&t.length>bestLen){best=els[i];bestLen=t.length;}',
-    '}catch(ex){}}',
-    'var caption=\'\';',
-    'if(best){',
-    '  var p=best;',
-    '  for(var j=0;j<20;j++){try{',
-    '    if(!p||p===d.body||p===d.documentElement)break;',
-    '    var txt=p.innerText||\'\';',
-    '    if(txt.indexOf(\'₱\')!==-1&&txt.split(\'\\n\').filter(Boolean).length>3){caption=txt.trim();break;}',
-    '    p=p.parentElement;',
-    '  }catch(ex){break;}}',
-    '  if(!caption)caption=(best.innerText||\'\').trim();',
-    '}',
-    'if(!caption)caption=d.body.innerText||\'\';',
+    'var d=document,w=window;',
+    '// Extract images (reliable - fbcdn URLs are distinctive)',
     'var imgs=[],seen={};',
     'try{',
     '  d.querySelectorAll(\'img\').forEach(function(i){',
@@ -125,8 +108,19 @@
     '    seen[s]=!0;imgs.push(s);',
     '  });',
     '}catch(ex){}',
-    'var data=JSON.stringify({caption:caption,images:imgs,url:location.href});',
-    'window.open("' + baseUrl + '/import-from-facebook#" + encodeURIComponent(data),"yokoso_import");',
+    '// Select & copy page text to clipboard',
+    'var copied=false;',
+    'try{',
+    '  var r=d.createRange();',
+    '  r.selectNodeContents(d.body);',
+    '  var sel=w.getSelection();',
+    '  sel.removeAllRanges();sel.addRange(r);',
+    '  copied=d.execCommand(\'copy\');',
+    '  sel.removeAllRanges();',
+    '}catch(ex){}',
+    'var msg=copied?"✓ Text copied! Just paste below.":"⚠ Could not auto-copy. Select text manually.";',
+    'var data=JSON.stringify({images:imgs,url:location.href,msg:msg});',
+    'w.open("' + baseUrl + '/import-from-facebook#" + encodeURIComponent(data),"yokoso_import");',
     '}catch(e){alert("Import error: "+e.message)}})();'
   ].join('');
 
@@ -159,13 +153,22 @@
     var caption = data.caption || '';
     var images = data.images || [];
     var url = data.url || '';
+    var msg = data.msg || '';
+
+    // Show clipboard message
+    var msgEl = document.getElementById('clipboardMsg');
+    if (msg) {
+      msgEl.innerHTML = msg + '<br><span style="font-size:12px">Go back to the Facebook tab, then come back here and <strong>Ctrl+V</strong> to paste.</span>';
+      msgEl.style.display = 'block';
+    } else {
+      msgEl.style.display = 'none';
+    }
 
     // Show post URL
-    var urlEl = document.getElementById('importPostUrl');
-    urlEl.textContent = url;
-    urlEl.href = url;
+    document.getElementById('importPostUrl').textContent = url;
+    document.getElementById('importPostUrl').href = url;
 
-    // Show caption in editable textarea
+    // If caption was auto-extracted, fill it in
     document.getElementById('importCaption').value = caption;
 
     // Show images as selectable thumbnails
@@ -173,7 +176,7 @@
     var imgContainer = document.getElementById('importImages');
 
     if (images.length === 0) {
-      imgContainer.innerHTML = '<p style="color:#999;font-size:13px">No images found in the post. You can add them manually in the admin panel.</p>';
+      imgContainer.innerHTML = '<p style="color:#999;font-size:13px">No images found.</p>';
       imgCount.textContent = '0';
     } else {
       imgCount.textContent = images.length;
@@ -182,7 +185,7 @@
       }).join('');
     }
 
-    showStatus('Data received from Facebook post! Edit the caption and select images below.', 'ok');
+    showStatus('Images extracted! Paste the caption text below.', 'ok');
   }
 
   // ==================== IMAGE TOGGLE ====================
@@ -195,6 +198,11 @@
     var caption = document.getElementById('importCaption').value;
     var imgEls = document.querySelectorAll('#importImages img.selected');
     var images = Array.from(imgEls).map(function(img) { return img.src; });
+
+    if (!caption && images.length === 0) {
+      showStatus('Please paste the post text or select at least one image.', 'err');
+      return;
+    }
 
     // Save to localStorage for main site
     localStorage.setItem('yokoso_import_caption', caption || '');
