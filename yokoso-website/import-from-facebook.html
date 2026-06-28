@@ -59,17 +59,33 @@
     <div class="code-box" id="consoleScript">
 <span class="hl3">// Paste this into Facebook's Console (F12) on a product post</span>
 <span class="hl">function</span> collectFacebookPost() {
-  <span class="hl">var</span> data = { url: location.href, images: [] };
-  <span class="hl3">// Collect all visible fbcdn images (carousel/main image)</span>
-  <span class="hl">var</span> imgs = document.querySelectorAll(<span class="hl2">'img[src*="fbcdn"], img[src*="scontent"]'</span>);
-  imgs.forEach(<span class="hl">function</span>(img) {
-    <span class="hl">if</span> (img.offsetParent !== <span class="hl">null</span> && img.src) {
-      data.images.push(img.src);
-    }
+  <span class="hl">var</span> data = { url: location.href, images: [], text: <span class="hl2">''</span> };
+  <span class="hl3">// Collect fbcdn images, filter out emojis, deduplicate</span>
+  <span class="hl">var</span> seen = {};
+  document.querySelectorAll(<span class="hl2">'img'</span>).forEach(<span class="hl">function</span>(img) {
+    <span class="hl">if</span> (!img.src) <span class="hl">return</span>;
+    <span class="hl">if</span> (img.src.indexOf(<span class="hl2">'emoji'</span>) > <span class="hl">-1</span>) <span class="hl">return</span>;
+    <span class="hl">if</span> (img.src.indexOf(<span class="hl2">'fbcdn'</span>) === <span class="hl">-1</span> && img.src.indexOf(<span class="hl2">'scontent'</span>) === <span class="hl">-1</span>) <span class="hl">return</span>;
+    <span class="hl">var</span> base = img.src.split(<span class="hl2">'?'</span>)[0];
+    <span class="hl">if</span> (seen[base]) <span class="hl">return</span>;
+    seen[base] = <span class="hl">true</span>;
+    <span class="hl">if</span> (img.offsetParent !== <span class="hl">null</span>) data.images.push(img.src);
   });
-  <span class="hl3">// Try to find the post text</span>
+  <span class="hl3">// Try to find post text from multiple possible containers</span>
   <span class="hl">var</span> article = document.querySelector(<span class="hl2">'[role="article"]'</span>);
-  <span class="hl">if</span> (article) data.text = article.textContent.trim();
+  <span class="hl">if</span> (article) {
+    <span class="hl">var</span> paragraphs = article.querySelectorAll(<span class="hl2">'p, span, div'</span>);
+    <span class="hl">var</span> texts = [];
+    paragraphs.forEach(<span class="hl">function</span>(el) {
+      <span class="hl">var</span> t = (el.textContent || <span class="hl2">''</span>).trim();
+      <span class="hl">if</span> (t.length > <span class="hl">20</span>) texts.push(t);
+    });
+    <span class="hl">if</span> (texts.length > <span class="hl">0</span>) {
+      data.text = texts.filter(<span class="hl">function</span>(v, i, a) { <span class="hl">return</span> a.indexOf(v) === i; }).join(<span class="hl2">'\n---\n'</span>);
+    } <span class="hl">else</span> {
+      data.text = article.textContent.trim().substring(<span class="hl">0</span>, <span class="hl">2000</span>);
+    }
+  }
   <span class="hl">var</span> str = JSON.stringify(data, <span class="hl">null</span>, <span class="hl">2</span>);
   copyToClipboard(str);
   <span class="hl">return</span> str;
@@ -166,11 +182,18 @@ function copyScript() {
 function parseData() {
   var raw = document.getElementById('importData').value.trim();
   if (!raw) { alert('Paste the data first.'); return; }
+  if ((raw.charAt(0) === "'" && raw.charAt(raw.length - 1) === "'") ||
+      (raw.charAt(0) === '"' && raw.charAt(raw.length - 1) === '"')) {
+    raw = raw.substring(1, raw.length - 1);
+  }
+  if (raw.indexOf('\\n') > -1) {
+    raw = raw.replace(/\\n/g, '\n');
+  }
   var data;
   try {
     data = JSON.parse(raw);
   } catch(e) {
-    alert('Invalid JSON. Make sure you copied the full output from the Console script.');
+    alert('Invalid JSON. The error was: ' + e.message + '\n\nTip: In the console, type: copy(JSON.stringify(collectFacebookPost())) and press Enter, then paste here.');
     return;
   }
   if (data.url) {
