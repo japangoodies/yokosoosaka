@@ -538,11 +538,30 @@
       <div class="admin-tab-content" id="tab-import" style="display:none">
         <div class="admin-smart-import" style="padding:12px 20px">
           <h3 style="margin:0 0 12px;font-size:15px">Facebook Import</h3>
-          <p style="font-size:12px;color:#888;margin:0 0 12px">Paste a Facebook post embed code to auto-extract product info and images.</p>
+
+          <div id="importBookmarkletBanner" style="background:#e8f5e9;border:1px solid #4caf50;border-radius:6px;padding:12px;margin-bottom:12px;display:none">
+            <strong style="color:#2e7d32;font-size:13px">✅ Data received from bookmarklet!</strong>
+            <div id="importBookmarkletInfo" style="font-size:12px;color:#333;margin-top:6px"></div>
+            <button class="btn btn-sm btn-primary" id="importUseBookmarkletData" style="font-size:12px;padding:4px 12px;margin-top:6px">Use this data</button>
+            <button class="btn btn-sm" id="importClearBookmarkletData" style="font-size:12px;padding:4px 12px;margin-top:6px;background:#888">Dismiss</button>
+          </div>
+
+          <details style="margin-bottom:12px;font-size:13px">
+            <summary style="cursor:pointer;color:#1976d2;font-weight:600">⭐ Quickest way: Use the bookmarklet</summary>
+            <div style="margin-top:8px;padding:10px;background:#f5f5f5;border-radius:6px;border:1px solid #ddd">
+              <p style="margin:0 0 8px;font-size:12px;color:#555">One-click import from any Facebook post:</p>
+              <ol style="margin:0 0 8px 16px;padding:0;font-size:12px;color:#555">
+                <li>Open <a href="/import-from-facebook" target="_blank" style="color:#1976d2">the setup page</a> and drag the button to your bookmarks bar</li>
+                <li>Go to any Facebook product post and click the bookmark</li>
+                <li>It opens here with the caption + images pre-filled!</li>
+              </ol>
+              <a href="/import-from-facebook" target="_blank" class="btn btn-sm" style="font-size:12px;padding:4px 12px">Open Bookmarklet Setup →</a>
+            </div>
+          </details>
 
           <div style="margin-bottom:12px">
-            <label style="display:block;margin-bottom:4px;font-size:13px;color:#666">Facebook embed code:</label>
-            <textarea id="importEmbedInput" rows="4" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:12px;font-family:monospace;box-sizing:border-box;resize:vertical" placeholder='<iframe src="https://www.facebook.com/plugins/post.php?href=..." ...></iframe> Paste embed code here'></textarea>
+            <label style="display:block;margin-bottom:4px;font-size:13px;color:#666">Paste embed code or post URL:</label>
+            <textarea id="importEmbedInput" rows="4" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:12px;font-family:monospace;box-sizing:border-box;resize:vertical" placeholder='<iframe src="..."></iframe> or https://www.facebook.com/...'></textarea>
           </div>
 
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">

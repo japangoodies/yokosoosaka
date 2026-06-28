@@ -284,7 +284,7 @@ function switchAdminTab(tab) {
   if (tab === 'users') loadUsers();
   if (tab === 'analytics') loadAnalytics();
   if (tab === 'config') { applyProxyUrl(); var gti = document.getElementById('githubTokenInput'); if (gti) gti.value = localStorage.getItem('github_token') || ''; var ast = document.getElementById('autoSyncToggle'); if (ast) ast.checked = localStorage.getItem('autoSyncEnabled') === 'true'; var mui = document.getElementById('messengerUrlInput'); if (mui) mui.value = categoriesConfig.messengerUrl || ''; var ccn = document.getElementById('cloudinaryCloudName'); if (ccn) ccn.value = categoriesConfig.cloudinaryCloudName || ''; var cup = document.getElementById('cloudinaryUploadPreset'); if (cup) cup.value = categoriesConfig.cloudinaryUploadPreset || ''; var tbt = document.getElementById('telegramBotToken'); if (tbt) tbt.value = localStorage.getItem('telegram_bot_token') || ''; var tci = document.getElementById('telegramChatId'); if (tci) tci.value = localStorage.getItem('telegram_chat_id') || ''; var gci = document.getElementById('googleClientId'); if (gci) gci.value = localStorage.getItem('google_client_id') || ''; }
-  if (tab === 'import') { populateImportDropdowns(); }
+  if (tab === 'import') { populateImportDropdowns(); checkBookmarkletData(); }
 }
 function loadUsers() {
   var list = document.getElementById('usersList');
@@ -5813,6 +5813,44 @@ function renderImportSizeChecks(selectedSizes) {
     return '<label style="display:inline-flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="import-size-cb" value="' + s + '"' + checked + '> ' + s + '</label>';
   }).join('');
 }
+
+function checkBookmarkletData() {
+  var banner = document.getElementById('importBookmarkletBanner');
+  var infoEl = document.getElementById('importBookmarkletInfo');
+  var caption = localStorage.getItem('yokoso_import_caption');
+  var images = localStorage.getItem('yokoso_import_images');
+  if (!banner || !infoEl || !caption) return;
+  var imgArr = [];
+  try { imgArr = JSON.parse(images || '[]'); } catch(e) {}
+  infoEl.innerHTML = 'Caption (' + caption.length + ' chars) + ' + imgArr.length + ' images from bookmarklet ready.';
+  banner.style.display = 'block';
+}
+
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'importUseBookmarkletData') {
+    var caption = localStorage.getItem('yokoso_import_caption');
+    var images = localStorage.getItem('yokoso_import_images');
+    var imgArr = [];
+    try { imgArr = JSON.parse(images || '[]'); } catch(e) {}
+    if (caption) {
+      var fields = parseCaptionToFields(caption);
+      fields.images = imgArr;
+      showImportPreview(fields);
+    } else {
+      showImportPreview({ images: imgArr });
+    }
+    document.getElementById('importBookmarkletBanner').style.display = 'none';
+    localStorage.removeItem('yokoso_import_caption');
+    localStorage.removeItem('yokoso_import_images');
+    localStorage.removeItem('yokoso_import_url');
+  }
+  if (e.target.id === 'importClearBookmarkletData') {
+    document.getElementById('importBookmarkletBanner').style.display = 'none';
+    localStorage.removeItem('yokoso_import_caption');
+    localStorage.removeItem('yokoso_import_images');
+    localStorage.removeItem('yokoso_import_url');
+  }
+});
 
 function parseFacebookEmbed(html) {
   var match = html.match(/href=(["'])([^"']+)\1/i);
