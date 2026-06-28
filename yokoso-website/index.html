@@ -166,6 +166,7 @@
           <button class="admin-tab-btn" data-tab="categories">Categories</button>
           <button class="admin-tab-btn" data-tab="users">Users</button>
           <button class="admin-tab-btn" data-tab="config">Config</button>
+          <button class="admin-tab-btn" data-tab="import">Smart Import</button>
           <button class="btn btn-secondary" id="backToPublicBtn">Back</button>
         </div>
       </div>
@@ -530,6 +531,100 @@
           </div>
           <div style="font-size:11px;color:#888;margin-top:6px">
             Product images upload to Cloudinary instead of being stored as data URLs. Get your <strong>Cloud name</strong> and create an <strong>unsigned Upload preset</strong> (Settings &gt; Upload &gt; Upload presets) in your <a href="https://cloudinary.com" target="_blank" style="color:#007bff">Cloudinary</a> dashboard.
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-tab-content" id="tab-import" style="display:none">
+        <div class="admin-smart-import" style="padding:12px 20px">
+          <h3 style="margin:0 0 12px;font-size:15px">Facebook Import</h3>
+          <p style="font-size:12px;color:#888;margin:0 0 12px">Paste a Facebook post embed code to auto-extract product info and images.</p>
+
+          <div style="margin-bottom:12px">
+            <label style="display:block;margin-bottom:4px;font-size:13px;color:#666">Facebook embed code:</label>
+            <textarea id="importEmbedInput" rows="4" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:12px;font-family:monospace;box-sizing:border-box;resize:vertical" placeholder='<iframe src="https://www.facebook.com/plugins/post.php?href=..." ...></iframe> Paste embed code here'></textarea>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+            <button class="btn btn-primary" id="importParseBtn" style="font-size:13px">Parse</button>
+            <span id="importParseStatus" style="font-size:12px;color:#888"></span>
+          </div>
+
+          <div id="importPreview" style="display:none;border:1px solid #ddd;border-radius:6px;padding:12px;background:#fafafa">
+            <h4 style="margin:0 0 10px;font-size:14px">Preview — Review &amp; edit before saving</h4>
+
+            <div class="form-group">
+              <label>Product Name</label>
+              <input type="text" id="importName" style="width:100%;padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:13px;box-sizing:border-box">
+            </div>
+
+            <div class="form-row" style="display:flex;gap:8px">
+              <div class="form-group" style="flex:1">
+                <label>Price (₱)</label>
+                <input type="text" id="importPrice" style="width:100%;padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:13px;box-sizing:border-box" placeholder="₱1,500">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="importDesc" rows="3" style="width:100%;padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:13px;box-sizing:border-box;resize:vertical"></textarea>
+            </div>
+
+            <div class="form-row" style="display:flex;gap:8px">
+              <div class="form-group" style="flex:1">
+                <label>Group</label>
+                <select id="importCategory0" style="width:100%;padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:13px"><option value="">—</option></select>
+              </div>
+              <div class="form-group" style="flex:1">
+                <label>Subcategory</label>
+                <select id="importCategory1" style="width:100%;padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:13px"><option value="">—</option></select>
+              </div>
+              <div class="form-group" style="flex:1">
+                <label>Brand</label>
+                <select id="importCategory2" style="width:100%;padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:13px"><option value="">—</option></select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Sizes</label>
+              <div id="importSizes" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px"></div>
+            </div>
+
+            <div class="form-group">
+              <label>Images (<span id="importImageCount">0</span>)</label>
+              <div id="importImages" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
+              <div style="font-size:11px;color:#888;margin-top:4px">Images will be resized to 800px and stored as base64 on save.</div>
+            </div>
+
+            <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+              <button class="btn btn-primary" id="importSaveBtn" style="font-size:13px">Save to Products</button>
+              <span id="importSaveStatus" style="font-size:12px;color:#888"></span>
+            </div>
+          </div>
+
+          <div id="importFallback" style="display:none;margin-top:12px;border:1px solid #ffc107;border-radius:6px;padding:12px;background:#fff8e1">
+            <strong style="font-size:13px;color:#856404">⚠ Manual Entry Required</strong>
+            <p style="font-size:12px;color:#856404;margin:4px 0 6px">Facebook blocked automatic fetching. Here's what to do:</p>
+            <ol style="font-size:12px;color:#856404;margin:0 0 10px 16px;padding:0">
+              <li>Click the <strong>post URL</strong> below to open it in a new tab</li>
+              <li><strong>Copy the caption</strong> text from the post</li>
+              <li><strong>Right-click each photo</strong> → "Copy image address" / "Open image in new tab"</li>
+              <li>Paste them below, then click <strong>"Parse from text"</strong></li>
+            </ol>
+            <div id="importFallbackUrl" style="font-size:12px;margin-bottom:8px;word-break:break-all"></div>
+            <div class="form-group" style="margin-bottom:8px">
+              <label style="font-size:12px;color:#666">Post Caption (paste the full text)</label>
+              <textarea id="importManualCaption" rows="4" style="width:100%;padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:12px;box-sizing:border-box;resize:vertical" placeholder="Nike Air Max 90 Japan Pack
+₱5,500
+Description here...
+Sizes: S, M, L
+#MENS #SHOES #NIKE"></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom:8px">
+              <label style="font-size:12px;color:#666">Image URLs (one per line — right‑click photo → Copy image address)</label>
+              <textarea id="importManualImages" rows="3" style="width:100%;padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:12px;box-sizing:border-box;resize:vertical" placeholder="https://scontent.fmnl4-1.fna.fbcdn.net/..."></textarea>
+            </div>
+            <button class="btn btn-primary" id="importManualParseBtn" style="font-size:13px">Parse from text</button>
           </div>
         </div>
       </div>

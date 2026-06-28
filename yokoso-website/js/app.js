@@ -284,6 +284,7 @@ function switchAdminTab(tab) {
   if (tab === 'users') loadUsers();
   if (tab === 'analytics') loadAnalytics();
   if (tab === 'config') { applyProxyUrl(); var gti = document.getElementById('githubTokenInput'); if (gti) gti.value = localStorage.getItem('github_token') || ''; var ast = document.getElementById('autoSyncToggle'); if (ast) ast.checked = localStorage.getItem('autoSyncEnabled') === 'true'; var mui = document.getElementById('messengerUrlInput'); if (mui) mui.value = categoriesConfig.messengerUrl || ''; var ccn = document.getElementById('cloudinaryCloudName'); if (ccn) ccn.value = categoriesConfig.cloudinaryCloudName || ''; var cup = document.getElementById('cloudinaryUploadPreset'); if (cup) cup.value = categoriesConfig.cloudinaryUploadPreset || ''; var tbt = document.getElementById('telegramBotToken'); if (tbt) tbt.value = localStorage.getItem('telegram_bot_token') || ''; var tci = document.getElementById('telegramChatId'); if (tci) tci.value = localStorage.getItem('telegram_chat_id') || ''; var gci = document.getElementById('googleClientId'); if (gci) gci.value = localStorage.getItem('google_client_id') || ''; }
+  if (tab === 'import') { populateImportDropdowns(); }
 }
 function loadUsers() {
   var list = document.getElementById('usersList');
@@ -5777,4 +5778,317 @@ document.addEventListener('keydown', function(e) {
       modalStripNav(e.key === 'ArrowLeft' ? -1 : 1);
     }
   }
+});
+
+// ========== SMART IMPORT (Facebook Embed) ==========
+
+var importImageData = [];
+
+function populateImportDropdowns() {
+  var groupEl = document.getElementById('importCategory0');
+  if (!groupEl) return;
+  var groups = (categoriesConfig.groups || []).map(function(g) { return g.name; });
+  groupEl.innerHTML = '<option value="">—</option>' + groups.map(function(g) { return '<option value="' + g + '">' + g + '</option>'; }).join('');
+  var subs = [];
+  if (categoriesConfig.subcategoryMap) {
+    for (var k in categoriesConfig.subcategoryMap) {
+      subs = subs.concat(categoriesConfig.subcategoryMap[k]);
+    }
+  }
+  var uniq = []; subs.forEach(function(s) { if (uniq.indexOf(s) === -1) uniq.push(s); });
+  var subEl = document.getElementById('importCategory1');
+  if (subEl) subEl.innerHTML = '<option value="">—</option>' + uniq.map(function(s) { return '<option value="' + s + '">' + s + '</option>'; }).join('');
+  var brandEl = document.getElementById('importCategory2');
+  if (brandEl) brandEl.innerHTML = '<option value="">—</option>' + (categoriesConfig.brands || []).map(function(b) { return '<option value="' + b + '">' + b + '</option>'; }).join('');
+  renderImportSizeChecks();
+}
+
+function renderImportSizeChecks(selectedSizes) {
+  var container = document.getElementById('importSizes');
+  if (!container) return;
+  var allSizes = categoriesConfig.sizes || [];
+  if (!Array.isArray(selectedSizes)) selectedSizes = [];
+  container.innerHTML = allSizes.map(function(s) {
+    var checked = selectedSizes.indexOf(s) !== -1 ? ' checked' : '';
+    return '<label style="display:inline-flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" class="import-size-cb" value="' + s + '"' + checked + '> ' + s + '</label>';
+  }).join('');
+}
+
+function parseFacebookEmbed(html) {
+  var match = html.match(/href=(["'])([^"']+)\1/i);
+  if (match) return decodeURIComponent(match[2]);
+  match = html.match(/src=(["'])([^"']+)\1/i);
+  if (match) {
+    var src = match[2];
+    var hrefMatch = src.match(/[?&]href=([^&]+)/);
+    if (hrefMatch) return decodeURIComponent(hrefMatch[1]);
+    return src;
+  }
+  // Check if it's already a direct URL
+  if (html.match(/^https?:\/\/(www\.)?facebook\.com/i)) return html.trim();
+  return null;
+}
+
+function parseCaptionToFields(caption) {
+  var result = { name: '', price: '', description: '', sizes: [], hashtags: [], category0: '', category1: '', category2: '' };
+  if (!caption) return result;
+  var lines = caption.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+  // Extract price
+  var priceMatch = caption.match(/₱\s*[\d,]+\.?\d*/);
+  if (priceMatch) result.price = priceMatch[0];
+  // Extract sizes
+  var sizeMatch = caption.match(/Sizes?\s*:?\s*([\w\s,\/]+)/i);
+  if (sizeMatch) {
+    result.sizes = sizeMatch[1].split(/[,\/\s]+/).map(function(s) { return s.trim(); }).filter(Boolean);
+  }
+  // Extract hashtags and map to categories
+  var hashtagRegex = /#(\w+)/g;
+  var tagMatch;
+  var knownGroups = (categoriesConfig.groups || []).map(function(g) { return g.name.toUpperCase(); });
+  var knownSubs = [];
+  if (categoriesConfig.subcategoryMap) {
+    for (var k in categoriesConfig.subcategoryMap) {
+      knownSubs = knownSubs.concat(categoriesConfig.subcategoryMap[k]);
+    }
+  }
+  knownSubs = knownSubs.map(function(s) { return s.toUpperCase(); });
+  var knownBrands = (categoriesConfig.brands || []).map(function(b) { return b.toUpperCase(); });
+  while ((tagMatch = hashtagRegex.exec(caption)) !== null) {
+    var tag = tagMatch[1].toUpperCase();
+    result.hashtags.push(tagMatch[1]);
+    if (!result.category0 && knownGroups.indexOf(tag) !== -1) result.category0 = tagMatch[1];
+    else if (!result.category1 && knownSubs.indexOf(tag) !== -1) result.category1 = tagMatch[1];
+    else if (!result.category2 && knownBrands.indexOf(tag) !== -1) result.category2 = tagMatch[1];
+  }
+  // Determine name (first line that's not price, sizes, or hashtag)
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (line.match(/^₱/)) continue;
+    if (line.match(/^Sizes?\s*:/i)) continue;
+    if (line.match(/^#/)) continue;
+    if (line.length > 3 && !result.name) { result.name = line; break; }
+  }
+  // Description: everything between name/price and hashtags/sizes
+  var descStart = 0;
+  if (result.name) descStart = caption.indexOf(result.name) + result.name.length;
+  var descEnd = caption.length;
+  var sizeIdx = caption.toLowerCase().indexOf('sizes');
+  if (sizeIdx > descStart && sizeIdx < descEnd) descEnd = sizeIdx;
+  var hashIdx = caption.indexOf('#');
+  if (hashIdx > descStart && hashIdx < descEnd) descEnd = hashIdx;
+  result.description = caption.substring(descStart, descEnd).trim().replace(/^[\s\n]+/, '');
+  return result;
+}
+
+function showImportPreview(data) {
+  var preview = document.getElementById('importPreview');
+  var fallback = document.getElementById('importFallback');
+  if (!preview) return;
+  preview.style.display = 'block';
+  if (fallback) fallback.style.display = 'none';
+  document.getElementById('importName').value = data.name || '';
+  document.getElementById('importPrice').value = data.price || '';
+  document.getElementById('importDesc').value = data.description || '';
+  // Set dropdowns
+  if (data.category0) { var g = document.getElementById('importCategory0'); if (g) g.value = data.category0; }
+  if (data.category1) { var s = document.getElementById('importCategory1'); if (s) s.value = data.category1; }
+  if (data.category2) { var b = document.getElementById('importCategory2'); if (b) b.value = data.category2; }
+  renderImportSizeChecks(data.sizes);
+  // Store images
+  importImageData = data.images || [];
+  renderImportImageThumbs();
+}
+
+function renderImportImageThumbs() {
+  var container = document.getElementById('importImages');
+  var countEl = document.getElementById('importImageCount');
+  if (!container) return;
+  if (!importImageData || importImageData.length === 0) {
+    container.innerHTML = '<span style="color:#999;font-size:12px">No images</span>';
+    if (countEl) countEl.textContent = '0';
+    return;
+  }
+  if (countEl) countEl.textContent = importImageData.length;
+  container.innerHTML = importImageData.map(function(img, i) {
+    var thumb = typeof img === 'string' && img.startsWith('http') ? img : (typeof img === 'object' && img.url ? img.url : img);
+    return '<div style="position:relative;display:inline-block"><img src="' + thumb + '" style="width:80px;height:80px;object-fit:cover;border-radius:4px;border:1px solid #ddd" onerror="this.style.display=\'none\'"><button type="button" class="import-remove-img" data-idx="' + i + '" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;border:none;background:#dc3545;color:#fff;font-size:12px;line-height:1;cursor:pointer;padding:0">×</button></div>';
+  }).join('');
+}
+
+document.addEventListener('click', function(e) {
+  var rmBtn = e.target.closest('.import-remove-img');
+  if (rmBtn) {
+    var idx = parseInt(rmBtn.dataset.idx);
+    if (!isNaN(idx) && idx >= 0 && idx < importImageData.length) {
+      importImageData.splice(idx, 1);
+      renderImportImageThumbs();
+    }
+  }
+});
+
+// Parse button
+var ipb = document.getElementById('importParseBtn');
+if (ipb) ipb.addEventListener('click', function() {
+  var embed = document.getElementById('importEmbedInput');
+  if (!embed || !embed.value.trim()) { showToast('Paste a Facebook embed code first.', 'info'); return; }
+  var statusEl = document.getElementById('importParseStatus');
+  if (statusEl) statusEl.textContent = 'Parsing...';
+  var postUrl = parseFacebookEmbed(embed.value.trim());
+
+  // Show post URL as clickable link in status
+  if (postUrl) {
+    if (statusEl) statusEl.innerHTML = 'Post URL: <a href="' + postUrl + '" target="_blank" style="color:#1976d2;text-decoration:underline">' + postUrl.substring(0, 60) + '...</a> — ';
+  } else {
+    if (statusEl) statusEl.textContent = 'Could not extract URL from embed code. ';
+  }
+  if (statusEl && !statusEl.textContent.match(/Post URL/)) statusEl.innerHTML = '<span style="color:#888">Could not extract URL.</span> ';
+
+  // Try worker endpoint (best-effort)
+  var proxyUrl = localStorage.getItem('stock_proxy_url') || '';
+  if (proxyUrl && postUrl) {
+    var apiUrl = proxyUrl.replace(/\/+$/, '') + '/facebook/parse-post';
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: postUrl })
+    }).then(function(r) {
+      if (!r.ok) return r.json().then(function(j) { throw new Error(j.error || 'HTTP ' + r.status); });
+      return r.json();
+    }).then(function(resp) {
+      if (statusEl) statusEl.textContent = '';
+      if (resp.error) { showImportFallback(postUrl); return; }
+      var fields = parseCaptionToFields(resp.caption);
+      fields.name = fields.name || resp.name || '';
+      fields.description = fields.description || resp.caption || '';
+      fields.images = resp.images || [];
+      showImportPreview(fields);
+    }).catch(function() {
+      showImportFallback(postUrl);
+    });
+  } else {
+    showImportFallback(postUrl);
+    if (!proxyUrl && statusEl) statusEl.textContent = 'Set your Stock Proxy URL in Config tab first. Images will use placeholder.';
+  }
+});
+
+function showImportFallback(postUrl) {
+  var preview = document.getElementById('importPreview');
+  var fallback = document.getElementById('importFallback');
+  if (preview) preview.style.display = 'none';
+  if (fallback) {
+    fallback.style.display = 'block';
+    // Show post URL link in fallback
+    var urlEl = document.getElementById('importFallbackUrl');
+    if (urlEl && postUrl) {
+      urlEl.innerHTML = 'Open in browser: <a href="' + postUrl + '" target="_blank" style="color:#1976d2;text-decoration:underline">' + postUrl + '</a>';
+      urlEl.style.display = 'block';
+    } else if (urlEl) {
+      urlEl.style.display = 'none';
+    }
+  }
+  // Focus caption textarea
+  var capEl = document.getElementById('importManualCaption');
+  if (capEl) capEl.focus();
+}
+
+// Manual parse button
+var impb = document.getElementById('importManualParseBtn');
+if (impb) impb.addEventListener('click', function() {
+  var captionEl = document.getElementById('importManualCaption');
+  var imagesEl = document.getElementById('importManualImages');
+  var caption = captionEl ? captionEl.value.trim() : '';
+  var imageUrls = imagesEl ? imagesEl.value.trim().split('\n').map(function(l) { return l.trim(); }).filter(Boolean) : [];
+  if (!caption && imageUrls.length === 0) { showToast('Paste a caption or image URLs.', 'info'); return; }
+  var fields = parseCaptionToFields(caption);
+  fields.images = imageUrls;
+  // If no name extracted but images exist, let user fill it
+  if (!fields.name && !fields.price && imageUrls.length > 0) {
+    fields.name = '';
+    fields.description = caption;
+  }
+  showImportPreview(fields);
+});
+
+// Save button
+var isb = document.getElementById('importSaveBtn');
+if (isb) isb.addEventListener('click', function() {
+  var statusEl = document.getElementById('importSaveStatus');
+  if (statusEl) statusEl.textContent = 'Processing...';
+  var name = document.getElementById('importName').value.trim();
+  var price = document.getElementById('importPrice').value.trim();
+  var desc = document.getElementById('importDesc').value.trim();
+  var category0 = document.getElementById('importCategory0').value;
+  var category1 = document.getElementById('importCategory1').value;
+  var category2 = document.getElementById('importCategory2').value;
+  if (!name || !price) { showToast('Name and price are required.', 'error'); if (statusEl) statusEl.textContent = ''; return; }
+  // Collect checked sizes
+  var sizeCbs = document.querySelectorAll('.import-size-cb:checked');
+  var sizes = Array.from(sizeCbs).map(function(cb) { return cb.value; });
+  // Build variants (single default variant if no sizes)
+  var variants = {};
+  if (sizes.length > 0) {
+    var stock = {};
+    sizes.forEach(function(s) { stock[s] = 5; });
+    variants['Default'] = { stock: stock };
+  } else {
+    variants['Default'] = { stock: { q: 5 } };
+  }
+  // Process images: resize each one
+  var imagesToSave = [];
+  var pending = importImageData.length;
+  if (pending === 0) { imagesToSave = ['images/products/placeholder.svg']; }
+  function finishSave() {
+    var maxId = products.length > 0 ? Math.max.apply(null, products.map(function(p) { return p.id; })) : 0;
+    var newProd = {
+      id: maxId + 1,
+      name: name,
+      category0: category0 || '',
+      category1: category1 || '',
+      category2: category2 || '',
+      variants: variants,
+      price: price.indexOf('₱') === 0 ? price : '₱' + price,
+      description: desc || '',
+      images: imagesToSave,
+      available: true
+    };
+    products.push(newProd);
+    saveProducts();
+    if (statusEl) statusEl.textContent = '✓ Saved as "' + name + '" (ID: ' + newProd.id + ')';
+    showToast('Product "' + name + '" saved!', 'success');
+    // Reset
+    importImageData = [];
+    document.getElementById('importEmbedInput').value = '';
+    document.getElementById('importPreview').style.display = 'none';
+    document.getElementById('importFallback').style.display = 'none';
+  }
+  if (pending === 0) { finishSave(); return; }
+  var proxyUrl = localStorage.getItem('stock_proxy_url') || '';
+  var processed = 0;
+  importImageData.forEach(function(img, idx) {
+    var url = typeof img === 'object' && img.url ? img.url : (typeof img === 'string' ? img : '');
+    if (!url || url.startsWith('data:')) {
+      if (url.startsWith('data:')) imagesToSave[idx] = url;
+      processed++;
+      if (processed === pending) finishSave();
+      return;
+    }
+    // Download through worker proxy
+    var downloadUrl = proxyUrl ? proxyUrl.replace(/\/+$/, '') + '/facebook/image?url=' + encodeURIComponent(url) : url;
+    fetch(downloadUrl).then(function(r) {
+      if (!r.ok) return null;
+      return r.blob();
+    }).then(function(blob) {
+      if (!blob) { imagesToSave[idx] = 'images/products/placeholder.svg'; processed++; if (processed === pending) finishSave(); return; }
+      var file = new File([blob], 'import_' + idx + '.jpg', { type: blob.type || 'image/jpeg' });
+      resizeImage(file, 800, 0.8, function(dataUrl) {
+        imagesToSave[idx] = dataUrl;
+        processed++;
+        if (processed === pending) finishSave();
+      });
+    }).catch(function() {
+      imagesToSave[idx] = 'images/products/placeholder.svg';
+      processed++;
+      if (processed === pending) finishSave();
+    });
+  });
 });

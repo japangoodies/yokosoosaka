@@ -290,6 +290,36 @@ async function updateStockInMemoryCache(productId, field, amount) {
   }
 }
 
+async function fetchFacebookPost(postUrl) {
+  const resp = await fetch(postUrl, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    }
+  });
+  if (!resp.ok) throw new Error('Facebook returned HTTP ' + resp.status);
+  const html = await resp.text();
+
+  // Extract og:title
+  const titleMatch = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["'][^>]*>/i);
+  // Extract og:description
+  const descMatch = html.match(/<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']+)["'][^>]*>/i);
+  // Extract all og:image
+  const imageRegex = /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["'][^>]*>/gi;
+  const imageUrls = [];
+  let imgMatch;
+  while ((imgMatch = imageRegex.exec(html)) !== null) {
+    const u = imgMatch[1].split('?')[0];
+    if (!imageUrls.includes(u)) imageUrls.push(u);
+  }
+
+  const title = titleMatch ? titleMatch[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#039;/g, "'").replace(/&quot;/g, '"').trim() : '';
+  const description = descMatch ? descMatch[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#039;/g, "'").replace(/&quot;/g, '"').trim() : '';
+
+  return { name: title, caption: description, images: imageUrls };
+}
+
 async function handleRequest(request, env) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/^\/+/, '');
@@ -874,6 +904,51 @@ async function handleRequest(request, env) {
         return new Response(JSON.stringify({ id: parts[1], fields, total: fields[field] }), { headers: corsHeaders(origin) });
       }
       throw new Error(`Decrement failed: ${JSON.stringify(r)}`);
+    }
+
+    // POST /facebook/parse-post
+    if (request.method === 'POST' && parts.length === 2 && parts[0] === 'facebook' && parts[1] === 'parse-post') {
+      const body = await request.json().catch(() => ({}));
+      if (!body.url) {
+        return new Response(JSON.stringify({ error: 'url required' }), { status: 400, headers: corsHeaders(origin) });
+      }
+      try {
+        const result = await fetchFacebookPost(body.url);
+        return new Response(JSON.stringify(result), { headers: corsHeaders(origin) });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), { status: 502, headers: corsHeaders(origin) });
+      }
+    }
+
+    // GET /facebook/image?url=...
+    if (request.method === 'GET' && parts.length === 2 && parts[0] === 'facebook' && parts[1] === 'image') {
+      const imageUrl = url.searchParams.get('url');
+      if (!imageUrl) {
+        return new Response(JSON.stringify({ error: 'url query param required' }), { status: 400, headers: corsHeaders(origin) });
+      }
+      try {
+        const imgResp = await fetch(imageUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'image/webp,image/avif,image/*,*/*;q=0.8',
+            'Referer': 'https://www.facebook.com/'
+          }
+        });
+        if (!imgResp.ok) {
+          return new Response(JSON.stringify({ error: 'Image fetch failed: HTTP ' + imgResp.status }), { status: 502, headers: corsHeaders(origin) });
+        }
+        const blob = await imgResp.arrayBuffer();
+        const contentType = imgResp.headers.get('content-type') || 'image/jpeg';
+        return new Response(blob, {
+          headers: {
+            'Content-Type': contentType,
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'public, max-age=86400'
+          }
+        });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), { status: 502, headers: corsHeaders(origin) });
+      }
     }
 
     return new Response(JSON.stringify({ error: 'route_not_found' }), { status: 404, headers: corsHeaders(origin) });
