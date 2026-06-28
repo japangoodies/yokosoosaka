@@ -106,14 +106,17 @@
     'var d=document,w=window;',
     'var imgs=[],seen={};',
     'try{d.querySelectorAll(\'img\').forEach(function(i){',
-    '  var s=i.src;',
+    '  var s=i.src||i.getAttribute(\'data-src\')||\'\';',
     '  if(!s||seen[s])return;',
     '  if(s.indexOf(\'fbcdn\')===-1&&s.indexOf(\'scontent\')===-1)return;',
-    '  if(i.width&&i.width<50)return;',
     '  seen[s]=1;imgs.push(s);',
     '})}catch(e){}',
+    'var msg="Images found: "+imgs.length+"\\nPost: "+location.href;',
+    'if(imgs.length===0)msg+="\\n\\nNo product images found. Try clicking the post first to open it.";',
     'var data=JSON.stringify({images:imgs,url:location.href});',
-    'w.open("' + baseUrl + '/import-from-facebook#" + encodeURIComponent(data),"yokoso_import");',
+    'var tab=w.open("","yokoso_import");',
+    'if(!tab||tab.closed){w.open("' + baseUrl + '/import-from-facebook#" + encodeURIComponent(data),"yokoso_import");}',
+    'else{tab.location="' + baseUrl + '/import-from-facebook#" + encodeURIComponent(data);tab.focus();}',
     '})();'
   ].join('');
 
