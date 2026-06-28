@@ -84,10 +84,10 @@
 4. Come back here and Ctrl+V (paste)"></textarea>
     </div>
 
-    <div class="box">
-      <div class="box-title">Images found (<span id="importImgCount">0</span>)</div>
-      <div id="importImages" class="img-grid"></div>
-      <p style="font-size:11px;color:#999;margin:4px 0 0">Click to select/deselect. Selected images are imported.</p>
+    <div class="field-group">
+      <label>Image URLs (one per line — right-click each image on Facebook → Copy image address → paste here):</label>
+      <textarea id="importImageUrls" rows="3" placeholder="https://scontent.fmnl1-1.fna.fbcdn.net/...
+https://scontent.fmnl1-2.fna.fbcdn.net/..."></textarea>
     </div>
 
     <div style="margin-top:12px">
@@ -115,55 +115,25 @@
   // ==================== HANDLE INCOMING DATA ====================
   var hash = location.hash.substring(1);
   if (hash) {
-    try {
-      var data = JSON.parse(decodeURIComponent(hash));
-      setupEditPage(data);
-    } catch(e) {
-      showStatus('Error parsing data: ' + e.message, 'err');
-      document.getElementById('editSection').style.display = 'block';
-      document.getElementById('setupSection').style.display = 'none';
-    }
-  }
-
-  function setupEditPage(data) {
     document.getElementById('setupSection').style.display = 'none';
     document.getElementById('editSection').style.display = 'block';
+    document.getElementById('clipboardMsg').style.display = 'block';
 
-    var caption = data.caption || '';
-    var images = data.images || [];
-    var url = data.url || '';
-    var msg = data.msg || '';
-
-    // Show clipboard instructions (hide if caption was auto-extracted)
-    var msgEl = document.getElementById('clipboardMsg');
-    if (caption) {
-      msgEl.style.display = 'none';
-    } else {
-      msgEl.style.display = 'block';
+    var url = '';
+    try {
+      var parsed = JSON.parse(decodeURIComponent(hash));
+      if (parsed.url) url = parsed.url;
+    } catch(e) {
+      // Try format: url=<encoded_url>
+      if (hash.indexOf('url=') === 0) {
+        url = decodeURIComponent(hash.substring(4));
+      }
     }
 
-    // Show post URL
-    document.getElementById('importPostUrl').textContent = url;
-    document.getElementById('importPostUrl').href = url;
-
-    // If caption was auto-extracted, fill it in
-    document.getElementById('importCaption').value = caption;
-
-    // Show images as selectable thumbnails
-    var imgCount = document.getElementById('importImgCount');
-    var imgContainer = document.getElementById('importImages');
-
-    if (images.length === 0) {
-      imgContainer.innerHTML = '<p style="color:#999;font-size:13px">No images found.</p>';
-      imgCount.textContent = '0';
-    } else {
-      imgCount.textContent = images.length;
-      imgContainer.innerHTML = images.map(function(src, i) {
-        return '<img src="' + src + '" data-index="' + i + '" class="selected" onclick="toggleImage(this)" title="Click to toggle">';
-      }).join('');
+    if (url) {
+      document.getElementById('importPostUrl').textContent = url;
+      document.getElementById('importPostUrl').href = url;
     }
-
-    showStatus('Images extracted! Paste the caption text below.', 'ok');
   }
 
   // ==================== IMAGE TOGGLE ====================
@@ -174,20 +144,17 @@
   // ==================== PARSE & IMPORT ====================
   document.getElementById('parseAndImportBtn').addEventListener('click', function() {
     var caption = document.getElementById('importCaption').value;
-    var imgEls = document.querySelectorAll('#importImages img.selected');
-    var images = Array.from(imgEls).map(function(img) { return img.src; });
+    var imgUrls = document.getElementById('importImageUrls').value;
+    var images = imgUrls.split('\n').map(function(s) { return s.trim(); }).filter(Boolean);
 
     if (!caption && images.length === 0) {
-      showStatus('Please paste the post text or select at least one image.', 'err');
+      showStatus('Please paste the caption text or add at least one image URL.', 'err');
       return;
     }
 
-    // Save to localStorage for main site
     localStorage.setItem('yokoso_import_caption', caption || '');
     localStorage.setItem('yokoso_import_images', JSON.stringify(images));
     localStorage.setItem('yokoso_import_url', document.getElementById('importPostUrl').textContent || '');
-
-    // Also save a flag that import data is ready
     localStorage.setItem('yokoso_import_ready', '1');
 
     showStatus('Data saved! Redirecting to admin panel...', 'ok');
