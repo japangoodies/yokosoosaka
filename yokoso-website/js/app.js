@@ -5817,13 +5817,27 @@ function renderImportSizeChecks(selectedSizes) {
 function checkBookmarkletData() {
   var banner = document.getElementById('importBookmarkletBanner');
   var infoEl = document.getElementById('importBookmarkletInfo');
+  var ready = localStorage.getItem('yokoso_import_ready');
   var caption = localStorage.getItem('yokoso_import_caption');
   var images = localStorage.getItem('yokoso_import_images');
-  if (!banner || !infoEl || !caption) return;
+  if (!banner || !infoEl || !caption || !ready) return;
   var imgArr = [];
   try { imgArr = JSON.parse(images || '[]'); } catch(e) {}
   infoEl.innerHTML = 'Caption (' + caption.length + ' chars) + ' + imgArr.length + ' images from bookmarklet ready.';
   banner.style.display = 'block';
+  // Auto-use the data
+  if (caption) {
+    var fields = parseCaptionToFields(caption);
+    fields.images = imgArr;
+    showImportPreview(fields);
+  } else {
+    showImportPreview({ images: imgArr });
+  }
+  banner.style.display = 'none';
+  localStorage.removeItem('yokoso_import_caption');
+  localStorage.removeItem('yokoso_import_images');
+  localStorage.removeItem('yokoso_import_url');
+  localStorage.removeItem('yokoso_import_ready');
 }
 
 document.addEventListener('click', function(e) {

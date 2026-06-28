@@ -1,53 +1,98 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Import from Facebook</title>
 <style>
-  body{font-family:sans-serif;padding:20px;max-width:600px;margin:40px auto;text-align:center}
-  .step{background:#e3f2fd;border-radius:8px;padding:16px;margin:12px 0;text-align:left;font-size:14px}
-  .step-num{display:inline-block;background:#1976d2;color:#fff;border-radius:50%;width:24px;height:24px;text-align:center;line-height:24px;font-size:13px;font-weight:bold;margin-right:8px}
-  code{background:#f5f5f5;padding:2px 6px;border-radius:3px;font-size:13px;border:1px solid #ddd}
-  .bookmarklet-btn{display:inline-block;padding:12px 24px;background:#1976d2;color:#fff;text-decoration:none;border-radius:6px;font-size:15px;font-weight:bold;cursor:move;border:2px dashed rgba(255,255,255,0.5)}
+  *{box-sizing:border-box}
+  body{font-family:sans-serif;padding:20px;max-width:680px;margin:0 auto;color:#333}
+  h2{margin:0 0 4px}
+  .sub{color:#888;font-size:13px;margin:0 0 16px}
+  textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:13px;font-family:monospace;resize:vertical;min-height:80px}
+  .field-group{margin-bottom:12px}
+  .field-group label{display:block;font-size:12px;color:#666;margin-bottom:3px;font-weight:600}
+  input[type=text]{width:100%;padding:7px 8px;border:1px solid #ccc;border-radius:4px;font-size:13px}
+  .img-grid{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+  .img-grid img{width:100px;height:100px;object-fit:cover;border-radius:4px;border:2px solid transparent;cursor:pointer}
+  .img-grid img.selected{border-color:#1976d2}
+  .img-grid img:hover{border-color:#90caf9}
+  .img-count{font-size:12px;color:#888;margin:4px 0}
+  .btn{padding:10px 24px;border:none;border-radius:4px;cursor:pointer;font-size:14px;display:inline-block;margin:4px 4px 0 0}
+  .btn-primary{background:#1976d2;color:#fff}
+  .btn-primary:hover{background:#1565c0}
+  .btn-secondary{background:#f5f5f5;color:#333;border:1px solid #ccc}
+  .btn-secondary:hover{background:#eee}
+  .btn-sm{padding:4px 10px;font-size:12px}
+  .box{border:1px solid #ddd;border-radius:6px;padding:14px;margin-bottom:14px}
+  .box-title{font-size:12px;font-weight:600;color:#888;margin-bottom:6px;text-transform:uppercase}
+  .bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  .pill{display:inline-block;background:#e3f2fd;color:#1565c0;border-radius:12px;padding:2px 10px;font-size:12px}
+  .setup-box{background:#fff8e1;border:1px solid #ffc107;border-radius:6px;padding:14px;margin-bottom:14px;font-size:13px}
+  .setup-box ol{margin:6px 0 0 16px;padding:0}
+  .setup-box li{margin-bottom:4px}
+  .bookmarklet-btn{display:inline-block;padding:10px 20px;background:#1976d2;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:bold;cursor:move;border:2px dashed rgba(255,255,255,0.5)}
   .bookmarklet-btn:hover{background:#1565c0}
-  .note{background:#fff8e1;border:1px solid #ffc107;border-radius:6px;padding:12px;margin:12px 0;font-size:13px;color:#856404;text-align:left}
-  .success{background:#e8f5e9;border:1px solid #4caf50;border-radius:6px;padding:16px;margin:12px 0;display:none}
-  .btn{display:inline-block;padding:8px 20px;background:#1976d2;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:14px;text-decoration:none;margin:4px}
-  .btn:hover{background:#1565c0}
+  .status{font-size:13px;padding:8px 12px;border-radius:4px;margin-bottom:12px;display:none}
+  .status-ok{background:#e8f5e9;color:#2e7d32;display:block}
+  .status-err{background:#ffebee;color:#c62828;display:block}
+  a{color:#1976d2}
 </style>
 </head>
 <body>
   <h2>📦 Import from Facebook</h2>
-  <p style="color:#666;font-size:14px">One-click import products from your Facebook posts.</p>
+  <p class="sub">Extract product info from a Facebook post.</p>
 
-  <div style="background:#e8f5e9;border:1px solid #4caf50;border-radius:6px;padding:16px;margin:16px 0;text-align:left">
-    <strong style="color:#2e7d32;font-size:15px">✅ Data received!</strong>
-    <div id="receivedInfo" style="margin-top:8px;font-size:13px;color:#333"></div>
-    <a href="/" class="btn" style="margin-top:12px;display:inline-block" id="goToImportBtn">Go to Admin → Smart Import</a>
+  <!-- ====== SETUP SECTION (shown when no data) ====== -->
+  <div id="setupSection">
+    <div class="setup-box">
+      <strong>How to use:</strong>
+      <ol>
+        <li><strong>First time:</strong> Drag the blue button below to your bookmarks bar</li>
+        <li>On Facebook, <strong>click a post</strong> to open it alone (URL will end with <code>/posts/...</code>)</li>
+        <li>Click the bookmark → this page opens with data extracted!</li>
+      </ol>
+      <p style="font-size:12px;color:#888;margin:6px 0 0">⚠️ Don't use on your main Facebook feed — open the post first.</p>
+    </div>
+
+    <div style="text-align:center;margin:16px 0">
+      <p style="font-size:13px;color:#666">★ Drag this to your bookmarks bar:</p>
+      <a id="bookmarkletLink" class="bookmarklet-btn" href="">📥 Import to JapanGoodies</a>
+    </div>
+
+    <details style="font-size:12px;color:#888;margin-top:16px">
+      <summary>Or install manually (copy-paste bookmark URL)</summary>
+      <code id="bookmarkletCode" style="display:block;padding:8px;margin-top:6px;word-break:break-all;font-size:11px;line-height:1.5;max-height:100px;overflow:auto;border:1px solid #eee;border-radius:4px"></code>
+    </details>
   </div>
 
-  <div class="note" id="setupInstructions">
-    <strong>How to use (3 clicks):</strong>
-    <ol style="margin:8px 0 0 12px;padding:0">
-      <li style="margin-bottom:6px"><strong>First time only:</strong> Drag the blue button below to your <strong>bookmarks bar</strong></li>
-      <li style="margin-bottom:6px">On the yokoso Facebook page, <strong>click a post</strong> (the text/date area) to open it alone → URL will end with <code>/posts/12345</code></li>
-      <li style="margin-bottom:6px">Now click the <strong>"Import to JapanGoodies"</strong> bookmark → import page opens with data pre-filled!</li>
-    </ol>
-    <p style="font-size:12px;color:#888;margin:4px 0 0 0">⚠️ Don't use the bookmarklet on the main feed page — open the post first.</p>
-  </div>
+  <!-- ====== EDIT SECTION (shown when data received) ====== -->
+  <div id="editSection" style="display:none">
+    <div id="statusMessage" class="status"></div>
 
-  <div style="margin:20px 0">
-    <p style="font-size:13px;color:#666;margin-bottom:8px">★ Drag this to your bookmarks bar:</p>
-    <a id="bookmarkletLink" class="bookmarklet-btn" href="">📥 Import to JapanGoodies</a>
-  </div>
+    <div class="box">
+      <div class="box-title">Post URL</div>
+      <a id="importPostUrl" href="#" target="_blank" style="font-size:12px;word-break:break-all"></a>
+    </div>
 
-  <div style="margin-top:24px;padding-top:16px;border-top:1px solid #eee;font-size:12px;color:#888">
-    <p>Or paste this as the URL of a new bookmark:</p>
-    <code id="bookmarkletCode" style="display:block;padding:8px;margin-top:4px;word-break:break-all;font-size:11px;line-height:1.5;max-height:120px;overflow:auto"></code>
+    <div class="field-group">
+      <label>Raw caption text (edit if needed):</label>
+      <textarea id="importCaption" rows="6"></textarea>
+    </div>
+
+    <div class="box">
+      <div class="box-title">Images found (<span id="importImgCount">0</span>)</div>
+      <div id="importImages" class="img-grid"></div>
+      <p style="font-size:11px;color:#999;margin:4px 0 0">Click to select/deselect. Selected images are imported.</p>
+    </div>
+
+    <div style="margin-top:12px">
+      <button class="btn btn-primary" id="parseAndImportBtn">Parse &amp; Import to Admin</button>
+      <button class="btn btn-secondary" id="skipToAdminBtn">Go to Admin Panel Only</button>
+    </div>
   </div>
 
 <script>
 (function() {
   var baseUrl = location.protocol + '//' + location.host;
 
-  // The bookmarklet JS (must be self-contained, no external deps)
+  // ==================== BOOKMARKLET CODE ====================
   var bookmarkletFn = [
     '(function(){',
     'var d=document;',
@@ -74,39 +119,100 @@
     return /[a-zA-Z0-9:%_]/.test(c) ? c : m;
   });
 
-  var link = document.getElementById('bookmarkletLink');
-  link.href = bookmarkletHref;
-
+  document.getElementById('bookmarkletLink').href = bookmarkletHref;
   var codeEl = document.getElementById('bookmarkletCode');
-  codeEl.textContent = bookmarkletHref.substring(0, 300) + '...';
+  codeEl.textContent = bookmarkletHref;
 
-  // Check if we received data from bookmarklet
+  // ==================== HANDLE INCOMING DATA ====================
   var hash = location.hash.substring(1);
   if (hash) {
     try {
       var data = JSON.parse(decodeURIComponent(hash));
-      var info = document.getElementById('receivedInfo');
-      info.innerHTML =
-        '<div><strong>Caption:</strong> ' + (data.caption || '').substring(0, 100) + '...</div>' +
-        '<div><strong>Images:</strong> ' + (data.images || []).length + ' found</div>' +
-        '<div><strong>Post URL:</strong> <a href="' + (data.url || '#') + '" target="_blank" style="color:#1976d2">' + (data.url || '').substring(0, 60) + '...</a></div>';
-
-      // Save to localStorage for the main site to pick up
-      localStorage.setItem('yokoso_import_caption', data.caption || '');
-      localStorage.setItem('yokoso_import_images', JSON.stringify(data.images || []));
-      localStorage.setItem('yokoso_import_url', data.url || '');
-
-      document.getElementById('setupInstructions').style.display = 'none';
-      document.getElementById('goToImportBtn').style.display = 'inline-block';
+      setupEditPage(data);
     } catch(e) {
-      document.getElementById('receivedInfo').innerHTML = '<span style="color:#f44336">Error parsing data: ' + e.message + '</span>';
+      showStatus('Error parsing data: ' + e.message, 'err');
+      document.getElementById('editSection').style.display = 'block';
+      document.getElementById('setupSection').style.display = 'none';
     }
-  } else {
-    document.getElementById('goToImportBtn').style.display = 'none';
-    // Clear any stale data
+  }
+
+  function setupEditPage(data) {
+    document.getElementById('setupSection').style.display = 'none';
+    document.getElementById('editSection').style.display = 'block';
+
+    var caption = data.caption || '';
+    var images = data.images || [];
+    var url = data.url || '';
+
+    // Show post URL
+    var urlEl = document.getElementById('importPostUrl');
+    urlEl.textContent = url;
+    urlEl.href = url;
+
+    // Show caption in editable textarea
+    document.getElementById('importCaption').value = caption;
+
+    // Show images as selectable thumbnails
+    var imgCount = document.getElementById('importImgCount');
+    var imgContainer = document.getElementById('importImages');
+
+    if (images.length === 0) {
+      imgContainer.innerHTML = '<p style="color:#999;font-size:13px">No images found in the post. You can add them manually in the admin panel.</p>';
+      imgCount.textContent = '0';
+    } else {
+      imgCount.textContent = images.length;
+      imgContainer.innerHTML = images.map(function(src, i) {
+        return '<img src="' + src + '" data-index="' + i + '" class="selected" onclick="toggleImage(this)" title="Click to toggle">';
+      }).join('');
+    }
+
+    showStatus('Data received from Facebook post! Edit the caption and select images below.', 'ok');
+  }
+
+  // ==================== IMAGE TOGGLE ====================
+  window.toggleImage = function(imgEl) {
+    imgEl.classList.toggle('selected');
+  };
+
+  // ==================== PARSE & IMPORT ====================
+  document.getElementById('parseAndImportBtn').addEventListener('click', function() {
+    var caption = document.getElementById('importCaption').value;
+    var imgEls = document.querySelectorAll('#importImages img.selected');
+    var images = Array.from(imgEls).map(function(img) { return img.src; });
+
+    // Save to localStorage for main site
+    localStorage.setItem('yokoso_import_caption', caption || '');
+    localStorage.setItem('yokoso_import_images', JSON.stringify(images));
+    localStorage.setItem('yokoso_import_url', document.getElementById('importPostUrl').textContent || '');
+
+    // Also save a flag that import data is ready
+    localStorage.setItem('yokoso_import_ready', '1');
+
+    showStatus('Data saved! Redirecting to admin panel...', 'ok');
+
+    setTimeout(function() {
+      window.location.href = '/';
+    }, 1000);
+  });
+
+  document.getElementById('skipToAdminBtn').addEventListener('click', function() {
+    window.location.href = '/';
+  });
+
+  // ==================== STATUS HELPER ====================
+  function showStatus(msg, type) {
+    var el = document.getElementById('statusMessage');
+    el.textContent = msg;
+    el.className = 'status status-' + type;
+    el.style.display = 'block';
+  }
+
+  // If no hash data, clear localStorage
+  if (!hash) {
     localStorage.removeItem('yokoso_import_caption');
     localStorage.removeItem('yokoso_import_images');
     localStorage.removeItem('yokoso_import_url');
+    localStorage.removeItem('yokoso_import_ready');
   }
 })();
 </script>
