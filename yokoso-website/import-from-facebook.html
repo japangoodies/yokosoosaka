@@ -45,10 +45,9 @@
       <strong>How to use:</strong>
       <ol>
         <li><strong>First time:</strong> Drag the blue button below to your bookmarks bar</li>
-        <li>On Facebook, <strong>click a post</strong> to open it alone (URL will end with <code>/posts/...</code>)</li>
+        <li>On Facebook, <strong>click a post's date/time</strong> → a popup opens with the full post</li>
         <li>Click the bookmark → this page opens with data extracted!</li>
       </ol>
-      <p style="font-size:12px;color:#888;margin:6px 0 0">⚠️ Don't use on your main Facebook feed — open the post first.</p>
     </div>
 
     <div style="text-align:center;margin:16px 0">
@@ -96,8 +95,11 @@
   var bookmarkletFn = [
     '(function(){',
     'var d=document;',
-    'var art=d.querySelector(\'[role="article"]\');',
-    'if(!art)art=d.querySelector(\'[data-pagelet="FeedUnit"]\');',
+    'var dlg=d.querySelector(\'div[role="dialog"]\');',
+    'if(!dlg||!dlg.offsetParent)dlg=null;',
+    'var el=dlg||d;',
+    'var art=el.querySelector(\'[role="article"]\');',
+    'if(!art)art=el.querySelector(\'[data-pagelet="FeedUnit"]\');',
     'var caption=\'\';',
     'if(art){',
     '  var c=art.cloneNode(!0);',
@@ -105,9 +107,9 @@
     '  c.querySelectorAll(\'header,footer,aside,[role="button"],[role="dialog"]\').forEach(function(e){e.remove()});',
     '  caption=(c.innerText||c.textContent||\'\').trim();',
     '}',
-    'if(!caption)caption=d.body.innerText||\'\';',
+    'if(!caption)caption=(el.body||el).innerText||\'\';',
     'var imgs=[],seen={};',
-    'var srcs=art?art.querySelectorAll(\'img\'):d.querySelectorAll(\'img\');',
+    'var srcs=art?art.querySelectorAll(\'img\'):el.querySelectorAll(\'img\');',
     'srcs.forEach(function(i){',
     '  var s=i.src||i.getAttribute(\'data-src\')||\'\';',
     '  if(!s||seen[s])return;',

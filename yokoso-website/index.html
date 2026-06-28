@@ -552,10 +552,9 @@
               <p style="margin:0 0 8px;font-size:12px;color:#555">One-click import from any Facebook post:</p>
               <ol style="margin:0 0 8px 16px;padding:0;font-size:12px;color:#555">
                 <li>Open <a href="/import-from-facebook" target="_blank" style="color:#1976d2">the setup page</a> and drag the button to your bookmarks bar</li>
-                <li>On Facebook, <strong>click a post</strong> to open it alone (URL should end with <code>/posts/...</code>)</li>
+                <li>On Facebook, <strong>click a post's date/time</strong> → a popup opens with the post details</li>
                 <li>Click the bookmark → import opens here pre-filled!</li>
               </ol>
-              <p style="font-size:11px;color:#999;margin:4px 0 0 0">⚠️ Don't use on the main Facebook feed — open the post first.</p>
               <a href="/import-from-facebook" target="_blank" class="btn btn-sm" style="font-size:12px;padding:4px 12px">Open Bookmarklet Setup →</a>
             </div>
           </details>
@@ -808,5 +807,15 @@ Sizes: S, M, L
     <button onclick="dismissInstallBanner()" style="background:none;border:none;color:#888;font-size:20px;cursor:pointer;padding:4px 8px">✕</button>
     <button onclick="installApp()" style="background:#e94560;border:none;color:#fff;padding:8px 18px;border-radius:6px;cursor:pointer;font-weight:600;font-size:14px">Install</button>
   </div>
+<script>
+if (localStorage.getItem('yokoso_import_ready')) {
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      var btn = document.querySelector('[onclick*="dmin"i]');
+      if (btn) btn.click();
+    }, 800);
+  });
+}
+</script>
 </body>
 </html>
