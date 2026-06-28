@@ -52,8 +52,22 @@
 
   <div style="text-align:center;margin:16px 0">
     <a class="install-btn" href="/japan-goodies-importer.user.js">+ Install Importer Script</a>
-    <p style="font-size:12px;color:#888;margin:8px 0 0">Click the button above, then click <strong>Install</strong> in Tampermonkey's page.</p>
+    <p style="font-size:12px;color:#888;margin:8px 0 0">Click the button above. If Tampermonkey doesn't open, see manual install below.</p>
   </div>
+
+  <details style="font-size:12px;color:#888;margin-bottom:14px">
+    <summary style="font-weight:600;cursor:pointer;color:#333">Manual install (if auto-install doesn't work)</summary>
+    <ol style="margin:8px 0 0 18px;line-height:1.8">
+      <li>Click Tampermonkey icon → <strong>Create a new script</strong></li>
+      <li>Delete all default code in the editor</li>
+      <li>Copy the script below and paste it in</li>
+      <li>Press <strong>Ctrl+S</strong> to save</li>
+    </ol>
+    <div style="position:relative;margin-top:8px">
+      <button class="copy-btn" onclick="copyRawScript()" style="position:absolute;top:8px;right:8px;background:#444;color:#fff;border:none;border-radius:3px;padding:4px 12px;cursor:pointer;font-size:11px;z-index:1">Copy Script</button>
+      <textarea id="rawScriptDisplay" readonly style="width:100%;height:200px;padding:8px;font-size:11px;font-family:monospace;background:#1e1e1e;color:#d4d4d4;border:1px solid #333;border-radius:4px;resize:vertical"></textarea>
+    </div>
+  </details>
 
   <div style="background:#f3e5f5;border:1px solid #ce93d8;border-radius:6px;padding:12px;font-size:13px;margin-bottom:14px">
     <strong>After install:</strong> Go to a Facebook post → the blue <strong>📥 Import</strong> button appears at bottom-right → click it → come back here and paste below.
@@ -113,6 +127,21 @@
   </details>
 
 <script>
+// Load raw script into textarea for manual install
+fetch('/japan-goodies-importer.user.js').then(function(r){return r.text();}).then(function(code){
+  document.getElementById('rawScriptDisplay').value = code;
+}).catch(function(){});
+
+function copyRawScript() {
+  var ta = document.createElement('textarea');
+  ta.value = document.getElementById('rawScriptDisplay').value;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  alert('Script copied! Paste it into Tampermonkey (Ctrl+V) and save (Ctrl+S).');
+}
+
 function parseData() {
   var raw = document.getElementById('importData').value.trim();
   if (!raw) { alert('Paste the data first.'); return; }
