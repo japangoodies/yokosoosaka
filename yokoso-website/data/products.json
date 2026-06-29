@@ -912,8 +912,8 @@
     "deposit": "₱250",
     "variants": {
       "BLACK": {
-        "stock": {},
-        "sizes": []
+        "sizes": [],
+        "stock": {}
       }
     },
     "id": 26,
@@ -931,7 +931,7 @@
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947962/tpzgsnrsk03fgfbwi8vo.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947962/ep6zsc20bhecxfki69yi.jpg"
     ],
-    "category0": "MENS",
+    "category0": "WOMENS",
     "_colorOrder": [
       "BLACK"
     ],
