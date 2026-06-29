@@ -5893,7 +5893,11 @@ function parseCaptionToFields(caption) {
   var lines = caption.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
   // Extract price
   var priceMatch = caption.match(/₱\s*[\d,]+\.?\d*/);
-  if (priceMatch) result.price = priceMatch[0];
+  if (priceMatch) { result.price = priceMatch[0]; }
+  else {
+    var pesoMatch = caption.match(/([\d,]+\.?\d*)\s*pesos/i);
+    if (pesoMatch) result.price = '₱' + pesoMatch[1];
+  }
   // Extract sizes
   var sizeMatch = caption.match(/Sizes?\s*:?\s*([\w\s,\/]+)/i);
   if (sizeMatch) {
@@ -6138,6 +6142,7 @@ if (isb) isb.addEventListener('click', function() {
     };
     products.push(newProd);
     saveProducts();
+    renderAdminList();
     if (statusEl) statusEl.textContent = '✓ Saved as "' + name + '" (ID: ' + newProd.id + ')';
     showToast('Product "' + name + '" saved!', 'success');
     // Reset
