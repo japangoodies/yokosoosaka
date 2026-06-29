@@ -1942,58 +1942,6 @@
     "color": "Brown"
   },
   {
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 14
-        }
-      }
-    },
-    "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item.",
-    "id": 75,
-    "price": "₱2163",
-    "category0": "MENS",
-    "stock": 14,
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "White",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "sizes": [],
-    "name": "Snow Peak Down Vest",
-    "category1": "Clothing",
-    "category2": "Supreme",
-    "available": true
-  },
-  {
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 21
-        }
-      }
-    },
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
-    "id": 76,
-    "price": "₱2280",
-    "category0": "MENS",
-    "stock": 21,
-    "color": "Pink",
-    "_colorOrder": [
-      "Default"
-    ],
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "name": "24H Cosme Lip Balm",
-    "sizes": [],
-    "category1": "Shoes",
-    "category2": "Nike",
-    "available": false
-  },
-  {
     "available": true,
     "category2": "Uniqlo",
     "category1": "Clothing",
