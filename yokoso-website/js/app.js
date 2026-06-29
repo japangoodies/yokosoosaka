@@ -4176,14 +4176,12 @@ function resizeImage(file, maxW, maxQ, cb, aspectRatio) {
       cb(canvas.toDataURL('image/jpeg', maxQ));
     };
     img.onerror = function() {
-      var el = document.getElementById('groupImageSyncStatus');
-      if (el) { el.textContent = 'Error: image failed to load'; el.style.color = '#dc3545'; }
+      cb('images/products/placeholder.svg');
     };
     img.src = ev.target.result;
   };
   reader.onerror = function() {
-    var el = document.getElementById('groupImageSyncStatus');
-    if (el) { el.textContent = 'Error: failed to read file'; el.style.color = '#dc3545'; }
+    cb('images/products/placeholder.svg');
   };
   reader.readAsDataURL(file);
 }
@@ -6127,6 +6125,7 @@ if (isb) isb.addEventListener('click', function() {
   var pending = importImageData.length;
   if (pending === 0) { imagesToSave = ['images/products/placeholder.svg']; }
   function finishSave() {
+    clearTimeout(saveTimeout);
     var maxId = products.length > 0 ? Math.max.apply(null, products.map(function(p) { return p.id; })) : 0;
     var newProd = {
       id: maxId + 1,
@@ -6154,6 +6153,11 @@ if (isb) isb.addEventListener('click', function() {
   if (pending === 0) { finishSave(); return; }
   var proxyUrl = localStorage.getItem('stock_proxy_url') || '';
   var processed = 0;
+  var saveTimeout = setTimeout(function() {
+    if (statusEl) statusEl.textContent = 'Image processing timed out. Saving without images.';
+    imagesToSave = ['images/products/placeholder.svg'];
+    finishSave();
+  }, 30000);
   importImageData.forEach(function(img, idx) {
     var url = typeof img === 'object' && img.url ? img.url : (typeof img === 'string' ? img : '');
     if (!url || url.startsWith('data:')) {
