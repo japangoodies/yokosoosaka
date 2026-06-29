@@ -87,14 +87,23 @@ def scrape_post(page, url):
         return results;
     }''')
 
-    # Enter photo viewer to find hidden photos (posts with "+N" overlay)
-    viewer_urls = []
-    entered = page.evaluate('''() => {
-        let link = document.querySelector('a[href*="photo"][href*="set=pcb"]');
-        if (link) { link.click(); return true; }
+    # Check if post has hidden photos (look for "+N" overlay in the article)
+    has_hidden = page.evaluate('''() => {
+        let article = document.querySelector('[role="article"]');
+        if (!article) return false;
+        let els = article.querySelectorAll('a, span, div');
+        for (let el of els) {
+            if (/^\\+\\d+$/.test(el.textContent.trim()) && el.offsetParent !== null) return true;
+        }
         return false;
     }''')
-    if entered:
+    # Only enter the photo viewer if there are hidden photos behind the "+N" overlay
+    viewer_urls = []
+    if has_hidden:
+        page.evaluate('''() => {
+            let link = document.querySelector('a[href*="photo"][href*="set=pcb"]');
+            if (link) link.click();
+        }''')
         page.wait_for_timeout(3000)
         seen_bases = set()
         for _ in range(20):
