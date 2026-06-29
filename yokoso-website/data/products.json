@@ -1110,58 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "sizes": [],
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
-    "color": "Pink",
-    "price": "₱2397",
-    "name": "Fujiko Lip Oil",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 28
-        }
-      }
-    },
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "stock": 28,
-    "category2": "Adidas",
-    "available": true,
-    "_colorOrder": [
-      "Default"
-    ],
-    "category1": "Shoes",
-    "id": 77,
-    "category0": "MENS"
-  },
-  {
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "sizes": [],
-    "name": "Excel Eyebrow Powder",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 35
-        }
-      }
-    },
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "color": "Lavender",
-    "price": "₱2514",
-    "category2": "Uniqlo",
-    "available": true,
-    "stock": 35,
-    "category1": "Clothing",
-    "id": 78,
-    "category0": "MENS",
-    "_colorOrder": [
-      "Default"
-    ]
-  },
-  {
     "stock": 42,
     "category2": "GU",
     "available": true,
