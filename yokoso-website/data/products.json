@@ -1110,58 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "category1": "Shoes",
-    "category0": "MENS",
-    "id": 72,
-    "_colorOrder": [
-      "Default"
-    ],
-    "category2": "New Balance",
-    "available": true,
-    "stock": 43,
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 43
-        }
-      }
-    },
-    "name": "Anello Backpack",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "color": "Beige",
-    "price": "₱1812",
-    "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
-    "sizes": []
-  },
-  {
-    "available": true,
-    "category2": "Uniqlo",
-    "stock": 50,
-    "id": 73,
-    "category0": "MENS",
-    "category1": "Clothing",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "sizes": [],
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 50
-        }
-      }
-    },
-    "name": "Porter Tanker 2-Way",
-    "price": "₱1929",
-    "color": "Navy"
-  },
-  {
     "category1": "Clothing",
     "category0": "MENS",
     "id": 74,
