@@ -2210,8 +2210,7 @@
     "price": "₱559.00",
     "description": "559.00 pesos only\n150 DP TO SECURE ITEM",
     "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782756881/otlkhf7wap0efos3b5vd.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782756881/i8bgfimogpqoquqvvja3.jpg"
+      "images/products/placeholder.svg"
     ],
     "available": true,
     "_colorOrder": [
