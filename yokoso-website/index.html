@@ -580,6 +580,16 @@
             </div>
           </details>
 
+          <div style="margin-bottom:12px;padding:10px;background:#e3f2fd;border:1px solid #90caf9;border-radius:6px">
+            <label style="display:block;margin-bottom:4px;font-size:13px;color:#1565c0;font-weight:600">Local Scraper (auto)</label>
+            <p style="margin:0 0 6px;font-size:11px;color:#555">Paste a Facebook post URL → click Scrape → data fills in automatically.</p>
+            <div style="display:flex;gap:6px">
+              <input type="text" id="importScraperUrl" style="flex:1;padding:7px 8px;border:1px solid #90caf9;border-radius:4px;font-size:13px;box-sizing:border-box" placeholder="https://www.facebook.com/.../posts/...">
+              <button class="btn btn-primary" id="importScraperBtn" style="font-size:13px;white-space:nowrap">Scrape</button>
+            </div>
+            <span id="importScraperStatus" style="font-size:11px;color:#888;margin-top:4px;display:block">Requires <code style="background:#eee;padding:1px 4px;border-radius:2px">fb-server.py</code> running on port 8899</span>
+          </div>
+
           <div style="margin-bottom:12px">
             <label style="display:block;margin-bottom:4px;font-size:13px;color:#666">Paste embed code or post URL:</label>
             <textarea id="importEmbedInput" rows="4" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:12px;font-family:monospace;box-sizing:border-box;resize:vertical" placeholder='<iframe src="..."></iframe> or https://www.facebook.com/...'></textarea>
