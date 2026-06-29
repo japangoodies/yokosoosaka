@@ -1137,7 +1137,7 @@
         }
       }
     },
-    "price": "₱795.00",
+    "price": "₱799.00",
     "description": "Blue pa lang naka-sale\nSizes avail: XS to 3XL\nNasa comsec size reference\n200 DP TO SECURE ITEM\nYokoso Osaka - Japan Goodies PH\nSize - length - sleeve - shoulder - bust",
     "images": [
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747347/sthuco5zl9hwirpisvrq.jpg",
@@ -1148,6 +1148,8 @@
     "available": true,
     "_colorOrder": [
       "Default"
-    ]
+    ],
+    "deposit": "₱200",
+    "originalPrice": "₱795"
   }
 ]
