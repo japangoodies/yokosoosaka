@@ -56,17 +56,36 @@ def scrape_post(page, url):
 
     raw_images = page.evaluate('''() => {
         let seen = {}, results = [];
-        document.querySelectorAll('img').forEach(img => {
+        let article = document.querySelector('[role="article"]');
+        if (!article) return results;
+        // First: get images from photo album links (most reliable for product posts)
+        article.querySelectorAll('a[href*="photo"]').forEach(a => {
+            let img = a.querySelector('img');
+            if (!img) return;
             let src = img.src || '';
             if (!src || src.includes('emoji')) return;
             if (!src.includes('fbcdn') && !src.includes('scontent')) return;
-            if (src.includes('rsrc.php') || src.includes('static.xx') || src.match(/v\\/t39\\.99422/)) return;
+            // Skip small images (profile pics, reaction face thumbnails)
+            if (img.naturalWidth < 300 && img.naturalHeight < 300) return;
             let base = src.split('?')[0];
             if (seen[base]) return;
             seen[base] = true;
-            try { if (img.offsetParent !== null || img.complete) results.push(img.src); }
-            catch(e) {}
+            results.push(img.src);
         });
+        // Fallback: any article image with meaningful size
+        if (results.length === 0) {
+            article.querySelectorAll('img').forEach(img => {
+                let src = img.src || '';
+                if (!src || src.includes('emoji')) return;
+                if (!src.includes('fbcdn') && !src.includes('scontent')) return;
+                if (src.includes('rsrc.php') || src.includes('static.xx')) return;
+                if (img.naturalWidth < 150 || img.naturalHeight < 150) return;
+                let base = src.split('?')[0];
+                if (seen[base]) return;
+                seen[base] = true;
+                results.push(img.src);
+            });
+        }
         return results;
     }''')
 
