@@ -1682,32 +1682,6 @@
     "category1": "Accessories"
   },
   {
-    "description": "Authentic Japanese accessories from Lily Brown. Limited Japan-exclusive item.",
-    "id": 65,
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 43
-        }
-      }
-    },
-    "price": "₱993",
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "Silver",
-    "stock": 43,
-    "category0": "MENS",
-    "available": true,
-    "category2": "Lily Brown",
-    "category1": "Accessories",
-    "name": "Military Shirt",
-    "sizes": [],
-    "images": [
-      "images/products/placeholder.svg"
-    ]
-  },
-  {
     "price": "₱1227",
     "variants": {
       "Default": {
