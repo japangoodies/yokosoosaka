@@ -1110,32 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "name": "Majolica Majorca Mascara",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 49
-        }
-      }
-    },
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "color": "",
-    "price": "₱2748",
-    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
-    "sizes": [],
-    "category1": "Cosmetics",
-    "category0": "WOMENS",
-    "id": 80,
-    "_colorOrder": [
-      "Default"
-    ],
-    "category2": "Shiseido",
-    "available": true,
-    "stock": 49
-  },
-  {
     "stock": 6,
     "available": true,
     "category2": "SK-II",
