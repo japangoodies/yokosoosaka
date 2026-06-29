@@ -29,9 +29,9 @@ def get_context(p):
 
 def scrape_post(page, url):
     page.goto(url, timeout=60000, wait_until='domcontentloaded')
-    page.wait_for_timeout(4000)
+    page.wait_for_timeout(5000)
     page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
-    page.wait_for_timeout(2000)
+    page.wait_for_timeout(3000)
 
     text = page.evaluate('''() => {
         let parts = [];
@@ -54,25 +54,23 @@ def scrape_post(page, url):
         return filtered.join('\\n').substring(0, 5000);
     }''')
 
-    raw_images = page.evaluate('''() => {
+    # Extract images visible in the article
+    article_images = page.evaluate('''() => {
         let seen = {}, results = [];
         let article = document.querySelector('[role="article"]');
         if (!article) return results;
-        // First: get images from photo album links (most reliable for product posts)
         article.querySelectorAll('a[href*="photo"]').forEach(a => {
             let img = a.querySelector('img');
             if (!img) return;
             let src = img.src || '';
             if (!src || src.includes('emoji')) return;
             if (!src.includes('fbcdn') && !src.includes('scontent')) return;
-            // Skip small images (profile pics, reaction face thumbnails)
             if (img.naturalWidth < 300 && img.naturalHeight < 300) return;
             let base = src.split('?')[0];
             if (seen[base]) return;
             seen[base] = true;
             results.push(img.src);
         });
-        // Fallback: any article image with meaningful size
         if (results.length === 0) {
             article.querySelectorAll('img').forEach(img => {
                 let src = img.src || '';
@@ -89,9 +87,59 @@ def scrape_post(page, url):
         return results;
     }''')
 
+    # Enter photo viewer to find hidden photos (posts with "+N" overlay)
+    viewer_urls = []
+    entered = page.evaluate('''() => {
+        let link = document.querySelector('a[href*="photo"][href*="set=pcb"]');
+        if (link) { link.click(); return true; }
+        return false;
+    }''')
+    if entered:
+        page.wait_for_timeout(3000)
+        seen_bases = set()
+        for _ in range(20):
+            img_url = page.evaluate('''() => {
+                let best = null;
+                document.querySelectorAll('img').forEach(img => {
+                    let src = img.src || '';
+                    if (!src.includes('fbcdn') && !src.includes('scontent')) return;
+                    if (src.includes('emoji') || src.includes('rsrc.php') || src.includes('static.xx')) return;
+                    if (img.naturalWidth < 300 && img.naturalHeight < 300) return;
+                    if (!best || img.naturalWidth > best['w']) best = { src: src, w: img.naturalWidth };
+                });
+                return best ? best['src'] : null;
+            }''')
+            if img_url:
+                base = img_url.split('?')[0]
+                if base not in seen_bases:
+                    seen_bases.add(base)
+                    viewer_urls.append(img_url)
+            has_next = page.evaluate('''() => {
+                let btn = document.querySelector('[aria-label="Next photo"]');
+                if (btn && btn.offsetParent !== null) { btn.click(); return true; }
+                return false;
+            }''')
+            if not has_next:
+                break
+            page.wait_for_timeout(2000)
+
+    # Merge: article images first, then viewer images (deduplicated by base URL)
+    all_seen = set()
+    merged = []
+    for url in article_images:
+        base = url.split('?')[0]
+        if base not in all_seen:
+            all_seen.add(base)
+            merged.append(url)
+    for url in viewer_urls:
+        base = url.split('?')[0]
+        if base not in all_seen:
+            all_seen.add(base)
+            merged.append(url)
+
     return {
         'text': text.strip() if text else '',
-        'raw_images': raw_images or [],
+        'raw_images': merged or [],
     }
 
 def download_as_base64(url):
