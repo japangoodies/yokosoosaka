@@ -1650,17 +1650,17 @@
   {
     "deposit": "₱200",
     "_colorOrder": [
+      "PINK",
       "BLACK",
       "GRAY",
-      "WHITE",
-      "PINK"
+      "WHITE"
     ],
     "name": "UNIQLO CECILIE BAHNSEN SHIRT",
     "category1": "Clothing",
     "description": "Sizes avail: XS to 3XL\n699.00 pesos only\n200 DP TO SECURE ITEM",
     "category2": "Uniqlo",
     "originalPrice": "₱695",
-    "category0": "MENS",
+    "category0": "WOMENS",
     "available": true,
     "sizes": [],
     "stock": 5,
@@ -1676,38 +1676,29 @@
     ],
     "variants": {
       "PINK": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
         "stock": {
-          "L": 5,
-          "2XL": 5,
-          "XL": 5,
+          "XS": 5,
           "S": 5,
           "M": 5,
-          "XS": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
           "3XL": 5
         },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/mr3r24yhprm5bx0nqgyq.jpg"
-        ],
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
         ]
       },
       "BLACK": {
-        "stock": {
-          "M": 5,
-          "XS": 5,
-          "3XL": 5,
-          "L": 5,
-          "2XL": 5,
-          "XL": 5,
-          "S": 5
-        },
         "sizes": [
           "XS",
           "S",
@@ -1717,23 +1708,20 @@
           "2XL",
           "3XL"
         ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/v96vmbuzk0walh9hxc0n.jpg"
         ]
       },
       "GRAY": {
-        "stock": {
-          "2XL": 5,
-          "L": 5,
-          "S": 5,
-          "XL": 5,
-          "XS": 5,
-          "M": 5,
-          "3XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/swy8bwgu2ysaavvouwwn.jpg"
-        ],
         "sizes": [
           "XS",
           "S",
@@ -1742,6 +1730,18 @@
           "XL",
           "2XL",
           "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/swy8bwgu2ysaavvouwwn.jpg"
         ]
       },
       "WHITE": {
@@ -1754,18 +1754,18 @@
           "2XL",
           "3XL"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751148/sgqsgzrjk3idbkzhwajk.jpg"
-        ],
         "stock": {
           "XS": 5,
-          "M": 5,
-          "3XL": 5,
-          "2XL": 5,
-          "L": 5,
           "S": 5,
-          "XL": 5
-        }
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751148/sgqsgzrjk3idbkzhwajk.jpg"
+        ]
       }
     }
   },
