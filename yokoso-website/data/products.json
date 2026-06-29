@@ -2010,31 +2010,5 @@
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782753378/mcygpf2l9szikspyxewu.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782753377/jvoxvujjssoq3tgjkrbd.jpg"
     ]
-  },
-  {
-    "id": 37,
-    "name": "BIORE UV KIDS PURE MILK SUNSCREEN 70ML",
-    "category0": "KIDS",
-    "category1": "Clothing",
-    "category2": "Others",
-    "variants": {
-      "Default": {
-        "sizes": [],
-        "stock": {
-          "q": 5
-        }
-      }
-    },
-    "price": "₱399.00",
-    "description": "Pwede sa face and body\nWaterproof, perfect for outdoor ganaps kahit pagpawisan chikiting lumalaban po to\nAlcohol free, unscented din po\n399.00 pesos only!!\n70 DP TO SECURE ITEM",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782754950/szlmromwwhoqyljuajpr.jpg"
-    ],
-    "available": true,
-    "_colorOrder": [
-      "Default"
-    ],
-    "deposit": "₱70",
-    "originalPrice": "₱395"
   }
 ]
