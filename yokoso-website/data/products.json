@@ -1110,58 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "category0": "MENS",
-    "id": 35,
-    "category1": "Shoes",
-    "_colorOrder": [
-      "Default"
-    ],
-    "available": true,
-    "category2": "Adidas",
-    "stock": 34,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "name": "Warm Pile Jacket",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 34
-        }
-      }
-    },
-    "price": "₱2603",
-    "color": "White",
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item.",
-    "sizes": []
-  },
-  {
-    "color": "Beige",
-    "price": "₱2720",
-    "name": "V-Neck Cashmere Sweater",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 41
-        }
-      }
-    },
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "sizes": [],
-    "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "category1": "Shoes",
-    "category0": "MENS",
-    "id": 36,
-    "stock": 41,
-    "category2": "New Balance",
-    "available": true
-  },
-  {
     "sizes": [],
     "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
     "price": "₱2837",
