@@ -3706,6 +3706,28 @@ function renderVariantImagePreview(vi) {
     return '<span style="position:relative;display:inline-block;margin:2px"><img src="' + src + '" style="width:50px;height:50px;object-fit:cover;border-radius:4px;border:1px solid #ddd"><button type="button" class="btn-variant-remove-image" data-vi="' + vi + '" data-idx="' + idx + '" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;border:none;background:#dc3545;color:#fff;font-size:12px;line-height:1;cursor:pointer;padding:0">×</button></span>';
   }).join('');
 }
+function renderVariantProductImageSelect(vi) {
+  var grid = document.querySelector('.variant-pimg-grid[data-vi="' + vi + '"]');
+  if (!grid) return;
+  if (!selectedImagesData || selectedImagesData.length === 0) {
+    grid.innerHTML = '<span style="color:#999;font-size:11px">No product images</span>';
+    return;
+  }
+  var vImgs = variantImagesData[vi] || [];
+  grid.innerHTML = selectedImagesData.map(function(src, i) {
+    var checked = vImgs.indexOf(src) !== -1;
+    return '<label style="display:inline-flex;flex-direction:column;align-items:center;margin:3px;cursor:pointer;border:2px solid ' + (checked ? '#007bff' : '#ddd') + ';border-radius:6px;padding:2px"><img src="' + src + '" style="width:55px;height:55px;object-fit:cover;border-radius:4px"><input type="checkbox" class="variant-pimg-cb" data-vi="' + vi + '" data-idx="' + i + '"' + (checked ? ' checked' : '') + ' style="margin-top:2px;cursor:pointer"></label>';
+  }).join('');
+}
+
+function renderAllVariantProductImageSelects() {
+  var rows = document.querySelectorAll('.variant-row');
+  rows.forEach(function(r) {
+    var vi = r.dataset.vi;
+    if (vi !== undefined) renderVariantProductImageSelect(vi);
+  });
+}
+
 function renderVariantsEditor() {
   var container = document.getElementById('formVariantsContainer');
   if (!container) return;
@@ -3756,6 +3778,18 @@ function renderVariantsEditor() {
   });
   var modeEl = document.getElementById('formVariantMode');
   if (modeEl) applyVariantMode(modeEl.value);
+  rows.forEach(function(r) {
+    var vi = r.dataset.vi;
+    if (!r.querySelector('.variant-pimg-grid')) {
+      var grid = document.createElement('div');
+      grid.className = 'variant-pimg-grid';
+      grid.setAttribute('data-vi', vi);
+      grid.style.cssText = 'margin-top:4px;display:none;max-height:120px;overflow-y:auto';
+      var section = r.querySelector('.variant-images-section');
+      if (section) section.appendChild(grid);
+    }
+  });
+  renderAllVariantProductImageSelects();
 }
 
 function applyVariantMode(mode) {
@@ -3800,7 +3834,7 @@ function resetForm() {
     var sizesHtml = allSizes.map(function(s) {
       return '<label class="vs-row" style="display:inline-flex;align-items:center;gap:4px;margin:2px 6px 2px 0;font-size:0.8rem;white-space:nowrap"><input type="checkbox" class="vs-size" value="' + s + '"> ' + s + ' <input type="number" class="vs-stock" value="5" min="0" style="width:40px;padding:2px 4px;border:1px solid #ddd;border-radius:4px;font-size:0.75rem"></label>';
     }).join('');
-    container.innerHTML = '<div class="variant-row" data-vi="0"><select class="form-variant-color"><option value="">Select color...</option></select><input type="text" class="form-variant-design" style="display:none" placeholder="e.g. D1"><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:none">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this variant:</label><div class="variant-image-preview" data-vi="0"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
+    container.innerHTML = '<div class="variant-row" data-vi="0"><select class="form-variant-color"><option value="">Select color...</option></select><input type="text" class="form-variant-design" style="display:none" placeholder="e.g. D1"><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:none">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this variant:</label><div class="variant-image-preview" data-vi="0"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload</button><button type="button" class="btn btn-sm btn-outline-secondary variant-select-pimg-btn" style="font-size:0.75rem">From uploads</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
   }
   renderVariantsEditor();
 }
@@ -3829,7 +3863,7 @@ function populateForm(product) {
         var stockVal = v.stock && v.stock[s] !== undefined ? v.stock[s] : 5;
         return '<label class="vs-row" style="display:inline-flex;align-items:center;gap:4px;margin:2px 6px 2px 0;font-size:0.8rem;white-space:nowrap"><input type="checkbox" class="vs-size" value="' + s + '"' + checked + '> ' + s + ' <input type="number" class="vs-stock" value="' + stockVal + '" min="0" style="width:40px;padding:2px 4px;border:1px solid #ddd;border-radius:4px;font-size:0.75rem"></label>';
       }).join('');
-      return '<div class="variant-row" data-vi="' + i + '"><select class="form-variant-color"><option value="">Select color...</option></select><input type="text" class="form-variant-design" style="display:none" placeholder="e.g. D1"><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:' + (colors.length > 1 ? 'inline-block' : 'none') + '">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this variant:</label><div class="variant-image-preview" data-vi="' + i + '"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
+      return '<div class="variant-row" data-vi="' + i + '"><select class="form-variant-color"><option value="">Select color...</option></select><input type="text" class="form-variant-design" style="display:none" placeholder="e.g. D1"><button type="button" class="btn btn-danger btn-sm variant-remove-btn" style="display:' + (colors.length > 1 ? 'inline-block' : 'none') + '">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this variant:</label><div class="variant-image-preview" data-vi="' + i + '"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload</button><button type="button" class="btn btn-sm btn-outline-secondary variant-select-pimg-btn" style="font-size:0.75rem">From uploads</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
     }).join('');
     // Load per-variant images
     colors.forEach(function(c, i) {
@@ -4044,7 +4078,7 @@ if (avb) avb.addEventListener('click', function() {
   var div = document.createElement('div');
   div.className = 'variant-row';
   div.dataset.vi = idx;
-  div.innerHTML = '<select class="form-variant-color"><option value="">Select color...</option></select><input type="text" class="form-variant-design" style="display:none" placeholder="e.g. D1"><button type="button" class="btn btn-danger btn-sm variant-remove-btn">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this variant:</label><div class="variant-image-preview" data-vi="' + idx + '"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload Images</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
+  div.innerHTML = '<select class="form-variant-color"><option value="">Select color...</option></select><input type="text" class="form-variant-design" style="display:none" placeholder="e.g. D1"><button type="button" class="btn btn-danger btn-sm variant-remove-btn">×</button><div class="variant-sizes" style="margin-top:6px">' + sizesHtml + '</div><div class="variant-images-section" style="margin-top:6px;padding-top:6px;border-top:1px solid #eee"><label style="font-size:0.75rem;color:#666">Images for this variant:</label><div class="variant-image-preview" data-vi="' + idx + '"></div><button type="button" class="btn btn-sm btn-outline-primary variant-add-image-btn">+ Upload</button><button type="button" class="btn btn-sm btn-outline-secondary variant-select-pimg-btn" style="font-size:0.75rem">From uploads</button><input type="file" class="variant-image-input" accept="image/*" multiple style="display:none"></div></div>';
   container.appendChild(div);
   variantImagesData[idx] = [];
   renderVariantsEditor();
@@ -4084,6 +4118,46 @@ document.addEventListener('click', function(e) {
       renderVariantImagePreview(vi);
     }
   }
+  // Toggle "From uploads" product image selector
+  var pimgBtn = e.target.closest('.variant-select-pimg-btn');
+  if (pimgBtn) {
+    var row = pimgBtn.closest('.variant-row');
+    if (row) {
+      var vi = row.dataset.vi;
+      var grid = row.querySelector('.variant-pimg-grid');
+      if (!grid) {
+        grid = document.createElement('div');
+        grid.className = 'variant-pimg-grid';
+        grid.setAttribute('data-vi', vi);
+        grid.style.cssText = 'margin-top:4px;display:none;max-height:120px;overflow-y:auto';
+        var section = row.querySelector('.variant-images-section');
+        if (section) section.appendChild(grid);
+      }
+      var isOpen = grid.style.display !== 'none';
+      grid.style.display = isOpen ? 'none' : '';
+      if (!isOpen) renderVariantProductImageSelect(vi);
+    }
+  }
+});
+
+// Variant product image checkbox toggle
+document.addEventListener('change', function(e) {
+  var cb = e.target.closest('.variant-pimg-cb');
+  if (!cb) return;
+  var vi = cb.dataset.vi;
+  var idx = parseInt(cb.dataset.idx);
+  if (isNaN(idx)) return;
+  if (!variantImagesData[vi]) variantImagesData[vi] = [];
+  var src = selectedImagesData[idx];
+  if (!src) return;
+  if (cb.checked) {
+    if (variantImagesData[vi].indexOf(src) === -1) variantImagesData[vi].push(src);
+  } else {
+    var pos = variantImagesData[vi].indexOf(src);
+    if (pos !== -1) variantImagesData[vi].splice(pos, 1);
+  }
+  renderVariantImagePreview(vi);
+  renderVariantProductImageSelect(vi);
 });
 
 var fc0 = document.getElementById('formCategory0');
@@ -4138,6 +4212,7 @@ function renderImagePreview() {
       renderImagePreview();
     });
   });
+  renderAllVariantProductImageSelects();
 }
 
 var aib = document.getElementById('addImageBtn');
