@@ -2044,31 +2044,5 @@
     },
     "id": 78,
     "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item."
-  },
-  {
-    "price": "₱2631",
-    "id": 79,
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 42
-        }
-      }
-    },
-    "category2": "GU",
-    "available": true,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "sizes": [],
-    "name": "Kate Liquid Eyeliner",
-    "category1": "Clothing",
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "Black",
-    "stock": 42,
-    "category0": "MENS"
   }
 ]
