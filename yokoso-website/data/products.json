@@ -1342,38 +1342,5 @@
     },
     "sizes": [],
     "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item."
-  },
-  {
-    "category0": "MENS",
-    "images": [
-      "images/products/placeholder.svg",
-      "images/products/placeholder.svg",
-      "images/products/placeholder.svg",
-      "images/products/placeholder.svg",
-      "images/products/placeholder.svg"
-    ],
-    "id": 116,
-    "variants": {
-      "Default": {
-        "stock": {
-          "XL": 5,
-          "M": 5,
-          "L": 5,
-          "S": 5
-        }
-      }
-    },
-    "category1": "Clothing",
-    "name": "UNIQLO MENS JWA ZIP UP BLOUSON",
-    "price": "₱995",
-    "available": true,
-    "description": "FOR AUGUST ETA\nPrice down! Paubos na din stocks po \nUNIQLO MENS JWA ZIP UP BLOUSON\nPink na lang avail color\nSizes avail: S M L XL\nSize reference nasa comsec\n🏷️ 995.00 pesos\n250 DP TO SECURE ITEM\nSize - length - shoulder - bust - sleeve",
-    "category2": "Uniqlo",
-    "color": "",
-    "sizes": [],
-    "_colorOrder": [
-      "Default"
-    ],
-    "stock": 5
   }
 ]
