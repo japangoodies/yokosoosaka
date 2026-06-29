@@ -1290,57 +1290,5 @@
     ],
     "sizes": [],
     "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item."
-  },
-  {
-    "price": "₱1606",
-    "color": "Lavender",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 37
-        }
-      }
-    },
-    "name": "U9060",
-    "sizes": [],
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "_colorOrder": [
-      "Default"
-    ],
-    "id": 114,
-    "category0": "MENS",
-    "category1": "Clothing",
-    "stock": 37,
-    "available": true,
-    "category2": "Uniqlo"
-  },
-  {
-    "_colorOrder": [
-      "Default"
-    ],
-    "category0": "MENS",
-    "id": 115,
-    "category1": "Clothing",
-    "stock": 44,
-    "available": true,
-    "category2": "GU",
-    "price": "₱1723",
-    "color": "Black",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "name": "Bape STA Low",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 44
-        }
-      }
-    },
-    "sizes": [],
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item."
   }
 ]
