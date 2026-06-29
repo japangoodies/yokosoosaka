@@ -2098,32 +2098,6 @@
     "price": "₱2748"
   },
   {
-    "category1": "Clothing",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "sizes": [],
-    "name": "Belted Trench Coat",
-    "available": true,
-    "category2": "Undercover",
-    "category0": "MENS",
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "Black",
-    "stock": 34,
-    "price": "₱3333",
-    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
-    "id": 85,
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 34
-        }
-      }
-    }
-  },
-  {
     "variants": {
       "Default": {
         "stock": {
