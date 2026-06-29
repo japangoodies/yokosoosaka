@@ -1110,32 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "_colorOrder": [
-      "Default"
-    ],
-    "category0": "MENS",
-    "id": 29,
-    "category1": "Accessories",
-    "stock": 42,
-    "available": true,
-    "category2": "Lily Brown",
-    "price": "₱1901",
-    "color": "Silver",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "name": "U9060",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 41
-        }
-      }
-    },
-    "sizes": [],
-    "description": "Authentic Japanese accessories from Lily Brown. Limited Japan-exclusive item."
-  },
-  {
     "category0": "MENS",
     "id": 30,
     "category1": "Clothing",
