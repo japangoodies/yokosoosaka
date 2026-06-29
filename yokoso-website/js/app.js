@@ -1309,10 +1309,22 @@ function getVariant(product, color) {
 }
 
 function getVariantColors(product) {
+  var colors;
   if (product._colorOrder && product._colorOrder.length) {
-    return product._colorOrder.filter(function(c) { return product.variants && product.variants[c]; });
+    colors = product._colorOrder.filter(function(c) { return product.variants && product.variants[c]; });
+  } else {
+    colors = Object.keys(product.variants || {});
   }
-  return Object.keys(product.variants || {});
+  // For design-based variants (not standard color names), sort numerically
+  var isDesign = (categoriesConfig.colors || []).every(function(col) { return colors.indexOf(col) === -1; });
+  if (isDesign && colors.length > 1) {
+    return colors.slice().sort(function(a, b) {
+      var na = parseInt(a.match(/\d+/)) || 0;
+      var nb = parseInt(b.match(/\d+/)) || 0;
+      return na - nb;
+    });
+  }
+  return colors;
 }
 
 var ALPHA_SIZE_ORDER = ["XS","S","M","L","XL","2XL","3XL","One Size","Free Size"];
