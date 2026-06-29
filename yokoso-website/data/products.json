@@ -1651,7 +1651,7 @@
     "category1": "Clothing",
     "category2": "Uniqlo",
     "variants": {
-      "Default": {
+      "BLACK": {
         "sizes": [
           "XS",
           "S",
@@ -1669,11 +1669,83 @@
           "XL": 5,
           "2XL": 5,
           "3XL": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/v96vmbuzk0walh9hxc0n.jpg"
+        ]
+      },
+      "GRAY": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/swy8bwgu2ysaavvouwwn.jpg"
+        ]
+      },
+      "WHITE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751148/sgqsgzrjk3idbkzhwajk.jpg"
+        ]
+      },
+      "PINK": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/mr3r24yhprm5bx0nqgyq.jpg"
+        ]
       }
     },
     "price": "₱699.00",
-    "description": "Sizes avail: XS to 3XL\n695.00 pesos only\n200 DP TO SECURE ITEM",
+    "description": "Sizes avail: XS to 3XL\n699.00 pesos only\n200 DP TO SECURE ITEM",
     "images": [
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/prlmcwwraj5i7l9jz2sl.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/mr3r24yhprm5bx0nqgyq.jpg",
@@ -1683,7 +1755,12 @@
     ],
     "available": true,
     "_colorOrder": [
-      "Default"
-    ]
+      "BLACK",
+      "GRAY",
+      "WHITE",
+      "PINK"
+    ],
+    "deposit": "₱200",
+    "originalPrice": "₱695"
   }
 ]
