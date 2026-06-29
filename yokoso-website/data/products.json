@@ -1110,32 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "category2": "Undercover",
-    "available": true,
-    "stock": 6,
-    "category1": "Clothing",
-    "id": 31,
-    "category0": "MENS",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese clothing from Undercover. Limited Japan-exclusive item.",
-    "sizes": [],
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 6
-        }
-      }
-    },
-    "name": "AIRism Cotton T-Shirt",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "color": "Black",
-    "price": "₱2135"
-  },
-  {
     "available": true,
     "category2": "Canmake",
     "stock": 12,
