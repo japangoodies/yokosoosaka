@@ -1734,32 +1734,6 @@
     "category0": "MENS"
   },
   {
-    "price": "₱1344",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 14
-        }
-      }
-    },
-    "id": 68,
-    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "name": "Crew Socks (5-Pack)",
-    "sizes": [],
-    "category1": "Cosmetics",
-    "category2": "Canmake",
-    "available": true,
-    "category0": "WOMENS",
-    "stock": 14,
-    "color": "",
-    "_colorOrder": [
-      "Default"
-    ]
-  },
-  {
     "color": "White",
     "_colorOrder": [
       "Default"
@@ -1784,32 +1758,6 @@
       }
     },
     "price": "₱1695"
-  },
-  {
-    "category1": "Clothing",
-    "name": "Porter Tanker 2-Way",
-    "sizes": [],
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "available": true,
-    "category2": "Uniqlo",
-    "category0": "MENS",
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "Navy",
-    "stock": 50,
-    "price": "₱1929",
-    "id": 73,
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 50
-        }
-      }
-    }
   },
   {
     "price": "₱2046",
