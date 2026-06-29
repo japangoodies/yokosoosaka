@@ -1472,31 +1472,5 @@
     "category2": "Shiseido",
     "sizes": [],
     "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item."
-  },
-  {
-    "available": true,
-    "price": "₱876",
-    "category2": "G-Shock",
-    "sizes": [],
-    "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
-    "color": "Green",
-    "_colorOrder": [
-      "Default"
-    ],
-    "name": "Ripstop Shorts",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 35
-        }
-      }
-    },
-    "category0": "MENS",
-    "id": 64,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "category1": "Accessories",
-    "stock": 35
   }
 ]
