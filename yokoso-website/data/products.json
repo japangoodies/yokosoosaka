@@ -1110,32 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "stock": 6,
-    "available": true,
-    "category2": "SK-II",
-    "_colorOrder": [
-      "Default"
-    ],
-    "category0": "WOMENS",
-    "id": 81,
-    "category1": "Cosmetics",
-    "sizes": [],
-    "description": "Authentic Japanese cosmetics from SK-II. Limited Japan-exclusive item.",
-    "price": "₱2865",
-    "color": "",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 6
-        }
-      }
-    },
-    "name": "Nylon Puffer Jacket"
-  },
-  {
     "color": "White",
     "price": "₱2982",
     "name": "Ribbed Knit Top",
