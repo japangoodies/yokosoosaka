@@ -2098,32 +2098,6 @@
     "price": "₱2748"
   },
   {
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 41
-        }
-      }
-    },
-    "description": "Authentic Japanese cosmetics from Canmake. Limited Japan-exclusive item.",
-    "id": 86,
-    "price": "₱3450",
-    "stock": 41,
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "",
-    "category0": "WOMENS",
-    "category2": "Canmake",
-    "available": false,
-    "sizes": [],
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "name": "Patchwork Denim Jacket",
-    "category1": "Cosmetics"
-  },
-  {
     "price": "₱3567",
     "id": 87,
     "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
