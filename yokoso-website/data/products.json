@@ -1126,13 +1126,13 @@
           "3XL"
         ],
         "stock": {
-          "M": 5,
-          "3XL": 5,
-          "XL": 5,
+          "XS": 5,
           "S": 5,
+          "M": 5,
           "L": 5,
+          "XL": 5,
           "2XL": 5,
-          "XS": 5
+          "3XL": 5
         }
       }
     },
@@ -1144,7 +1144,7 @@
       "Default"
     ],
     "stock": 5,
-    "category0": "MENS",
+    "category0": "WOMENS",
     "images": [
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747347/sthuco5zl9hwirpisvrq.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747347/uersd1hzuprsukjtaypv.jpg",
