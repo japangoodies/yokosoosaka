@@ -1812,32 +1812,6 @@
     "price": "₱1461"
   },
   {
-    "price": "₱1578",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 28
-        }
-      }
-    },
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
-    "id": 70,
-    "category1": "Shoes",
-    "name": "Easy Shorts",
-    "sizes": [],
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "available": true,
-    "category2": "Nike",
-    "category0": "MENS",
-    "stock": 28,
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "Green"
-  },
-  {
     "color": "White",
     "_colorOrder": [
       "Default"
@@ -1862,32 +1836,6 @@
       }
     },
     "price": "₱1695"
-  },
-  {
-    "price": "₱1812",
-    "description": "Authentic Japanese shoes from New Balance. Limited Japan-exclusive item.",
-    "id": 72,
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 43
-        }
-      }
-    },
-    "available": true,
-    "category2": "New Balance",
-    "category1": "Shoes",
-    "sizes": [],
-    "name": "Anello Backpack",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "Beige",
-    "stock": 43,
-    "category0": "MENS"
   },
   {
     "category1": "Clothing",
