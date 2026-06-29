@@ -1322,8 +1322,8 @@
     "deposit": "₱150",
     "_colorOrder": [
       "Design 1",
-      "Design 2",
-      "Design 3"
+      "Design 3",
+      "Design 2"
     ],
     "images": [
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747840/je4afmns8rjixksg0jtq.jpg",
@@ -1344,9 +1344,6 @@
           "150",
           "160"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747841/fvi1dh1m4gsdc3l62fgj.jpg"
-        ],
         "stock": {
           "100": 5,
           "110": 5,
@@ -1355,12 +1352,12 @@
           "140": 5,
           "150": 5,
           "160": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747841/fvi1dh1m4gsdc3l62fgj.jpg"
+        ]
       },
       "Design 3": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747840/wel9diistfpez7cnctrl.jpg"
-        ],
         "sizes": [
           "100",
           "110",
@@ -1378,7 +1375,10 @@
           "140": 5,
           "150": 5,
           "160": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747840/wel9diistfpez7cnctrl.jpg"
+        ]
       },
       "Design 2": {
         "sizes": [
@@ -1390,9 +1390,6 @@
           "150",
           "160"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747840/dv5xzvgcygogdhtiis5q.jpg"
-        ],
         "stock": {
           "100": 5,
           "110": 5,
@@ -1401,14 +1398,17 @@
           "140": 5,
           "150": 5,
           "160": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747840/dv5xzvgcygogdhtiis5q.jpg"
+        ]
       }
     },
     "stock": 105,
     "id": 30,
     "sizes": [],
     "originalPrice": "₱550",
-    "category0": "MENS",
+    "category0": "KIDS",
     "available": true
   },
   {
