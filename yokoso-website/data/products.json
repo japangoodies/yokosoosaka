@@ -1264,31 +1264,5 @@
     ],
     "color": "Pink",
     "price": "₱1372"
-  },
-  {
-    "_colorOrder": [
-      "Default"
-    ],
-    "category1": "Shoes",
-    "id": 113,
-    "category0": "MENS",
-    "stock": 30,
-    "category2": "Adidas",
-    "available": true,
-    "color": "Pink",
-    "price": "₱1489",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 30
-        }
-      }
-    },
-    "name": "990v5 Made in Japan",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "sizes": [],
-    "description": "Authentic Japanese shoes from Adidas. Limited Japan-exclusive item."
   }
 ]
