@@ -1110,32 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "category2": "Nike",
-    "available": false,
-    "stock": 31,
-    "category1": "Shoes",
-    "id": 106,
-    "category0": "MENS",
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
-    "sizes": [],
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 31
-        }
-      }
-    },
-    "name": "Ultraboost 22",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "color": "Black",
-    "price": "₱670"
-  },
-  {
     "color": "White",
     "price": "₱787",
     "variants": {
