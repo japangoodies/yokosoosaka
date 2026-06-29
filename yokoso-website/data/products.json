@@ -1110,32 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "category0": "MENS",
-    "id": 30,
-    "category1": "Clothing",
-    "_colorOrder": [
-      "Default"
-    ],
-    "available": true,
-    "category2": "WTAPS",
-    "stock": 49,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "name": "Bape STA Low",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 49
-        }
-      }
-    },
-    "price": "₱2018",
-    "color": "Grey",
-    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
-    "sizes": []
-  },
-  {
     "category2": "Undercover",
     "available": true,
     "stock": 6,
