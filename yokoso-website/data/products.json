@@ -2098,32 +2098,6 @@
     "price": "₱2748"
   },
   {
-    "category0": "MENS",
-    "stock": 20,
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "Silver",
-    "sizes": [],
-    "name": "Midi Wrap Skirt",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "category1": "Accessories",
-    "category2": "Lily Brown",
-    "available": true,
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 20
-        }
-      }
-    },
-    "id": 83,
-    "description": "Authentic Japanese accessories from Lily Brown. Limited Japan-exclusive item.",
-    "price": "₱3099"
-  },
-  {
     "price": "₱3216",
     "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
     "id": 84,
