@@ -1732,31 +1732,5 @@
       }
     },
     "price": "₱1695"
-  },
-  {
-    "price": "₱2046",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 7
-        }
-      }
-    },
-    "id": 74,
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "name": "Muji Labo Coat",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "sizes": [],
-    "category1": "Clothing",
-    "category2": "GU",
-    "available": true,
-    "category0": "MENS",
-    "stock": 7,
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "Brown"
   }
 ]
