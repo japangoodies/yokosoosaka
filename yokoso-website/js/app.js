@@ -4443,6 +4443,12 @@ function showAdminPanel() {
   switchAdminTab('orders');
   renderAdminFilterDropdowns();
   renderAdminList();
+  // Auto-open Import tab if scraped data exists
+  var importReady = localStorage.getItem('yokoso_import_ready');
+  var importCaption = localStorage.getItem('yokoso_import_caption');
+  if (importReady && importCaption) {
+    switchAdminTab('import');
+  }
 }
 
 var eab = document.getElementById('enterAdminBtn');
@@ -5976,6 +5982,33 @@ document.addEventListener('click', function(e) {
       renderImportImageThumbs();
     }
   }
+});
+
+// Local scraper button
+document.getElementById('importScraperBtn').addEventListener('click', function() {
+  var urlInput = document.getElementById('importScraperUrl');
+  var status = document.getElementById('importScraperStatus');
+  var url = (urlInput.value || '').trim();
+  if (!url) { showToast('Enter a Facebook post URL.', 'info'); return; }
+  status.textContent = 'Scraping...';
+  status.style.color = '#1976d2';
+  fetch('http://localhost:8899/scrape', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url: url })
+  }).then(function(r) {
+    if (!r.ok) return r.json().then(function(j) { throw new Error(j.error || 'HTTP ' + r.status); });
+    return r.json();
+  }).then(function(data) {
+    status.textContent = 'Done! (' + data.images.length + ' images, ' + data.text.length + ' chars)';
+    status.style.color = '#2e7d32';
+    var fields = parseCaptionToFields(data.text);
+    fields.images = data.images;
+    showImportPreview(fields);
+  }).catch(function(err) {
+    status.textContent = 'Error: ' + err.message + '. Make sure fb-server.py is running on port 8899.';
+    status.style.color = '#e94560';
+  });
 });
 
 // Parse button
