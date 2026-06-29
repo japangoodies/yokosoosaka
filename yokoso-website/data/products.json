@@ -2070,31 +2070,5 @@
     "color": "Black",
     "stock": 42,
     "category0": "MENS"
-  },
-  {
-    "stock": 49,
-    "color": "",
-    "_colorOrder": [
-      "Default"
-    ],
-    "category0": "WOMENS",
-    "available": true,
-    "category2": "Shiseido",
-    "category1": "Cosmetics",
-    "name": "Majolica Majorca Mascara",
-    "sizes": [],
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 49
-        }
-      }
-    },
-    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item.",
-    "id": 80,
-    "price": "₱2748"
   }
 ]
