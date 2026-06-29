@@ -1500,7 +1500,7 @@
     "category1": "Clothing",
     "category2": "Uniqlo",
     "variants": {
-      "Default": {
+      "Design 1": {
         "sizes": [
           "XS",
           "S",
@@ -1518,11 +1518,114 @@
           "2XL": 5,
           "3XL": 5,
           "4XL": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782750933/kuicjkc32hgnw8u9bezr.jpg"
+        ]
+      },
+      "Design 2": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782750933/y0njxn4iw6zv8nxjlc83.jpg"
+        ]
+      },
+      "Design 3": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782750933/nq9iborkrkhd3zpki3fy.jpg"
+        ]
+      },
+      "Design 4": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782750933/yininlvha9m4lwhsqoko.jpg"
+        ]
+      },
+      "Design 5": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782750933/yuupbgy37gzeqr4zgf41.jpg"
+        ]
       }
     },
     "price": "₱980.00",
-    "description": "Meron pong naka-button type, meron din half-zip\nSizes avail: XS to 4XL\nSize reference nasa comsec po\n250 DP TO SECURE ITEM\nYokoso Osaka - Japan Goodies PH\nSize - length - shoulder - bust - sleeve",
+    "description": "Meron pong naka-button type, meron din half-zip\nSizes avail: XS to 4XL\n250 DP TO SECURE ITEM",
     "images": [
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782750933/kuicjkc32hgnw8u9bezr.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782750933/y0njxn4iw6zv8nxjlc83.jpg",
@@ -1532,7 +1635,13 @@
     ],
     "available": true,
     "_colorOrder": [
-      "Default"
-    ]
+      "Design 1",
+      "Design 2",
+      "Design 3",
+      "Design 4",
+      "Design 5"
+    ],
+    "deposit": "₱250",
+    "originalPrice": "₱975"
   }
 ]
