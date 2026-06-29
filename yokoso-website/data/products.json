@@ -1110,32 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "category1": "Clothing",
-    "category0": "MENS",
-    "id": 74,
-    "_colorOrder": [
-      "Default"
-    ],
-    "category2": "GU",
-    "available": true,
-    "stock": 7,
-    "name": "Muji Labo Coat",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 7
-        }
-      }
-    },
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "color": "Brown",
-    "price": "₱2046",
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "sizes": []
-  },
-  {
     "_colorOrder": [
       "Default"
     ],
