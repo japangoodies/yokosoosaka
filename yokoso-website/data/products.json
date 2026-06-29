@@ -909,8 +909,8 @@
     "description": "FOR AUGUST ETA\nFlash sale!\nUNIQLO WASHABLE KNIT POLO SHIRT\n🏷️ 980.00 pesos\n250 DP TO SECURE ITEM",
     "variants": {
       "BLACK": {
-        "stock": {},
-        "sizes": []
+        "sizes": [],
+        "stock": {}
       }
     },
     "deposit": "₱250",
@@ -921,7 +921,7 @@
     "color": "",
     "stock": 21,
     "originalPrice": "₱975",
-    "category0": "MENS",
+    "category0": "WOMENS",
     "category2": "Uniqlo",
     "available": true,
     "sizes": [],
