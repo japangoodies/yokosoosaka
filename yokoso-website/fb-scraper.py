@@ -86,13 +86,21 @@ def scrape_post(page, url):
         return results;
     }''')
 
-    viewer_urls = []
-    entered = page.evaluate('''() => {
-        let link = document.querySelector('a[href*="photo"][href*="set=pcb"]');
-        if (link) { link.click(); return true; }
+    has_hidden = page.evaluate('''() => {
+        let article = document.querySelector('[role="article"]');
+        if (!article) return false;
+        let els = article.querySelectorAll('a, span, div');
+        for (let el of els) {
+            if (/^\\+\\d+$/.test(el.textContent.trim()) && el.offsetParent !== null) return true;
+        }
         return false;
     }''')
-    if entered:
+    viewer_urls = []
+    if has_hidden:
+        page.evaluate('''() => {
+            let link = document.querySelector('a[href*="photo"][href*="set=pcb"]');
+            if (link) link.click();
+        }''')
         page.wait_for_timeout(3000)
         seen_bases = set()
         for _ in range(20):
