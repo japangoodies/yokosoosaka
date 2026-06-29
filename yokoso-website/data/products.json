@@ -2098,32 +2098,6 @@
     "price": "₱2748"
   },
   {
-    "description": "Authentic Japanese accessories from G-Shock. Limited Japan-exclusive item.",
-    "id": 82,
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 13
-        }
-      }
-    },
-    "price": "₱2982",
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "White",
-    "stock": 13,
-    "category0": "MENS",
-    "category2": "G-Shock",
-    "available": true,
-    "name": "Ribbed Knit Top",
-    "sizes": [],
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "category1": "Accessories"
-  },
-  {
     "category0": "MENS",
     "stock": 20,
     "_colorOrder": [
