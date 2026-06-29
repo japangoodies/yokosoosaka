@@ -1281,15 +1281,6 @@
     "stock": 35,
     "variants": {
       "Default": {
-        "stock": {
-          "L": 5,
-          "2XL": 5,
-          "XL": 5,
-          "S": 5,
-          "M": 5,
-          "XS": 5,
-          "3XL": 5
-        },
         "sizes": [
           "XS",
           "S",
@@ -1298,7 +1289,16 @@
           "XL",
           "2XL",
           "3XL"
-        ]
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        }
       }
     },
     "color": "",
@@ -1310,7 +1310,7 @@
     ],
     "price": "₱799.00",
     "available": true,
-    "category0": "MENS",
+    "category0": "WOMENS",
     "originalPrice": "₱795",
     "sizes": []
   },
