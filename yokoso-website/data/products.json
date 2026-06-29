@@ -2098,32 +2098,6 @@
     "price": "₱2748"
   },
   {
-    "price": "₱3216",
-    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item.",
-    "id": 84,
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 27
-        }
-      }
-    },
-    "name": "Wool Flared Pants",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "sizes": [],
-    "category1": "Clothing",
-    "category2": "WTAPS",
-    "available": true,
-    "category0": "MENS",
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "Grey",
-    "stock": 27
-  },
-  {
     "category1": "Clothing",
     "images": [
       "images/products/placeholder.svg"
