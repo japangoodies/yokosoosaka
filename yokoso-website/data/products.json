@@ -1160,57 +1160,5 @@
     "images": [
       "images/products/placeholder.svg"
     ]
-  },
-  {
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "name": "Gazelle (Made in Japan)",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 2
-        }
-      }
-    },
-    "price": "₱1021",
-    "color": "Beige",
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "sizes": [],
-    "id": 109,
-    "category0": "MENS",
-    "category1": "Clothing",
-    "_colorOrder": [
-      "Default"
-    ],
-    "available": true,
-    "category2": "Uniqlo",
-    "stock": 2
-  },
-  {
-    "_colorOrder": [
-      "Default"
-    ],
-    "category1": "Clothing",
-    "category0": "MENS",
-    "id": 110,
-    "stock": 9,
-    "category2": "GU",
-    "available": true,
-    "color": "Brown",
-    "price": "₱1138",
-    "name": "Forum Low",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 9
-        }
-      }
-    },
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "sizes": [],
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item."
   }
 ]
