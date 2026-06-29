@@ -1110,58 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "sizes": [],
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item.",
-    "price": "₱2837",
-    "color": "White",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "name": "Flannel Check Shirt",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 48
-        }
-      }
-    },
-    "stock": 48,
-    "available": true,
-    "category2": "Uniqlo",
-    "_colorOrder": [
-      "Default"
-    ],
-    "id": 37,
-    "category0": "MENS",
-    "category1": "Clothing"
-  },
-  {
-    "id": 38,
-    "category0": "MENS",
-    "category1": "Clothing",
-    "_colorOrder": [
-      "Default"
-    ],
-    "available": true,
-    "category2": "GU",
-    "stock": 5,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 5
-        }
-      }
-    },
-    "name": "Heattech Extra Warm Crew Neck",
-    "price": "₱2954",
-    "color": "Brown",
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "sizes": []
-  },
-  {
     "name": "Drake T-Shirt (Japan Drop)",
     "variants": {
       "Default": {
