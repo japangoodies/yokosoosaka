@@ -1708,32 +1708,6 @@
     ]
   },
   {
-    "category2": "WTAPS",
-    "available": false,
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "sizes": [],
-    "name": "Hooded Down Parka",
-    "category1": "Clothing",
-    "stock": 1,
-    "_colorOrder": [
-      "Default"
-    ],
-    "color": "Grey",
-    "category0": "MENS",
-    "price": "₱1110",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 1
-        }
-      }
-    },
-    "id": 66,
-    "description": "Authentic Japanese clothing from WTAPS. Limited Japan-exclusive item."
-  },
-  {
     "price": "₱1227",
     "variants": {
       "Default": {
@@ -1784,32 +1758,6 @@
     "_colorOrder": [
       "Default"
     ]
-  },
-  {
-    "category0": "WOMENS",
-    "color": "",
-    "_colorOrder": [
-      "Default"
-    ],
-    "stock": 21,
-    "name": "Cotton Linen Shirt",
-    "sizes": [],
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "category1": "Cosmetics",
-    "category2": "Kiss Me",
-    "available": true,
-    "description": "Authentic Japanese cosmetics from Kiss Me. Limited Japan-exclusive item.",
-    "id": 69,
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 21
-        }
-      }
-    },
-    "price": "₱1461"
   },
   {
     "color": "White",
