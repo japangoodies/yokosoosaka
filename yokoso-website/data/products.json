@@ -919,15 +919,6 @@
     "color": "",
     "variants": {
       "Design 2": {
-        "stock": {
-          "S": 5,
-          "XL": 5,
-          "2XL": 5,
-          "L": 5,
-          "3XL": 5,
-          "XS": 5,
-          "M": 5
-        },
         "sizes": [
           "XS",
           "S",
@@ -937,19 +928,20 @@
           "2XL",
           "3XL"
         ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/hqvhcrfqgtx5ohiytyoj.jpg"
         ]
       },
       "Design 3": {
-        "stock": {
-          "3XL": 5,
-          "M": 5,
-          "XS": 5,
-          "XL": 5,
-          "L": 5,
-          "2XL": 5
-        },
         "sizes": [
           "XS",
           "M",
@@ -958,43 +950,42 @@
           "2XL",
           "3XL"
         ],
+        "stock": {
+          "XS": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/iot4ferqsqmld4cskioj.jpg"
         ]
       },
       "Design 1": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
         "stock": {
-          "XL": 5,
+          "XS": 5,
           "S": 5,
-          "L": 5,
-          "2XL": 5,
-          "3XL": 5,
           "M": 5,
-          "XS": 5
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
         },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/s9esojvkbsrcznhyeq68.jpg"
-        ],
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
         ]
       },
       "Design 5": {
-        "stock": {
-          "2XL": 5,
-          "L": 5,
-          "S": 5,
-          "XL": 5,
-          "XS": 5,
-          "M": 5,
-          "3XL": 5
-        },
         "sizes": [
           "XS",
           "S",
@@ -1004,14 +995,20 @@
           "2XL",
           "3XL"
         ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/pa6tmeqiym4vxxziwmtr.jpg"
         ]
       },
       "Design 6": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/pl225lt8rgcxd16b4uft.jpg"
-        ],
         "sizes": [
           "XS",
           "S",
@@ -1021,18 +1018,18 @@
           "2XL"
         ],
         "stock": {
-          "2XL": 5,
-          "L": 5,
-          "S": 5,
-          "XL": 5,
           "XS": 5,
-          "M": 5
-        }
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/pl225lt8rgcxd16b4uft.jpg"
+        ]
       },
       "Design 7": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947962/tpzgsnrsk03fgfbwi8vo.jpg"
-        ],
         "sizes": [
           "XS",
           "S",
@@ -1044,24 +1041,18 @@
         ],
         "stock": {
           "XS": 5,
+          "S": 5,
           "M": 5,
-          "3XL": 5,
-          "2XL": 5,
           "L": 5,
-          "S": 5,
-          "XL": 5
-        }
-      },
-      "Design 4": {
-        "stock": {
-          "3XL": 5,
-          "XS": 5,
-          "M": 5,
-          "S": 5,
           "XL": 5,
           "2XL": 5,
-          "L": 5
+          "3XL": 5
         },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947962/tpzgsnrsk03fgfbwi8vo.jpg"
+        ]
+      },
+      "Design 4": {
         "sizes": [
           "XS",
           "S",
@@ -1071,6 +1062,15 @@
           "2XL",
           "3XL"
         ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/zsoyigktjto2ptxaeqs6.jpg"
         ]
@@ -1080,7 +1080,7 @@
     "id": 26,
     "sizes": [],
     "originalPrice": "₱975",
-    "category0": "MENS",
+    "category0": "WOMENS",
     "available": true,
     "category1": "Clothing",
     "description": "FOR AUGUST ETA\nFlash sale!\nUNIQLO WASHABLE KNIT POLO SHIRT\n🏷️ 980.00 pesos\n250 DP TO SECURE ITEM",
@@ -1088,13 +1088,13 @@
     "name": "UNIQLO WASHABLE KNIT POLO SHIRT",
     "deposit": "₱250",
     "_colorOrder": [
-      "Design 1",
       "Design 2",
       "Design 3",
-      "Design 4",
+      "Design 1",
       "Design 5",
       "Design 6",
-      "Design 7"
+      "Design 7",
+      "Design 4"
     ]
   },
   {
