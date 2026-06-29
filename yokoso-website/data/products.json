@@ -1776,13 +1776,177 @@
     "category1": "Clothing",
     "category2": "Uniqlo",
     "variants": {
-      "Default": {
+      "Design 1": {
         "sizes": [
-          "XS"
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
         ],
         "stock": {
-          "XS": 5
-        }
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782752773/j1rdf0f32e1pmxtelciv.jpg"
+        ]
+      },
+      "Design 3": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782752772/hfn5tlr1oz0njk4lp7fe.jpg"
+        ]
+      },
+      "Design 4": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782752772/acjqgi68hjj34xfvtmqc.jpg"
+        ]
+      },
+      "Design 5": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782752773/rakcgx2xj3d4hnziqyp0.jpg"
+        ]
+      },
+      "Design 6": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782752773/iucsxbx3vkanmtpdoi2c.jpg"
+        ]
+      },
+      "Design 7": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782752773/zvwhsg5preaouedxqod7.jpg"
+        ]
+      },
+      "Design 8": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782752773/bqdwbcbtk5v4dxrrkhhk.jpg"
+        ]
+      },
+      "Design 9": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782752773/gndiacs4or6hxsjxrdz2.jpg"
+        ]
       }
     },
     "price": "₱699.00",
@@ -1801,7 +1965,16 @@
     ],
     "available": true,
     "_colorOrder": [
-      "Default"
-    ]
+      "Design 1",
+      "Design 3",
+      "Design 4",
+      "Design 5",
+      "Design 6",
+      "Design 7",
+      "Design 8",
+      "Design 9"
+    ],
+    "deposit": "₱200",
+    "originalPrice": "₱695"
   }
 ]
