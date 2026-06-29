@@ -1212,57 +1212,5 @@
     ],
     "sizes": [],
     "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item."
-  },
-  {
-    "category1": "Clothing",
-    "category0": "MENS",
-    "id": 111,
-    "_colorOrder": [
-      "Default"
-    ],
-    "category2": "Supreme",
-    "available": true,
-    "stock": 16,
-    "name": "550 (Japan Exclusive)",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 16
-        }
-      }
-    },
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "color": "White",
-    "price": "₱1255",
-    "description": "Authentic Japanese clothing from Supreme. Limited Japan-exclusive item.",
-    "sizes": []
-  },
-  {
-    "category2": "Nike",
-    "available": true,
-    "stock": 23,
-    "category1": "Shoes",
-    "category0": "MENS",
-    "id": 112,
-    "_colorOrder": [
-      "Default"
-    ],
-    "description": "Authentic Japanese shoes from Nike. Limited Japan-exclusive item.",
-    "sizes": [],
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 23
-        }
-      }
-    },
-    "name": "574 Classic",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "color": "Pink",
-    "price": "₱1372"
   }
 ]
