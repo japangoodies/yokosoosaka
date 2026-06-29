@@ -1446,31 +1446,5 @@
     },
     "id": 60,
     "name": "Silk Scarf (Japan Exclusive)"
-  },
-  {
-    "category1": "Cosmetics",
-    "stock": 22,
-    "name": "Cargo Pants",
-    "category0": "WOMENS",
-    "id": 62,
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 22
-        }
-      }
-    },
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "color": "",
-    "_colorOrder": [
-      "Default"
-    ],
-    "price": "₱642",
-    "available": true,
-    "category2": "Shiseido",
-    "sizes": [],
-    "description": "Authentic Japanese cosmetics from Shiseido. Limited Japan-exclusive item."
   }
 ]
