@@ -1517,7 +1517,7 @@ function migrateProducts() {
         });
         p.variants[colorKey] = { sizes: p.sizes.slice(), stock: stockObj };
       } else {
-        p.variants[colorKey] = { stock: { q: p.stock !== undefined ? p.stock : 5 } };
+        p.variants[colorKey] = { sizes: [], stock: { q: p.stock !== undefined ? p.stock : 5 } };
       }
       migrated = true;
     }
@@ -6117,9 +6117,9 @@ if (isb) isb.addEventListener('click', function() {
   if (sizes.length > 0) {
     var stock = {};
     sizes.forEach(function(s) { stock[s] = 5; });
-    variants['Default'] = { stock: stock };
+    variants['Default'] = { sizes: sizes, stock: stock };
   } else {
-    variants['Default'] = { stock: { q: 5 } };
+    variants['Default'] = { sizes: [], stock: { q: 5 } };
   }
   // Process images: resize each one
   var imagesToSave = [];
