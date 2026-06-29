@@ -1110,32 +1110,6 @@
     "deposit": "₱200"
   },
   {
-    "stock": 42,
-    "category2": "GU",
-    "available": true,
-    "_colorOrder": [
-      "Default"
-    ],
-    "category1": "Clothing",
-    "id": 79,
-    "category0": "MENS",
-    "sizes": [],
-    "description": "Authentic Japanese clothing from GU. Limited Japan-exclusive item.",
-    "color": "Black",
-    "price": "₱2631",
-    "name": "Kate Liquid Eyeliner",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 42
-        }
-      }
-    },
-    "images": [
-      "images/products/placeholder.svg"
-    ]
-  },
-  {
     "name": "Majolica Majorca Mascara",
     "variants": {
       "Default": {
