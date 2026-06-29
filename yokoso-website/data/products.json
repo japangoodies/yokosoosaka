@@ -1460,7 +1460,7 @@
     "description": "Sizes avail: XS to XXL\n200 DP TO SECURE ITEM",
     "category1": "Shoes",
     "available": true,
-    "category0": "MENS",
+    "category0": "WOMENS",
     "originalPrice": "₱845",
     "sizes": [],
     "id": 32,
@@ -1476,12 +1476,12 @@
           "2XL"
         ],
         "stock": {
-          "M": 5,
           "XS": 5,
+          "S": 5,
+          "M": 5,
           "L": 5,
-          "2XL": 5,
           "XL": 5,
-          "S": 5
+          "2XL": 5
         }
       }
     },
