@@ -5889,7 +5889,12 @@ function parseFacebookEmbed(html) {
 function parseCaptionToFields(caption) {
   var result = { name: '', price: '', description: '', sizes: [], hashtags: [], category0: '', category1: '', category2: '' };
   if (!caption) return result;
-  var lines = caption.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+  var originalLines = caption.split('\n');
+  var lines = [], origIdx = [];
+  originalLines.forEach(function(l, i) {
+    var t = l.trim();
+    if (t) { lines.push(t); origIdx.push(i); }
+  });
   // Extract price
   var priceMatch = caption.match(/₱\s*[\d,]+\.?\d*/);
   if (priceMatch) { result.price = priceMatch[0]; }
@@ -5921,23 +5926,63 @@ function parseCaptionToFields(caption) {
     else if (!result.category1 && knownSubs.indexOf(tag) !== -1) result.category1 = tagMatch[1];
     else if (!result.category2 && knownBrands.indexOf(tag) !== -1) result.category2 = tagMatch[1];
   }
-  // Determine name (first line that's not price, sizes, or hashtag)
+  // Smart name detection: score each line for likelihood of being a product name
+  var productKw = ['JACKET','COAT','CARDIGAN','SHIRT','BLOUSE','TOP','POLO','HOODIE','SWEATER','PANTS','JEANS','SHORTS','SKIRT','DRESS','BAG','SHOES','SNEAKERS','SANDALS','WALLET','WATCH','VEST','JUMPSUIT','LEGGINGS','SWIMWEAR','BIKINI','TEE','PULLOVER','JOGGERS','BELT','HAT','BACKPACK','TOTE','SLIPPERS','BOOTS','HEELS','SNEAKER','SANDAL','GLASSES','SUNGLASSES','WALLET','BAG','CAP','BEANIE','SCARF','HOOD','CREW','SWEATSHIRT','WINDBREAKER','BOMBER','BLAZER','CROP','TANK','ROMPER','SHORTSLEEVE','LONGSLEEVE','POLO','BUTTON','SWIM','BRA','UNDERWEAR','SOCKS','PLUSH','TOY','KEYCHAIN','POUCH'];
+  var skipRe = /^(for\s|price|sizes?|deposit|dp\s|yokoso|nasa\s|size\s|₱)/i;
+  var nonNameRe = /(price|down|sale|avail|sizes?|comsec|reference|deposit|dp|eta)/i;
+  var best = { line: '', score: -999, idx: -1 };
   for (var i = 0; i < lines.length; i++) {
     var line = lines[i];
-    if (line.match(/^₱/)) continue;
-    if (line.match(/^Sizes?\s*:/i)) continue;
-    if (line.match(/^#/)) continue;
-    if (line.length > 3 && !result.name) { result.name = line; break; }
+    if (line.length < 4 || line.length > 120) continue;
+    if (skipRe.test(line)) continue;
+    var score = 0;
+    var upper = line.toUpperCase();
+    // Heavily penalize concatenated lines (no space between lowercase and uppercase)
+    if (/[a-z][A-Z]/.test(line)) continue;
+    // ALL CAPS is a strong product name signal
+    if (line === upper && line.length > 5) score += 10;
+    // Title case (every word starts with capital) is a good signal
+    var words = line.split(/\s+/).filter(Boolean);
+    var capped = words.filter(function(w) { return w[0] >= 'A' && w[0] <= 'Z'; });
+    if (capped.length === words.length && words.length >= 2) score += 5;
+    // Contains a known brand name from categories config
+    if (knownBrands.some(function(b) { return upper.indexOf(b) !== -1; })) score += 8;
+    // Contains a product-type keyword
+    if (productKw.some(function(k) { return upper.indexOf(k) !== -1; })) score += 5;
+    // No non-name words
+    if (!nonNameRe.test(line)) score += 3;
+    // Sweet-spot length
+    if (line.length >= 10 && line.length <= 60) score += 2;
+    // Slight preference for earlier lines
+    if (i < 3) score += 1;
+    if (score > best.score) { best = { line: line, score: score, idx: i }; }
   }
-  // Description: everything between name/price and hashtags/sizes
-  var descStart = 0;
-  if (result.name) descStart = caption.indexOf(result.name) + result.name.length;
-  var descEnd = caption.length;
-  var sizeIdx = caption.toLowerCase().indexOf('sizes');
-  if (sizeIdx > descStart && sizeIdx < descEnd) descEnd = sizeIdx;
-  var hashIdx = caption.indexOf('#');
-  if (hashIdx > descStart && hashIdx < descEnd) descEnd = hashIdx;
-  result.description = caption.substring(descStart, descEnd).trim().replace(/^[\s\n]+/, '');
+  if (best.score > 5) {
+    result.name = best.line;
+  } else {
+    // Fallback: first line that's not price/size/hashtag
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      if (line.match(/^₱/)) continue;
+      if (line.match(/^Sizes?\s*:/i)) continue;
+      if (line.match(/^#/)) continue;
+      if (line.length > 3 && !result.name) { result.name = line; best.idx = i; break; }
+    }
+  }
+  // Description: everything after the name line in the original caption
+  if (result.name && best.idx >= 0) {
+    var realIdx = origIdx[best.idx];
+    var pos = 0;
+    for (var i = 0; i <= realIdx; i++) {
+      pos += originalLines[i].length + 1;
+    }
+    var descEnd = caption.length;
+    var sizePos = caption.toLowerCase().indexOf('sizes');
+    if (sizePos > pos && sizePos < descEnd) descEnd = sizePos;
+    var hashPos = caption.indexOf('#');
+    if (hashPos > pos && hashPos < descEnd) descEnd = hashPos;
+    result.description = caption.substring(pos, descEnd).trim().replace(/^[\s\n]+/, '');
+  }
   return result;
 }
 
