@@ -1110,33 +1110,6 @@
     "sizes": []
   },
   {
-    "deposit": "₱200",
-    "_colorOrder": [
-      "BLUE"
-    ],
-    "description": ".",
-    "variants": {
-      "BLUE": {
-        "stock": {},
-        "sizes": []
-      }
-    },
-    "id": 28,
-    "category0": "WOMENS",
-    "originalPrice": "₱795",
-    "name": "GU METAL BUTTON CARDIGAN",
-    "category2": "GU",
-    "available": true,
-    "category1": "Clothing",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "price": "₱799",
-    "color": "",
-    "sizes": [],
-    "stock": 5
-  },
-  {
     "id": 29,
     "name": "GU METAL BUTTON CARDIGAN",
     "category0": "WOMENS",
