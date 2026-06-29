@@ -1836,31 +1836,5 @@
       "Default"
     ],
     "color": "Brown"
-  },
-  {
-    "available": true,
-    "category2": "Uniqlo",
-    "category1": "Clothing",
-    "sizes": [],
-    "name": "Excel Eyebrow Powder",
-    "images": [
-      "images/products/placeholder.svg"
-    ],
-    "stock": 35,
-    "color": "Lavender",
-    "_colorOrder": [
-      "Default"
-    ],
-    "category0": "MENS",
-    "price": "₱2514",
-    "variants": {
-      "Default": {
-        "stock": {
-          "q": 35
-        }
-      }
-    },
-    "id": 78,
-    "description": "Authentic Japanese clothing from Uniqlo. Limited Japan-exclusive item."
   }
 ]
