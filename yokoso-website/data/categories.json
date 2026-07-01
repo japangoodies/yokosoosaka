@@ -103,7 +103,8 @@
     "GREEN",
     "WHITE & BLUE",
     "PINK",
-    "NATURAL"
+    "NATURAL",
+    "LIGHT BLUE"
   ],
   "cloudinaryUploadPreset": "japangoodies",
   "proxyUrl": "https://yokoso-stock-proxy.shayera019.workers.dev",
