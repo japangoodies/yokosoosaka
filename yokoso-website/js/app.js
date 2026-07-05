@@ -1557,72 +1557,98 @@ function loadProducts(callback) {
     if (!rendered) { rendered = true; if (callback) callback(); }
   }
 
-  // Stage 1: Load committed data from file
-  fetch('data/products.json?_=' + Date.now())
-    .then(function(r) { return r.json(); })
+  // Stage 1: Load committed data from GitHub API (bypasses CDN), fallback to CDN file
+  var fileFetch = fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_PATH)
+    .then(function(r) {
+      if (!r.ok) throw new Error('API fetch failed');
+      return r.json();
+    })
     .then(function(data) {
-      if (data && data.length > 0) { products = data; migrateProducts(); }
-      else { throw new Error('empty'); }
-    })
-    .catch(function() {
-      // Fallback to localStorage or defaults
-      var saved = localStorage.getItem('yokoso_products');
-      if (saved) {
-        try { products = JSON.parse(saved); migrateProducts(); }
-        catch { products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)); }
-      } else {
-        products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-      }
-    })
-    .finally(function() {
-      // Stage 2: Prefer localStorage only if it's newer than the last GitHub sync
-      // This ensures admin edits (localStorage) are visible on the editing device,
-      // while other devices see GitHub-synced data (the file) when it's newer.
-      var localSaved = localStorage.getItem('yokoso_products');
-      if (localSaved) {
-        try {
-          var local = JSON.parse(localSaved);
-          if (local.length > 0) {
-            var localTime = parseInt(localStorage.getItem('yokoso_local_save_time') || '0', 10);
-            var syncTime = parseInt(localStorage.getItem('yokoso_sync_time') || '0', 10);
-            var forceTime = parseInt(localStorage.getItem('yokoso_force_sync_time') || '0', 10);
-            var pend = localStorage.getItem('yokoso_pending_sync');
-            // If a force sync happened after the local save, discard local data
-            if (forceTime > localTime) {
-              console.log('[Load] Force sync detected (forceTime=' + forceTime + ' > localTime=' + localTime + '), using file data');
-            } else if (pend === 'true' || localTime > syncTime) {
-              products = local;
-              migrateProducts();
-              console.log('[Load] Using localStorage data (localTime=' + localTime + ' > syncTime=' + syncTime + ', pending=' + pend + ')');
-            } else {
-              console.log('[Load] Using file data (syncTime=' + syncTime + ' >= localTime=' + localTime + ')');
-            }
-          }
-        } catch(e) {
-          console.warn('[Load] Failed to parse localStorage products:', e);
+      if (data && data.content) {
+        var decoded = atob(data.content.replace(/\n/g, ''));
+        var parsed = JSON.parse(decoded);
+        if (parsed && parsed.length > 0) {
+          products = parsed;
+          migrateProducts();
+          console.log('[Load] Loaded from GitHub API: ' + products.length + ' products');
+          return;
         }
       }
-      localStorage.setItem('yokoso_products', JSON.stringify(products));
-
-      // Stage 3: Firebase sync (if available)
-      if (fbDB) {
-        fbDB.collection(FB_COLLECTION).doc(FB_DOC).get()
-          .then(function(doc) {
-            if (doc.exists && doc.data().items && doc.data().items.length > 0) {
-              products = doc.data().items;
-              migrateProducts();
-              localStorage.setItem('yokoso_products', JSON.stringify(products));
-            } else {
-              fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(function() {});
-            }
-            done();
-          })
-          .catch(function() { done(); });
-        setTimeout(done, 3000);
-      } else {
-        done();
-      }
+      throw new Error('no content');
+    })
+    .catch(function() {
+      // Fallback to CDN file
+      return fetch('data/products.json?_=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data && data.length > 0) {
+            products = data;
+            migrateProducts();
+            console.log('[Load] Loaded from CDN file: ' + products.length + ' products');
+          } else {
+            throw new Error('empty file');
+          }
+        })
+        .catch(function() {
+          var saved = localStorage.getItem('yokoso_products');
+          if (saved) {
+            try { products = JSON.parse(saved); migrateProducts(); console.log('[Load] Fallback to localStorage: ' + products.length + ' products'); }
+            catch { products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)); console.log('[Load] Fallback to defaults (localStorage parse failed)'); }
+          } else {
+            products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+            console.log('[Load] Fallback to defaults');
+          }
+        });
     });
+
+  fileFetch.then(function() {
+    // Stage 2: Compare with localStorage using timestamp logic
+    // This ensures admin edits (localStorage) are visible on the editing device,
+    // while other devices see GitHub-synced data (the file) when it's newer.
+    var localSaved = localStorage.getItem('yokoso_products');
+    if (localSaved) {
+      try {
+        var local = JSON.parse(localSaved);
+        if (local.length > 0) {
+          var localTime = parseInt(localStorage.getItem('yokoso_local_save_time') || '0', 10);
+          var syncTime = parseInt(localStorage.getItem('yokoso_sync_time') || '0', 10);
+          var forceTime = parseInt(localStorage.getItem('yokoso_force_sync_time') || '0', 10);
+          var pend = localStorage.getItem('yokoso_pending_sync');
+          if (forceTime > localTime) {
+            console.log('[Load] Force sync detected (forceTime=' + forceTime + ' > localTime=' + localTime + '), using API/file data');
+          } else if (pend === 'true' || localTime > syncTime) {
+            products = local;
+            migrateProducts();
+            console.log('[Load] Using localStorage data (localTime=' + localTime + ' > syncTime=' + syncTime + ', pending=' + pend + ')');
+          } else {
+            console.log('[Load] Using API/file data (syncTime=' + syncTime + ' >= localTime=' + localTime + ')');
+          }
+        }
+      } catch(e) {
+        console.warn('[Load] Failed to parse localStorage products:', e);
+      }
+    }
+    localStorage.setItem('yokoso_products', JSON.stringify(products));
+
+    // Stage 3: Firebase sync (if available)
+    if (fbDB) {
+      fbDB.collection(FB_COLLECTION).doc(FB_DOC).get()
+        .then(function(doc) {
+          if (doc.exists && doc.data().items && doc.data().items.length > 0) {
+            products = doc.data().items;
+            migrateProducts();
+            localStorage.setItem('yokoso_products', JSON.stringify(products));
+          } else {
+            fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(function() {});
+          }
+          done();
+        })
+        .catch(function() { done(); });
+      setTimeout(done, 3000);
+    } else {
+      done();
+    }
+  });
 
   // Load categories
   loadCategories();
