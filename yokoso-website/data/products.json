@@ -2768,7 +2768,7 @@
     "category1": "Clothing",
     "category2": "GU",
     "variants": {
-      "Default": {
+      "BEIGE": {
         "sizes": [
           "XS",
           "S",
@@ -2786,7 +2786,33 @@
           "XL": 5,
           "2XL": 5,
           "3XL": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/i9micoyutw1enxuugoo6.jpg"
+        ]
+      },
+      "BLACK": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/f26ayanhwcjka8jkzgvq.jpg"
+        ]
       }
     },
     "price": "₱799.00",
@@ -2799,7 +2825,8 @@
     ],
     "available": true,
     "_colorOrder": [
-      "Default"
+      "BEIGE",
+      "BLACK"
     ],
     "deposit": "₱200",
     "originalPrice": "₱795.00"
