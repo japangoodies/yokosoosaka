@@ -3447,6 +3447,27 @@
           "150": 5,
           "160": 5
         }
+      },
+      "PURPLE": {
+        "sizes": [
+          "110",
+          "120",
+          "130",
+          "140",
+          "150",
+          "160"
+        ],
+        "stock": {
+          "110": 5,
+          "120": 5,
+          "130": 5,
+          "140": 5,
+          "150": 5,
+          "160": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783265544/bcjzu3aglkqhrxzjwmwr.jpg"
+        ]
       }
     },
     "price": "₱699.00",
@@ -3461,7 +3482,8 @@
     "_colorOrder": [
       "YELLOW",
       "BLUE",
-      "WHITE"
+      "WHITE",
+      "PURPLE"
     ],
     "deposit": "₱200",
     "originalPrice": "₱650"
