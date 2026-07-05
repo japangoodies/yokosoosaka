@@ -2738,11 +2738,41 @@
     "category1": "Clothing",
     "category2": "Uniqlo",
     "variants": {
-      "Default": {
-        "sizes": [],
+      "PINK": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
         "stock": {
-          "q": 5
-        }
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/exzpulxhrcqhfb6cvisx.jpg"
+        ]
+      },
+      "BLUE": {
+        "sizes": [
+          "S",
+          "M"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/mqcmlvsiuwiepqhgap5h.jpg"
+        ]
       }
     },
     "price": "₱979",
@@ -2755,7 +2785,8 @@
     ],
     "available": true,
     "_colorOrder": [
-      "Default"
+      "PINK",
+      "BLUE"
     ],
     "deposit": "₱250",
     "originalPrice": "₱975.00"
