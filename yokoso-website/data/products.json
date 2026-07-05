@@ -2531,7 +2531,7 @@
     "category1": "Clothing",
     "category2": "Uniqlo",
     "variants": {
-      "Default": {
+      "Design 1": {
         "sizes": [
           "XS",
           "S",
@@ -2549,7 +2549,79 @@
           "XL": 5,
           "2XL": 5,
           "3XL": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/tthlh0sxjljruwkr8np6.jpg"
+        ]
+      },
+      "Design 2": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/api7peqjt9qyy7ol5sgs.jpg"
+        ]
+      },
+      "Design 3": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/beowtbial52fq01lvuqi.jpg"
+        ]
+      },
+      "Design 4": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/dxctpqbztnqaemcwqvtq.jpg"
+        ]
       }
     },
     "price": "₱559.00",
@@ -2562,7 +2634,10 @@
     ],
     "available": true,
     "_colorOrder": [
-      "Default"
+      "Design 1",
+      "Design 2",
+      "Design 3",
+      "Design 4"
     ],
     "deposit": "₱150",
     "originalPrice": "₱550"
