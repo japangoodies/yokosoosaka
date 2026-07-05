@@ -3009,7 +3009,7 @@
     "category1": "Clothing",
     "category2": "Uniqlo",
     "variants": {
-      "Default": {
+      "DARK BLUE": {
         "sizes": [
           "XS",
           "S",
@@ -3029,11 +3029,89 @@
           "2XL": 5,
           "3XL": 5,
           "4XL": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263984/u0iwbdcp4bapo64tkwss.jpg"
+        ]
+      },
+      "LIGHT BLUE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263984/gi8qyqz8pxp95tahzu5t.jpg"
+        ]
+      },
+      "WHITE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263984/epjavs86xzsukqktqp0m.jpg"
+        ]
+      },
+      "GRAY": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263984/u4vjpgmoublsdereslox.jpg"
+        ]
       }
     },
     "price": "₱995.00",
-    "description": "Flash sale!\nUNIQLO JORTS \nUnisex po ito. 💯 cotton din \nSizes avail: XS to 4XL\n🏷️ 990.00 pesos\n250 DP TO SECURE ITEM",
+    "description": "Flash sale!\nUNIQLO JORTS \nUnisex po ito. 💯 cotton din \nSizes avail: XS to 4XL\n🏷️ 995.00 pesos\n250 DP TO SECURE ITEM",
     "images": [
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263984/wmuwnf8gckieerr1iljz.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263984/kwuhompswvvzz72fdqnu.jpg",
@@ -3044,7 +3122,10 @@
     ],
     "available": true,
     "_colorOrder": [
-      "Default"
+      "DARK BLUE",
+      "LIGHT BLUE",
+      "WHITE",
+      "GRAY"
     ],
     "deposit": "₱250",
     "originalPrice": "₱990"
