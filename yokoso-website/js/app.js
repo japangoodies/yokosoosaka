@@ -1575,13 +1575,32 @@ function loadProducts(callback) {
       }
     })
     .finally(function() {
-      // Stage 2: Always prefer localStorage if available (saves survive CDN cache delays)
-      var saved = localStorage.getItem('yokoso_products');
-      if (saved) {
+      // Stage 2: Prefer localStorage only if it's newer than the last GitHub sync
+      // This ensures admin edits (localStorage) are visible on the editing device,
+      // while other devices see GitHub-synced data (the file) when it's newer.
+      var localSaved = localStorage.getItem('yokoso_products');
+      if (localSaved) {
         try {
-          var local = JSON.parse(saved);
-          if (local.length > 0) { products = local; migrateProducts(); }
-        } catch(e) {}
+          var local = JSON.parse(localSaved);
+          if (local.length > 0) {
+            var localTime = parseInt(localStorage.getItem('yokoso_local_save_time') || '0', 10);
+            var syncTime = parseInt(localStorage.getItem('yokoso_sync_time') || '0', 10);
+            var forceTime = parseInt(localStorage.getItem('yokoso_force_sync_time') || '0', 10);
+            var pend = localStorage.getItem('yokoso_pending_sync');
+            // If a force sync happened after the local save, discard local data
+            if (forceTime > localTime) {
+              console.log('[Load] Force sync detected (forceTime=' + forceTime + ' > localTime=' + localTime + '), using file data');
+            } else if (pend === 'true' || localTime > syncTime) {
+              products = local;
+              migrateProducts();
+              console.log('[Load] Using localStorage data (localTime=' + localTime + ' > syncTime=' + syncTime + ', pending=' + pend + ')');
+            } else {
+              console.log('[Load] Using file data (syncTime=' + syncTime + ' >= localTime=' + localTime + ')');
+            }
+          }
+        } catch(e) {
+          console.warn('[Load] Failed to parse localStorage products:', e);
+        }
       }
       localStorage.setItem('yokoso_products', JSON.stringify(products));
 
@@ -1787,13 +1806,19 @@ function saveCategoriesConfig() {
 }
 
 function saveProducts() {
+  console.log('[Save] saveProducts() called. Products count:', products.length);
   localStorage.setItem('yokoso_products', JSON.stringify(products));
   localStorage.setItem('yokoso_pending_sync', 'true');
+  localStorage.setItem('yokoso_local_save_time', Date.now().toString());
+  console.log('[Save] Written to localStorage, pending_sync=true');
   if (fbDB) {
     fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(function() {});
   }
   if (localStorage.getItem('autoSyncEnabled') === 'true' && localStorage.getItem('github_token')) {
+    console.log('[Save] Auto-sync enabled, triggering syncToGitHub()');
     syncToGitHub();
+  } else {
+    console.log('[Save] Auto-sync not enabled or no token. Token exists:', !!localStorage.getItem('github_token'));
   }
   // Show commit reminder in admin panel
   var reminder = document.getElementById('commitReminder');
@@ -2231,7 +2256,7 @@ function renderProducts() {
     var firstMedia = p.images?.[0] || 'images/products/placeholder.svg';
     var mediaHtml = isVideoUrl(firstMedia) ?
       '<div class="product-image-wrap"><div class="product-image product-image-video"><span class="video-play-icon">▶</span></div></div>' :
-      '<div class="product-image-wrap"><span class="skeleton"></span><img class="product-image" src="' + firstMedia + '" alt="' + p.name + '" loading="lazy" onload="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();" onerror="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}"></div>';
+      '<div class="product-image-wrap"><span class="skeleton"></span><img class="product-image" src="' + firstMedia + '" alt="' + p.name + '" loading="lazy" onload="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();" onerror="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();if(this.dataset.retry){this.style.display=\'none\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}"></div>';
     return '<div class="product-card" data-id="' + p.id + '">' +
       mediaHtml +
       '<button class="wishlist-btn' + (favorites.indexOf(p.id) !== -1 ? ' active' : '') + '" data-id="' + p.id + '" onclick="toggleFavorite(' + p.id + ', event)" title="Add to favorites">♥</button>' +
@@ -2809,7 +2834,7 @@ function renderModalMedia(src) {
   if (isVideoUrl(src)) {
     return '<video src="' + src + '" controls style="width:100%;height:500px;object-fit:contain;background:#000" playsinline></video>';
   }
-  return '<img class="modal-strip-img" src="' + src + '" style="height:500px;width:100%;flex:0 0 100%;object-fit:contain;background:#fff;cursor:pointer;scroll-snap-align:start" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
+  return '<img class="modal-strip-img" src="' + src + '" style="height:500px;width:100%;flex:0 0 100%;object-fit:contain;background:#fff;cursor:pointer;scroll-snap-align:start" onerror="if(this.dataset.retry){this.style.display=\'none\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
 }
 
 function modalGoTo(index) {
@@ -2937,7 +2962,7 @@ function openModal(product) {
          '<div style="position:relative">' +
             '<div id="modalMediaContainer" style="position:relative;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;height:500px">' +
             _modalImages.map(function(img, i) {
-              return '<img class="modal-strip-img" data-index="' + i + '" src="' + img + '" style="height:500px;width:100%;flex:0 0 100%;object-fit:contain;background:#fff;cursor:pointer;scroll-snap-align:start" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
+              return '<img class="modal-strip-img" data-index="' + i + '" src="' + img + '" style="height:500px;width:100%;flex:0 0 100%;object-fit:contain;background:#fff;cursor:pointer;scroll-snap-align:start" onerror="if(this.dataset.retry){this.style.display=\'none\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
             }).join('') +
             '</div>' +
             (_modalImages.length > 1 ? '<button id="modalStripPrev" onclick="modalStripNav(-1)" style="position:absolute;left:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">‹</button>' : '') +
@@ -3027,7 +3052,7 @@ function selectModalColor(el, color) {
     var mediaContainer = document.getElementById('modalMediaContainer');
     if (mediaContainer) {
       mediaContainer.innerHTML = _modalImages.map(function(img, idx) {
-        return '<img class="modal-strip-img" data-index="' + idx + '" src="' + img + '" style="height:500px;width:100%;flex:0 0 100%;object-fit:contain;background:#fff;cursor:pointer;scroll-snap-align:start" onerror="if(this.dataset.retry){this.src=\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\';this.style.background=\'#eee\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
+        return '<img class="modal-strip-img" data-index="' + idx + '" src="' + img + '" style="height:500px;width:100%;flex:0 0 100%;object-fit:contain;background:#fff;cursor:pointer;scroll-snap-align:start" onerror="if(this.dataset.retry){this.style.display=\'none\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">';
       }).join('');
       _modalImageIdx = 0;
       mediaContainer.scrollTo({ left: 0, behavior: 'smooth' });
@@ -3140,7 +3165,7 @@ function showModalImage() {
   const img = document.getElementById('modalImage');
   if (!img) { console.error('modalImage element not found!'); return; }
   img.onerror = function() {
-    if (_modalImgRetry > 0) { this.onerror = null; this.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; return; }
+    if (_modalImgRetry > 0) { this.onerror = null; this.style.display = 'none'; return; }
     _modalImgRetry++;
     this.src = 'images/products/placeholder.svg';
   };
@@ -3941,7 +3966,18 @@ if (pf) pf.addEventListener('submit', function(e) {
     if (!isNaN(num)) price = '₱' + num.toLocaleString('en-PH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
   }
   var description = document.getElementById('formDesc').value.trim();
-  if (!name || !category0 || !category1 || !category2 || !price || !description) return;
+  if (!name || !category0 || !category1 || !category2 || !price || !description) {
+    var missing = [];
+    if (!name) missing.push('Name');
+    if (!category0) missing.push('Group');
+    if (!category1) missing.push('Subcategory');
+    if (!category2) missing.push('Brand');
+    if (!price) missing.push('Price');
+    if (!description) missing.push('Description');
+    showToast('Please fill in: ' + missing.join(', '), 'error');
+    console.error('[Save] Validation failed - missing fields:', missing);
+    return;
+  }
 
   // Build variants from editor
   var modeEl = document.getElementById('formVariantMode');
@@ -4000,6 +4036,20 @@ if (pf) pf.addEventListener('submit', function(e) {
   var toUpload = selectedImagesData.filter(function(s) { return s.startsWith('data:'); });
   var keep = selectedImagesData.filter(function(s) { return !s.startsWith('data:'); });
 
+  // Also collect variant image data URLs for upload
+  var variantDataUrls = [];
+  Object.keys(variantImagesData).forEach(function(vi) {
+    var imgs = variantImagesData[vi] || [];
+    imgs.forEach(function(src) {
+      if (src.startsWith('data:')) {
+        if (toUpload.indexOf(src) === -1) {
+          toUpload.push(src);
+        }
+        variantDataUrls.push({ vi: vi, src: src });
+      }
+    });
+  });
+
   function finish(images) {
     var deposit = document.getElementById('formDeposit') ? document.getElementById('formDeposit').value.trim() : '';
     var originalPrice = document.getElementById('formOriginalPrice') ? document.getElementById('formOriginalPrice').value.trim() : '';
@@ -4014,6 +4064,7 @@ if (pf) pf.addEventListener('submit', function(e) {
         products[idx] = Object.assign({}, products[idx], upd);
       }
       savedId = editingId;
+      console.log('[Save] Updated existing product id=' + savedId + ', images count:', images.length);
     } else {
       var maxId = products.length > 0 ? Math.max.apply(null, products.map(function(p) { return p.id; })) : 0;
       var newId = maxId + 1;
@@ -4022,6 +4073,7 @@ if (pf) pf.addEventListener('submit', function(e) {
       if (originalPrice) newProd.originalPrice = originalPrice;
       products.push(newProd);
       savedId = newId;
+      console.log('[Save] Created new product id=' + savedId + ', name="' + name + '", images count:', images.length);
     }
     // Update stockMap so the admin list shows the new total immediately
     if (savedId !== undefined) {
@@ -4034,7 +4086,8 @@ if (pf) pf.addEventListener('submit', function(e) {
       }
     }
     saveProducts();
-    console.log('Form submit: saved product id ' + savedId + ', products count: ' + products.length);
+    console.log('[Save] Form submit complete: product id=' + savedId + ', total products=' + products.length + ', variants=' + Object.keys(variants).length);
+    showToast('Product "' + name + '" saved! Syncing to GitHub...', 'success');
     resetForm();
     renderAdminList();
     renderFilters();
@@ -4048,11 +4101,24 @@ if (pf) pf.addEventListener('submit', function(e) {
   }
 
   Promise.all(toUpload.map(function(src) { return uploadImage(src); })).then(function(urls) {
-    finish(urls.concat(keep));
-  }).catch(function() {
-    showToast('Failed to upload one or more images. Please try again.', 'error');
-    submitBtn.disabled = false;
-    submitBtn.textContent = origText;
+    // Map Cloudinary URLs back to variant images
+    var urlMap = {};
+    toUpload.forEach(function(src, i) { urlMap[src] = urls[i]; });
+    variantDataUrls.forEach(function(m) {
+      var idx = variantImagesData[m.vi].indexOf(m.src);
+      if (idx !== -1 && urlMap[m.src]) {
+        variantImagesData[m.vi][idx] = urlMap[m.src];
+      }
+    });
+    // Determine which of the uploaded URLs belong to product-level images
+    var productUploadCount = selectedImagesData.filter(function(s) { return s.startsWith('data:'); }).length;
+    var productUrls = urls.slice(0, productUploadCount);
+    finish(productUrls.concat(keep));
+  }).catch(function(err) {
+    console.error('[Save] Image upload failed:', err.message || err);
+    showToast('Image upload failed: ' + (err.message || 'unknown error') + '. Saving product without images.', 'warning');
+    // Save product without images rather than aborting entirely
+    finish(keep.length > 0 ? keep : ['images/products/placeholder.svg']);
   });
 });
 
@@ -4404,25 +4470,39 @@ if (ast) ast.addEventListener('change', function() {
 
 function syncToGitHub() {
   var token = localStorage.getItem('github_token');
-  if (!token) return;
-  if (syncToGitHub._busy) { syncToGitHub._queued = true; return; }
+  if (!token) {
+    console.warn('[Sync] No GitHub token found. Cannot sync.');
+    showToast('Cannot sync: No GitHub token configured.', 'error');
+    return;
+  }
+  if (syncToGitHub._busy) { syncToGitHub._queued = true; console.log('[Sync] Already syncing, queued another sync.'); return; }
   syncToGitHub._busy = true;
   var statusEl = document.getElementById('syncStatus');
-  statusEl.textContent = 'Syncing...';
-  statusEl.style.color = '#666';
+  if (statusEl) { statusEl.textContent = 'Syncing...'; statusEl.style.color = '#666'; }
   var content = JSON.stringify(products, null, 2);
   var encoded = btoa(unescape(encodeURIComponent(content)));
+  console.log('[Sync] Starting sync, products count:', products.length, 'content size:', content.length, 'bytes');
   doGitHubSync(GITHUB_PATH, encoded, 'Auto-sync products from admin panel', statusEl, 0)
-    .then(function() { syncToGitHub._busy = false; if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); } })
+    .then(function() {
+      syncToGitHub._busy = false;
+      console.log('[Sync] GitHub sync completed successfully.');
+      showToast('Products synced to GitHub successfully!', 'success');
+      if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); }
+    })
     .catch(function(err) {
       syncToGitHub._busy = false;
+      console.error('[Sync] GitHub sync failed:', err.message);
       if (statusEl) {
-        if (err.message === 'HTTP 401') {
+        if (err.message.indexOf('HTTP 401') !== -1) {
           statusEl.innerHTML = 'Token expired. <a href="#" onclick="window.open(\'https://github.com/settings/tokens\');return false" style="color:#007bff">Generate new token</a> → paste in Sync Settings.';
+          showToast('GitHub token expired. Update in Config tab.', 'error');
         } else {
           statusEl.textContent = 'Sync failed: ' + err.message;
+          showToast('GitHub sync failed: ' + err.message + '. Data saved locally only.', 'error');
         }
         statusEl.style.color = '#dc3545';
+      } else {
+        showToast('GitHub sync failed: ' + err.message, 'error');
       }
       if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); }
     });
@@ -4459,7 +4539,43 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
       localStorage.setItem('yokoso_sync_time', Date.now().toString());
     }
     if (statusEl) { statusEl.textContent = 'Synced ✓'; statusEl.style.color = '#28a745'; }
+    console.log('[Sync] doGitHubSync succeeded for', filePath);
   });
+}
+
+function forceSync() {
+  console.log('[ForceSync] Starting force sync...');
+  var token = localStorage.getItem('github_token');
+  if (!token) {
+    showToast('No GitHub token configured. Go to Config tab first.', 'error');
+    return;
+  }
+  // Re-save everything fresh to localStorage with a new timestamp
+  localStorage.setItem('yokoso_products', JSON.stringify(products));
+  var now = Date.now().toString();
+  localStorage.setItem('yokoso_local_save_time', now);
+  localStorage.setItem('yokoso_pending_sync', 'true');
+  console.log('[ForceSync] Saved ' + products.length + ' products to localStorage, time=' + now);
+  // Set a force-sync marker so other devices know to discard stale localStorage
+  localStorage.setItem('yokoso_force_sync_time', now);
+  showToast('Force sync: saving ' + products.length + ' products to GitHub...', 'info');
+  var statusEl = document.getElementById('syncStatus');
+  if (statusEl) { statusEl.textContent = 'Force syncing...'; statusEl.style.color = '#e94560'; }
+  var content = JSON.stringify(products, null, 2);
+  var encoded = btoa(unescape(encodeURIComponent(content)));
+  doGitHubSync(GITHUB_PATH, encoded, 'Force-sync: ' + products.length + ' products from admin', statusEl, 0)
+    .then(function() {
+      console.log('[ForceSync] GitHub sync succeeded.');
+      // Also sync categories
+      syncCategoriesToGitHub();
+      showToast('Force sync complete! All devices will get the latest data.', 'success');
+      if (statusEl) { statusEl.textContent = 'Force synced ✓'; statusEl.style.color = '#28a745'; }
+    })
+    .catch(function(err) {
+      console.error('[ForceSync] Failed:', err.message);
+      showToast('Force sync failed: ' + err.message, 'error');
+      if (statusEl) { statusEl.textContent = 'Force sync failed: ' + err.message; statusEl.style.color = '#dc3545'; }
+    });
 }
 
 function syncCategoriesToGitHub() {
