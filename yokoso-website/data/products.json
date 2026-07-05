@@ -1494,7 +1494,7 @@
     "name": "GU STRAP BALLET SNEAKER"
   },
   {
-    "stock": 5,
+    "stock": 195,
     "name": "UNIQLO MENS ROGER FEDERER DRY EX POLO SHIRT",
     "description": "Meron pong naka-button type, meron din half-zip\nSizes avail: XS to 4XL\n250 DP TO SECURE ITEM",
     "deposit": "₱250",
@@ -1766,11 +1766,11 @@
     "deposit": "₱200",
     "description": "Sizes avail: XS to 3XL\n699.00 pesos only\n200 DP TO SECURE ITEM",
     "color": "",
-    "stock": 5,
+    "stock": 140,
     "name": "UNIQLO CECILIE BAHNSEN SHIRT"
   },
   {
-    "stock": 5,
+    "stock": 250,
     "name": "UNIQLO UV CUT WASHABLE CREWNECK SHIRT",
     "variants": {
       "Design 1": {
@@ -2156,7 +2156,7 @@
     ]
   },
   {
-    "stock": 5,
+    "stock": 205,
     "name": "UNIQLO JWA BAGGY JEANS",
     "description": "1085.00 pesos only\n250 DP TO SECURE ITEM",
     "color": "",
@@ -2444,7 +2444,7 @@
         ]
       }
     },
-    "stock": 5,
+    "stock": 240,
     "name": "GU MENS BAGGY JEANS"
   },
   {
@@ -2487,7 +2487,7 @@
     "available": true,
     "color": "",
     "sizes": [],
-    "stock": 5
+    "stock": 25
   },
   {
     "id": 45,
