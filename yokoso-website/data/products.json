@@ -1500,7 +1500,7 @@
     "sizes": [],
     "color": "",
     "deposit": "₱250",
-    "stock": 5,
+    "stock": 195,
     "images": [
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782750933/kuicjkc32hgnw8u9bezr.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782750933/y0njxn4iw6zv8nxjlc83.jpg",
@@ -1648,7 +1648,7 @@
     }
   },
   {
-    "stock": 5,
+    "stock": 140,
     "images": [
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/prlmcwwraj5i7l9jz2sl.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/mr3r24yhprm5bx0nqgyq.jpg",
@@ -1978,7 +1978,7 @@
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782752773/bqdwbcbtk5v4dxrrkhhk.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782752773/gndiacs4or6hxsjxrdz2.jpg"
     ],
-    "stock": 5
+    "stock": 250
   },
   {
     "color": "",
@@ -2289,7 +2289,7 @@
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782757829/sv66ouoqjjrqtwut8xno.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782757830/d66xo2ddanfdcdi6lzlt.jpg"
     ],
-    "stock": 5
+    "stock": 205
   },
   {
     "price": "₱1079.00",
@@ -2438,7 +2438,7 @@
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/qyelsck5sh2pyf4mprof.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/mdj7g9ql8rrywkumlo3p.jpg"
     ],
-    "stock": 5,
+    "stock": 240,
     "originalPrice": "₱1075.00",
     "color": "",
     "deposit": "₱250",
@@ -2487,7 +2487,7 @@
     "deposit": "₱1000",
     "color": "",
     "sizes": [],
-    "stock": 5
+    "stock": 25
   },
   {
     "id": 45,
