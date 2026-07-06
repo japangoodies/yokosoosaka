@@ -1565,7 +1565,7 @@ function loadProducts(callback) {
     })
     .then(function(data) {
       if (data && data.content) {
-        var decoded = atob(data.content.replace(/\n/g, ''));
+        var decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
         var parsed = JSON.parse(decoded);
         if (parsed && parsed.length > 0) {
           products = parsed;
@@ -1665,7 +1665,7 @@ function loadCategories() {
     })
     .then(function(data) {
       if (data && data.content) {
-        var decoded = atob(data.content.replace(/\n/g, ''));
+        var decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
         return JSON.parse(decoded);
       }
       throw new Error('no content');
@@ -1747,6 +1747,7 @@ function loadCategories() {
       localStorage.setItem('yokoso_categories', JSON.stringify(categoriesConfig));
 
       // Re-assign category0 for products using authoritative categoriesConfig
+      // (mutates in-memory only; loadProducts() handles localStorage saves)
       products.forEach(function(p) {
         var assigned = false;
         (categoriesConfig.groups || []).forEach(function(g) {
@@ -1759,7 +1760,6 @@ function loadCategories() {
         });
         if (!assigned) p.category0 = (categoriesConfig.groups[0] || {}).name || '';
       });
-      localStorage.setItem('yokoso_products', JSON.stringify(products));
 
       // Re-render now that categories are loaded
       renderFilters();
