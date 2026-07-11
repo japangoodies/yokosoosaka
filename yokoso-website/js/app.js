@@ -4903,7 +4903,19 @@ function renderCategoryManagement() {
     }).join('');
   }
   if (sizeList) {
-    sizeList.innerHTML = (categoriesConfig.sizes || []).slice().reverse().map(function(s) {
+    var sortedSizes = (categoriesConfig.sizes || []).slice().sort(function(a, b) {
+      var alphaOrder = { XS: 0, S: 1, M: 2, L: 3, XL: 4, XXL: 5, XXXL: 6, '2XL': 7, '3XL': 8, '4XL': 9, '5XL': 10, '6XL': 11 };
+      var aIsAlpha = alphaOrder[a] !== undefined;
+      var bIsAlpha = alphaOrder[b] !== undefined;
+      if (aIsAlpha && bIsAlpha) return alphaOrder[a] - alphaOrder[b];
+      if (aIsAlpha) return -1;
+      if (bIsAlpha) return 1;
+      var aNum = parseFloat(a);
+      var bNum = parseFloat(b);
+      if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+      return a.localeCompare(b);
+    });
+    sizeList.innerHTML = sortedSizes.map(function(s) {
       return '<span class="admin-tag"><span class="admin-tag-label" title="Double-click to rename">' + s + '</span><span class="admin-tag-remove" data-size-cat="' + s + '">×</span></span>';
     }).join('');
   }
