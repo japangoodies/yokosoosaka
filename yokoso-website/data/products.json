@@ -27,7 +27,7 @@
     "color": "",
     "sizes": [],
     "stock": 5,
-    "onSale": true
+    "onSale": false
   },
   {
     "id": 77,
@@ -4503,7 +4503,6 @@
     ],
     "category1": "Shoes",
     "id": 16,
-    "deposit": "₱1000",
-    "onSale": false
+    "deposit": "₱1000"
   }
 ]
