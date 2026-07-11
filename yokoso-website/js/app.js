@@ -1936,31 +1936,14 @@ function renderCarousel() {
   if (!container) return;
   if (document.body.classList.contains('catalog-mode')) return;
   var groups = getGroups();
-  if (window._carouselIntervals) {
-    window._carouselIntervals.forEach(clearInterval);
-  }
-  window._carouselIntervals = [];
   container.innerHTML = groups.map(function(g) {
     var active = currentGroup === g.name ? ' active' : '';
     var images = g.images && g.images.length ? g.images : [];
-    var slidesHtml = images.map(function(img, i) {
-      return '<div class="carousel-group-slide' + (i === 0 ? ' active' : '') + '" style="background-image:url(' + img + ');background-size:cover;background-position:center"></div>';
-    }).join('');
+    var img = images.length ? images[Math.floor(Math.random() * images.length)] : '';
     return '<button class="carousel-group-btn' + active + '" data-group="' + g.name + '">' +
-      '<div class="carousel-group-slides">' + slidesHtml + '</div>' +
+      '<div class="carousel-group-slides"><div class="carousel-group-slide active" style="background-image:url(' + img + ');background-size:cover;background-position:center"></div></div>' +
       '<span class="carousel-group-label">' + g.name + '</span></button>';
   }).join('');
-  container.querySelectorAll('.carousel-group-btn').forEach(function(btn) {
-    var slides = btn.querySelectorAll('.carousel-group-slide');
-    if (slides.length < 2) return;
-    var idx = 0;
-    var interval = setInterval(function() {
-      slides[idx].classList.remove('active');
-      idx = (idx + 1) % slides.length;
-      slides[idx].classList.add('active');
-    }, 3000);
-    window._carouselIntervals.push(interval);
-  });
 }
 
 function renderBrandFilter() {
