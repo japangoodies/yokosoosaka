@@ -4550,8 +4550,8 @@ function syncToGitHub() {
     showToast('Cannot sync: No GitHub token configured.', 'error');
     return;
   }
-  if (syncToGitHub._busy) { syncToGitHub._queued = true; console.log('[Sync] Already syncing, queued another sync.'); return; }
-  syncToGitHub._busy = true;
+  if (window._githubBusy) { window._githubQueued = true; console.log('[Sync] Already syncing, queued another sync.'); return; }
+  window._githubBusy = true;
   var statusEl = document.getElementById('syncStatus');
   if (statusEl) { statusEl.textContent = 'Syncing...'; statusEl.style.color = '#666'; }
   var content = JSON.stringify(products, null, 2);
@@ -4559,17 +4559,18 @@ function syncToGitHub() {
   console.log('[Sync] Starting sync, products count:', products.length, 'content size:', content.length, 'bytes');
   doGitHubSync(GITHUB_PATH, encoded, 'Auto-sync products from admin panel', statusEl, 0)
     .then(function() {
-      syncToGitHub._busy = false;
       console.log('[Sync] GitHub sync completed successfully.');
       showToast('Products synced to GitHub successfully!', 'success');
-      if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); }
-      // Also sync categories if there are pending changes
-      if (localStorage.getItem('github_token')) {
-        syncCategoriesToGitHub();
-      }
+      // Sync categories, then release lock and handle queue
+      var catPromise = localStorage.getItem('github_token') ? syncCategoriesToGitHub() : Promise.resolve();
+      return catPromise;
+    })
+    .then(function() {
+      window._githubBusy = false;
+      if (window._githubQueued) { window._githubQueued = false; syncToGitHub(); }
     })
     .catch(function(err) {
-      syncToGitHub._busy = false;
+      window._githubBusy = false;
       console.error('[Sync] GitHub sync failed:', err.message);
       if (statusEl) {
         if (err.message.indexOf('HTTP 401') !== -1) {
@@ -4583,7 +4584,7 @@ function syncToGitHub() {
       } else {
         showToast('GitHub sync failed: ' + err.message, 'error');
       }
-      if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); }
+      if (window._githubQueued) { window._githubQueued = false; syncToGitHub(); }
     });
 }
 
@@ -4690,37 +4691,39 @@ function forceSync() {
 }
 
 function syncCategoriesToGitHub() {
-  var token = localStorage.getItem('github_token');
-  if (!token) return;
-  if (syncCategoriesToGitHub._busy) { syncCategoriesToGitHub._queued = true; return; }
-  syncCategoriesToGitHub._busy = true;
-  var statusEl = document.getElementById('syncStatus');
-  var groupStatusEl = document.getElementById('groupImageSyncStatus');
-  if (statusEl) { statusEl.textContent = 'Syncing categories...'; statusEl.style.color = '#666'; }
-  if (groupStatusEl) { groupStatusEl.textContent = 'Syncing categories to GitHub...'; groupStatusEl.style.color = '#888'; }
-  var content = JSON.stringify(categoriesConfig, null, 2);
-  var encoded = btoa(unescape(encodeURIComponent(content)));
-  doGitHubSync(GITHUB_CATEGORIES_PATH, encoded, 'Auto-sync categories from admin panel', null, 0)
-    .then(function() {
-      syncCategoriesToGitHub._busy = false;
-      if (syncCategoriesToGitHub._queued) { syncCategoriesToGitHub._queued = false; syncCategoriesToGitHub(); }
-      if (statusEl) { statusEl.textContent = 'Categories synced to GitHub ✓'; statusEl.style.color = '#28a745'; }
-      if (groupStatusEl) { groupStatusEl.textContent = 'Synced ✓'; groupStatusEl.style.color = '#28a745'; setTimeout(function() { groupStatusEl.textContent = ''; }, 4000); }
-    })
-    .catch(function(err) {
-      syncCategoriesToGitHub._busy = false;
-      console.error('Categories sync failed:', err.message);
-      if (statusEl) {
-        if (err.message.indexOf('HTTP 401') !== -1) {
-          statusEl.innerHTML = 'Token expired. <a href="#" onclick="window.open(\'https://github.com/settings/tokens\');return false" style="color:#007bff">Generate new token</a> → paste in Sync Settings.';
-        } else {
-          statusEl.textContent = 'Sync failed: ' + err.message;
+  return new Promise(function(resolve) {
+    var token = localStorage.getItem('github_token');
+    if (!token) { resolve(); return; }
+    if (window._githubBusy) { resolve(); return; }
+    window._githubBusy = true;
+    var statusEl = document.getElementById('syncStatus');
+    var groupStatusEl = document.getElementById('groupImageSyncStatus');
+    if (statusEl) { statusEl.textContent = 'Syncing categories...'; statusEl.style.color = '#666'; }
+    if (groupStatusEl) { groupStatusEl.textContent = 'Syncing categories to GitHub...'; groupStatusEl.style.color = '#888'; }
+    var content = JSON.stringify(categoriesConfig, null, 2);
+    var encoded = btoa(unescape(encodeURIComponent(content)));
+    doGitHubSync(GITHUB_CATEGORIES_PATH, encoded, 'Auto-sync categories from admin panel', null, 0)
+      .then(function() {
+        if (statusEl) { statusEl.textContent = 'Categories synced to GitHub ✓'; statusEl.style.color = '#28a745'; }
+        if (groupStatusEl) { groupStatusEl.textContent = 'Synced ✓'; groupStatusEl.style.color = '#28a745'; setTimeout(function() { groupStatusEl.textContent = ''; }, 4000); }
+      })
+      .catch(function(err) {
+        console.error('Categories sync failed:', err.message);
+        if (statusEl) {
+          if (err.message.indexOf('HTTP 401') !== -1) {
+            statusEl.innerHTML = 'Token expired. <a href="#" onclick="window.open(\'https://github.com/settings/tokens\');return false" style="color:#007bff">Generate new token</a> → paste in Sync Settings.';
+          } else {
+            statusEl.textContent = 'Sync failed: ' + err.message;
+          }
+          statusEl.style.color = '#dc3545';
         }
-        statusEl.style.color = '#dc3545';
-      }
-      if (groupStatusEl) { groupStatusEl.innerHTML = 'Saved locally. GitHub token ' + (err.message.indexOf('HTTP 401') !== -1 ? 'expired — <a href="#" onclick="window.open(\'https://github.com/settings/tokens\');return false" style="color:#007bff">generate new one</a>' : 'sync failed (' + err.message + ')') + '. Check token in <a href="#" onclick="document.getElementById(\'syncSettingsBtn\').click();return false" style="color:#007bff">sync settings</a>.'; groupStatusEl.style.color = '#e67e22'; }
-      if (syncCategoriesToGitHub._queued) { syncCategoriesToGitHub._queued = false; syncCategoriesToGitHub(); }
-    });
+        if (groupStatusEl) { groupStatusEl.innerHTML = 'Saved locally. GitHub token ' + (err.message.indexOf('HTTP 401') !== -1 ? 'expired — <a href="#" onclick="window.open(\'https://github.com/settings/tokens\');return false" style="color:#007bff">generate new one</a>' : 'sync failed (' + err.message + ')') + '. Check token in <a href="#" onclick="document.getElementById(\'syncSettingsBtn\').click();return false" style="color:#007bff">sync settings</a>.'; groupStatusEl.style.color = '#e67e22'; }
+      })
+      .then(function() {
+        window._githubBusy = false;
+        resolve();
+      });
+  });
 }
 
 // Navigation between public and admin view
