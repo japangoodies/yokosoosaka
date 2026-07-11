@@ -2290,7 +2290,7 @@ body {
 .checkout-total-row { display: flex; justify-content: space-between; font-size: 0.9rem; padding: 0.2rem 0; }
 .checkout-deposit-row { font-weight: 700; color: #e94560; font-size: 1rem; }
 .checkout-deposit-amt { font-size: 1.1rem; }
-.checkout-note { font-size: 0.8rem; color: #888; margin-bottom: 1rem; text-align: center; }
+.checkout-note { font-size: 1rem; color: #d32f2f; margin-bottom: 1rem; text-align: center; font-weight: 600; }
 .checkout-actions { display: flex; flex-direction: column; gap: 0.6rem; }
 .checkout-btn {
   width: 100%; padding: 0.75rem; border: none; border-radius: 8px;
