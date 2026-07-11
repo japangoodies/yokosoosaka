@@ -1330,9 +1330,7 @@ function getVariantColors(product) {
 }
 
 var ALPHA_SIZE_ORDER = ["XS","S","M","L","XL","2XL","3XL","One Size","Free Size"];
-function getVariantSizes(product, color) {
-  var v = getVariant(product, color);
-  var sizes = v ? (v.sizes || []) : [];
+function sortSizes(sizes) {
   return sizes.slice().sort(function(a, b) {
     var aIsNum = /^\d+(\.\d+)?$/.test(a);
     var bIsNum = /^\d+(\.\d+)?$/.test(b);
@@ -1343,6 +1341,11 @@ function getVariantSizes(product, color) {
     var bi = ALPHA_SIZE_ORDER.indexOf(b);
     return (ai !== -1 ? ai : 999) - (bi !== -1 ? bi : 999);
   });
+}
+function getVariantSizes(product, color) {
+  var v = getVariant(product, color);
+  var sizes = v ? (v.sizes || []) : [];
+  return sortSizes(sizes);
 }
 
 function getVariantStock(product, color, size) {
@@ -3817,7 +3820,7 @@ function renderVariantsEditor() {
         var stockInput = sr.querySelector('.vs-stock');
         if (cb && cb.checked && stockInput) currentSizes[cb.value] = stockInput.value;
       });
-      var allSizes = categoriesConfig.sizes.slice();
+      var allSizes = sortSizes(categoriesConfig.sizes);
       sizesDiv.innerHTML = allSizes.map(function(s) {
         var checked = currentSizes[s] !== undefined ? ' checked' : '';
         var stockVal = currentSizes[s] !== undefined ? currentSizes[s] : 5;
@@ -3885,7 +3888,7 @@ function resetForm() {
   // Reset variant editor to one empty row
   var container = document.getElementById('formVariantsContainer');
   if (container) {
-    var allSizes = categoriesConfig.sizes || [];
+    var allSizes = sortSizes(categoriesConfig.sizes || []);
     var sizesHtml = allSizes.map(function(s) {
       return '<label class="vs-row" style="display:inline-flex;align-items:center;gap:4px;margin:2px 6px 2px 0;font-size:0.8rem;white-space:nowrap"><input type="checkbox" class="vs-size" value="' + s + '"> ' + s + ' <input type="number" class="vs-stock" value="5" min="0" style="width:40px;padding:2px 4px;border:1px solid #ddd;border-radius:4px;font-size:0.75rem"></label>';
     }).join('');
@@ -3914,7 +3917,8 @@ function populateForm(product) {
     if (colors.length === 0) colors = [''];
     container.innerHTML = colors.map(function(c, i) {
       var v = product.variants[c] || { sizes: [], stock: {} };
-      var sizesHtml = (categoriesConfig.sizes || []).map(function(s) {
+      var sortedSizes = sortSizes(categoriesConfig.sizes || []);
+      var sizesHtml = sortedSizes.map(function(s) {
         var checked = v.sizes.indexOf(s) !== -1 ? ' checked' : '';
         var stockVal = v.stock && v.stock[s] !== undefined ? v.stock[s] : 5;
         return '<label class="vs-row" style="display:inline-flex;align-items:center;gap:4px;margin:2px 6px 2px 0;font-size:0.8rem;white-space:nowrap"><input type="checkbox" class="vs-size" value="' + s + '"' + checked + '> ' + s + ' <input type="number" class="vs-stock" value="' + stockVal + '" min="0" style="width:40px;padding:2px 4px;border:1px solid #ddd;border-radius:4px;font-size:0.75rem"></label>';
@@ -4179,7 +4183,7 @@ if (avb) avb.addEventListener('click', function() {
   var container = document.getElementById('formVariantsContainer');
   if (!container) return;
   var idx = container.querySelectorAll('.variant-row').length;
-  var allSizes = categoriesConfig.sizes || [];
+  var allSizes = sortSizes(categoriesConfig.sizes || []);
   var sizesHtml = allSizes.map(function(s) {
     return '<label class="vs-row" style="display:inline-flex;align-items:center;gap:4px;margin:2px 6px 2px 0;font-size:0.8rem;white-space:nowrap"><input type="checkbox" class="vs-size" value="' + s + '"> ' + s + ' <input type="number" class="vs-stock" value="5" min="0" style="width:40px;padding:2px 4px;border:1px solid #ddd;border-radius:4px;font-size:0.75rem"></label>';
   }).join('');
@@ -6051,7 +6055,7 @@ function populateImportDropdowns() {
 function renderImportSizeChecks(selectedSizes) {
   var container = document.getElementById('importSizes');
   if (!container) return;
-  var allSizes = categoriesConfig.sizes || [];
+  var allSizes = sortSizes(categoriesConfig.sizes || []);
   if (!Array.isArray(selectedSizes)) selectedSizes = [];
   container.innerHTML = allSizes.map(function(s) {
     var checked = selectedSizes.indexOf(s) !== -1 ? ' checked' : '';
