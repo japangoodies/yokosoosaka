@@ -1559,77 +1559,43 @@ function loadProducts(callback) {
     if (!rendered) { rendered = true; if (callback) callback(); }
   }
 
-  // Stage 1: Load committed data from GitHub API (bypasses CDN), fallback to CDN file
-  var fileFetch = fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_PATH)
-    .then(function(r) {
-      if (!r.ok) throw new Error('API fetch failed');
-      return r.json();
-    })
+  // Stage 1: Load from CDN file (Cloudflare Pages — always fresh), fallback to localStorage
+  fetch('data/products.json?_=' + Date.now())
+    .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data && data.content) {
-        var decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
-        var parsed = JSON.parse(decoded);
-        if (parsed && parsed.length > 0) {
-          products = parsed;
-          migrateProducts();
-          localStorage.setItem('yokoso_sync_time', Date.now().toString());
-          console.log('[Load] Loaded from GitHub API: ' + products.length + ' products');
-          return;
-        }
+      if (data && data.length > 0) {
+        products = data;
+        migrateProducts();
+        localStorage.setItem('yokoso_sync_time', Date.now().toString());
+        console.log('[Load] Loaded from CDN file: ' + products.length + ' products');
+      } else {
+        throw new Error('empty file');
       }
-      throw new Error('no content');
     })
     .catch(function() {
-      // Fallback to CDN file
-      return fetch('data/products.json?_=' + Date.now())
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (data && data.length > 0) {
-            products = data;
-            migrateProducts();
-            localStorage.setItem('yokoso_sync_time', Date.now().toString());
-            console.log('[Load] Loaded from CDN file: ' + products.length + ' products');
-          } else {
-            throw new Error('empty file');
-          }
-        })
-        .catch(function() {
-          var saved = localStorage.getItem('yokoso_products');
-          if (saved) {
-            try { products = JSON.parse(saved); migrateProducts(); console.log('[Load] Fallback to localStorage: ' + products.length + ' products'); }
-            catch { products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)); console.log('[Load] Fallback to defaults (localStorage parse failed)'); }
-          } else {
-            products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-            console.log('[Load] Fallback to defaults');
-          }
-        });
-    });
-
-  fileFetch.then(function() {
-    // Stage 2: Compare with localStorage using timestamp logic
-    // This ensures admin edits (localStorage) are visible on the editing device,
-    // while other devices see GitHub-synced data (the file) when it's newer.
-    var localSaved = localStorage.getItem('yokoso_products');
-    if (localSaved) {
-      try {
-        var local = JSON.parse(localSaved);
-        if (local.length > 0) {
-          var localTime = parseInt(localStorage.getItem('yokoso_local_save_time') || '0', 10);
-          var syncTime = parseInt(localStorage.getItem('yokoso_sync_time') || '0', 10);
-          var forceTime = parseInt(localStorage.getItem('yokoso_force_sync_time') || '0', 10);
-          var pend = localStorage.getItem('yokoso_pending_sync');
-          if (forceTime > localTime) {
-            console.log('[Load] Force sync detected (forceTime=' + forceTime + ' > localTime=' + localTime + '), using API/file data');
-          } else if (pend === 'true' || localTime > syncTime) {
-            products = local;
-            migrateProducts();
-            console.log('[Load] Using localStorage data (localTime=' + localTime + ' > syncTime=' + syncTime + ', pending=' + pend + ')');
-          } else {
-            console.log('[Load] Using API/file data (syncTime=' + syncTime + ' >= localTime=' + localTime + ')');
-          }
+      var saved = localStorage.getItem('yokoso_products');
+      if (saved) {
+        try { products = JSON.parse(saved); migrateProducts(); console.log('[Load] Fallback to localStorage: ' + products.length + ' products'); }
+        catch { products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)); console.log('[Load] Fallback to defaults (localStorage parse failed)'); }
+      } else {
+        products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+        console.log('[Load] Fallback to defaults');
+      }
+    })
+    .then(function() {
+    // Stage 2: Only use localStorage if there are pending unsaved edits
+    // Otherwise the CDN file is always authoritative for cross-device sync
+    var pend = localStorage.getItem('yokoso_pending_sync');
+    if (pend === 'true') {
+      var saved = localStorage.getItem('yokoso_products');
+      if (saved) {
+        try {
+          products = JSON.parse(saved);
+          migrateProducts();
+          console.log('[Load] Pending edits found, using localStorage: ' + products.length + ' products');
+        } catch(e) {
+          console.warn('[Load] Failed to parse localStorage products:', e);
         }
-      } catch(e) {
-        console.warn('[Load] Failed to parse localStorage products:', e);
       }
     }
     localStorage.setItem('yokoso_products', JSON.stringify(products));
