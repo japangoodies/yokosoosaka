@@ -2,7 +2,7 @@
   {
     "id": 62,
     "name": "UNIQLO AMERICAN SLEEVE RIB BRA TOP",
-    "category0": "WOMENS",
+    "category0": "MENS",
     "category1": "Clothing",
     "category2": "Uniqlo",
     "variants": {
@@ -17,7 +17,7 @@
           "XS": 5,
           "S": 5,
           "M": 5,
-          "L": 5
+          "L": 4
         },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783759811/qa4rixr8vgah7j3wdmz7.jpg"
@@ -96,7 +96,10 @@
       "WHITE"
     ],
     "deposit": "₱200",
-    "originalPrice": "₱695"
+    "originalPrice": "₱695",
+    "color": "",
+    "sizes": [],
+    "stock": 5
   },
   {
     "id": 61,
