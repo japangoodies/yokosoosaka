@@ -3981,7 +3981,6 @@ function populateForm(product) {
   if (depEl) depEl.value = product.deposit !== undefined ? product.deposit : '';
   document.getElementById('formDesc').value = product.description;
   document.getElementById('formAvailable').checked = product.available !== false;
-  document.getElementById('formOnSale').checked = product.onSale === true;
   var imgs = product.images || (product.image ? [product.image] : []);
   selectedImagesData = imgs.filter(function(img) { return img && img.indexOf('placeholder') === -1; });
   renderImagePreview();
@@ -4110,7 +4109,7 @@ if (pf) pf.addEventListener('submit', function(e) {
     if (editingId) {
       var idx = products.findIndex(function(p) { return p.id === editingId; });
       if (idx !== -1) {
-        var upd = { name: name, category0: category0, category1: category1, category2: category2, variants: variants, _colorOrder: colorOrder, price: price, description: description, images: images, available: document.getElementById('formAvailable').checked, onSale: document.getElementById('formOnSale').checked };
+        var upd = { name: name, category0: category0, category1: category1, category2: category2, variants: variants, _colorOrder: colorOrder, price: price, description: description, images: images, available: document.getElementById('formAvailable').checked };
         if (deposit) upd.deposit = deposit;
         if (originalPrice) upd.originalPrice = originalPrice;
         else delete upd.originalPrice;
@@ -4121,7 +4120,7 @@ if (pf) pf.addEventListener('submit', function(e) {
     } else {
       var maxId = products.length > 0 ? Math.max.apply(null, products.map(function(p) { return p.id; })) : 0;
       var newId = maxId + 1;
-      var newProd = { id: newId, name: name, category0: category0, category1: category1, category2: category2, variants: variants, _colorOrder: colorOrder, price: price, description: description, images: images, available: document.getElementById('formAvailable').checked, onSale: document.getElementById('formOnSale').checked };
+      var newProd = { id: newId, name: name, category0: category0, category1: category1, category2: category2, variants: variants, _colorOrder: colorOrder, price: price, description: description, images: images, available: document.getElementById('formAvailable').checked };
       if (deposit) newProd.deposit = deposit;
       if (originalPrice) newProd.originalPrice = originalPrice;
       products.push(newProd);
