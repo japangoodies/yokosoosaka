@@ -3633,6 +3633,8 @@ function renderAdminList() {
   if (adminFilterColor !== 'all') {
     filtered = filtered.filter(function(p) { return (p.color || '') === adminFilterColor; });
   }
+  // Newest first (descending by id)
+  filtered = filtered.sort(function(a, b) { return b.id - a.id; });
   var totalProducts = filtered.length;
   var totalProductPages = Math.max(1, Math.ceil(totalProducts / productsLimit));
   if (productsPage > totalProductPages) { productsPage = totalProductPages; renderAdminList(); return; }
