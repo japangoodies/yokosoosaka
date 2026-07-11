@@ -1606,14 +1606,11 @@ function loadProducts(callback) {
     console.log('[Debug] After Stage 2, products.length =', products.length);
 
     // Stage 3: Firebase sync (if available)
+    // CDN is authoritative — only write to Firebase (don't let stale Firebase data override)
     if (fbDB) {
       fbDB.collection(FB_COLLECTION).doc(FB_DOC).get()
         .then(function(doc) {
-          if (doc.exists && doc.data().items && doc.data().items.length > 0) {
-            products = doc.data().items;
-            migrateProducts();
-            localStorage.setItem('yokoso_products', JSON.stringify(products));
-          } else {
+          if (!doc.exists || !doc.data().items || !doc.data().items.length) {
             fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(function() {});
           }
           done();
@@ -1752,22 +1749,16 @@ function loadCategories() {
       renderMessengerLink();
 
       // Stage 3: Firebase sync (if available)
+      // categoriesConfig from GitHub API + localStorage merge is authoritative.
+      // Only write categories to Firebase if empty (don't let stale Firebase data override).
       if (fbDB) {
         var catDone = false;
         fbDB.collection(FB_COLLECTION).doc('categories').get()
           .then(function(doc) {
             if (!catDone) {
               catDone = true;
-              if (doc.exists) {
-                var fbData = doc.data();
-                if (fbData.types || fbData.groups) {
-                  var currentBrandLogos = categoriesConfig.brandLogos || {};
-                  categoriesConfig = migrateCategoriesConfig(fbData);
-                  Object.keys(currentBrandLogos).forEach(function(b) {
-                    if (!categoriesConfig.brandLogos[b]) categoriesConfig.brandLogos[b] = currentBrandLogos[b];
-                  });
-                  localStorage.setItem('yokoso_categories', JSON.stringify(categoriesConfig));
-                }
+              if (!doc.exists || !doc.data() || (!doc.data().types && !doc.data().groups)) {
+                fbDB.collection(FB_COLLECTION).doc('categories').set({ groups: categoriesConfig.groups, subcategoryMap: categoriesConfig.subcategoryMap, brands: categoriesConfig.brands, sizes: categoriesConfig.sizes, colors: categoriesConfig.colors || [], brandLogos: categoriesConfig.brandLogos || {} }).catch(function() {});
               }
               renderCategoryDropdowns();
               renderCategoryManagement();
