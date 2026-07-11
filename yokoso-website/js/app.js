@@ -2308,7 +2308,7 @@ function renderProducts() {
       '<div class="product-name" onclick="openProduct(' + p.id + ')">' + p.name + '</div>' +
       '<div class="product-price">' + p.price + '</div>' +
       '<div class="product-stock ' + stockClass + '">' + stockLabel + '</div>' +
-      (!hasSizes(p) && totalAvail > 0 ? '<button class="btn-add-cart" data-id="' + p.id + '" data-color="' + firstColor.replace(/'/g, "\\'") + '">Add to Cart</button>' : '') +
+      (!hasSizes(p) && variantColors.length <= 1 && totalAvail > 0 ? '<button class="btn-add-cart" data-id="' + p.id + '" data-color="' + firstColor.replace(/'/g, "\\'") + '">Add to Cart</button>' : '') +
       '</div></div>';
   }).join('');
 
