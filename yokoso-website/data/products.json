@@ -43,7 +43,180 @@
     "color": "",
     "sizes": [],
     "stock": 10,
-    "onSale": false
+    "onSale": true
+  },
+  {
+    "id": 66,
+    "name": "GU POCKET MINI BACKPACK",
+    "category0": "MENS",
+    "category1": "Accesories",
+    "category2": "GU",
+    "variants": {
+      "BLACK": {
+        "sizes": [],
+        "stock": {
+          "q": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763231/bvsmca5xhlqpix4uzlu3.jpg"
+        ]
+      },
+      "BROWN": {
+        "sizes": [],
+        "stock": {
+          "q": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763232/c1vam0favz0dcafc2sgf.jpg"
+        ]
+      }
+    },
+    "price": "₱739.00",
+    "description": "Maliit lang sya, pang awra lang po\nBlack and Brown lang avail colors\n200 DP TO SECURE ITEM",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763231/wt4q2htw1zbgijqyhjzw.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763231/bvsmca5xhlqpix4uzlu3.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763232/c1vam0favz0dcafc2sgf.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763232/h2ootqgzouimjqgypj52.jpg"
+    ],
+    "available": true,
+    "_colorOrder": [
+      "BLACK",
+      "BROWN"
+    ],
+    "deposit": "₱200",
+    "originalPrice": "₱735",
+    "color": "",
+    "sizes": [],
+    "stock": 10,
+    "onSale": true
+  },
+  {
+    "id": 58,
+    "name": "GU MENS JWA CARGO SHORTS",
+    "category0": "MENS",
+    "category1": "Clothing",
+    "category2": "GU",
+    "variants": {
+      "BLUE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/iszmnizf6wrqagtbbnsb.jpg"
+        ]
+      },
+      "BROWN": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/hgxp2p59jzpqnfsutlyt.jpg"
+        ]
+      },
+      "BEIGE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/uhavcudtnnxgf8087xvt.jpg"
+        ]
+      },
+      "GREEN": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/m1luagyzmc1qjuhpdti3.jpg"
+        ]
+      }
+    },
+    "price": "₱990.00",
+    "description": "250 DP TO SECURE ITEM",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/kwpy3kznjqni1aywhurh.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/iszmnizf6wrqagtbbnsb.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/vgexcigurlzuhnvbh1us.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/hgxp2p59jzpqnfsutlyt.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/uhavcudtnnxgf8087xvt.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/m1luagyzmc1qjuhpdti3.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/fkjspprqibuypn1ik0zf.jpg"
+    ],
+    "available": true,
+    "_colorOrder": [
+      "BLUE",
+      "BROWN",
+      "BEIGE",
+      "GREEN"
+    ],
+    "deposit": "₱250",
+    "originalPrice": "₱995",
+    "color": "",
+    "sizes": [],
+    "stock": 145,
+    "onSale": true
   },
   {
     "id": 56,
@@ -654,51 +827,6 @@
     "stock": 240
   },
   {
-    "id": 66,
-    "name": "GU POCKET MINI BACKPACK",
-    "category0": "MENS",
-    "category1": "Accesories",
-    "category2": "GU",
-    "variants": {
-      "BLACK": {
-        "sizes": [],
-        "stock": {
-          "q": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763231/bvsmca5xhlqpix4uzlu3.jpg"
-        ]
-      },
-      "BROWN": {
-        "sizes": [],
-        "stock": {
-          "q": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763232/c1vam0favz0dcafc2sgf.jpg"
-        ]
-      }
-    },
-    "price": "₱739.00",
-    "description": "Maliit lang sya, pang awra lang po\nBlack and Brown lang avail colors\n200 DP TO SECURE ITEM",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763231/wt4q2htw1zbgijqyhjzw.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763231/bvsmca5xhlqpix4uzlu3.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763232/c1vam0favz0dcafc2sgf.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763232/h2ootqgzouimjqgypj52.jpg"
-    ],
-    "available": true,
-    "_colorOrder": [
-      "BLACK",
-      "BROWN"
-    ],
-    "deposit": "₱200",
-    "originalPrice": "₱735",
-    "color": "",
-    "sizes": [],
-    "stock": 10
-  },
-  {
     "id": 65,
     "name": "SKIN AQUA TONE UP UV SUNSCREEN",
     "category0": "WOMENS",
@@ -1137,132 +1265,6 @@
     "stock": 120
   },
   {
-    "id": 58,
-    "name": "GU MENS JWA CARGO SHORTS",
-    "category0": "MENS",
-    "category1": "Clothing",
-    "category2": "GU",
-    "variants": {
-      "BLUE": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL",
-          "4XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5,
-          "2XL": 5,
-          "3XL": 5,
-          "4XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/iszmnizf6wrqagtbbnsb.jpg"
-        ]
-      },
-      "BROWN": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL",
-          "4XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5,
-          "2XL": 5,
-          "3XL": 5,
-          "4XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/hgxp2p59jzpqnfsutlyt.jpg"
-        ]
-      },
-      "BEIGE": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL",
-          "4XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5,
-          "2XL": 5,
-          "3XL": 5,
-          "4XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/uhavcudtnnxgf8087xvt.jpg"
-        ]
-      },
-      "GREEN": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/m1luagyzmc1qjuhpdti3.jpg"
-        ]
-      }
-    },
-    "price": "₱990.00",
-    "description": "250 DP TO SECURE ITEM",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/kwpy3kznjqni1aywhurh.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/iszmnizf6wrqagtbbnsb.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/vgexcigurlzuhnvbh1us.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/hgxp2p59jzpqnfsutlyt.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/uhavcudtnnxgf8087xvt.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/m1luagyzmc1qjuhpdti3.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/fkjspprqibuypn1ik0zf.jpg"
-    ],
-    "available": true,
-    "_colorOrder": [
-      "BLUE",
-      "BROWN",
-      "BEIGE",
-      "GREEN"
-    ],
-    "deposit": "₱250",
-    "originalPrice": "₱995",
-    "color": "",
-    "sizes": [],
-    "stock": 145
-  },
-  {
     "id": 57,
     "name": "GU COTTON BLEND PAJAMA",
     "category0": "MENS",
@@ -1581,7 +1583,8 @@
     "category1": "Shoes",
     "color": "",
     "sizes": [],
-    "stock": 20
+    "stock": 20,
+    "onSale": true
   },
   {
     "id": 51,
