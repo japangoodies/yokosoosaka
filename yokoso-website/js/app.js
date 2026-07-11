@@ -2268,8 +2268,9 @@ function renderProducts() {
     var mediaHtml = isVideoUrl(firstMedia) ?
       '<div class="product-image-wrap"><div class="product-image product-image-video"><span class="video-play-icon">▶</span></div></div>' :
       '<div class="product-image-wrap"><span class="skeleton"></span><img class="product-image" src="' + firstMedia + '" alt="' + p.name + '" loading="lazy" onload="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();" onerror="this.classList.add(\'loaded\');var sk=this.previousElementSibling;if(sk&&sk.classList.contains(\'skeleton\'))sk.remove();if(this.dataset.retry){this.style.display=\'none\'}else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}"></div>';
-    return '<div class="product-card" data-id="' + p.id + '">' +
+    return '<div class="product-card' + (p.onSale ? ' on-sale' : '') + '" data-id="' + p.id + '">' +
       mediaHtml +
+      (p.onSale ? '<span class="product-sale-badge">SALE</span>' : '') +
       '<button class="wishlist-btn' + (favorites.indexOf(p.id) !== -1 ? ' active' : '') + '" data-id="' + p.id + '" onclick="toggleFavorite(' + p.id + ', event)" title="Add to favorites">♥</button>' +
       '<button class="quick-view-btn" onclick="event.stopPropagation();openProduct(' + p.id + ')" title="Quick View">👁</button>' +
       '<div class="product-info">' +
@@ -2986,7 +2987,7 @@ function openModal(product) {
         '</div>' +
         '<div style="padding:24px 32px 32px">' +
           '<h2 style="font-size:20px;margin:0 0 4px;line-height:1.3">' + (product.name || '') + '</h2>' +
-          '<p style="font-size:18px;font-weight:700;color:#e94560;margin:0 0 4px">' + (product.price || '') + '</p>' +
+          '<div style="display:flex;align-items:center;gap:8px;margin:0 0 4px"><span style="font-size:18px;font-weight:700;color:#e94560">' + (product.price || '') + '</span>' + (product.onSale ? '<span style="background:#d32f2f;color:#fff;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:0.5px">SALE</span>' : '') + '</div>' +
           '<p style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:#888;font-weight:600;margin:0 0 8px">' + (product.category0 ? product.category0 + ' / ' : '') + (product.category1 || '') + (product.category2 ? ' · ' + product.category2 : '') + '</p>' +
           colorPickerHtml +
           sizesHtml +
