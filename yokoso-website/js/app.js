@@ -2237,6 +2237,11 @@ function renderProducts() {
   if (showFavoritesOnly) {
     filtered = filtered.filter(function(p) { return favorites.indexOf(p.id) !== -1; });
   }
+  filtered = filtered.sort(function(a, b) {
+    if (a.onSale && !b.onSale) return -1;
+    if (!a.onSale && b.onSale) return 1;
+    return 0;
+  });
   var totalFiltered = filtered.length;
   if (productsShown === 0) productsShown = mainLimit;
   if (productsShown > totalFiltered) productsShown = totalFiltered;
