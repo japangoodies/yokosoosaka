@@ -4562,7 +4562,7 @@ function syncToGitHub() {
       console.log('[Sync] GitHub sync completed successfully.');
       showToast('Products synced to GitHub successfully!', 'success');
       // Sync categories, then release lock and handle queue
-      var catPromise = localStorage.getItem('github_token') ? syncCategoriesToGitHub() : Promise.resolve();
+      var catPromise = localStorage.getItem('github_token') ? syncCategoriesToGitHub(true) : Promise.resolve();
       return catPromise;
     })
     .then(function() {
@@ -4700,12 +4700,14 @@ function forceSync() {
     });
 }
 
-function syncCategoriesToGitHub() {
+function syncCategoriesToGitHub(lockHeld) {
   return new Promise(function(resolve) {
     var token = localStorage.getItem('github_token');
     if (!token) { resolve(); return; }
-    if (window._githubBusy) { resolve(); return; }
-    window._githubBusy = true;
+    if (!lockHeld) {
+      if (window._githubBusy) { resolve(); return; }
+      window._githubBusy = true;
+    }
     var statusEl = document.getElementById('syncStatus');
     var groupStatusEl = document.getElementById('groupImageSyncStatus');
     if (statusEl) { statusEl.textContent = 'Syncing categories...'; statusEl.style.color = '#666'; }
@@ -4730,7 +4732,7 @@ function syncCategoriesToGitHub() {
         if (groupStatusEl) { groupStatusEl.innerHTML = 'Saved locally. GitHub token ' + (err.message.indexOf('HTTP 401') !== -1 ? 'expired — <a href="#" onclick="window.open(\'https://github.com/settings/tokens\');return false" style="color:#007bff">generate new one</a>' : 'sync failed (' + err.message + ')') + '. Check token in <a href="#" onclick="document.getElementById(\'syncSettingsBtn\').click();return false" style="color:#007bff">sync settings</a>.'; groupStatusEl.style.color = '#e67e22'; }
       })
       .then(function() {
-        window._githubBusy = false;
+        if (!lockHeld) window._githubBusy = false;
         resolve();
       });
   });
