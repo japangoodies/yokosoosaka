@@ -1606,7 +1606,8 @@ function loadProducts(callback) {
       }
     }
     // Merge onSale from localStorage onto CDN data (always, not just when pending edits).
-    // Only ADD onSale — never delete it from CDN data (localStorage may be stale on other devices).
+    // Only ADD onSale by default — also respect explicit onSale=false when pending edits exist
+    // (so admin's "turn off" survives stale CDN).
     if (cdnLoaded) {
       var saved = localStorage.getItem('yokoso_products');
       if (saved) {
@@ -1614,11 +1615,17 @@ function loadProducts(callback) {
           var localProds = JSON.parse(saved);
           if (localProds && localProds.length > 0) {
             var merged = 0;
+            var pend = localStorage.getItem('yokoso_pending_sync') === 'true';
             products.forEach(function(p) {
               var lp = localProds.find(function(x) { return x.id === p.id; });
-              if (lp && lp.onSale === true) {
-                p.onSale = true;
-                merged++;
+              if (lp) {
+                if (lp.onSale === true) {
+                  p.onSale = true;
+                  merged++;
+                } else if (lp.onSale === false && pend) {
+                  delete p.onSale;
+                  merged++;
+                }
               }
             });
             if (merged > 0) console.log('[Load] LocalStorage onSale merged onto CDN data: ' + merged + ' products');
