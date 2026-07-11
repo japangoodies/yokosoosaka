@@ -1572,6 +1572,7 @@ function loadProducts(callback) {
         if (parsed && parsed.length > 0) {
           products = parsed;
           migrateProducts();
+          localStorage.setItem('yokoso_sync_time', Date.now().toString());
           console.log('[Load] Loaded from GitHub API: ' + products.length + ' products');
           return;
         }
@@ -1586,6 +1587,7 @@ function loadProducts(callback) {
           if (data && data.length > 0) {
             products = data;
             migrateProducts();
+            localStorage.setItem('yokoso_sync_time', Date.now().toString());
             console.log('[Load] Loaded from CDN file: ' + products.length + ' products');
           } else {
             throw new Error('empty file');
