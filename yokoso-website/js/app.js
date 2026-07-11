@@ -787,7 +787,7 @@ function showCopied() {
 }
 
 function messageOrderDetails() {
-  var url = (categoriesConfig && categoriesConfig.messengerUrl) || 'https://m.me/103933895457769';
+  var url = (categoriesConfig && categoriesConfig.messengerUrl) || 'https://m.me/61591559623253';
   window.open(url, '_blank');
 }
 
@@ -1253,7 +1253,7 @@ function migrateCategoriesConfig(cfg) {
   if (!cfg.sizes) cfg.sizes = [];
   if (!cfg.subcategoryBrands) cfg.subcategoryBrands = {};
   if (!cfg.brandLogos) cfg.brandLogos = {};
-  if (!cfg.messengerUrl) cfg.messengerUrl = 'https://m.me/103933895457769';
+  if (!cfg.messengerUrl) cfg.messengerUrl = 'https://m.me/61591559623253';
   console.log('[Trace] migrateCategoriesConfig() — output groups:', cfg.groups.length, 'subcategoryMap keys:', Object.keys(cfg.subcategoryMap).length, 'brands:', cfg.brands.length, 'sizes:', cfg.sizes.length);
   return cfg;
 }
