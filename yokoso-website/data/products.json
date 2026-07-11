@@ -42,7 +42,7 @@
     "originalPrice": "₱735",
     "color": "",
     "sizes": [],
-    "stock": 5,
+    "stock": 10,
     "onSale": true
   },
   {
@@ -169,7 +169,82 @@
     "originalPrice": "₱995",
     "color": "",
     "sizes": [],
-    "stock": 5,
+    "stock": 145,
+    "onSale": true
+  },
+  {
+    "id": 57,
+    "name": "GU COTTON BLEND PAJAMA",
+    "category0": "MENS",
+    "category1": "Clothing",
+    "category2": "GU",
+    "variants": {
+      "PINK": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/ywnmyhllyzmzmdvguajl.jpg"
+        ]
+      },
+      "WHITE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/gkjdtz8uvul3sb6bxfxr.jpg"
+        ]
+      }
+    },
+    "price": "₱599.00",
+    "description": "Pink and White lang po naka-sale\nSizes avail: XS to 3XL\n595.00 pesos only\n150 DP TO SECURE ITEM",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/n7afgtr8heskxr9evarx.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/f8g3pyhd0ksrmofs0pno.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/gkjdtz8uvul3sb6bxfxr.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/ywnmyhllyzmzmdvguajl.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756767/ydbc4fdy90ijqe9f4gjz.jpg"
+    ],
+    "available": true,
+    "_colorOrder": [
+      "PINK",
+      "WHITE"
+    ],
+    "deposit": "₱150",
+    "originalPrice": "₱595",
+    "color": "",
+    "sizes": [],
+    "stock": 70,
     "onSale": true
   },
   {
@@ -254,7 +329,7 @@
     "originalPrice": "₱725.00",
     "color": "",
     "sizes": [],
-    "stock": 5,
+    "stock": 70,
     "onSale": true
   },
   {
@@ -293,7 +368,7 @@
     "deposit": "₱150",
     "color": "",
     "sizes": [],
-    "stock": 5,
+    "stock": 20,
     "onSale": true
   },
   {
@@ -425,7 +500,7 @@
     "category2": "Uniqlo",
     "color": "",
     "sizes": [],
-    "stock": 5,
+    "stock": 160,
     "onSale": true
   },
   {
@@ -464,7 +539,7 @@
     "price": "₱2499",
     "color": "",
     "sizes": [],
-    "stock": 5,
+    "stock": 15,
     "onSale": true
   },
   {
@@ -505,7 +580,71 @@
     "category1": "Shoes",
     "color": "",
     "sizes": [],
-    "stock": 5,
+    "stock": 20,
+    "onSale": true
+  },
+  {
+    "id": 51,
+    "deposit": "₱250",
+    "category1": "Clothing",
+    "category0": "MENS",
+    "_colorOrder": [
+      "PINK",
+      "BLUE"
+    ],
+    "variants": {
+      "PINK": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/exzpulxhrcqhfb6cvisx.jpg"
+        ],
+        "stock": {
+          "L": 5,
+          "M": 5,
+          "XL": 5,
+          "3XL": 5,
+          "XS": 5,
+          "2XL": 5,
+          "S": 5
+        }
+      },
+      "BLUE": {
+        "sizes": [
+          "S",
+          "M"
+        ],
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/mqcmlvsiuwiepqhgap5h.jpg"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5
+        }
+      }
+    },
+    "name": "UNIQLO AIRISM UV CUT MESH FULLZIP PARKA",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/d2drebl6uc5fxtezjix9.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/exzpulxhrcqhfb6cvisx.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/mqcmlvsiuwiepqhgap5h.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/nvt3mzthjyzt86yo80wi.jpg"
+    ],
+    "category2": "Uniqlo",
+    "originalPrice": "₱975.00",
+    "description": "Pink and Blue lang naka-sale\n250 DP TO SECURE ITEM",
+    "price": "₱979",
+    "available": true,
+    "color": "",
+    "sizes": [],
+    "stock": 45,
     "onSale": true
   },
   {
@@ -548,7 +687,559 @@
     "originalPrice": "₱2375.00",
     "color": "",
     "sizes": [],
+    "stock": 25,
+    "onSale": true
+  },
+  {
+    "price": "₱799.00",
+    "available": true,
+    "originalPrice": "₱795.00",
+    "description": "Beige and Black lang avail color\nSizes avail: XS to 3XL\nSize reference nasa comsec po\n200 DP TO SECURE ITEM",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262765/bypa9ho42fewcsltwgfc.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/i9micoyutw1enxuugoo6.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/f26ayanhwcjka8jkzgvq.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/mf93aiezvztc9dalsee5.jpg"
+    ],
+    "category2": "GU",
+    "variants": {
+      "BEIGE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/i9micoyutw1enxuugoo6.jpg"
+        ],
+        "stock": {
+          "S": 5,
+          "XS": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "XL": 5,
+          "M": 5,
+          "L": 5
+        }
+      },
+      "BLACK": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/f26ayanhwcjka8jkzgvq.jpg"
+        ],
+        "stock": {
+          "M": 5,
+          "XL": 5,
+          "L": 5,
+          "S": 5,
+          "XS": 5,
+          "2XL": 5,
+          "3XL": 5
+        }
+      }
+    },
+    "name": "GU NO COLLAR VEST",
+    "category0": "MENS",
+    "_colorOrder": [
+      "BEIGE",
+      "BLACK"
+    ],
+    "id": 49,
+    "deposit": "₱200",
+    "category1": "Clothing",
+    "color": "",
+    "sizes": [],
+    "stock": 70,
+    "onSale": true
+  },
+  {
+    "category1": "Clothing",
+    "id": 48,
+    "deposit": "₱150",
+    "category0": "MENS",
+    "_colorOrder": [
+      "BEIGE",
+      "BLACK",
+      "GRAY"
+    ],
+    "variants": {
+      "BEIGE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL"
+        ],
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/hgwiblpeu5lo3skgctj6.jpg"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "L": 5,
+          "M": 5,
+          "XL": 5
+        }
+      },
+      "GRAY": {
+        "sizes": [
+          "S",
+          "M",
+          "L",
+          "XL",
+          "3XL"
+        ],
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/ajip1j7wn1uwbmian8ne.jpg"
+        ],
+        "stock": {
+          "3XL": 5,
+          "S": 5,
+          "L": 5,
+          "XL": 5,
+          "M": 5
+        }
+      },
+      "BLACK": {
+        "sizes": [
+          "S",
+          "M",
+          "L",
+          "XL"
+        ],
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/vlvt6fljmuxjngerq9mt.jpg"
+        ],
+        "stock": {
+          "L": 5,
+          "S": 5,
+          "XL": 5,
+          "M": 5
+        }
+      }
+    },
+    "name": "GU DRY STRETCH ANKLE PANTS",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/qp5eajbbruhijcqul2zv.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/hgwiblpeu5lo3skgctj6.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/vlvt6fljmuxjngerq9mt.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/ajip1j7wn1uwbmian8ne.jpg"
+    ],
+    "category2": "GU",
+    "description": "150 DP TO SECURE ITEM",
+    "originalPrice": "₱595",
+    "available": true,
+    "price": "₱599.00",
+    "color": "",
+    "sizes": [],
+    "stock": 70,
+    "onSale": true
+  },
+  {
+    "available": true,
+    "price": "₱2500.00",
+    "description": "Sizes avail: W5 to W9\n2500.00 pesos only\n1000 DP TO SECURE ITEM",
+    "originalPrice": "₱2495.00",
+    "category2": "Crocs",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262428/hy7gcors0x5a38dvjnen.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262428/odmeln0qft14hduu6tgv.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262427/kjoxndu0uetdllyapnif.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262428/qwohhusbayqbgzsgvtn4.jpg"
+    ],
+    "variants": {
+      "Default": {
+        "stock": {
+          "5": 5,
+          "6": 5,
+          "7": 5,
+          "8": 5,
+          "9": 5
+        },
+        "sizes": [
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ]
+      }
+    },
+    "name": "CROCS SATURDAY ENAMEL BUCKLE - FRAPPE",
+    "_colorOrder": [
+      "Default"
+    ],
+    "category0": "MENS",
+    "category1": "Shoes",
+    "deposit": "₱1000",
+    "id": 47,
+    "color": "",
+    "sizes": [],
+    "stock": 25,
+    "onSale": true
+  },
+  {
+    "id": 46,
+    "deposit": "₱150",
+    "category1": "Clothing",
+    "category0": "MENS",
+    "_colorOrder": [
+      "Design 1",
+      "Design 2",
+      "Design 3",
+      "Design 4"
+    ],
+    "variants": {
+      "Design 4": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/dxctpqbztnqaemcwqvtq.jpg"
+        ],
+        "stock": {
+          "S": 5,
+          "XS": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "M": 5,
+          "XL": 5,
+          "L": 5
+        }
+      },
+      "Design 2": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/api7peqjt9qyy7ol5sgs.jpg"
+        ],
+        "stock": {
+          "XS": 5,
+          "2XL": 5,
+          "S": 5,
+          "3XL": 5,
+          "XL": 5,
+          "M": 5,
+          "L": 5
+        }
+      },
+      "Design 1": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/tthlh0sxjljruwkr8np6.jpg"
+        ],
+        "stock": {
+          "XS": 5,
+          "2XL": 5,
+          "S": 5,
+          "3XL": 5,
+          "XL": 5,
+          "M": 5,
+          "L": 5
+        }
+      },
+      "Design 3": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/beowtbial52fq01lvuqi.jpg"
+        ],
+        "stock": {
+          "3XL": 5,
+          "2XL": 5,
+          "XS": 5,
+          "S": 5,
+          "L": 5,
+          "XL": 5,
+          "M": 5
+        }
+      }
+    },
+    "name": "UNIQLO X POPMART OVERSIZED FIT SHIRT",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/tthlh0sxjljruwkr8np6.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/api7peqjt9qyy7ol5sgs.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/beowtbial52fq01lvuqi.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/dxctpqbztnqaemcwqvtq.jpg"
+    ],
+    "category2": "Uniqlo",
+    "originalPrice": "₱550",
+    "description": "Sizes avail:  XS to 3XL\n150 DP TO SECURE ITEM",
+    "price": "₱559.00",
+    "available": true,
+    "color": "",
+    "sizes": [],
+    "stock": 140,
+    "onSale": true
+  },
+  {
+    "_colorOrder": [
+      "Default"
+    ],
+    "category0": "MENS",
+    "id": 45,
+    "category1": "Shoes",
+    "category2": "Crocs",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262052/xq6ugzikv8dkopxgamcg.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262052/frghy33d81roey69pbyf.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262052/qh7bipbf4qpziif6x1cx.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262052/ny2xoum7zbtu9fxl7coj.jpg"
+    ],
+    "price": "₱3475.00",
+    "available": true,
+    "description": "Avail colors: Sepia & Black\nSizes avail: W5 W6 W7 W8\n3475.00 pesos only\n1000 DP TO SECURE ITEM",
+    "variants": {
+      "Default": {
+        "stock": {
+          "5": 5,
+          "6": 5,
+          "7": 5,
+          "8": 5
+        },
+        "sizes": [
+          "5",
+          "6",
+          "7",
+          "8"
+        ]
+      }
+    },
+    "name": "CROCS SATURDAY METALLIC BUCKLE",
+    "color": "",
+    "sizes": [],
+    "stock": 20,
+    "onSale": true
+  },
+  {
+    "category2": "GU",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/vlw1iz2evnmxjnlljtat.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/wj0pgkoymamkbakow4pi.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/umopqp7m4gtq7gfwjpje.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/qyelsck5sh2pyf4mprof.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/mdj7g9ql8rrywkumlo3p.jpg"
+    ],
+    "color": "",
+    "originalPrice": "₱1075.00",
+    "description": "Sizes avail: nasa pic na po\nSize reference nasa comsec po\n250 DP TO SECURE ITEM\nYokoso Osaka - Japan Goodies PH\nSize - waist - hip - width - rise - hem",
+    "price": "₱1079.00",
+    "available": true,
+    "deposit": "₱250",
+    "id": 43,
+    "category1": "Clothing",
+    "_colorOrder": [
+      "BLUE",
+      "LIGHT BLUE",
+      "GRAY",
+      "WHITE"
+    ],
+    "category0": "MENS",
+    "stock": 240,
+    "name": "GU MENS BAGGY JEANS",
+    "variants": {
+      "GRAY": {
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/qyelsck5sh2pyf4mprof.jpg"
+        ],
+        "stock": {
+          "28": 5,
+          "29": 5,
+          "30": 5,
+          "31": 5,
+          "32": 5,
+          "34": 5,
+          "35": 5,
+          "36": 5
+        },
+        "sizes": [
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "34",
+          "35",
+          "36"
+        ]
+      },
+      "BLUE": {
+        "stock": {
+          "28": 5,
+          "29": 5,
+          "30": 5,
+          "31": 5,
+          "32": 5,
+          "33": 5,
+          "34": 5,
+          "35": 5,
+          "36": 5,
+          "42": 5
+        },
+        "sizes": [
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36",
+          "42"
+        ]
+      },
+      "LIGHT BLUE": {
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/mdj7g9ql8rrywkumlo3p.jpg"
+        ],
+        "sizes": [
+          "27",
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36",
+          "38",
+          "39",
+          "40",
+          "41",
+          "42"
+        ],
+        "stock": {
+          "27": 5,
+          "28": 5,
+          "29": 5,
+          "30": 5,
+          "31": 5,
+          "32": 5,
+          "33": 5,
+          "34": 5,
+          "35": 5,
+          "36": 5,
+          "38": 5,
+          "39": 5,
+          "40": 5,
+          "41": 5,
+          "42": 5
+        }
+      },
+      "WHITE": {
+        "stock": {
+          "28": 5,
+          "29": 5,
+          "30": 5,
+          "31": 5,
+          "32": 5,
+          "33": 5,
+          "34": 5,
+          "35": 5,
+          "36": 5,
+          "37": 5,
+          "38": 5,
+          "39": 5,
+          "40": 5,
+          "41": 5,
+          "42": 5
+        },
+        "sizes": [
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36",
+          "37",
+          "38",
+          "39",
+          "40",
+          "41",
+          "42"
+        ]
+      }
+    },
+    "sizes": [],
+    "onSale": true
+  },
+  {
+    "id": 41,
+    "deposit": "₱200",
+    "category1": "Accesories",
     "stock": 5,
+    "category0": "MENS",
+    "_colorOrder": [
+      "Default"
+    ],
+    "name": "GU 2-WAY NYLON BAG",
+    "variants": {
+      "Default": {
+        "sizes": [],
+        "stock": {
+          "q": 5
+        }
+      }
+    },
+    "sizes": [],
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782755715/kub5mbdgn1nlfiop9ir3.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782755715/k3hjbjesew3wgxiytqpk.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782755715/ysfhgewxjmatdg16ljhv.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782755715/u1vojbpvvyhbgyycs8vh.jpg"
+    ],
+    "category2": "GU",
+    "originalPrice": "₱615",
+    "color": "",
+    "description": "Kasya po A4-sized laptop\n200 DP TO SECURE ITEM",
+    "price": "₱620.00",
+    "available": true,
     "onSale": true
   },
   {
@@ -911,7 +1602,7 @@
     "originalPrice": "₱180",
     "color": "",
     "sizes": [],
-    "stock": 5
+    "stock": 25
   },
   {
     "id": 68,
@@ -1072,7 +1763,7 @@
     "originalPrice": "₱2495",
     "color": "",
     "sizes": [],
-    "stock": 5
+    "stock": 240
   },
   {
     "id": 66,
@@ -1117,7 +1808,7 @@
     "originalPrice": "₱735",
     "color": "",
     "sizes": [],
-    "stock": 5
+    "stock": 10
   },
   {
     "id": 65,
@@ -1306,7 +1997,7 @@
     "originalPrice": "₱695",
     "color": "",
     "sizes": [],
-    "stock": 5
+    "stock": 89
   },
   {
     "id": 61,
@@ -1375,7 +2066,7 @@
     "originalPrice": "₱695",
     "color": "",
     "sizes": [],
-    "stock": 5
+    "stock": 60
   },
   {
     "id": 60,
@@ -1442,7 +2133,7 @@
     "originalPrice": "₱695",
     "color": "",
     "sizes": [],
-    "stock": 5
+    "stock": 55
   },
   {
     "id": 59,
@@ -1555,699 +2246,7 @@
     "originalPrice": "₱695",
     "color": "",
     "sizes": [],
-    "stock": 5
-  },
-  {
-    "id": 57,
-    "name": "GU COTTON BLEND PAJAMA",
-    "category0": "MENS",
-    "category1": "Clothing",
-    "category2": "GU",
-    "variants": {
-      "PINK": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5,
-          "2XL": 5,
-          "3XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/ywnmyhllyzmzmdvguajl.jpg"
-        ]
-      },
-      "WHITE": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5,
-          "2XL": 5,
-          "3XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/gkjdtz8uvul3sb6bxfxr.jpg"
-        ]
-      }
-    },
-    "price": "₱599.00",
-    "description": "Pink and White lang po naka-sale\nSizes avail: XS to 3XL\n595.00 pesos only\n150 DP TO SECURE ITEM",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/n7afgtr8heskxr9evarx.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/f8g3pyhd0ksrmofs0pno.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/gkjdtz8uvul3sb6bxfxr.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756246/ywnmyhllyzmzmdvguajl.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756767/ydbc4fdy90ijqe9f4gjz.jpg"
-    ],
-    "available": true,
-    "_colorOrder": [
-      "PINK",
-      "WHITE"
-    ],
-    "deposit": "₱150",
-    "originalPrice": "₱595",
-    "color": "",
-    "sizes": [],
-    "stock": 5
-  },
-  {
-    "id": 51,
-    "deposit": "₱250",
-    "category1": "Clothing",
-    "category0": "MENS",
-    "_colorOrder": [
-      "PINK",
-      "BLUE"
-    ],
-    "variants": {
-      "PINK": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
-        ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/exzpulxhrcqhfb6cvisx.jpg"
-        ],
-        "stock": {
-          "L": 5,
-          "M": 5,
-          "XL": 5,
-          "3XL": 5,
-          "XS": 5,
-          "2XL": 5,
-          "S": 5
-        }
-      },
-      "BLUE": {
-        "sizes": [
-          "S",
-          "M"
-        ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/mqcmlvsiuwiepqhgap5h.jpg"
-        ],
-        "stock": {
-          "S": 5,
-          "M": 5
-        }
-      }
-    },
-    "name": "UNIQLO AIRISM UV CUT MESH FULLZIP PARKA",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/d2drebl6uc5fxtezjix9.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/exzpulxhrcqhfb6cvisx.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/mqcmlvsiuwiepqhgap5h.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/nvt3mzthjyzt86yo80wi.jpg"
-    ],
-    "category2": "Uniqlo",
-    "originalPrice": "₱975.00",
-    "description": "Pink and Blue lang naka-sale\n250 DP TO SECURE ITEM",
-    "price": "₱979",
-    "available": true,
-    "color": "",
-    "sizes": [],
-    "stock": 5
-  },
-  {
-    "price": "₱799.00",
-    "available": true,
-    "originalPrice": "₱795.00",
-    "description": "Beige and Black lang avail color\nSizes avail: XS to 3XL\nSize reference nasa comsec po\n200 DP TO SECURE ITEM",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262765/bypa9ho42fewcsltwgfc.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/i9micoyutw1enxuugoo6.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/f26ayanhwcjka8jkzgvq.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/mf93aiezvztc9dalsee5.jpg"
-    ],
-    "category2": "GU",
-    "variants": {
-      "BEIGE": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
-        ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/i9micoyutw1enxuugoo6.jpg"
-        ],
-        "stock": {
-          "S": 5,
-          "XS": 5,
-          "2XL": 5,
-          "3XL": 5,
-          "XL": 5,
-          "M": 5,
-          "L": 5
-        }
-      },
-      "BLACK": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
-        ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/f26ayanhwcjka8jkzgvq.jpg"
-        ],
-        "stock": {
-          "M": 5,
-          "XL": 5,
-          "L": 5,
-          "S": 5,
-          "XS": 5,
-          "2XL": 5,
-          "3XL": 5
-        }
-      }
-    },
-    "name": "GU NO COLLAR VEST",
-    "category0": "MENS",
-    "_colorOrder": [
-      "BEIGE",
-      "BLACK"
-    ],
-    "id": 49,
-    "deposit": "₱200",
-    "category1": "Clothing",
-    "color": "",
-    "sizes": [],
-    "stock": 5
-  },
-  {
-    "category1": "Clothing",
-    "id": 48,
-    "deposit": "₱150",
-    "category0": "MENS",
-    "_colorOrder": [
-      "BEIGE",
-      "BLACK",
-      "GRAY"
-    ],
-    "variants": {
-      "BEIGE": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL"
-        ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/hgwiblpeu5lo3skgctj6.jpg"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "L": 5,
-          "M": 5,
-          "XL": 5
-        }
-      },
-      "GRAY": {
-        "sizes": [
-          "S",
-          "M",
-          "L",
-          "XL",
-          "3XL"
-        ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/ajip1j7wn1uwbmian8ne.jpg"
-        ],
-        "stock": {
-          "3XL": 5,
-          "S": 5,
-          "L": 5,
-          "XL": 5,
-          "M": 5
-        }
-      },
-      "BLACK": {
-        "sizes": [
-          "S",
-          "M",
-          "L",
-          "XL"
-        ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/vlvt6fljmuxjngerq9mt.jpg"
-        ],
-        "stock": {
-          "L": 5,
-          "S": 5,
-          "XL": 5,
-          "M": 5
-        }
-      }
-    },
-    "name": "GU DRY STRETCH ANKLE PANTS",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/qp5eajbbruhijcqul2zv.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/hgwiblpeu5lo3skgctj6.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/vlvt6fljmuxjngerq9mt.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/ajip1j7wn1uwbmian8ne.jpg"
-    ],
-    "category2": "GU",
-    "description": "150 DP TO SECURE ITEM",
-    "originalPrice": "₱595",
-    "available": true,
-    "price": "₱599.00",
-    "color": "",
-    "sizes": [],
-    "stock": 5
-  },
-  {
-    "available": true,
-    "price": "₱2500.00",
-    "description": "Sizes avail: W5 to W9\n2500.00 pesos only\n1000 DP TO SECURE ITEM",
-    "originalPrice": "₱2495.00",
-    "category2": "Crocs",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262428/hy7gcors0x5a38dvjnen.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262428/odmeln0qft14hduu6tgv.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262427/kjoxndu0uetdllyapnif.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262428/qwohhusbayqbgzsgvtn4.jpg"
-    ],
-    "variants": {
-      "Default": {
-        "stock": {
-          "5": 5,
-          "6": 5,
-          "7": 5,
-          "8": 5,
-          "9": 5
-        },
-        "sizes": [
-          "5",
-          "6",
-          "7",
-          "8",
-          "9"
-        ]
-      }
-    },
-    "name": "CROCS SATURDAY ENAMEL BUCKLE - FRAPPE",
-    "_colorOrder": [
-      "Default"
-    ],
-    "category0": "MENS",
-    "category1": "Shoes",
-    "deposit": "₱1000",
-    "id": 47,
-    "color": "",
-    "sizes": [],
-    "stock": 5
-  },
-  {
-    "id": 46,
-    "deposit": "₱150",
-    "category1": "Clothing",
-    "category0": "MENS",
-    "_colorOrder": [
-      "Design 1",
-      "Design 2",
-      "Design 3",
-      "Design 4"
-    ],
-    "variants": {
-      "Design 4": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
-        ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/dxctpqbztnqaemcwqvtq.jpg"
-        ],
-        "stock": {
-          "S": 5,
-          "XS": 5,
-          "2XL": 5,
-          "3XL": 5,
-          "M": 5,
-          "XL": 5,
-          "L": 5
-        }
-      },
-      "Design 2": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
-        ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/api7peqjt9qyy7ol5sgs.jpg"
-        ],
-        "stock": {
-          "XS": 5,
-          "2XL": 5,
-          "S": 5,
-          "3XL": 5,
-          "XL": 5,
-          "M": 5,
-          "L": 5
-        }
-      },
-      "Design 1": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
-        ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/tthlh0sxjljruwkr8np6.jpg"
-        ],
-        "stock": {
-          "XS": 5,
-          "2XL": 5,
-          "S": 5,
-          "3XL": 5,
-          "XL": 5,
-          "M": 5,
-          "L": 5
-        }
-      },
-      "Design 3": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
-        ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/beowtbial52fq01lvuqi.jpg"
-        ],
-        "stock": {
-          "3XL": 5,
-          "2XL": 5,
-          "XS": 5,
-          "S": 5,
-          "L": 5,
-          "XL": 5,
-          "M": 5
-        }
-      }
-    },
-    "name": "UNIQLO X POPMART OVERSIZED FIT SHIRT",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/tthlh0sxjljruwkr8np6.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/api7peqjt9qyy7ol5sgs.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/beowtbial52fq01lvuqi.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/dxctpqbztnqaemcwqvtq.jpg"
-    ],
-    "category2": "Uniqlo",
-    "originalPrice": "₱550",
-    "description": "Sizes avail:  XS to 3XL\n150 DP TO SECURE ITEM",
-    "price": "₱559.00",
-    "available": true,
-    "color": "",
-    "sizes": [],
-    "stock": 5
-  },
-  {
-    "_colorOrder": [
-      "Default"
-    ],
-    "category0": "MENS",
-    "id": 45,
-    "category1": "Shoes",
-    "category2": "Crocs",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262052/xq6ugzikv8dkopxgamcg.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262052/frghy33d81roey69pbyf.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262052/qh7bipbf4qpziif6x1cx.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262052/ny2xoum7zbtu9fxl7coj.jpg"
-    ],
-    "price": "₱3475.00",
-    "available": true,
-    "description": "Avail colors: Sepia & Black\nSizes avail: W5 W6 W7 W8\n3475.00 pesos only\n1000 DP TO SECURE ITEM",
-    "variants": {
-      "Default": {
-        "stock": {
-          "5": 5,
-          "6": 5,
-          "7": 5,
-          "8": 5
-        },
-        "sizes": [
-          "5",
-          "6",
-          "7",
-          "8"
-        ]
-      }
-    },
-    "name": "CROCS SATURDAY METALLIC BUCKLE",
-    "color": "",
-    "sizes": [],
-    "stock": 5
-  },
-  {
-    "sizes": [],
-    "name": "CROCS SATURDAY ENAMEL BUCKLE - FRAPPE",
-    "variants": {
-      "Default": {
-        "sizes": [
-          "5",
-          "6",
-          "7",
-          "8",
-          "9"
-        ],
-        "stock": {
-          "5": 5,
-          "6": 5,
-          "7": 5,
-          "8": 5,
-          "9": 5
-        }
-      }
-    },
-    "category0": "MENS",
-    "stock": 5,
-    "_colorOrder": [
-      "Default"
-    ],
-    "id": 44,
-    "deposit": "₱1000",
-    "category1": "Shoes",
-    "price": "₱2500.00",
-    "available": true,
-    "originalPrice": "₱2495",
-    "color": "",
-    "description": "Sizes avail: W5 to W9\n2495.00 pesos only\n1000 DP TO SECURE ITEM",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783257152/sm0tedme5wxexzpyx4zc.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783257153/yblshekjafgvvzz4dkmk.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783257153/ui3tsv6wymbl267r4xqc.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783257153/jzdpefepy5a8tqcvysbp.jpg"
-    ],
-    "category2": "Crocs"
-  },
-  {
-    "category2": "GU",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/vlw1iz2evnmxjnlljtat.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/wj0pgkoymamkbakow4pi.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/umopqp7m4gtq7gfwjpje.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/qyelsck5sh2pyf4mprof.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/mdj7g9ql8rrywkumlo3p.jpg"
-    ],
-    "color": "",
-    "originalPrice": "₱1075.00",
-    "description": "Sizes avail: nasa pic na po\nSize reference nasa comsec po\n250 DP TO SECURE ITEM\nYokoso Osaka - Japan Goodies PH\nSize - waist - hip - width - rise - hem",
-    "price": "₱1079.00",
-    "available": true,
-    "deposit": "₱250",
-    "id": 43,
-    "category1": "Clothing",
-    "_colorOrder": [
-      "BLUE",
-      "LIGHT BLUE",
-      "GRAY",
-      "WHITE"
-    ],
-    "category0": "MENS",
-    "stock": 5,
-    "name": "GU MENS BAGGY JEANS",
-    "variants": {
-      "GRAY": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/qyelsck5sh2pyf4mprof.jpg"
-        ],
-        "stock": {
-          "28": 5,
-          "29": 5,
-          "30": 5,
-          "31": 5,
-          "32": 5,
-          "34": 5,
-          "35": 5,
-          "36": 5
-        },
-        "sizes": [
-          "28",
-          "29",
-          "30",
-          "31",
-          "32",
-          "34",
-          "35",
-          "36"
-        ]
-      },
-      "BLUE": {
-        "stock": {
-          "28": 5,
-          "29": 5,
-          "30": 5,
-          "31": 5,
-          "32": 5,
-          "33": 5,
-          "34": 5,
-          "35": 5,
-          "36": 5,
-          "42": 5
-        },
-        "sizes": [
-          "28",
-          "29",
-          "30",
-          "31",
-          "32",
-          "33",
-          "34",
-          "35",
-          "36",
-          "42"
-        ]
-      },
-      "LIGHT BLUE": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/mdj7g9ql8rrywkumlo3p.jpg"
-        ],
-        "sizes": [
-          "27",
-          "28",
-          "29",
-          "30",
-          "31",
-          "32",
-          "33",
-          "34",
-          "35",
-          "36",
-          "38",
-          "39",
-          "40",
-          "41",
-          "42"
-        ],
-        "stock": {
-          "27": 5,
-          "28": 5,
-          "29": 5,
-          "30": 5,
-          "31": 5,
-          "32": 5,
-          "33": 5,
-          "34": 5,
-          "35": 5,
-          "36": 5,
-          "38": 5,
-          "39": 5,
-          "40": 5,
-          "41": 5,
-          "42": 5
-        }
-      },
-      "WHITE": {
-        "stock": {
-          "28": 5,
-          "29": 5,
-          "30": 5,
-          "31": 5,
-          "32": 5,
-          "33": 5,
-          "34": 5,
-          "35": 5,
-          "36": 5,
-          "37": 5,
-          "38": 5,
-          "39": 5,
-          "40": 5,
-          "41": 5,
-          "42": 5
-        },
-        "sizes": [
-          "28",
-          "29",
-          "30",
-          "31",
-          "32",
-          "33",
-          "34",
-          "35",
-          "36",
-          "37",
-          "38",
-          "39",
-          "40",
-          "41",
-          "42"
-        ]
-      }
-    },
-    "sizes": []
+    "stock": 120
   },
   {
     "category2": "Uniqlo",
@@ -2269,7 +2268,7 @@
       "DARK BLUE",
       "BLUE"
     ],
-    "stock": 5,
+    "stock": 205,
     "category0": "MENS",
     "name": "UNIQLO JWA BAGGY JEANS",
     "variants": {
@@ -2384,38 +2383,6 @@
       }
     },
     "sizes": []
-  },
-  {
-    "id": 41,
-    "deposit": "₱200",
-    "category1": "Accesories",
-    "stock": 5,
-    "category0": "MENS",
-    "_colorOrder": [
-      "Default"
-    ],
-    "name": "GU 2-WAY NYLON BAG",
-    "variants": {
-      "Default": {
-        "sizes": [],
-        "stock": {
-          "q": 5
-        }
-      }
-    },
-    "sizes": [],
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782755715/kub5mbdgn1nlfiop9ir3.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782755715/k3hjbjesew3wgxiytqpk.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782755715/ysfhgewxjmatdg16ljhv.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782755715/u1vojbpvvyhbgyycs8vh.jpg"
-    ],
-    "category2": "GU",
-    "originalPrice": "₱615",
-    "color": "",
-    "description": "Kasya po A4-sized laptop\n200 DP TO SECURE ITEM",
-    "price": "₱620.00",
-    "available": true
   },
   {
     "sizes": [],
@@ -2756,7 +2723,7 @@
     },
     "name": "UNIQLO UV CUT WASHABLE CREWNECK SHIRT",
     "category0": "MENS",
-    "stock": 5,
+    "stock": 250,
     "_colorOrder": [
       "Design 3",
       "Design 9",
@@ -2885,7 +2852,7 @@
     "id": 34,
     "deposit": "₱200",
     "category0": "MENS",
-    "stock": 5,
+    "stock": 140,
     "_colorOrder": [
       "PINK",
       "BLACK",
@@ -3037,7 +3004,7 @@
     "id": 33,
     "deposit": "₱250",
     "category1": "Clothing",
-    "stock": 5,
+    "stock": 195,
     "category0": "MENS",
     "_colorOrder": [
       "Design 1",
