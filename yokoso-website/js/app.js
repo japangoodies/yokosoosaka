@@ -4644,13 +4644,10 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
   .then(function(newCommit) {
     return fetch(baseUrl + '/git/refs/heads/' + GITHUB_BRANCH, {
       method: 'PATCH', headers: authHeaders,
-      body: JSON.stringify({ sha: newCommit.sha, force: false })
+      body: JSON.stringify({ sha: newCommit.sha, force: true })
     });
   })
   .then(function(r) {
-    if ((r.status === 409 || r.status === 422) && attempt < 3) {
-      return doGitHubSync(filePath, encoded, message, statusEl, attempt + 1);
-    }
     if (!r.ok) {
       return r.text().then(function(body) {
         throw new Error('update ref HTTP ' + r.status + ': ' + body.slice(0, 200));
