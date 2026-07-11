@@ -216,7 +216,7 @@
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763374/dxffv7ujrwhdjnxz818l.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763374/in077pmljpgu26aliod5.jpg"
     ],
-    "available": false,
+    "available": true,
     "_colorOrder": [
       "BLACK",
       "WHITE"
