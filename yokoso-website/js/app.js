@@ -3673,6 +3673,7 @@ function renderAdminList() {
       '</div>' +
       '<div class="admin-product-item-actions">' +
       '<button class="btn btn-sm ' + (p.available !== false ? 'btn-success' : 'btn-secondary') + ' toggle-available-btn">' + (p.available !== false ? 'Available' : 'Hidden') + '</button>' +
+      '<button class="btn btn-sm ' + (p.onSale ? 'btn-danger' : 'btn-outline-danger') + ' toggle-sale-btn">' + (p.onSale ? 'Sale' : 'Regular') + '</button>' +
       '<button class="btn btn-secondary btn-sm edit-product-btn">Edit</button>' +
       '<button class="btn btn-danger btn-sm delete-product-btn">Delete</button>' +
       '</div></div>';
@@ -3688,6 +3689,19 @@ function renderAdminList() {
         renderAdminList();
         renderProducts();
         renderFilters();
+      }
+    });
+  });
+
+  container.querySelectorAll('.toggle-sale-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const id = parseInt(e.target.closest('.admin-product-item').dataset.id);
+      const p = products.find(x => x.id === id);
+      if (p) {
+        p.onSale = !p.onSale;
+        saveProducts();
+        renderAdminList();
+        renderProducts();
       }
     });
   });
