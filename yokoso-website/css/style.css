@@ -1489,8 +1489,30 @@ body {
   transition: background 0.2s;
 }
 
+.admin-product-item.on-sale {
+  background: rgba(211,47,47,0.08);
+  border: 1px solid rgba(211,47,47,0.2);
+}
+
 .admin-product-item:hover {
   background: rgba(255,255,255,0.08);
+}
+
+.admin-product-item.on-sale:hover {
+  background: rgba(211,47,47,0.12);
+}
+
+.sale-badge {
+  display: inline-block;
+  background: #d32f2f;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-right: 4px;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
 }
 
 .admin-product-item img {
