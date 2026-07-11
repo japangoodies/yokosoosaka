@@ -1603,6 +1603,7 @@ function loadProducts(callback) {
       }
     }
     localStorage.setItem('yokoso_products', JSON.stringify(products));
+    console.log('[Debug] After Stage 2, products.length =', products.length);
 
     // Stage 3: Firebase sync (if available)
     if (fbDB) {
@@ -1620,6 +1621,7 @@ function loadProducts(callback) {
         .catch(function() { done(); });
       setTimeout(done, 3000);
     } else {
+      console.log('[Debug] Before done(), products.length =', products.length);
       done();
     }
   });
@@ -4645,6 +4647,7 @@ function syncCategoriesToGitHub() {
 // Navigation between public and admin view
 
 function showAdminPanel() {
+  console.log('[Debug] showAdminPanel START, products.length =', products.length);
   if (!currentUser) {
     openAccountModal();
     var loginError = document.getElementById('accountLoginError');
@@ -5867,6 +5870,7 @@ function parseURLParams() {
 }
 
 loadProducts(function() {
+  console.log('[Debug] loadProducts callback START, products.length =', products.length);
   if (typeof MAINTENANCE_MODE !== 'undefined' && MAINTENANCE_MODE) {
     document.getElementById('maintenanceOverlay').classList.add('active');
     return;
