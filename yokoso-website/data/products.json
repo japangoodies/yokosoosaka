@@ -46,6 +46,133 @@
     "onSale": true
   },
   {
+    "id": 58,
+    "name": "GU MENS JWA CARGO SHORTS",
+    "category0": "MENS",
+    "category1": "Clothing",
+    "category2": "GU",
+    "variants": {
+      "BLUE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/iszmnizf6wrqagtbbnsb.jpg"
+        ]
+      },
+      "BROWN": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/hgxp2p59jzpqnfsutlyt.jpg"
+        ]
+      },
+      "BEIGE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/uhavcudtnnxgf8087xvt.jpg"
+        ]
+      },
+      "GREEN": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/m1luagyzmc1qjuhpdti3.jpg"
+        ]
+      }
+    },
+    "price": "₱990.00",
+    "description": "250 DP TO SECURE ITEM",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/kwpy3kznjqni1aywhurh.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/iszmnizf6wrqagtbbnsb.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/vgexcigurlzuhnvbh1us.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/hgxp2p59jzpqnfsutlyt.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/uhavcudtnnxgf8087xvt.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/m1luagyzmc1qjuhpdti3.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/fkjspprqibuypn1ik0zf.jpg"
+    ],
+    "available": true,
+    "_colorOrder": [
+      "BLUE",
+      "BROWN",
+      "BEIGE",
+      "GREEN"
+    ],
+    "deposit": "₱250",
+    "originalPrice": "₱995",
+    "color": "",
+    "sizes": [],
+    "stock": 5,
+    "onSale": true
+  },
+  {
     "id": 56,
     "name": "UNIQLO COTTON CULOTTES",
     "category0": "MENS",
@@ -1303,132 +1430,6 @@
     ],
     "deposit": "₱200",
     "originalPrice": "₱695",
-    "color": "",
-    "sizes": [],
-    "stock": 5
-  },
-  {
-    "id": 58,
-    "name": "GU MENS JWA CARGO SHORTS",
-    "category0": "MENS",
-    "category1": "Clothing",
-    "category2": "GU",
-    "variants": {
-      "BLUE": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL",
-          "4XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5,
-          "2XL": 5,
-          "3XL": 5,
-          "4XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/iszmnizf6wrqagtbbnsb.jpg"
-        ]
-      },
-      "BROWN": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL",
-          "4XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5,
-          "2XL": 5,
-          "3XL": 5,
-          "4XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/hgxp2p59jzpqnfsutlyt.jpg"
-        ]
-      },
-      "BEIGE": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL",
-          "4XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5,
-          "2XL": 5,
-          "3XL": 5,
-          "4XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/uhavcudtnnxgf8087xvt.jpg"
-        ]
-      },
-      "GREEN": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/m1luagyzmc1qjuhpdti3.jpg"
-        ]
-      }
-    },
-    "price": "₱990.00",
-    "description": "250 DP TO SECURE ITEM",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/kwpy3kznjqni1aywhurh.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/iszmnizf6wrqagtbbnsb.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/vgexcigurlzuhnvbh1us.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/hgxp2p59jzpqnfsutlyt.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758204/uhavcudtnnxgf8087xvt.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/m1luagyzmc1qjuhpdti3.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783758205/fkjspprqibuypn1ik0zf.jpg"
-    ],
-    "available": true,
-    "_colorOrder": [
-      "BLUE",
-      "BROWN",
-      "BEIGE",
-      "GREEN"
-    ],
-    "deposit": "₱250",
-    "originalPrice": "₱995",
     "color": "",
     "sizes": [],
     "stock": 5
