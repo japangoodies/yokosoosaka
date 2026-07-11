@@ -4557,7 +4557,8 @@ function syncToGitHub() {
   if (statusEl) { statusEl.textContent = 'Syncing...'; statusEl.style.color = '#666'; }
   var content = JSON.stringify(products, null, 2);
   var encoded = btoa(unescape(encodeURIComponent(content)));
-  console.log('[Sync] Starting sync, products count:', products.length, 'content size:', content.length, 'bytes');
+  var onSaleCount = products.filter(function(p) { return p.onSale; }).length;
+  console.log('[Sync] Starting sync, products count:', products.length, 'onSale count:', onSaleCount, 'content size:', content.length, 'bytes');
   doGitHubSync(GITHUB_PATH, encoded, 'Auto-sync products from admin panel', statusEl, 0)
     .then(function() {
       console.log('[Sync] GitHub sync completed successfully.');
@@ -4654,12 +4655,15 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
         throw new Error('update ref HTTP ' + r.status + ': ' + body.slice(0, 200));
       });
     }
-    if (filePath === GITHUB_PATH) {
-      localStorage.setItem('yokoso_pending_sync', 'false');
-      localStorage.setItem('yokoso_sync_time', Date.now().toString());
-    }
-    if (statusEl) { statusEl.textContent = 'Synced ✓'; statusEl.style.color = '#28a745'; }
-    console.log('[Sync] doGitHubSync succeeded for', filePath);
+    return r.json().then(function(refData) {
+      console.log('[Sync] Ref updated to', refData.object.sha, 'for', filePath);
+      if (filePath === GITHUB_PATH) {
+        localStorage.setItem('yokoso_pending_sync', 'false');
+        localStorage.setItem('yokoso_sync_time', Date.now().toString());
+      }
+      if (statusEl) { statusEl.textContent = 'Synced ✓'; statusEl.style.color = '#28a745'; }
+      console.log('[Sync] doGitHubSync succeeded for', filePath);
+    });
   });
 }
 
