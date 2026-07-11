@@ -3640,8 +3640,12 @@ function renderAdminList() {
   if (adminFilterColor !== 'all') {
     filtered = filtered.filter(function(p) { return (p.color || '') === adminFilterColor; });
   }
-  // Newest first (descending by id)
-  filtered = filtered.sort(function(a, b) { return b.id - a.id; });
+  // Sale items on top, then newest first (descending by id)
+  filtered = filtered.sort(function(a, b) {
+    if (a.onSale && !b.onSale) return -1;
+    if (!a.onSale && b.onSale) return 1;
+    return b.id - a.id;
+  });
   var totalProducts = filtered.length;
   var totalProductPages = Math.max(1, Math.ceil(totalProducts / productsLimit));
   if (productsPage > totalProductPages) { productsPage = totalProductPages; renderAdminList(); return; }
@@ -3661,10 +3665,10 @@ function renderAdminList() {
     if (p.variants) { for (var c in p.variants) { (p.variants[c].sizes || []).forEach(function(s) { if (allSizes.indexOf(s) === -1) allSizes.push(s); }); } }
     var sizesStr = allSizes.length > 0 ? ' · Sizes: ' + allSizes.join(', ') : '';
     var stockStr = ' · Stock: ' + getTotalStock(p.id);
-    return '<div class="admin-product-item" data-id="' + p.id + '">' +
+    return '<div class="admin-product-item' + (p.onSale ? ' on-sale' : '') + '" data-id="' + p.id + '">' +
       '<img src="' + (p.images?.[0] || 'images/products/placeholder.svg') + '" alt="' + p.name + '" onerror="if(this.dataset.retry)this.style.display=\'none\';else{this.dataset.retry=\'1\';this.src=\'images/products/placeholder.svg\'}">' +
       '<div class="admin-product-item-info">' +
-      '<div class="name">' + p.name + '</div>' +
+      '<div class="name">' + (p.onSale ? '<span class="sale-badge">SALE</span> ' : '') + p.name + '</div>' +
       '<div class="meta">' + catStr + ' · ' + p.price + sizesStr + stockStr + '</div>' +
       '</div>' +
       '<div class="admin-product-item-actions">' +
@@ -3957,6 +3961,7 @@ function populateForm(product) {
   if (depEl) depEl.value = product.deposit !== undefined ? product.deposit : '';
   document.getElementById('formDesc').value = product.description;
   document.getElementById('formAvailable').checked = product.available !== false;
+  document.getElementById('formOnSale').checked = product.onSale === true;
   var imgs = product.images || (product.image ? [product.image] : []);
   selectedImagesData = imgs.filter(function(img) { return img && img.indexOf('placeholder') === -1; });
   renderImagePreview();
@@ -4085,7 +4090,7 @@ if (pf) pf.addEventListener('submit', function(e) {
     if (editingId) {
       var idx = products.findIndex(function(p) { return p.id === editingId; });
       if (idx !== -1) {
-        var upd = { name: name, category0: category0, category1: category1, category2: category2, variants: variants, _colorOrder: colorOrder, price: price, description: description, images: images, available: document.getElementById('formAvailable').checked };
+        var upd = { name: name, category0: category0, category1: category1, category2: category2, variants: variants, _colorOrder: colorOrder, price: price, description: description, images: images, available: document.getElementById('formAvailable').checked, onSale: document.getElementById('formOnSale').checked };
         if (deposit) upd.deposit = deposit;
         if (originalPrice) upd.originalPrice = originalPrice;
         else delete upd.originalPrice;
@@ -4096,7 +4101,7 @@ if (pf) pf.addEventListener('submit', function(e) {
     } else {
       var maxId = products.length > 0 ? Math.max.apply(null, products.map(function(p) { return p.id; })) : 0;
       var newId = maxId + 1;
-      var newProd = { id: newId, name: name, category0: category0, category1: category1, category2: category2, variants: variants, _colorOrder: colorOrder, price: price, description: description, images: images, available: document.getElementById('formAvailable').checked };
+      var newProd = { id: newId, name: name, category0: category0, category1: category1, category2: category2, variants: variants, _colorOrder: colorOrder, price: price, description: description, images: images, available: document.getElementById('formAvailable').checked, onSale: document.getElementById('formOnSale').checked };
       if (deposit) newProd.deposit = deposit;
       if (originalPrice) newProd.originalPrice = originalPrice;
       products.push(newProd);
@@ -6435,7 +6440,8 @@ if (isb) isb.addEventListener('click', function() {
       price: price.indexOf('₱') === 0 ? price : '₱' + price,
       description: desc || '',
       images: imagesToSave,
-      available: true
+      available: true,
+      onSale: false
     };
     products.push(newProd);
     saveProducts();
