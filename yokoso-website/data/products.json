@@ -509,6 +509,49 @@
     "onSale": true
   },
   {
+    "_colorOrder": [
+      "Default"
+    ],
+    "category0": "MENS",
+    "category1": "Shoes",
+    "deposit": "₱1000",
+    "id": 50,
+    "variants": {
+      "Default": {
+        "stock": {
+          "5": 5,
+          "6": 5,
+          "7": 5,
+          "8": 5,
+          "9": 5
+        },
+        "sizes": [
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ]
+      }
+    },
+    "name": "CROCS SATURDAY ENAMEL BUCKLE - WHITE",
+    "category2": "Crocs",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262902/dyzklnisjjfytmh98jla.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262902/l1aoodwdkntoqryizff9.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262902/wwekeudvbxxm2ccpcfdf.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262902/haqhl4qgnfpefxzhrjmq.jpg"
+    ],
+    "available": true,
+    "price": "₱2399.00",
+    "description": "Sizes avail: W5 to W9\n2375.00 pesos only\n1000 DP TO SECURE ITEM",
+    "originalPrice": "₱2375.00",
+    "color": "",
+    "sizes": [],
+    "stock": 5,
+    "onSale": true
+  },
+  {
     "id": 79,
     "name": "MEIJI KANRO",
     "category0": "FOODS",
@@ -1647,48 +1690,6 @@
     "description": "Pink and Blue lang naka-sale\n250 DP TO SECURE ITEM",
     "price": "₱979",
     "available": true,
-    "color": "",
-    "sizes": [],
-    "stock": 5
-  },
-  {
-    "_colorOrder": [
-      "Default"
-    ],
-    "category0": "MENS",
-    "category1": "Shoes",
-    "deposit": "₱1000",
-    "id": 50,
-    "variants": {
-      "Default": {
-        "stock": {
-          "5": 5,
-          "6": 5,
-          "7": 5,
-          "8": 5,
-          "9": 5
-        },
-        "sizes": [
-          "5",
-          "6",
-          "7",
-          "8",
-          "9"
-        ]
-      }
-    },
-    "name": "CROCS SATURDAY ENAMEL BUCKLE - WHITE",
-    "category2": "Crocs",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262902/dyzklnisjjfytmh98jla.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262902/l1aoodwdkntoqryizff9.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262902/wwekeudvbxxm2ccpcfdf.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262902/haqhl4qgnfpefxzhrjmq.jpg"
-    ],
-    "available": true,
-    "price": "₱2399.00",
-    "description": "Sizes avail: W5 to W9\n2375.00 pesos only\n1000 DP TO SECURE ITEM",
-    "originalPrice": "₱2375.00",
     "color": "",
     "sizes": [],
     "stock": 5
