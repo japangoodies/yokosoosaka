@@ -1559,6 +1559,8 @@ function loadProducts(callback) {
     if (!rendered) { rendered = true; if (callback) callback(); }
   }
 
+  var cdnLoaded = false;
+
   // Stage 1: Load from CDN file (Cloudflare Pages — always fresh), fallback to localStorage
   fetch('data/products.json?_=' + Date.now())
     .then(function(r) { return r.json(); })
@@ -1566,6 +1568,7 @@ function loadProducts(callback) {
       if (data && data.length > 0) {
         products = data;
         migrateProducts();
+        cdnLoaded = true;
         localStorage.setItem('yokoso_sync_time', Date.now().toString());
         console.log('[Load] Loaded from CDN file: ' + products.length + ' products');
       } else {
@@ -1583,10 +1586,11 @@ function loadProducts(callback) {
       }
     })
     .then(function() {
-    // Stage 2: Only use localStorage if there are pending unsaved edits
-    // Otherwise the CDN file is always authoritative for cross-device sync
+    // Stage 2: Only use localStorage if CDN failed AND there are pending unsaved edits.
+    // If CDN loaded, it is always authoritative — otherwise stale localStorage
+    // (from a previous buggy saveProducts call) would perpetually override fresh data.
     var pend = localStorage.getItem('yokoso_pending_sync');
-    if (pend === 'true') {
+    if (pend === 'true' && !cdnLoaded) {
       var saved = localStorage.getItem('yokoso_products');
       if (saved) {
         try {
@@ -4653,20 +4657,8 @@ function showAdminPanel() {
   }
   // Release expired orders (older than 24h)
   releaseExpiredOrders();
-  // Migrate localStorage data if not yet synced
-  if (localStorage.getItem('yokoso_pending_sync') !== 'true') {
-    var saved = localStorage.getItem('yokoso_products');
-    if (saved) {
-      try {
-        var local = JSON.parse(saved);
-        if (local.length > 0 && JSON.stringify(local) !== JSON.stringify(products)) {
-          products = local;
-          migrateProducts();
-          saveProducts();
-        }
-      } catch(e) {}
-    }
-  }
+  // CDN products are always authoritative — loadProducts() already handles
+  // localStorage fallback and pending edits. Don't replace here.
   document.getElementById('maintenanceOverlay').classList.add('active', 'admin-mode');
   document.getElementById('maintenancePublic').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'block';
