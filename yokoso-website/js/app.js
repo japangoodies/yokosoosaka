@@ -4894,16 +4894,16 @@ function renderCategoryManagement() {
     renderSubcategoryTagList();
   }
 
-  brandList.innerHTML = (categoriesConfig.brands || []).map(function(b) {
+  brandList.innerHTML = (categoriesConfig.brands || []).slice().reverse().map(function(b) {
     return '<span class="admin-tag"><span class="admin-tag-label" title="Double-click to rename">' + b + '</span><span class="admin-tag-remove" data-brand="' + b + '">×</span></span>';
   }).join('');
   if (colorList) {
-    colorList.innerHTML = (categoriesConfig.colors || []).map(function(c) {
+    colorList.innerHTML = (categoriesConfig.colors || []).slice().reverse().map(function(c) {
       return '<span class="admin-tag"><span class="admin-tag-label" title="Double-click to rename">' + c + '</span><span class="admin-tag-remove" data-color-cat="' + c + '">×</span></span>';
     }).join('');
   }
   if (sizeList) {
-    sizeList.innerHTML = (categoriesConfig.sizes || []).map(function(s) {
+    sizeList.innerHTML = (categoriesConfig.sizes || []).slice().reverse().map(function(s) {
       return '<span class="admin-tag"><span class="admin-tag-label" title="Double-click to rename">' + s + '</span><span class="admin-tag-remove" data-size-cat="' + s + '">×</span></span>';
     }).join('');
   }
