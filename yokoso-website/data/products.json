@@ -1,5 +1,136 @@
 [
   {
+    "id": 67,
+    "name": "GU 2-WAY LONG BELT BAG",
+    "category0": "MENS",
+    "category1": "Accesories",
+    "category2": "GU",
+    "variants": {
+      "BLACK": {
+        "sizes": [],
+        "stock": {
+          "q": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763374/in077pmljpgu26aliod5.jpg"
+        ]
+      },
+      "WHITE": {
+        "sizes": [],
+        "stock": {
+          "q": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763374/dxffv7ujrwhdjnxz818l.jpg"
+        ]
+      }
+    },
+    "price": "₱739.00",
+    "description": "Kasya po A4-sized laptop\nBlack and White lang avail colors\n200 DP TO SECURE ITEM",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763375/e8vdszocsyvxo5xwiyzb.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763375/x2youlox23p6ejaq4cfy.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763374/dxffv7ujrwhdjnxz818l.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763374/in077pmljpgu26aliod5.jpg"
+    ],
+    "available": true,
+    "_colorOrder": [
+      "BLACK",
+      "WHITE"
+    ],
+    "deposit": "₱200",
+    "originalPrice": "₱735",
+    "color": "",
+    "sizes": [],
+    "stock": 10,
+    "onSale": true
+  },
+  {
+    "id": 56,
+    "name": "UNIQLO COTTON CULOTTES",
+    "category0": "MENS",
+    "category1": "Clothing",
+    "category2": "Uniqlo",
+    "variants": {
+      "BLACK": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/irqncsgg6ckvrn8i0gms.jpg"
+        ]
+      },
+      "BEIGE": {
+        "sizes": [
+          "S",
+          "M",
+          "L",
+          "XL",
+          "3XL"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/haltve13rey6ar6icmf0.jpg"
+        ]
+      },
+      "BROWN": {
+        "sizes": [
+          "S",
+          "M",
+          "L",
+          "XL"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/exudwuu34ddlgar2o5ze.jpg"
+        ]
+      }
+    },
+    "price": "₱729",
+    "description": "Sizes avail nasa pic na po\nNOT ACCEPTING SHORT LENGTH! Standard length lang.\n725.00 pesos only\n200 DP TO SECURE ITEM",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/iua96qtcjyfnzunvdm8o.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/haltve13rey6ar6icmf0.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/irqncsgg6ckvrn8i0gms.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/exudwuu34ddlgar2o5ze.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756017/na5fzwlkvzomleublzi6.jpg"
+    ],
+    "available": true,
+    "_colorOrder": [
+      "BLACK",
+      "BEIGE",
+      "BROWN"
+    ],
+    "deposit": "₱200",
+    "originalPrice": "₱725.00",
+    "color": "",
+    "sizes": [],
+    "stock": 70,
+    "onSale": false
+  },
+  {
     "id": 79,
     "name": "MEIJI KANRO",
     "category0": "FOODS",
@@ -521,52 +652,6 @@
     "color": "",
     "sizes": [],
     "stock": 240
-  },
-  {
-    "id": 67,
-    "name": "GU 2-WAY LONG BELT BAG",
-    "category0": "MENS",
-    "category1": "Accesories",
-    "category2": "GU",
-    "variants": {
-      "BLACK": {
-        "sizes": [],
-        "stock": {
-          "q": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763374/in077pmljpgu26aliod5.jpg"
-        ]
-      },
-      "WHITE": {
-        "sizes": [],
-        "stock": {
-          "q": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763374/dxffv7ujrwhdjnxz818l.jpg"
-        ]
-      }
-    },
-    "price": "₱739.00",
-    "description": "Kasya po A4-sized laptop\nBlack and White lang avail colors\n200 DP TO SECURE ITEM",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763375/e8vdszocsyvxo5xwiyzb.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763375/x2youlox23p6ejaq4cfy.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763374/dxffv7ujrwhdjnxz818l.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763374/in077pmljpgu26aliod5.jpg"
-    ],
-    "available": true,
-    "_colorOrder": [
-      "BLACK",
-      "WHITE"
-    ],
-    "deposit": "₱200",
-    "originalPrice": "₱735",
-    "color": "",
-    "sizes": [],
-    "stock": 10,
-    "onSale": true
   },
   {
     "id": 66,
@@ -1247,90 +1332,6 @@
     ],
     "deposit": "₱150",
     "originalPrice": "₱595",
-    "color": "",
-    "sizes": [],
-    "stock": 70
-  },
-  {
-    "id": 56,
-    "name": "UNIQLO COTTON CULOTTES",
-    "category0": "MENS",
-    "category1": "Clothing",
-    "category2": "Uniqlo",
-    "variants": {
-      "BLACK": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/irqncsgg6ckvrn8i0gms.jpg"
-        ]
-      },
-      "BEIGE": {
-        "sizes": [
-          "S",
-          "M",
-          "L",
-          "XL",
-          "3XL"
-        ],
-        "stock": {
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5,
-          "3XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/haltve13rey6ar6icmf0.jpg"
-        ]
-      },
-      "BROWN": {
-        "sizes": [
-          "S",
-          "M",
-          "L",
-          "XL"
-        ],
-        "stock": {
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/exudwuu34ddlgar2o5ze.jpg"
-        ]
-      }
-    },
-    "price": "₱729",
-    "description": "Sizes avail nasa pic na po\nNOT ACCEPTING SHORT LENGTH! Standard length lang.\n725.00 pesos only\n200 DP TO SECURE ITEM",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/iua96qtcjyfnzunvdm8o.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/haltve13rey6ar6icmf0.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/irqncsgg6ckvrn8i0gms.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783754580/exudwuu34ddlgar2o5ze.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783756017/na5fzwlkvzomleublzi6.jpg"
-    ],
-    "available": true,
-    "_colorOrder": [
-      "BLACK",
-      "BEIGE",
-      "BROWN"
-    ],
-    "deposit": "₱200",
-    "originalPrice": "₱725.00",
     "color": "",
     "sizes": [],
     "stock": 70
