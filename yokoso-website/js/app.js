@@ -4648,7 +4648,7 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
     });
   })
   .then(function(r) {
-    if (r.status === 409 && attempt < 3) {
+    if ((r.status === 409 || r.status === 422) && attempt < 3) {
       return doGitHubSync(filePath, encoded, message, statusEl, attempt + 1);
     }
     if (!r.ok) {
