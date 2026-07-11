@@ -27,151 +27,6 @@
     "color": "",
     "sizes": [],
     "stock": 5,
-    "onSale": true
-  },
-  {
-    "available": true,
-    "price": "₱2699",
-    "description": "FOR JULY ETA\nNew Balance Summer Sale!\nNB HANZO V v3\n🏷️ 2699.00 pesos only\n1000 DP TO SECURE ITEM",
-    "originalPrice": "₱2675.00",
-    "color": "Black",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781920678/anxihrprowdycfnvsnlf.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781919773/n9zhn9wlgm5qgnvt9rnm.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781920678/y4vsj0jghigajlypa3kq.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781920678/fqugb52n3v0afrvymuwy.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781920678/oiwovzlrkj2umccwfj22.jpg"
-    ],
-    "category2": "New Balance",
-    "sizes": [],
-    "variants": {
-      "BLACK": {
-        "sizes": [
-          "6",
-          "7",
-          "8",
-          "9",
-          "10",
-          "11",
-          "12"
-        ],
-        "stock": {
-          "6": 0,
-          "7": 0,
-          "8": 0,
-          "9": 4,
-          "10": 5,
-          "11": 5,
-          "12": 3
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783767409/uda5t1rnc3flvpr0x3zt.jpg"
-        ]
-      },
-      "VIOLET": {
-        "sizes": [
-          "6",
-          "7",
-          "8",
-          "9",
-          "10",
-          "11",
-          "12"
-        ],
-        "stock": {
-          "6": 5,
-          "7": 5,
-          "8": 5,
-          "9": 5,
-          "10": 5,
-          "11": 5,
-          "12": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783767409/avv5hnehy6eujlqrtwi9.jpg"
-        ]
-      },
-      "BLACK & ORANGE": {
-        "sizes": [
-          "7",
-          "8",
-          "9",
-          "10",
-          "11",
-          "12"
-        ],
-        "stock": {
-          "7": 5,
-          "8": 5,
-          "9": 5,
-          "10": 5,
-          "11": 5,
-          "12": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783767409/uciakgio2qh2uh6riakt.jpg"
-        ]
-      },
-      "BLUE": {
-        "sizes": [
-          "6",
-          "7",
-          "8",
-          "9",
-          "10",
-          "11",
-          "12"
-        ],
-        "stock": {
-          "6": 5,
-          "7": 5,
-          "8": 5,
-          "9": 5,
-          "10": 5,
-          "11": 5,
-          "12": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783767409/e6qfcg8dwhfi2dz2lgd5.jpg"
-        ]
-      },
-      "BLACK & WHITE": {
-        "sizes": [
-          "6",
-          "7",
-          "8",
-          "9",
-          "10",
-          "11",
-          "12"
-        ],
-        "stock": {
-          "6": 5,
-          "7": 5,
-          "8": 5,
-          "9": 5,
-          "10": 5,
-          "11": 5,
-          "12": 5
-        },
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783767409/feijjrdgyp2azblidvgr.jpg"
-        ]
-      }
-    },
-    "name": "NB HANZO V v3",
-    "stock": 152,
-    "category0": "MENS",
-    "_colorOrder": [
-      "BLACK",
-      "VIOLET",
-      "BLACK & ORANGE",
-      "BLUE",
-      "BLACK & WHITE"
-    ],
-    "category1": "Shoes",
-    "id": 16,
-    "deposit": "₱1000",
     "onSale": false
   },
   {
@@ -4505,5 +4360,150 @@
     "color": "White",
     "available": true,
     "price": "₱599"
+  },
+  {
+    "available": true,
+    "price": "₱2699",
+    "description": "FOR JULY ETA\nNew Balance Summer Sale!\nNB HANZO V v3\n🏷️ 2699.00 pesos only\n1000 DP TO SECURE ITEM",
+    "originalPrice": "₱2675.00",
+    "color": "Black",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781920678/anxihrprowdycfnvsnlf.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781919773/n9zhn9wlgm5qgnvt9rnm.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781920678/y4vsj0jghigajlypa3kq.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781920678/fqugb52n3v0afrvymuwy.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781920678/oiwovzlrkj2umccwfj22.jpg"
+    ],
+    "category2": "New Balance",
+    "sizes": [],
+    "variants": {
+      "BLACK": {
+        "sizes": [
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ],
+        "stock": {
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 4,
+          "10": 5,
+          "11": 5,
+          "12": 3
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783767409/uda5t1rnc3flvpr0x3zt.jpg"
+        ]
+      },
+      "VIOLET": {
+        "sizes": [
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ],
+        "stock": {
+          "6": 5,
+          "7": 5,
+          "8": 5,
+          "9": 5,
+          "10": 5,
+          "11": 5,
+          "12": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783767409/avv5hnehy6eujlqrtwi9.jpg"
+        ]
+      },
+      "BLACK & ORANGE": {
+        "sizes": [
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ],
+        "stock": {
+          "7": 5,
+          "8": 5,
+          "9": 5,
+          "10": 5,
+          "11": 5,
+          "12": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783767409/uciakgio2qh2uh6riakt.jpg"
+        ]
+      },
+      "BLUE": {
+        "sizes": [
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ],
+        "stock": {
+          "6": 5,
+          "7": 5,
+          "8": 5,
+          "9": 5,
+          "10": 5,
+          "11": 5,
+          "12": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783767409/e6qfcg8dwhfi2dz2lgd5.jpg"
+        ]
+      },
+      "BLACK & WHITE": {
+        "sizes": [
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ],
+        "stock": {
+          "6": 5,
+          "7": 5,
+          "8": 5,
+          "9": 5,
+          "10": 5,
+          "11": 5,
+          "12": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783767409/feijjrdgyp2azblidvgr.jpg"
+        ]
+      }
+    },
+    "name": "NB HANZO V v3",
+    "stock": 152,
+    "category0": "MENS",
+    "_colorOrder": [
+      "BLACK",
+      "VIOLET",
+      "BLACK & ORANGE",
+      "BLUE",
+      "BLACK & WHITE"
+    ],
+    "category1": "Shoes",
+    "id": 16,
+    "deposit": "₱1000",
+    "onSale": false
   }
 ]
