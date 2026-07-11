@@ -1605,22 +1605,23 @@ function loadProducts(callback) {
         }
       }
     }
-    // Also overlay localStorage onSale fields onto CDN data
-    // (sync may have failed or CDN not yet propagated)
-    if (cdnLoaded) {
+    // Only overlay onSale from localStorage if pending unsync'd edit exists.
+    // Never delete onSale from CDN data (localStorage may be stale on other devices).
+    if (cdnLoaded && localStorage.getItem('yokoso_pending_sync') === 'true') {
       var saved = localStorage.getItem('yokoso_products');
       if (saved) {
         try {
           var localProds = JSON.parse(saved);
           if (localProds && localProds.length > 0) {
+            var merged = false;
             products.forEach(function(p) {
               var lp = localProds.find(function(x) { return x.id === p.id; });
-              if (lp) {
-                if (lp.onSale === true) p.onSale = true;
-                else delete p.onSale;
+              if (lp && lp.onSale === true) {
+                p.onSale = true;
+                merged = true;
               }
             });
-            console.log('[Load] LocalStorage onSale merged onto CDN data');
+            if (merged) console.log('[Load] LocalStorage onSale merged onto CDN data (pending edits)');
           }
         } catch(e) {
           console.warn('[Load] Failed to parse localStorage for onSale merge:', e);
