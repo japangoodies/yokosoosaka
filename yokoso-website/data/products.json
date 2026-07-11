@@ -172,7 +172,7 @@
     "category1": "Shoes",
     "id": 16,
     "deposit": "₱1000",
-    "onSale": true
+    "onSale": false
   },
   {
     "id": 77,
