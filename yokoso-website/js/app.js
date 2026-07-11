@@ -4595,30 +4595,36 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
   var baseUrl = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO;
   var authHeaders = { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' };
   // Use Git Blob API (no 1MB limit like Contents API)
+  function checkResp(r, label) {
+    if (!r.ok) {
+      return r.text().then(function(body) {
+        console.error('[Sync] ' + label + ' failed:', r.status, body);
+        throw new Error(label + ' HTTP ' + r.status + ': ' + body.slice(0, 200));
+      });
+    }
+    return r.json();
+  }
+
   var blobSha, commitSha;
   return fetch(baseUrl + '/git/blobs', {
     method: 'POST', headers: authHeaders,
     body: JSON.stringify({ content: encoded, encoding: 'base64' })
   })
-  .then(function(r) {
-    if (r.status === 401) throw new Error('HTTP 401 (token expired or invalid)');
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  })
+  .then(function(r) { return checkResp(r, 'create blob'); })
   .then(function(blob) {
     blobSha = blob.sha;
     return fetch(baseUrl + '/git/refs/heads/' + GITHUB_BRANCH, { headers: authHeaders });
   })
-  .then(function(r) { return r.json(); })
+  .then(function(r) { return checkResp(r, 'get ref'); })
   .then(function(ref) {
     return fetch(baseUrl + '/git/commits/' + ref.object.sha, { headers: authHeaders });
   })
-  .then(function(r) { return r.json(); })
+  .then(function(r) { return checkResp(r, 'get commit'); })
   .then(function(commit) {
     commitSha = commit.sha;
     return fetch(baseUrl + '/git/trees/' + commit.tree.sha, { headers: authHeaders });
   })
-  .then(function(r) { return r.json(); })
+  .then(function(r) { return checkResp(r, 'get tree'); })
   .then(function(treeObj) {
     var treeItems = (treeObj.tree || []).filter(function(item) { return item.path !== filePath; });
     treeItems.push({ path: filePath, mode: '100644', type: 'blob', sha: blobSha });
@@ -4627,14 +4633,14 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
       body: JSON.stringify({ base_tree: treeObj.sha, tree: treeItems })
     });
   })
-  .then(function(r) { return r.json(); })
+  .then(function(r) { return checkResp(r, 'create tree'); })
   .then(function(tree) {
     return fetch(baseUrl + '/git/commits', {
       method: 'POST', headers: authHeaders,
       body: JSON.stringify({ message: message, tree: tree.sha, parents: [commitSha] })
     });
   })
-  .then(function(r) { return r.json(); })
+  .then(function(r) { return checkResp(r, 'create commit'); })
   .then(function(newCommit) {
     return fetch(baseUrl + '/git/refs/heads/' + GITHUB_BRANCH, {
       method: 'PATCH', headers: authHeaders,
@@ -4645,7 +4651,11 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
     if (r.status === 409 && attempt < 3) {
       return doGitHubSync(filePath, encoded, message, statusEl, attempt + 1);
     }
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if (!r.ok) {
+      return r.text().then(function(body) {
+        throw new Error('update ref HTTP ' + r.status + ': ' + body.slice(0, 200));
+      });
+    }
     if (filePath === GITHUB_PATH) {
       localStorage.setItem('yokoso_pending_sync', 'false');
       localStorage.setItem('yokoso_sync_time', Date.now().toString());
