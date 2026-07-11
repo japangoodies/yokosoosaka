@@ -1605,9 +1605,9 @@ function loadProducts(callback) {
         }
       }
     }
-    // Also overlay localStorage onSale fields onto CDN data (sync may have
-    // completed but CDN may not have propagated yet)
-    if (cdnLoaded && pend === 'false') {
+    // Also overlay localStorage onSale fields onto CDN data
+    // (sync may have failed or CDN not yet propagated)
+    if (cdnLoaded) {
       var saved = localStorage.getItem('yokoso_products');
       if (saved) {
         try {
