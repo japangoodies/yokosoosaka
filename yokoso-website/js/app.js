@@ -4615,11 +4615,15 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
   .then(function(r) { return r.json(); })
   .then(function(commit) {
     commitSha = commit.sha;
-    var treeItems = (commit.tree.tree || []).filter(function(item) { return item.path !== filePath; });
+    return fetch(baseUrl + '/git/trees/' + commit.tree.sha, { headers: authHeaders });
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(treeObj) {
+    var treeItems = (treeObj.tree || []).filter(function(item) { return item.path !== filePath; });
     treeItems.push({ path: filePath, mode: '100644', type: 'blob', sha: blobSha });
     return fetch(baseUrl + '/git/trees', {
       method: 'POST', headers: authHeaders,
-      body: JSON.stringify({ base_tree: commit.tree.sha, tree: treeItems })
+      body: JSON.stringify({ base_tree: treeObj.sha, tree: treeItems })
     });
   })
   .then(function(r) { return r.json(); })
