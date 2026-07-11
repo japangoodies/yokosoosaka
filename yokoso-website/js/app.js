@@ -760,7 +760,7 @@ function getOrderText() {
   });
   var total = snap.total || getCartTotal();
   var deposit = snap.deposit || getDepositAmount();
-  lines.push('', 'Total: ₱' + total.toFixed(2), 'Deposit: ₱' + deposit.toFixed(2), '', 'Please message us to confirm stock availability before sending payment. Stock is reserved only once the deposit is confirmed. Prices are subject to change without prior notice.');
+  lines.push('', 'Total: ₱' + total.toFixed(2), 'Deposit: ₱' + deposit.toFixed(2));
   return lines.join('\n');
 }
 
