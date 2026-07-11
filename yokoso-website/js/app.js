@@ -1232,6 +1232,7 @@ function exportOrdersCSV() {
 // ---- END DEPOSIT & CHECKOUT ----
 
 function migrateCategoriesConfig(cfg) {
+  console.log('[Trace] migrateCategoriesConfig() — input has types:', !!cfg.types, 'groups:', !!(cfg.groups), 'subcategoryMap:', !!(cfg.subcategoryMap), 'brands:', (cfg.brands||[]).length);
   if (cfg.types && !cfg.groups) {
     cfg.groups = [{ name: "All", image: "" }];
     cfg.subcategoryMap = { "All": cfg.types || [] };
@@ -1253,6 +1254,7 @@ function migrateCategoriesConfig(cfg) {
   if (!cfg.subcategoryBrands) cfg.subcategoryBrands = {};
   if (!cfg.brandLogos) cfg.brandLogos = {};
   if (!cfg.messengerUrl) cfg.messengerUrl = 'https://m.me/103933895457769';
+  console.log('[Trace] migrateCategoriesConfig() — output groups:', cfg.groups.length, 'subcategoryMap keys:', Object.keys(cfg.subcategoryMap).length, 'brands:', cfg.brands.length, 'sizes:', cfg.sizes.length);
   return cfg;
 }
 
@@ -1655,7 +1657,9 @@ function loadProducts(callback) {
 }
 
 function loadCategories() {
+  console.log('[Trace] loadCategories()');
   var savedConfig = localStorage.getItem('yokoso_categories');
+  console.log('[Trace] loadCategories() — localStorage has savedConfig:', !!savedConfig);
 
   // Stage 1: Load committed categories from GitHub API (bypasses CDN), fallback to local file
   var fileFetch = fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_CATEGORIES_PATH)
@@ -1678,10 +1682,14 @@ function loadCategories() {
 
   fileFetch.then(function(data) {
     if (data) {
+      console.log('[Trace] loadCategories() — loaded from GitHub API/' + GITHUB_CATEGORIES_PATH + ', groups:', (data.groups||[]).length);
       categoriesConfig = migrateCategoriesConfig(data);
+    } else {
+      console.log('[Trace] loadCategories() — empty data from API');
     }
   })
   .catch(function() {
+    console.log('[Trace] loadCategories() — API failed, using fallback');
     // Fallback: keep whatever we had before
       if (savedConfig) {
         try {
@@ -1692,8 +1700,10 @@ function loadCategories() {
       categoriesConfig = migrateCategoriesConfig(categoriesConfig);
     })
     .finally(function() {
+      console.log('[Trace] loadCategories() — Stage 2 merge, categoriesConfig groups:', (categoriesConfig.groups||[]).length, 'subcategoryMap keys:', Object.keys(categoriesConfig.subcategoryMap||{}).length);
       // Stage 2: Overlay with savedConfig (preserves user's edits from before fetch)
       if (savedConfig) {
+        console.log('[Trace] loadCategories() — merging savedConfig with API data');
         try {
           var parsed = JSON.parse(savedConfig);
           var fetched = categoriesConfig;
@@ -1744,6 +1754,7 @@ function loadCategories() {
           categoriesConfig = migrateCategoriesConfig(fetched);
         } catch(e) {}
       }
+      console.log('[Trace] loadCategories() — final categoriesConfig groups:', (categoriesConfig.groups||[]).length, 'subcategoryMap keys:', Object.keys(categoriesConfig.subcategoryMap||{}).length, 'brands:', (categoriesConfig.brands||[]).length, 'sizes:', (categoriesConfig.sizes||[]).length);
       localStorage.setItem('yokoso_categories', JSON.stringify(categoriesConfig));
 
       // Re-assign category0 for products using authoritative categoriesConfig
@@ -1812,6 +1823,7 @@ function loadCategories() {
 }
 
 function saveCategoriesConfig() {
+  console.log('[Trace] saveCategoriesConfig() — groups:', (categoriesConfig.groups||[]).length, 'subcategories:', Object.keys(categoriesConfig.subcategoryMap||{}).length, 'brands:', (categoriesConfig.brands||[]).length);
   var groupStatusEl = document.getElementById('groupImageSyncStatus');
   if (groupStatusEl) groupStatusEl.textContent = 'Saving...';
   localStorage.setItem('yokoso_categories', JSON.stringify(categoriesConfig));
@@ -2224,6 +2236,7 @@ function selectSubcategory(name) {
 }
 
 function renderProducts() {
+  console.log('[Trace] renderProducts() — total products:', products.length, 'group:', currentGroup, 'category:', currentCategory, 'brand:', currentBrand, 'search:', currentSearch, 'favoritesOnly:', showFavoritesOnly);
   renderBreadcrumb();
   var grid = document.getElementById('productGrid');
   var spinner = document.getElementById('loadingSpinner');
@@ -2614,6 +2627,7 @@ function applyProxyUrl() {
 var cart = JSON.parse(localStorage.getItem('yokoso_cart') || '[]');
 
 function saveCart() {
+  console.log('[Trace] saveCart() — cart items:', cart.length, 'total qty:', cart.reduce(function(s,i){return s+i.qty;},0), 'cart:', JSON.stringify(cart.map(function(i){return {id:i.id,color:i.color,size:i.size,qty:i.qty}})));
   localStorage.setItem('yokoso_cart', JSON.stringify(cart));
   updateCartBadge();
 }
@@ -2632,7 +2646,8 @@ function cartKey(id, color, size) {
 
 function addToCart(productId, color, size) {
   var p = products.find(function(x) { return x.id === productId; });
-  if (!p) { return; }
+  if (!p) { console.warn('[Trace] addToCart() — product not found, id:', productId); return; }
+  console.log('[Trace] addToCart() — id:', productId, 'color:', color, 'size:', size, 'name:', p.name);
   // If color not provided, use first/only variant
   if (!color) {
     var colors = getVariantColors(p);
@@ -2726,8 +2741,9 @@ function restoreVariantStock(p, color, size, qty) {
 function removeFromCart(productId, color, size) {
   var key = cartKey(productId, color, size);
   var idx = cart.findIndex(function(x) { return cartKey(x.id, x.color, x.size) === key; });
-  if (idx === -1) return;
+  if (idx === -1) { console.warn('[Trace] removeFromCart() — not found, key:', key); return; }
   var item = cart[idx];
+  console.log('[Trace] removeFromCart() — id:', productId, 'color:', color, 'size:', size, 'qty:', item.qty);
   var p = products.find(function(x) { return x.id === productId; });
   if (p) restoreVariantStock(p, item.color, item.size || 'q', item.qty);
   cart.splice(idx, 1);
@@ -2739,8 +2755,9 @@ function removeFromCart(productId, color, size) {
 function updateCartQty(productId, delta, color, size) {
   var key = cartKey(productId, color, size);
   var idx = cart.findIndex(function(x) { return cartKey(x.id, x.color, x.size) === key; });
-  if (idx === -1) return;
+  if (idx === -1) { console.warn('[Trace] updateCartQty() — not found, key:', key); return; }
   var item = cart[idx];
+  console.log('[Trace] updateCartQty() — id:', productId, 'color:', color, 'size:', size, 'delta:', delta, 'currentQty:', item.qty);
   var p = products.find(function(x) { return x.id === productId; });
   var avail = p ? getVariantStock(p, item.color, item.size || 'q') : 0;
   var newQty = item.qty + delta;
@@ -2931,6 +2948,7 @@ function isLightColor(hex) {
 
 function openModal(product) {
   try {
+    console.log('[Trace] openModal() — product:', product.id, product.name);
     _modalProduct = product;
     var overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
@@ -3237,6 +3255,7 @@ if (cd) cd.addEventListener('click', e => {
 });
 
 function closeModal() {
+  console.log('[Trace] closeModal()');
   var pm = document.getElementById('productModal');
   if (pm) { pm.classList.remove('active'); pm.style.display = ''; }
   unlockBody();
@@ -3254,6 +3273,7 @@ if (mc) mc.addEventListener('click', closeModal);
 // Fullscreen image viewer
 function openFullscreen() {
   if (currentModalImages.length === 0) return;
+  console.log('[Trace] openFullscreen() — images:', currentModalImages.length, 'startIdx:', currentImageIndex);
   var old = document.getElementById('liveFullscreen');
   if (old) old.remove();
   var ov = document.createElement('div');
@@ -3622,6 +3642,7 @@ var productsPage = 1;
 var productsLimit = 50;
 
 function renderAdminList() {
+  console.log('[Trace] renderAdminList() — total products:', products.length, 'page:', productsPage, 'filter:', adminFilterGroup, adminFilterType, adminFilterBrand, adminFilterColor, 'search:', adminSearchVal);
   renderAdminFilterDropdowns();
   var container = document.getElementById('adminProductList');
   var filtered = products;
@@ -3903,6 +3924,7 @@ function resetForm() {
 }
 
 function populateForm(product) {
+  console.log('[Trace] populateForm() — id:', product.id, 'name:', product.name, 'variants:', product.variants ? Object.keys(product.variants).join(',') : 'none');
   editingId = product.id;
   document.getElementById('formTitle').textContent = 'Edit Product';
   document.getElementById('formSubmitBtn').textContent = 'Save Changes';
@@ -3967,15 +3989,20 @@ function populateForm(product) {
 }
 
 function editProduct(id) {
+  console.log('[Trace] editProduct() — id:', id);
   const product = products.find(p => p.id === id);
-  if (product) populateForm(product);
+  if (product) { console.log('[Trace] editProduct() — found:', product.name); populateForm(product); }
+  else { console.warn('[Trace] editProduct() — NOT FOUND, id:', id); }
 }
 
 function deleteProduct(id) {
+  console.log('[Trace] deleteProduct() — id:', id);
   if (!confirm('Delete this product?')) return;
   products = products.filter(p => p.id !== id);
+  console.log('[Trace] deleteProduct() — products after delete:', products.length);
   saveProducts();
   renderAdminList();
+  renderProducts();
   renderFilters();
 }
 
@@ -4116,6 +4143,7 @@ if (pf) pf.addEventListener('submit', function(e) {
     showToast('Product "' + name + '" saved! Syncing to GitHub...', 'success');
     resetForm();
     renderAdminList();
+    renderProducts();
     renderFilters();
     submitBtn.disabled = false;
     submitBtn.textContent = origText;
@@ -4514,6 +4542,10 @@ function syncToGitHub() {
       console.log('[Sync] GitHub sync completed successfully.');
       showToast('Products synced to GitHub successfully!', 'success');
       if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); }
+      // Also sync categories if there are pending changes
+      if (localStorage.getItem('github_token')) {
+        syncCategoriesToGitHub();
+      }
     })
     .catch(function(err) {
       syncToGitHub._busy = false;
@@ -4607,8 +4639,8 @@ function forceSync() {
 function syncCategoriesToGitHub() {
   var token = localStorage.getItem('github_token');
   if (!token) return;
-  if (syncToGitHub._busy) { syncToGitHub._queued = true; return; }
-  syncToGitHub._busy = true;
+  if (syncCategoriesToGitHub._busy) { syncCategoriesToGitHub._queued = true; return; }
+  syncCategoriesToGitHub._busy = true;
   var statusEl = document.getElementById('syncStatus');
   var groupStatusEl = document.getElementById('groupImageSyncStatus');
   if (statusEl) { statusEl.textContent = 'Syncing categories...'; statusEl.style.color = '#666'; }
@@ -4617,24 +4649,24 @@ function syncCategoriesToGitHub() {
   var encoded = btoa(unescape(encodeURIComponent(content)));
   doGitHubSync(GITHUB_CATEGORIES_PATH, encoded, 'Auto-sync categories from admin panel', null, 0)
     .then(function() {
-      syncToGitHub._busy = false;
-      if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); }
+      syncCategoriesToGitHub._busy = false;
+      if (syncCategoriesToGitHub._queued) { syncCategoriesToGitHub._queued = false; syncCategoriesToGitHub(); }
       if (statusEl) { statusEl.textContent = 'Categories synced to GitHub ✓'; statusEl.style.color = '#28a745'; }
       if (groupStatusEl) { groupStatusEl.textContent = 'Synced ✓'; groupStatusEl.style.color = '#28a745'; setTimeout(function() { groupStatusEl.textContent = ''; }, 4000); }
     })
     .catch(function(err) {
-      syncToGitHub._busy = false;
+      syncCategoriesToGitHub._busy = false;
       console.error('Categories sync failed:', err.message);
       if (statusEl) {
-        if (err.message === 'HTTP 401') {
+        if (err.message.indexOf('HTTP 401') !== -1) {
           statusEl.innerHTML = 'Token expired. <a href="#" onclick="window.open(\'https://github.com/settings/tokens\');return false" style="color:#007bff">Generate new token</a> → paste in Sync Settings.';
         } else {
           statusEl.textContent = 'Sync failed: ' + err.message;
         }
         statusEl.style.color = '#dc3545';
       }
-      if (groupStatusEl) { groupStatusEl.innerHTML = 'Saved locally. GitHub token ' + (err.message === 'HTTP 401' ? 'expired — <a href="#" onclick="window.open(\'https://github.com/settings/tokens\');return false" style="color:#007bff">generate new one</a>' : 'sync failed (' + err.message + ')') + '. Check token in <a href="#" onclick="document.getElementById(\'syncSettingsBtn\').click();return false" style="color:#007bff">sync settings</a>.'; groupStatusEl.style.color = '#e67e22'; }
-      if (syncToGitHub._queued) { syncToGitHub._queued = false; syncToGitHub(); }
+      if (groupStatusEl) { groupStatusEl.innerHTML = 'Saved locally. GitHub token ' + (err.message.indexOf('HTTP 401') !== -1 ? 'expired — <a href="#" onclick="window.open(\'https://github.com/settings/tokens\');return false" style="color:#007bff">generate new one</a>' : 'sync failed (' + err.message + ')') + '. Check token in <a href="#" onclick="document.getElementById(\'syncSettingsBtn\').click();return false" style="color:#007bff">sync settings</a>.'; groupStatusEl.style.color = '#e67e22'; }
+      if (syncCategoriesToGitHub._queued) { syncCategoriesToGitHub._queued = false; syncCategoriesToGitHub(); }
     });
 }
 
@@ -4855,6 +4887,7 @@ function renderSubcategoryTagList() {
 }
 
 function renderCategoryManagement() {
+  console.log('[Trace] renderCategoryManagement() — groups:', (categoriesConfig.groups||[]).map(function(g){return g.name+':'+(g.images?g.images.length:0)}).join(', '), 'subcategories:', Object.keys(categoriesConfig.subcategoryMap||{}).length, 'brands:', (categoriesConfig.brands||[]).length);
   var groupList = document.getElementById('groupTagList');
   var brandList = document.getElementById('brandTagList');
   var colorList = document.getElementById('colorTagList');
@@ -6121,8 +6154,9 @@ function parseFacebookEmbed(html) {
 }
 
 function parseCaptionToFields(caption) {
+  console.log('[Trace] parseCaptionToFields() — caption length:', caption ? caption.length : 0, 'first 200 chars:', caption ? caption.substring(0, 200) : 'N/A');
   var result = { name: '', price: '', description: '', sizes: [], hashtags: [], category0: '', category1: '', category2: '' };
-  if (!caption) return result;
+  if (!caption) { console.log('[Trace] parseCaptionToFields() — empty caption'); return result; }
   var originalLines = caption.split('\n');
   var lines = [], origIdx = [];
   originalLines.forEach(function(l, i) {
@@ -6140,6 +6174,7 @@ function parseCaptionToFields(caption) {
   var sizeMatch = caption.match(/Sizes?\s*:?\s*([\w\s,\/]+)/i);
   if (sizeMatch) {
     result.sizes = sizeMatch[1].split(/[,\/\s]+/).map(function(s) { return s.trim(); }).filter(Boolean);
+    console.log('[Trace] parseCaptionToFields() — found sizes:', result.sizes.join(', '));
   }
   // Extract hashtags and map to categories
   var hashtagRegex = /#(\w+)/g;
@@ -6217,6 +6252,7 @@ function parseCaptionToFields(caption) {
     if (hashPos > pos && hashPos < descEnd) descEnd = hashPos;
     result.description = caption.substring(pos, descEnd).trim().replace(/^[\s\n]+/, '');
   }
+  console.log('[Trace] parseCaptionToFields() — result:', JSON.stringify({name:result.name, price:result.price, sizes:result.sizes.length, hashtags:result.hashtags.length, category0:result.category0, category1:result.category1, category2:result.category2}));
   return result;
 }
 
@@ -6379,6 +6415,7 @@ if (impb) impb.addEventListener('click', function() {
 // Save button
 var isb = document.getElementById('importSaveBtn');
 if (isb) isb.addEventListener('click', function() {
+  console.log('[Trace] importSaveBtn clicked');
   var statusEl = document.getElementById('importSaveStatus');
   if (statusEl) statusEl.textContent = 'Processing...';
   var name = document.getElementById('importName').value.trim();
@@ -6403,8 +6440,12 @@ if (isb) isb.addEventListener('click', function() {
   // Process images: resize each one
   var imagesToSave = [];
   var pending = importImageData.length;
+  var _saved = false;
   if (pending === 0) { imagesToSave = ['images/products/placeholder.svg']; }
   function finishSave() {
+    if (_saved) { console.log('[Trace] import finishSave() — already saved, skipping'); return; }
+    console.log('[Trace] import finishSave() — name:', name, 'price:', price, 'imagesToSave count:', imagesToSave.length);
+    _saved = true;
     clearTimeout(saveTimeout);
     var maxId = products.length > 0 ? Math.max.apply(null, products.map(function(p) { return p.id; })) : 0;
     var newProd = {
@@ -6422,6 +6463,7 @@ if (isb) isb.addEventListener('click', function() {
     products.push(newProd);
     saveProducts();
     renderAdminList();
+    renderProducts();
     if (statusEl) statusEl.textContent = '✓ Saved as "' + name + '" (ID: ' + newProd.id + ')';
     showToast('Product "' + name + '" saved!', 'success');
     // Reset
@@ -6430,38 +6472,47 @@ if (isb) isb.addEventListener('click', function() {
     document.getElementById('importPreview').style.display = 'none';
     document.getElementById('importFallback').style.display = 'none';
   }
-  if (pending === 0) { finishSave(); return; }
+  console.log('[Trace] importSaveBtn — pending images:', pending);
+  if (pending === 0) { console.log('[Trace] importSaveBtn — no images, saving directly'); finishSave(); return; }
   var proxyUrl = localStorage.getItem('stock_proxy_url') || '';
   var processed = 0;
   var saveTimeout = setTimeout(function() {
-    if (statusEl) statusEl.textContent = 'Image processing timed out. Saving without images.';
-    imagesToSave = ['images/products/placeholder.svg'];
-    finishSave();
+    if (!_saved) {
+      if (statusEl) statusEl.textContent = 'Image processing timed out. Saving without images.';
+      imagesToSave = ['images/products/placeholder.svg'];
+      finishSave();
+    }
   }, 30000);
   importImageData.forEach(function(img, idx) {
     var url = typeof img === 'object' && img.url ? img.url : (typeof img === 'string' ? img : '');
     if (!url || url.startsWith('data:')) {
-      if (url.startsWith('data:')) imagesToSave[idx] = url;
+      if (url.startsWith('data:')) { imagesToSave[idx] = url; console.log('[Trace] import image', idx, 'is data URL, kept inline'); }
       processed++;
+      console.log('[Trace] import image', idx, 'processed (inline/empty), total:', processed, '/', pending);
       if (processed === pending) finishSave();
       return;
     }
+    console.log('[Trace] import image', idx, 'downloading from:', url.substring(0, 80));
     // Download through worker proxy
     var downloadUrl = proxyUrl ? proxyUrl.replace(/\/+$/, '') + '/facebook/image?url=' + encodeURIComponent(url) : url;
     fetch(downloadUrl).then(function(r) {
-      if (!r.ok) return null;
+      if (!r.ok) { console.warn('[Trace] import image', idx, 'fetch failed with status:', r.status); return null; }
       return r.blob();
     }).then(function(blob) {
-      if (!blob) { imagesToSave[idx] = 'images/products/placeholder.svg'; processed++; if (processed === pending) finishSave(); return; }
+      if (!blob) { console.warn('[Trace] import image', idx, 'no blob, using placeholder'); imagesToSave[idx] = 'images/products/placeholder.svg'; processed++; console.log('[Trace] import image', idx, 'done (placeholder), total:', processed, '/', pending); if (processed === pending) finishSave(); return; }
       var file = new File([blob], 'import_' + idx + '.jpg', { type: blob.type || 'image/jpeg' });
+      console.log('[Trace] import image', idx, 'downloaded, blob size:', blob.size, 'resizing...');
       resizeImage(file, 800, 0.8, function(dataUrl) {
         imagesToSave[idx] = dataUrl;
         processed++;
+        console.log('[Trace] import image', idx, 'resized, total:', processed, '/', pending);
         if (processed === pending) finishSave();
       });
-    }).catch(function() {
+    }).catch(function(err) {
+      console.warn('[Trace] import image', idx, 'error:', err.message);
       imagesToSave[idx] = 'images/products/placeholder.svg';
       processed++;
+      console.log('[Trace] import image', idx, 'done (error->placeholder), total:', processed, '/', pending);
       if (processed === pending) finishSave();
     });
   });
