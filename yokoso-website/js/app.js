@@ -4591,21 +4591,49 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
   var token = localStorage.getItem('github_token');
   if (!token) { return Promise.reject(new Error('No token')); }
   statusEl = statusEl || document.getElementById('syncStatus');
-  return fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + filePath, {
-    headers: { 'Authorization': 'token ' + token }
+  var baseUrl = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO;
+  var authHeaders = { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' };
+  // Use Git Blob API (no 1MB limit like Contents API)
+  var blobSha, commitSha;
+  return fetch(baseUrl + '/git/blobs', {
+    method: 'POST', headers: authHeaders,
+    body: JSON.stringify({ content: encoded, encoding: 'base64' })
   })
   .then(function(r) {
-    if (r.status === 404) return null;
     if (r.status === 401) throw new Error('HTTP 401 (token expired or invalid)');
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   })
-  .then(function(data) {
-    var sha = data ? data.sha : null;
-    return fetch('https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + filePath, {
-      method: 'PUT',
-      headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: message, content: encoded, sha: sha, branch: GITHUB_BRANCH })
+  .then(function(blob) {
+    blobSha = blob.sha;
+    return fetch(baseUrl + '/git/refs/heads/' + GITHUB_BRANCH, { headers: authHeaders });
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(ref) {
+    return fetch(baseUrl + '/git/commits/' + ref.object.sha, { headers: authHeaders });
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(commit) {
+    commitSha = commit.sha;
+    var treeItems = (commit.tree.tree || []).filter(function(item) { return item.path !== filePath; });
+    treeItems.push({ path: filePath, mode: '100644', type: 'blob', sha: blobSha });
+    return fetch(baseUrl + '/git/trees', {
+      method: 'POST', headers: authHeaders,
+      body: JSON.stringify({ base_tree: commit.tree.sha, tree: treeItems })
+    });
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(tree) {
+    return fetch(baseUrl + '/git/commits', {
+      method: 'POST', headers: authHeaders,
+      body: JSON.stringify({ message: message, tree: tree.sha, parents: [commitSha] })
+    });
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(newCommit) {
+    return fetch(baseUrl + '/git/refs/heads/' + GITHUB_BRANCH, {
+      method: 'PATCH', headers: authHeaders,
+      body: JSON.stringify({ sha: newCommit.sha, force: false })
     });
   })
   .then(function(r) {
