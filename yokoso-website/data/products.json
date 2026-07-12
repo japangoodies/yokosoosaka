@@ -1391,22 +1391,22 @@
     "category2": "Uniqlo",
     "variants": {
       "Default": {
-        "stock": {
-          "M": 5,
-          "XL": 5,
-          "S": 5,
-          "L": 5
-        },
         "sizes": [
           "S",
           "M",
           "L",
           "XL"
-        ]
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5
+        }
       }
     },
     "name": "UNIQLO WASHABLE KNIT POLO SHIRT",
-    "category0": "MENS",
+    "category0": "WOMENS",
     "_colorOrder": [
       "Default"
     ],
