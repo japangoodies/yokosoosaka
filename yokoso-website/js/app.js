@@ -4731,7 +4731,6 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
     return r.json().then(function(refData) {
       console.log('[Sync] Ref updated to', refData.object.sha, 'for', filePath);
       if (filePath === GITHUB_PATH) {
-        localStorage.setItem('yokoso_pending_sync', 'false');
         localStorage.setItem('yokoso_sync_time', Date.now().toString());
       }
       if (statusEl) { statusEl.textContent = 'Synced ✓'; statusEl.style.color = '#28a745'; }
@@ -4763,6 +4762,7 @@ function forceSync() {
   doGitHubSync(GITHUB_PATH, encoded, 'Force-sync: ' + products.length + ' products from admin', statusEl, 0)
     .then(function() {
       console.log('[ForceSync] GitHub sync succeeded.');
+      localStorage.setItem('yokoso_pending_sync', 'false');
       // Also sync categories
       syncCategoriesToGitHub();
       showToast('Force sync complete! All devices will get the latest data.', 'success');
