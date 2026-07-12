@@ -1861,27 +1861,27 @@
     ],
     "variants": {
       "Default": {
-        "stock": {
-          "5": 5,
-          "6": 5,
-          "7": 5,
-          "8": 5,
-          "9": 5
-        },
         "sizes": [
           "5",
           "6",
           "7",
           "8",
           "9"
-        ]
+        ],
+        "stock": {
+          "5": 5,
+          "6": 5,
+          "7": 5,
+          "8": 5,
+          "9": 5
+        }
       }
     },
     "name": "CROCS SATURDAY ENAMEL BUCKLE - FRAPPE",
     "_colorOrder": [
       "Default"
     ],
-    "category0": "MENS",
+    "category0": "WOMENS",
     "category1": "Shoes",
     "deposit": "₱1000",
     "id": 47,
