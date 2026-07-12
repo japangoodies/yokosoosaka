@@ -4665,6 +4665,8 @@ function syncToGitHub() {
 }
 
 function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
+  attempt = attempt || 0;
+  var MAX_ATTEMPTS = 5;
   var token = localStorage.getItem('github_token');
   if (!token) { return Promise.reject(new Error('No token')); }
   statusEl = statusEl || document.getElementById('syncStatus');
@@ -4675,61 +4677,76 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
     if (!r.ok) {
       return r.text().then(function(body) {
         console.error('[Sync] ' + label + ' failed:', r.status, body);
-        throw new Error(label + ' HTTP ' + r.status + ': ' + body.slice(0, 200));
+        var err = new Error(label + ' HTTP ' + r.status + ': ' + body.slice(0, 200));
+        err.status = r.status;
+        throw err;
       });
     }
     return r.json();
   }
 
-  var blobSha, commitSha;
-  return fetch(baseUrl + '/git/blobs', {
-    method: 'POST', headers: authHeaders,
-    body: JSON.stringify({ content: encoded, encoding: 'base64' })
-  })
-  .then(function(r) { return checkResp(r, 'create blob'); })
-  .then(function(blob) {
-    blobSha = blob.sha;
-    return fetch(baseUrl + '/git/refs/heads/' + GITHUB_BRANCH, { headers: authHeaders });
-  })
-  .then(function(r) { return checkResp(r, 'get ref'); })
-  .then(function(ref) {
-    return fetch(baseUrl + '/git/commits/' + ref.object.sha, { headers: authHeaders });
-  })
-  .then(function(r) { return checkResp(r, 'get commit'); })
-  .then(function(commit) {
-    commitSha = commit.sha;
-    return fetch(baseUrl + '/git/trees/' + commit.tree.sha, { headers: authHeaders });
-  })
-  .then(function(r) { return checkResp(r, 'get tree'); })
-  .then(function(treeObj) {
-    var treeItems = (treeObj.tree || []).filter(function(item) { return item.path !== filePath; });
-    treeItems.push({ path: filePath, mode: '100644', type: 'blob', sha: blobSha });
-    return fetch(baseUrl + '/git/trees', {
+  // One full attempt: build the commit on whatever main HEAD is right now, then
+  // fast-forward the ref. If main moved under us (another sync or a code push),
+  // the fast-forward fails and we retry from the fresh head so we NEVER discard
+  // intervening commits (e.g. code fixes pushed to main).
+  function syncOnce() {
+    var blobSha, parentSha, parentTreeSha;
+    return fetch(baseUrl + '/git/blobs', {
       method: 'POST', headers: authHeaders,
-      body: JSON.stringify({ base_tree: treeObj.sha, tree: treeItems })
-    });
-  })
-  .then(function(r) { return checkResp(r, 'create tree'); })
-  .then(function(tree) {
-    return fetch(baseUrl + '/git/commits', {
-      method: 'POST', headers: authHeaders,
-      body: JSON.stringify({ message: message, tree: tree.sha, parents: [commitSha] })
-    });
-  })
-  .then(function(r) { return checkResp(r, 'create commit'); })
-  .then(function(newCommit) {
-    return fetch(baseUrl + '/git/refs/heads/' + GITHUB_BRANCH, {
-      method: 'PATCH', headers: authHeaders,
-      body: JSON.stringify({ sha: newCommit.sha, force: true })
-    });
-  })
-  .then(function(r) {
-    if (!r.ok) {
-      return r.text().then(function(body) {
-        throw new Error('update ref HTTP ' + r.status + ': ' + body.slice(0, 200));
+      body: JSON.stringify({ content: encoded, encoding: 'base64' })
+    })
+    .then(function(r) { return checkResp(r, 'create blob'); })
+    .then(function(blob) {
+      blobSha = blob.sha;
+      // Always read the LATEST branch head so we build on top of current main.
+      return fetch(baseUrl + '/git/refs/heads/' + GITHUB_BRANCH, { headers: authHeaders });
+    })
+    .then(function(r) { return checkResp(r, 'get ref'); })
+    .then(function(ref) {
+      parentSha = ref.object.sha;
+      return fetch(baseUrl + '/git/commits/' + parentSha, { headers: authHeaders });
+    })
+    .then(function(r) { return checkResp(r, 'get commit'); })
+    .then(function(commit) {
+      parentTreeSha = commit.tree.sha;
+      return fetch(baseUrl + '/git/trees/' + parentTreeSha, { headers: authHeaders });
+    })
+    .then(function(r) { return checkResp(r, 'get tree'); })
+    .then(function(treeObj) {
+      var treeItems = (treeObj.tree || []).filter(function(item) { return item.path !== filePath; });
+      treeItems.push({ path: filePath, mode: '100644', type: 'blob', sha: blobSha });
+      return fetch(baseUrl + '/git/trees', {
+        method: 'POST', headers: authHeaders,
+        body: JSON.stringify({ base_tree: parentTreeSha, tree: treeItems })
       });
-    }
-    return r.json().then(function(refData) {
+    })
+    .then(function(r) { return checkResp(r, 'create tree'); })
+    .then(function(tree) {
+      return fetch(baseUrl + '/git/commits', {
+        method: 'POST', headers: authHeaders,
+        body: JSON.stringify({ message: message, tree: tree.sha, parents: [parentSha] })
+      });
+    })
+    .then(function(r) { return checkResp(r, 'create commit'); })
+    .then(function(newCommit) {
+      // Fast-forward only (no force). This is the "rebase before push": it
+      // succeeds only if built on the current head; otherwise it 422s and we retry.
+      return fetch(baseUrl + '/git/refs/heads/' + GITHUB_BRANCH, {
+        method: 'PATCH', headers: authHeaders,
+        body: JSON.stringify({ sha: newCommit.sha, force: false })
+      });
+    })
+    .then(function(r) {
+      if (!r.ok) {
+        return r.text().then(function(body) {
+          var err = new Error('update ref HTTP ' + r.status + ': ' + body.slice(0, 200));
+          err.status = r.status;
+          throw err;
+        });
+      }
+      return r.json();
+    })
+    .then(function(refData) {
       console.log('[Sync] Ref updated to', refData.object.sha, 'for', filePath);
       if (filePath === GITHUB_PATH) {
         localStorage.setItem('yokoso_sync_time', Date.now().toString());
@@ -4737,6 +4754,16 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
       if (statusEl) { statusEl.textContent = 'Synced ✓'; statusEl.style.color = '#28a745'; }
       console.log('[Sync] doGitHubSync succeeded for', filePath);
     });
+  }
+
+  return syncOnce().catch(function(err) {
+    // 409/422 = branch moved between read and write. Rebase on the fresh head
+    // (which now includes any code fixes) and retry, instead of force-overwriting.
+    if ((err.status === 409 || err.status === 422) && attempt < MAX_ATTEMPTS - 1) {
+      console.warn('[Sync] Ref conflict (HTTP ' + err.status + '), rebasing on latest ' + GITHUB_BRANCH + ' and retrying (' + (attempt + 1) + '/' + (MAX_ATTEMPTS - 1) + ')');
+      return doGitHubSync(filePath, encoded, message, statusEl, attempt + 1);
+    }
+    throw err;
   });
 }
 
