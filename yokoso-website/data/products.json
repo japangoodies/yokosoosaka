@@ -1893,12 +1893,12 @@
     "id": 46,
     "deposit": "₱150",
     "category1": "Clothing",
-    "category0": "MENS",
+    "category0": "WOMENS",
     "_colorOrder": [
-      "Design 1",
+      "Design 4",
       "Design 2",
-      "Design 3",
-      "Design 4"
+      "Design 1",
+      "Design 3"
     ],
     "variants": {
       "Design 4": {
@@ -1911,18 +1911,18 @@
           "2XL",
           "3XL"
         ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/dxctpqbztnqaemcwqvtq.jpg"
-        ],
-        "stock": {
-          "S": 5,
-          "XS": 5,
-          "2XL": 5,
-          "3XL": 5,
-          "M": 5,
-          "XL": 5,
-          "L": 5
-        }
+        ]
       },
       "Design 2": {
         "sizes": [
@@ -1934,18 +1934,18 @@
           "2XL",
           "3XL"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/api7peqjt9qyy7ol5sgs.jpg"
-        ],
         "stock": {
           "XS": 5,
-          "2XL": 5,
           "S": 5,
-          "3XL": 5,
-          "XL": 5,
           "M": 5,
-          "L": 5
-        }
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/api7peqjt9qyy7ol5sgs.jpg"
+        ]
       },
       "Design 1": {
         "sizes": [
@@ -1957,18 +1957,18 @@
           "2XL",
           "3XL"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/tthlh0sxjljruwkr8np6.jpg"
-        ],
         "stock": {
           "XS": 5,
-          "2XL": 5,
           "S": 5,
-          "3XL": 5,
-          "XL": 5,
           "M": 5,
-          "L": 5
-        }
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/tthlh0sxjljruwkr8np6.jpg"
+        ]
       },
       "Design 3": {
         "sizes": [
@@ -1980,18 +1980,18 @@
           "2XL",
           "3XL"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/beowtbial52fq01lvuqi.jpg"
-        ],
         "stock": {
-          "3XL": 5,
-          "2XL": 5,
           "XS": 5,
           "S": 5,
+          "M": 5,
           "L": 5,
           "XL": 5,
-          "M": 5
-        }
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262282/beowtbial52fq01lvuqi.jpg"
+        ]
       }
     },
     "name": "UNIQLO X POPMART OVERSIZED FIT SHIRT",
