@@ -2051,48 +2051,6 @@
     "originalPrice": "₱3479.00"
   },
   {
-    "sizes": [],
-    "name": "CROCS SATURDAY ENAMEL BUCKLE - FRAPPE",
-    "variants": {
-      "Default": {
-        "sizes": [
-          "5",
-          "6",
-          "7",
-          "8",
-          "9"
-        ],
-        "stock": {
-          "5": 5,
-          "6": 5,
-          "7": 5,
-          "8": 5,
-          "9": 5
-        }
-      }
-    },
-    "category0": "WOMENS",
-    "stock": 25,
-    "_colorOrder": [
-      "Default"
-    ],
-    "id": 44,
-    "deposit": "₱1000",
-    "category1": "Shoes",
-    "price": "₱2500.00",
-    "available": true,
-    "originalPrice": "₱2495",
-    "color": "",
-    "description": "Sizes avail: W5 to W9\n2495.00 pesos only\n1000 DP TO SECURE ITEM",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783257152/sm0tedme5wxexzpyx4zc.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783257153/yblshekjafgvvzz4dkmk.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783257153/ui3tsv6wymbl267r4xqc.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783257153/jzdpefepy5a8tqcvysbp.jpg"
-    ],
-    "category2": "Crocs"
-  },
-  {
     "category2": "GU",
     "images": [
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782928933/vlw1iz2evnmxjnlljtat.jpg",
