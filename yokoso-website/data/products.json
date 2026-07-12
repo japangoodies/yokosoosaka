@@ -317,25 +317,25 @@
     ],
     "variants": {
       "Default": {
-        "stock": {
-          "7": 5,
-          "8": 5,
-          "9": 5,
-          "10": 5
-        },
         "sizes": [
           "7",
           "8",
           "9",
           "10"
-        ]
+        ],
+        "stock": {
+          "7": 5,
+          "8": 5,
+          "9": 5,
+          "10": 5
+        }
       }
     },
     "name": "CROCS SATURDAY ENAMEL BUCKLE - NAVY",
     "_colorOrder": [
       "Default"
     ],
-    "category0": "MENS",
+    "category0": "WOMENS",
     "deposit": "₱1000",
     "id": 52,
     "category1": "Shoes",
