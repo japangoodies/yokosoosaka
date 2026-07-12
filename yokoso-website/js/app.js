@@ -1608,11 +1608,10 @@ function loadProducts(callback) {
       }
     })
     .then(function() {
-    // Stage 2: Only use localStorage if CDN failed AND there are pending unsaved edits.
-    // If CDN loaded, it is always authoritative — otherwise stale localStorage
-    // (from a previous buggy saveProducts call) would perpetually override fresh data.
+    // Stage 2: If there are pending unsaved edits, localStorage is authoritative
+    // (CDN file may be stale from GitHub sync not yet propagated to Cloudflare Pages).
     var pend = localStorage.getItem('yokoso_pending_sync');
-    if (pend === 'true' && !cdnLoaded) {
+    if (pend === 'true') {
       var saved = localStorage.getItem('yokoso_products');
       if (saved) {
         try {
@@ -1683,15 +1682,15 @@ function loadProducts(callback) {
           return r.json();
         })
         .then(function(data) {
-          if (data && data.products && data.products.length > 0) {
+          var pend = localStorage.getItem('yokoso_pending_sync') === 'true';
+          if (data && data.products && data.products.length > 0 && !pend) {
             products = data.products;
             migrateProducts();
-            // Re-merge onSale from localStorage (worker is authoritative but onSale toggle is local)
+            // Re-merge onSale from localStorage
             var saved = localStorage.getItem('yokoso_products');
             if (saved) {
               try {
                 var localProds = JSON.parse(saved);
-                var pend = localStorage.getItem('yokoso_pending_sync') === 'true';
                 products.forEach(function(p) {
                   var lp = localProds.find(function(x) { return x.id === p.id; });
                   if (lp) {
