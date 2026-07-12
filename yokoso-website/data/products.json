@@ -1714,18 +1714,18 @@
           "2XL",
           "3XL"
         ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/i9micoyutw1enxuugoo6.jpg"
-        ],
-        "stock": {
-          "S": 5,
-          "XS": 5,
-          "2XL": 5,
-          "3XL": 5,
-          "XL": 5,
-          "M": 5,
-          "L": 5
-        }
+        ]
       },
       "BLACK": {
         "sizes": [
@@ -1737,22 +1737,22 @@
           "2XL",
           "3XL"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/f26ayanhwcjka8jkzgvq.jpg"
-        ],
         "stock": {
-          "M": 5,
-          "XL": 5,
-          "L": 5,
-          "S": 5,
           "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
           "2XL": 5,
           "3XL": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262764/f26ayanhwcjka8jkzgvq.jpg"
+        ]
       }
     },
     "name": "GU NO COLLAR VEST",
-    "category0": "MENS",
+    "category0": "WOMENS",
     "_colorOrder": [
       "BEIGE",
       "BLACK"
