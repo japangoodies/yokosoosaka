@@ -1761,9 +1761,10 @@ function loadCategories() {
       console.log('[Trace] loadCategories() — final categoriesConfig groups:', (categoriesConfig.groups||[]).length, 'subcategoryMap keys:', Object.keys(categoriesConfig.subcategoryMap||{}).length, 'brands:', (categoriesConfig.brands||[]).length, 'sizes:', (categoriesConfig.sizes||[]).length);
       localStorage.setItem('yokoso_categories', JSON.stringify(categoriesConfig));
 
-      // Re-assign category0 for products using authoritative categoriesConfig
-      // (mutates in-memory only; loadProducts() handles localStorage saves)
+      // Backfill category0 only for products that don't have it yet
+      // (preserves admin-set category0 values)
       products.forEach(function(p) {
+        if (p.category0) return;
         var assigned = false;
         (categoriesConfig.groups || []).forEach(function(g) {
           if (assigned) return;
