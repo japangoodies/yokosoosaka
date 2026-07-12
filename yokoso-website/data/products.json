@@ -1590,7 +1590,7 @@
     "id": 51,
     "deposit": "₱250",
     "category1": "Clothing",
-    "category0": "MENS",
+    "category0": "WOMENS",
     "_colorOrder": [
       "PINK",
       "BLUE"
@@ -1606,31 +1606,31 @@
           "2XL",
           "3XL"
         ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/exzpulxhrcqhfb6cvisx.jpg"
-        ],
-        "stock": {
-          "L": 5,
-          "M": 5,
-          "XL": 5,
-          "3XL": 5,
-          "XS": 5,
-          "2XL": 5,
-          "S": 5
-        }
+        ]
       },
       "BLUE": {
         "sizes": [
           "S",
           "M"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/mqcmlvsiuwiepqhgap5h.jpg"
-        ],
         "stock": {
           "S": 5,
           "M": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263017/mqcmlvsiuwiepqhgap5h.jpg"
+        ]
       }
     },
     "name": "UNIQLO AIRISM UV CUT MESH FULLZIP PARKA",
