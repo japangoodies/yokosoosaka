@@ -1768,11 +1768,11 @@
     "category1": "Clothing",
     "id": 48,
     "deposit": "₱150",
-    "category0": "MENS",
+    "category0": "WOMENS",
     "_colorOrder": [
       "BEIGE",
-      "BLACK",
-      "GRAY"
+      "GRAY",
+      "BLACK"
     ],
     "variants": {
       "BEIGE": {
@@ -1783,16 +1783,16 @@
           "L",
           "XL"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/hgwiblpeu5lo3skgctj6.jpg"
-        ],
         "stock": {
           "XS": 5,
           "S": 5,
-          "L": 5,
           "M": 5,
+          "L": 5,
           "XL": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/hgwiblpeu5lo3skgctj6.jpg"
+        ]
       },
       "GRAY": {
         "sizes": [
@@ -1802,16 +1802,16 @@
           "XL",
           "3XL"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/ajip1j7wn1uwbmian8ne.jpg"
-        ],
         "stock": {
-          "3XL": 5,
           "S": 5,
+          "M": 5,
           "L": 5,
           "XL": 5,
-          "M": 5
-        }
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/ajip1j7wn1uwbmian8ne.jpg"
+        ]
       },
       "BLACK": {
         "sizes": [
@@ -1820,15 +1820,15 @@
           "L",
           "XL"
         ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5
+        },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262645/vlvt6fljmuxjngerq9mt.jpg"
-        ],
-        "stock": {
-          "L": 5,
-          "S": 5,
-          "XL": 5,
-          "M": 5
-        }
+        ]
       }
     },
     "name": "GU DRY STRETCH ANKLE PANTS",
