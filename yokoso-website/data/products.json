@@ -3463,21 +3463,18 @@
     "deposit": "₱250",
     "id": 26,
     "_colorOrder": [
-      "Design 2",
       "Design 3",
-      "Design 1",
-      "Design 5",
-      "Design 6",
       "Design 7",
+      "Design 2",
+      "Design 5",
+      "Design 1",
+      "Design 6",
       "Design 4"
     ],
     "stock": 235,
-    "category0": "MENS",
+    "category0": "WOMENS",
     "variants": {
       "Design 3": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/iot4ferqsqmld4cskioj.jpg"
-        ],
         "sizes": [
           "XS",
           "M",
@@ -3487,27 +3484,18 @@
           "3XL"
         ],
         "stock": {
-          "L": 5,
-          "M": 5,
-          "XL": 5,
-          "3XL": 5,
-          "2XL": 5,
-          "XS": 5
-        }
-      },
-      "Design 7": {
-        "stock": {
-          "M": 5,
-          "XL": 5,
-          "L": 5,
-          "S": 5,
           "XS": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
           "2XL": 5,
           "3XL": 5
         },
         "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947962/tpzgsnrsk03fgfbwi8vo.jpg"
-        ],
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/iot4ferqsqmld4cskioj.jpg"
+        ]
+      },
+      "Design 7": {
         "sizes": [
           "XS",
           "S",
@@ -3516,6 +3504,18 @@
           "XL",
           "2XL",
           "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947962/tpzgsnrsk03fgfbwi8vo.jpg"
         ]
       },
       "Design 2": {
@@ -3528,18 +3528,18 @@
           "2XL",
           "3XL"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/hqvhcrfqgtx5ohiytyoj.jpg"
-        ],
         "stock": {
-          "3XL": 5,
-          "2XL": 5,
           "XS": 5,
           "S": 5,
+          "M": 5,
           "L": 5,
           "XL": 5,
-          "M": 5
-        }
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/hqvhcrfqgtx5ohiytyoj.jpg"
+        ]
       },
       "Design 5": {
         "sizes": [
@@ -3551,32 +3551,20 @@
           "2XL",
           "3XL"
         ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/pa6tmeqiym4vxxziwmtr.jpg"
-        ],
-        "stock": {
-          "XL": 5,
-          "M": 5,
-          "L": 5,
-          "2XL": 5,
-          "XS": 5,
-          "S": 5,
-          "3XL": 5
-        }
+        ]
       },
       "Design 1": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/s9esojvkbsrcznhyeq68.jpg"
-        ],
-        "stock": {
-          "3XL": 5,
-          "S": 5,
-          "2XL": 5,
-          "XS": 5,
-          "L": 5,
-          "M": 5,
-          "XL": 5
-        },
         "sizes": [
           "XS",
           "S",
@@ -3585,6 +3573,18 @@
           "XL",
           "2XL",
           "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/s9esojvkbsrcznhyeq68.jpg"
         ]
       },
       "Design 6": {
@@ -3596,22 +3596,19 @@
           "XL",
           "2XL"
         ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5
+        },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/pl225lt8rgcxd16b4uft.jpg"
-        ],
-        "stock": {
-          "L": 5,
-          "M": 5,
-          "XL": 5,
-          "2XL": 5,
-          "XS": 5,
-          "S": 5
-        }
+        ]
       },
       "Design 4": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/zsoyigktjto2ptxaeqs6.jpg"
-        ],
         "sizes": [
           "XS",
           "S",
@@ -3622,14 +3619,17 @@
           "3XL"
         ],
         "stock": {
-          "S": 5,
-          "2XL": 5,
           "XS": 5,
-          "3XL": 5,
+          "S": 5,
           "M": 5,
+          "L": 5,
           "XL": 5,
-          "L": 5
-        }
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1781947961/zsoyigktjto2ptxaeqs6.jpg"
+        ]
       }
     },
     "name": "UNIQLO WASHABLE KNIT POLO SHIRT",
