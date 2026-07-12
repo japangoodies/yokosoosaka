@@ -2265,17 +2265,14 @@
     "id": 42,
     "_colorOrder": [
       "NATURAL",
-      "DARK BLUE",
-      "BLUE"
+      "BLUE",
+      "DARK BLUE"
     ],
     "stock": 205,
-    "category0": "MENS",
+    "category0": "WOMENS",
     "name": "UNIQLO JWA BAGGY JEANS",
     "variants": {
       "NATURAL": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782757829/qkecbzmepepxc6d56q5r.jpg"
-        ],
         "sizes": [
           "21",
           "22",
@@ -2311,9 +2308,23 @@
           "34": 5,
           "35": 5,
           "36": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782757829/qkecbzmepepxc6d56q5r.jpg"
+        ]
       },
       "BLUE": {
+        "sizes": [
+          "21",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36"
+        ],
         "stock": {
           "21": 5,
           "29": 5,
@@ -2327,23 +2338,9 @@
         },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782757830/d66xo2ddanfdcdi6lzlt.jpg"
-        ],
-        "sizes": [
-          "21",
-          "29",
-          "30",
-          "31",
-          "32",
-          "33",
-          "34",
-          "35",
-          "36"
         ]
       },
       "DARK BLUE": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782757829/sv66ouoqjjrqtwut8xno.jpg"
-        ],
         "sizes": [
           "21",
           "22",
@@ -2379,7 +2376,10 @@
           "34": 5,
           "35": 5,
           "36": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782757829/sv66ouoqjjrqtwut8xno.jpg"
+        ]
       }
     },
     "sizes": []
