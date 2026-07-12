@@ -2060,7 +2060,7 @@ function renderCarousel() {
         slides[idx].classList.remove('active');
         idx = (idx + 1) % slides.length;
         slides[idx].classList.add('active');
-      }, 3000);
+      }, 5000);
       window._carouselIntervals = window._carouselIntervals || [];
       window._carouselIntervals.push(interval);
     }, stagger);
