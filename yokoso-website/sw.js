@@ -1,5 +1,5 @@
-var CACHE = 'japangoodies-v11';
-var DATA_CACHE = 'japangoodies-data-v11';
+var CACHE = 'japangoodies-v12';
+var DATA_CACHE = 'japangoodies-data-v12';
 
 self.addEventListener('install', function(e) {
   e.waitUntil(
@@ -8,7 +8,7 @@ self.addEventListener('install', function(e) {
         '.',
         'index.html',
         'css/style.css?v=2',
-        'js/app.js?v=20260713',
+        'js/app.js?v=20260714',
         'manifest.json'
       ]);
     })
