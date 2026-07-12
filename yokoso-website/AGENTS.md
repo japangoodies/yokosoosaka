@@ -22,7 +22,8 @@ Now using committed `data/products.json` as primary source instead
 - `loadProducts()`: Fetches file via `fetch('data/products.json?_=' + Date.now())` → checks localStorage for `yokoso_pending_sync` flag → uses localStorage only if pending edits exist → falls back to defaults
 - `loadCategories()`: Same pattern with `data/categories.json`
 - `saveProducts()`: Saves to localStorage, sets `yokoso_pending_sync = 'true'`, tries Firebase, triggers `syncToGitHub()` if auto-sync enabled
-- `syncToGitHub()`: PUTs `data/products.json` to repo via GitHub API, on success clears `yokoso_pending_sync = 'false'`
+- `syncToGitHub()`: PUTs `data/products.json` to repo via GitHub API. **Does NOT clear `yokoso_pending_sync`** — localStorage stays authoritative until a manual Force Sync
+- `forceSync()`: Pushes localStorage → Worker + GitHub, then clears `yokoso_pending_sync = 'false'` (only place that clears the flag)
 - `syncCategoriesToGitHub()`: PUTs `data/categories.json` to repo via GitHub API (triggered by `saveCategoriesConfig()` if auto-sync on)
 - Admin panel on login auto-detects unsynced localStorage data and migrates it
 
@@ -207,6 +208,23 @@ Now also syncs `data/categories.json` automatically
 - **HTML updated**: manifest link, apple-touch-icon, theme-color meta
 - **JS updated**: service worker registration at end of init
 - **Service worker**: cache-first for static assets, network-first for `data/*.json` and API calls
+
+## Session History (Jun 13, 2026)
+
+### Fixed: Added/updated products vanish after page refresh
+- **Problem**: Admin-added products disappeared on refresh. Two compounding bugs:
+  1. `loadProducts()` Stage 2 used `if (pend === 'true' && !cdnLoaded)` — when the CDN file loaded (`cdnLoaded=true`), pending localStorage edits were discarded, so unsynced products were lost.
+  2. `syncToGitHub()` cleared `yokoso_pending_sync='false'` on auto-sync, which let Stage 3 fetch the Worker. The Worker (`yokoso-stock-proxy`) returns `0` products (push fails), so once `pend` was cleared the empty Worker could not wipe data but the discarded localStorage already lost the products.
+- **Fix**:
+  - Stage 2 condition changed to `if (pend === 'true')` (localStorage authoritative whenever pending edits exist, regardless of CDN).
+  - Stage 3 Worker override guarded with `&& !pend` (only trusts Worker when no pending edits).
+  - Removed `yokoso_pending_sync='false'` clear from `syncToGitHub()`; added it only to `forceSync()` success handler.
+  - Removed `autoSyncEnabled` gate blocking `saveProducts()`/`saveCategoriesConfig()` so saves always persist to localStorage + GitHub.
+  - Added color hex mappings (khaki, dark blue, light blue, natural, linen) to `_colorHexMap`.
+  - Bumped cache buster: `index.html` `app.js?v=20260713`, `sw.js` `japangoodies-v11`.
+- **Deploy**: Cloudflare Pages GitHub auto-deploy was serving stale code. Deployed directly with `npx wrangler pages deploy yokoso-website --project-name japangoodies --branch main` (auth: shayera019@gmail.com). Verified live `app.js` has fixes (`!cdnLoaded` absent, single pend-clear only in forceSync).
+- **Note**: Worker `yokoso-stock-proxy` returns 0 products (broken) — cross-device live sync is currently non-functional; single-device persistence via localStorage + GitHub `data/products.json` works.
+- **Files**: `js/app.js`, `index.html`, `sw.js`, `AGENTS.md`
 
 ## Session History (Jun 04, 2026)
 
