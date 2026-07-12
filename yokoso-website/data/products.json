@@ -3130,11 +3130,11 @@
   },
   {
     "_colorOrder": [
+      "Design 2",
       "Design 1",
-      "Design 3",
-      "Design 2"
+      "Design 3"
     ],
-    "category0": "MENS",
+    "category0": "KIDS",
     "stock": 105,
     "category1": "Clothing",
     "deposit": "₱150",
@@ -3142,6 +3142,15 @@
     "sizes": [],
     "variants": {
       "Design 2": {
+        "sizes": [
+          "100",
+          "110",
+          "120",
+          "130",
+          "140",
+          "150",
+          "160"
+        ],
         "stock": {
           "100": 5,
           "110": 5,
@@ -3153,7 +3162,9 @@
         },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747840/dv5xzvgcygogdhtiis5q.jpg"
-        ],
+        ]
+      },
+      "Design 1": {
         "sizes": [
           "100",
           "110",
@@ -3162,11 +3173,6 @@
           "140",
           "150",
           "160"
-        ]
-      },
-      "Design 1": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747841/fvi1dh1m4gsdc3l62fgj.jpg"
         ],
         "stock": {
           "100": 5,
@@ -3177,14 +3183,8 @@
           "150": 5,
           "160": 5
         },
-        "sizes": [
-          "100",
-          "110",
-          "120",
-          "130",
-          "140",
-          "150",
-          "160"
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747841/fvi1dh1m4gsdc3l62fgj.jpg"
         ]
       },
       "Design 3": {
@@ -3197,9 +3197,6 @@
           "150",
           "160"
         ],
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747840/wel9diistfpez7cnctrl.jpg"
-        ],
         "stock": {
           "100": 5,
           "110": 5,
@@ -3208,7 +3205,10 @@
           "140": 5,
           "150": 5,
           "160": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782747840/wel9diistfpez7cnctrl.jpg"
+        ]
       }
     },
     "name": "UNIQLO KIDS CECILIE BAHNSEN GRAPHIC SHIRT",
