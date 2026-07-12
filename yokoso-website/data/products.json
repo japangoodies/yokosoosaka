@@ -2786,41 +2786,29 @@
     "category2": "Uniqlo",
     "variants": {
       "PINK": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
         "stock": {
-          "3XL": 5,
-          "S": 5,
           "XS": 5,
-          "2XL": 5,
+          "S": 5,
+          "M": 5,
           "L": 5,
           "XL": 5,
-          "M": 5
+          "2XL": 5,
+          "3XL": 5
         },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/mr3r24yhprm5bx0nqgyq.jpg"
-        ],
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
         ]
       },
       "WHITE": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751148/sgqsgzrjk3idbkzhwajk.jpg"
-        ],
-        "stock": {
-          "2XL": 5,
-          "XS": 5,
-          "S": 5,
-          "3XL": 5,
-          "XL": 5,
-          "M": 5,
-          "L": 5
-        },
         "sizes": [
           "XS",
           "S",
@@ -2829,12 +2817,21 @@
           "XL",
           "2XL",
           "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751148/sgqsgzrjk3idbkzhwajk.jpg"
         ]
       },
       "BLACK": {
-        "images": [
-          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/v96vmbuzk0walh9hxc0n.jpg"
-        ],
         "sizes": [
           "XS",
           "S",
@@ -2845,36 +2842,39 @@
           "3XL"
         ],
         "stock": {
-          "XL": 5,
+          "XS": 5,
+          "S": 5,
           "M": 5,
           "L": 5,
-          "S": 5,
+          "XL": 5,
           "2XL": 5,
-          "XS": 5,
           "3XL": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/v96vmbuzk0walh9hxc0n.jpg"
+        ]
       },
       "GRAY": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
         "stock": {
-          "XL": 5,
+          "XS": 5,
+          "S": 5,
           "M": 5,
           "L": 5,
-          "S": 5,
-          "XS": 5,
+          "XL": 5,
           "2XL": 5,
           "3XL": 5
         },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782751146/swy8bwgu2ysaavvouwwn.jpg"
-        ],
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL",
-          "3XL"
         ]
       }
     },
@@ -2883,13 +2883,13 @@
     "category1": "Clothing",
     "id": 34,
     "deposit": "₱200",
-    "category0": "MENS",
+    "category0": "WOMENS",
     "stock": 140,
     "_colorOrder": [
       "PINK",
+      "WHITE",
       "BLACK",
-      "GRAY",
-      "WHITE"
+      "GRAY"
     ]
   },
   {
