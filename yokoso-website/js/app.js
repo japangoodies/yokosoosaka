@@ -1229,6 +1229,25 @@ function exportOrdersCSV() {
     })
     .catch(function(e) { showCartNotification('Export error: ' + (e.message || '')); });
 }
+
+function clearAllOrders() {
+  if (!isProxyReady()) { showToast('Proxy not configured. Set Stock Proxy URL in Config tab.', 'error'); return; }
+  if (!confirm('Delete ALL orders? This cannot be undone.')) return;
+  if (!confirm('Are you sure? All order history will be permanently deleted.')) return;
+  showToast('Clearing all orders...', 'info');
+  fetch(proxyUrl('orders/clear-all'))
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      showToast('Deleted ' + (data.deleted || 0) + ' orders.', 'success');
+      loadOrders();
+    })
+    .catch(function(err) {
+      showToast('Failed to clear orders: ' + err.message, 'error');
+    });
+}
 // ---- END DEPOSIT & CHECKOUT ----
 
 function migrateCategoriesConfig(cfg) {
