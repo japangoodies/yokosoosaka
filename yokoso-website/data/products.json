@@ -3048,7 +3048,7 @@
   },
   {
     "stock": 30,
-    "category0": "MENS",
+    "category0": "WOMENS",
     "_colorOrder": [
       "Default"
     ],
@@ -3059,14 +3059,6 @@
     "name": "GU STRAP BALLET SNEAKER",
     "variants": {
       "Default": {
-        "stock": {
-          "XS": 5,
-          "2XL": 5,
-          "S": 5,
-          "L": 5,
-          "XL": 5,
-          "M": 5
-        },
         "sizes": [
           "XS",
           "S",
@@ -3074,7 +3066,15 @@
           "L",
           "XL",
           "2XL"
-        ]
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5
+        }
       }
     },
     "images": [
