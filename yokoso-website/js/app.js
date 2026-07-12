@@ -1857,6 +1857,18 @@ function saveProducts() {
   } else {
     console.log('[Save] Auto-sync not enabled or no token. Token exists:', !!localStorage.getItem('github_token'));
   }
+  // Push to worker for cross-device real-time sync
+  if (isProxyReady()) {
+    var now = Date.now();
+    localStorage.setItem('yokoso_last_product_sync', String(now));
+    fetch(proxyUrl('products'), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ products: products, updatedAt: now })
+    }).then(function(r) {
+      if (r.ok) console.log('[Sync] Products pushed to worker');
+    }).catch(function(err) { console.warn('[Sync] Worker push failed:', err.message); });
+  }
   // Show commit reminder in admin panel
   var reminder = document.getElementById('commitReminder');
   if (!reminder) {
@@ -6007,6 +6019,38 @@ loadProducts(function() {
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function() {});
 }
+
+// Cross-device product sync: poll worker every 30s for updates
+function pollWorkerProducts() {
+  if (!isProxyReady()) return;
+  var lastSync = parseInt(localStorage.getItem('yokoso_last_product_sync') || '0', 10);
+  fetch(proxyUrl('products'))
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      if (data && data.products && data.products.length > 0 && data.updatedAt > lastSync) {
+        var mergeCount = 0;
+        data.products.forEach(function(wp) {
+          var idx = products.findIndex(function(p) { return p.id === wp.id; });
+          if (idx !== -1) {
+            products[idx] = wp;
+            mergeCount++;
+          }
+        });
+        if (mergeCount > 0) {
+          localStorage.setItem('yokoso_last_product_sync', String(data.updatedAt));
+          renderProducts();
+          console.log('[Sync] Poll: merged ' + mergeCount + ' products from worker');
+        }
+      }
+    })
+    .catch(function() {});
+}
+setInterval(pollWorkerProducts, 30000);
+// Also poll immediately after load
+setTimeout(pollWorkerProducts, 2000);
 
 // PWA install prompt
 var deferredPrompt = null;

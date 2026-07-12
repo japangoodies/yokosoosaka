@@ -951,6 +951,28 @@ async function handleRequest(request, env) {
       }
     }
 
+    // PUT /products — save products data to KV for cross-device sync
+    if (request.method === 'PUT' && parts.length === 1 && parts[0] === 'products') {
+      if (!env || !env.ORDERS_KV) {
+        return new Response(JSON.stringify({ error: 'KV not available' }), { status: 500, headers: corsHeaders(origin) });
+      }
+      const body = await request.json();
+      await env.ORDERS_KV.put('products_data', JSON.stringify({
+        products: body.products,
+        updatedAt: body.updatedAt || Date.now()
+      }));
+      return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders(origin) });
+    }
+
+    // GET /products — get products data from KV
+    if (request.method === 'GET' && parts.length === 1 && parts[0] === 'products') {
+      if (!env || !env.ORDERS_KV) {
+        return new Response(JSON.stringify({ products: [], updatedAt: 0 }), { headers: corsHeaders(origin) });
+      }
+      const data = await env.ORDERS_KV.get('products_data', { type: 'json' }).catch(() => null);
+      return new Response(JSON.stringify(data || { products: [], updatedAt: 0 }), { headers: corsHeaders(origin) });
+    }
+
     return new Response(JSON.stringify({ error: 'route_not_found' }), { status: 404, headers: corsHeaders(origin) });
   } catch (e) {
     return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders(origin) });
