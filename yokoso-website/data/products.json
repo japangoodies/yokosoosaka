@@ -2,7 +2,7 @@
   {
     "id": 67,
     "name": "GU 2-WAY LONG BELT BAG",
-    "category0": "MENS",
+    "category0": "WOMENS",
     "category1": "Accesories",
     "category2": "GU",
     "variants": {
@@ -301,6 +301,47 @@
     "color": "",
     "sizes": [],
     "stock": 70,
+    "onSale": true
+  },
+  {
+    "price": "₱2150.00",
+    "available": true,
+    "originalPrice": "₱2145.00",
+    "description": "Sizes avail: M7 M8 M9 M10\n2150.00 pesos only\n1000 DP TO SECURE ITEM",
+    "category2": "Crocs",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263555/x6jqb5wsddun0dlqtlew.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263555/jdtmmqwwkhdthneki6jd.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263555/fx6kvc7xaj1sxibvjdp1.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263556/kbvzec0ydfzm40gbiclm.jpg"
+    ],
+    "variants": {
+      "Default": {
+        "stock": {
+          "7": 5,
+          "8": 5,
+          "9": 5,
+          "10": 5
+        },
+        "sizes": [
+          "7",
+          "8",
+          "9",
+          "10"
+        ]
+      }
+    },
+    "name": "CROCS SATURDAY ENAMEL BUCKLE - NAVY",
+    "_colorOrder": [
+      "Default"
+    ],
+    "category0": "MENS",
+    "deposit": "₱1000",
+    "id": 52,
+    "category1": "Shoes",
+    "color": "",
+    "sizes": [],
+    "stock": 20,
     "onSale": true
   },
   {
@@ -1544,47 +1585,6 @@
     "color": "",
     "sizes": [],
     "stock": 15
-  },
-  {
-    "price": "₱2150.00",
-    "available": true,
-    "originalPrice": "₱2145.00",
-    "description": "Sizes avail: M7 M8 M9 M10\n2150.00 pesos only\n1000 DP TO SECURE ITEM",
-    "category2": "Crocs",
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263555/x6jqb5wsddun0dlqtlew.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263555/jdtmmqwwkhdthneki6jd.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263555/fx6kvc7xaj1sxibvjdp1.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783263556/kbvzec0ydfzm40gbiclm.jpg"
-    ],
-    "variants": {
-      "Default": {
-        "stock": {
-          "7": 5,
-          "8": 5,
-          "9": 5,
-          "10": 5
-        },
-        "sizes": [
-          "7",
-          "8",
-          "9",
-          "10"
-        ]
-      }
-    },
-    "name": "CROCS SATURDAY ENAMEL BUCKLE - NAVY",
-    "_colorOrder": [
-      "Default"
-    ],
-    "category0": "MENS",
-    "deposit": "₱1000",
-    "id": 52,
-    "category1": "Shoes",
-    "color": "",
-    "sizes": [],
-    "stock": 20,
-    "onSale": true
   },
   {
     "id": 51,
