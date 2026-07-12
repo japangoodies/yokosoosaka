@@ -6021,9 +6021,9 @@ if ('serviceWorker' in navigator) {
 }
 
 // Cross-device product sync: poll worker every 30s for updates
-function pollWorkerProducts() {
+function pollWorkerProducts(skipTimestampCheck) {
   if (!isProxyReady()) return;
-  var lastSync = parseInt(localStorage.getItem('yokoso_last_product_sync') || '0', 10);
+  var lastSync = skipTimestampCheck ? 0 : parseInt(localStorage.getItem('yokoso_last_product_sync') || '0', 10);
   fetch(proxyUrl('products'))
     .then(function(r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -6048,9 +6048,9 @@ function pollWorkerProducts() {
     })
     .catch(function() {});
 }
-setInterval(pollWorkerProducts, 30000);
-// Also poll immediately after load
-setTimeout(pollWorkerProducts, 2000);
+setInterval(function() { pollWorkerProducts(); }, 30000);
+// Initial load: always merge from worker (overrides stale CDN data)
+setTimeout(function() { pollWorkerProducts(true); }, 2000);
 
 // PWA install prompt
 var deferredPrompt = null;
