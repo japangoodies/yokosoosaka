@@ -351,7 +351,7 @@
     "category1": "Clothing",
     "category2": "Uniqlo",
     "variants": {
-      "Default": {
+      "BLACK": {
         "sizes": [
           "XS",
           "S",
@@ -371,7 +371,60 @@
           "2XL": 5,
           "3XL": 5,
           "4XL": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783880643/m1lujwvlormtc1jmqsho.jpg"
+        ]
+      },
+      "BROWN": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783880643/isk5yjmaqnxxdq2tequk.jpg"
+        ]
+      },
+      "BEIGE": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL",
+          "4XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5,
+          "4XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783880643/vvza1f5j80ij9ump2b3l.jpg"
+        ]
       }
     },
     "price": "₱980.00",
@@ -385,7 +438,9 @@
     "available": true,
     "onSale": false,
     "_colorOrder": [
-      "Default"
+      "BLACK",
+      "BROWN",
+      "BEIGE"
     ],
     "deposit": "₱250",
     "originalPrice": "₱975.00"
