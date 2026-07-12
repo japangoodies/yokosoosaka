@@ -1638,21 +1638,58 @@ function loadProducts(callback) {
     localStorage.setItem('yokoso_products', JSON.stringify(products));
     console.log('[Debug] After Stage 2, products.length =', products.length);
 
-    // Stage 3: Firebase sync (if available)
-    // CDN is authoritative — only write to Firebase (don't let stale Firebase data override)
-    if (fbDB) {
-      fbDB.collection(FB_COLLECTION).doc(FB_DOC).get()
-        .then(function(doc) {
-          if (!doc.exists || !doc.data().items || !doc.data().items.length) {
-            fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(function() {});
-          }
-          done();
+    // Stage 3: Override with worker data (authoritative — always has latest edits)
+    function afterWorkerCheck() {
+      // Stage 4: Firebase sync (if available)
+      if (fbDB) {
+        fbDB.collection(FB_COLLECTION).doc(FB_DOC).get()
+          .then(function(doc) {
+            if (!doc.exists || !doc.data().items || !doc.data().items.length) {
+              fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(function() {});
+            }
+            done();
+          })
+          .catch(function() { done(); });
+        setTimeout(done, 3000);
+      } else {
+        console.log('[Debug] Before done(), products.length =', products.length);
+        done();
+      }
+    }
+
+    if (isProxyReady()) {
+      fetch(proxyUrl('products'))
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
         })
-        .catch(function() { done(); });
-      setTimeout(done, 3000);
+        .then(function(data) {
+          if (data && data.products && data.products.length > 0) {
+            products = data.products;
+            migrateProducts();
+            // Re-merge onSale from localStorage (worker is authoritative but onSale toggle is local)
+            var saved = localStorage.getItem('yokoso_products');
+            if (saved) {
+              try {
+                var localProds = JSON.parse(saved);
+                var pend = localStorage.getItem('yokoso_pending_sync') === 'true';
+                products.forEach(function(p) {
+                  var lp = localProds.find(function(x) { return x.id === p.id; });
+                  if (lp) {
+                    if (lp.onSale === true) p.onSale = true;
+                    else if (lp.onSale === false && pend) delete p.onSale;
+                  }
+                });
+              } catch(e) {}
+            }
+            console.log('[Load] Overrode with worker data: ' + products.length + ' products');
+          }
+          localStorage.setItem('yokoso_products', JSON.stringify(products));
+          afterWorkerCheck();
+        })
+        .catch(function() { afterWorkerCheck(); });
     } else {
-      console.log('[Debug] Before done(), products.length =', products.length);
-      done();
+      afterWorkerCheck();
     }
   });
 
@@ -1859,12 +1896,10 @@ function saveProducts() {
   }
   // Push to worker for cross-device real-time sync
   if (isProxyReady()) {
-    var now = Date.now();
-    localStorage.setItem('yokoso_last_product_sync', String(now));
     fetch(proxyUrl('products'), {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ products: products, updatedAt: now })
+      body: JSON.stringify({ products: products, updatedAt: Date.now() })
     }).then(function(r) {
       if (r.ok) console.log('[Sync] Products pushed to worker');
     }).catch(function(err) { console.warn('[Sync] Worker push failed:', err.message); });
@@ -6020,10 +6055,10 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function() {});
 }
 
-// Cross-device product sync: poll worker every 30s for updates
-function pollWorkerProducts(skipTimestampCheck) {
+// Cross-device product sync: poll worker every 30s for updates made after page load
+function pollWorkerProducts() {
   if (!isProxyReady()) return;
-  var lastSync = skipTimestampCheck ? 0 : parseInt(localStorage.getItem('yokoso_last_product_sync') || '0', 10);
+  var lastSync = parseInt(localStorage.getItem('yokoso_last_poll') || '0', 10);
   fetch(proxyUrl('products'))
     .then(function(r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -6040,7 +6075,7 @@ function pollWorkerProducts(skipTimestampCheck) {
           }
         });
         if (mergeCount > 0) {
-          localStorage.setItem('yokoso_last_product_sync', String(data.updatedAt));
+          localStorage.setItem('yokoso_last_poll', String(data.updatedAt));
           renderProducts();
           console.log('[Sync] Poll: merged ' + mergeCount + ' products from worker');
         }
@@ -6048,9 +6083,7 @@ function pollWorkerProducts(skipTimestampCheck) {
     })
     .catch(function() {});
 }
-setInterval(function() { pollWorkerProducts(); }, 30000);
-// Initial load: always merge from worker (overrides stale CDN data)
-setTimeout(function() { pollWorkerProducts(true); }, 2000);
+setInterval(pollWorkerProducts, 30000);
 
 // PWA install prompt
 var deferredPrompt = null;
