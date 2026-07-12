@@ -2014,7 +2014,7 @@
     "_colorOrder": [
       "Default"
     ],
-    "category0": "MENS",
+    "category0": "WOMENS",
     "id": 45,
     "category1": "Shoes",
     "category2": "Crocs",
@@ -2024,29 +2024,31 @@
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262052/qh7bipbf4qpziif6x1cx.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783262052/ny2xoum7zbtu9fxl7coj.jpg"
     ],
-    "price": "₱3475.00",
+    "price": "₱3479.00",
     "available": true,
     "description": "Avail colors: Sepia & Black\nSizes avail: W5 W6 W7 W8\n3475.00 pesos only\n1000 DP TO SECURE ITEM",
     "variants": {
       "Default": {
-        "stock": {
-          "5": 5,
-          "6": 5,
-          "7": 5,
-          "8": 5
-        },
         "sizes": [
           "5",
           "6",
           "7",
           "8"
-        ]
+        ],
+        "stock": {
+          "5": 5,
+          "6": 5,
+          "7": 5,
+          "8": 5
+        }
       }
     },
     "name": "CROCS SATURDAY METALLIC BUCKLE",
     "color": "",
     "sizes": [],
-    "stock": 20
+    "stock": 20,
+    "deposit": "₱1000",
+    "originalPrice": "₱3479.00"
   },
   {
     "sizes": [],
