@@ -3242,22 +3242,13 @@
     "deposit": "₱200",
     "category1": "Clothing",
     "stock": 35,
-    "category0": "MENS",
+    "category0": "WOMENS",
     "_colorOrder": [
       "Default"
     ],
     "name": "GU METAL BUTTON CARDIGAN",
     "variants": {
       "Default": {
-        "stock": {
-          "M": 5,
-          "XL": 5,
-          "L": 5,
-          "2XL": 5,
-          "XS": 5,
-          "S": 5,
-          "3XL": 5
-        },
         "sizes": [
           "XS",
           "S",
@@ -3266,7 +3257,16 @@
           "XL",
           "2XL",
           "3XL"
-        ]
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        }
       }
     },
     "sizes": []
