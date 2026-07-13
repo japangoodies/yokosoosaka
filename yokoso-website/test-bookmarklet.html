@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html><head><title>Test Bookmarklet</title></head>
+<body>
+
+  <!-- Simulated Facebook FEED (behind the modal) -->
+  <div id="feed" style="padding:20px;font-family:sans-serif">
+    <h3>Main Feed (should be IGNORED)</h3>
+    <div role="article">
+      <div>Some Other Product</div>
+      <div dir="auto">Other product name</div>
+      <div dir="auto">₱ 150.00</div>
+      <div dir="auto">Sizes: Free size</div>
+      <div dir="auto">#Other</div>
+    </div>
+    <div role="article">
+      <div>Another Old Post</div>
+      <div dir="auto">Old item</div>
+      <div dir="auto">₱ 99.00</div>
+      <div dir="auto">SOLD OUT</div>
+    </div>
+  </div>
+
+  <!-- Simulated Facebook MODAL (the post the user clicked) -->
+  <div role="dialog" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:flex;padding:40px">
+    <div style="background:#fff;width:700px;margin:auto;border-radius:8px;padding:20px;max-height:80vh;overflow:auto">
+      <div role="article">
+        <div><strong>Yokoso Osaka</strong> · <span>2h</span></div>
+        <!-- THIS is the post we want to capture -->
+        <div>
+          <div dir="auto">NEW ARRIVAL: Korean Skincare Set</div>
+          <div dir="auto">Complete skincare routine with cleanser, toner, serum, and moisturizer.</div>
+          <div dir="auto">₱ 599.00</div>
+          <div dir="auto">Sizes: S, M, L</div>
+          <div dir="auto">#Skincare #KoreanBeauty</div>
+        </div>
+        <div>
+          <img src="https://scontent.fmnl1-1.fna.fbcdn.net/v/t1.0-9/product1.jpg" width="200">
+          <img src="https://scontent.fmnl1-1.fna.fbcdn.net/v/t1.0-9/product2.jpg" width="200">
+        </div>
+        <!-- Comments (should be EXCLUDED) -->
+        <div role="article">
+          <div dir="auto">Comment: How much?</div>
+        </div>
+        <div role="article">
+          <div dir="auto">Comment: Dm you</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;padding:20px;background:#f5f5f5;border-radius:8px">
+    <h2>Bookmarklet Test Results</h2>
+    <div id="result" style="font-family:monospace;font-size:13px;white-space:pre-wrap;background:#fff;padding:12px;border:1px solid #ddd;border-radius:4px"></div>
+  </div>
+
+<script>
+// Simulate the bookmarklet logic
+(function test(){
+  var d = document;
+  var els = d.querySelectorAll('[dir="auto"]');
+  var best = null, bestLen = 0;
+  for (var i = 0; i < els.length; i++) {
+    var t = els[i].innerText || '';
+    if (t.indexOf('₱') !== -1 && t.length > bestLen) { best = els[i]; bestLen = t.length; }
+  }
+  
+  var result = '=== PRICE ELEMENT FOUND ===\n';
+  result += 'Text: "' + (best ? best.innerText.trim() : 'NONE') + '"\n';
+  result += 'Length: ' + bestLen + '\n\n';
+  
+  var caption = '';
+  if (best) {
+    var p = best;
+    for (var j = 0; j < 15; j++) {
+      if (!p || p === d.body || p === d.documentElement) break;
+      var txt = p.innerText || '';
+      result += 'Walking up level ' + j + ': ' + txt.substring(0, 60).replace(/\n/g, '\\n') + '...\n';
+      if (txt.indexOf('₱') !== -1 && (txt.match(/sizes?:/i) || txt.split('\n').length > 3)) {
+        caption = txt.trim();
+        result += '✓ FOUND good container at level ' + j + '!\n';
+        break;
+      }
+      p = p.parentElement;
+    }
+    if (!caption) caption = (best.innerText || '').trim();
+  }
+  
+  result += '\n=== CAPTURED TEXT ===\n';
+  result += caption || '(empty)\n';
+  
+  // Check for required fields
+  result += '\n=== FIELD CHECKS ===\n';
+  result += 'Has ₱: ' + (caption.indexOf('₱') !== -1) + '\n';
+  result += 'Has Sizes: ' + (/sizes?:/i.test(caption)) + '\n';
+  result += 'Line count: ' + caption.split('\n').length + '\n';
+  
+  // Check images
+  var imgs = [], seen = {};
+  var imgSrc = best || d.querySelector('[role="article"]') || d;
+  (imgSrc.querySelectorAll('img') || []).forEach(function(i) {
+    var s = i.src || i.getAttribute('data-src') || '';
+    if (!s || seen[s]) return;
+    if (s.indexOf('fbcdn') === -1 && s.indexOf('scontent') === -1) return;
+    seen[s] = true; imgs.push(s);
+  });
+  
+  result += '\n=== IMAGES ===\n';
+  result += (imgs.length ? imgs.join('\n') : 'None found (filtered by fbcdn/scontent pattern)') + '\n';
+  
+  document.getElementById('result').textContent = result;
+  
+  // Summary
+  var passed = caption.indexOf('₱') !== -1 && caption.indexOf('Sizes') !== -1 && caption.indexOf('Skincare') !== -1;
+  document.getElementById('result').style.borderColor = passed ? '#4caf50' : '#f44336';
+  document.getElementById('result').style.borderWidth = '3px';
+  
+  var summary = document.createElement('p');
+  summary.style.fontWeight = 'bold';
+  summary.style.color = passed ? '#4caf50' : '#f44336';
+  summary.textContent = passed ? '✅ PASS: Correctly extracted the modal post (not the feed)' : '❌ FAIL: Did not extract the right content';
+  document.getElementById('result').parentNode.insertBefore(summary, document.getElementById('result'));
+})();
+</script>
+</body>
+</html>

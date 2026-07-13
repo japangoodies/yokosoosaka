@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "E:\opencode\winvqp-tests\discovery\map_login.py", line 55, in <module>
+    test_key("F1", "{F1}")
+    ~~~~~~~~^^^^^^^^^^^^^^
+  File "E:\opencode\winvqp-tests\discovery\map_login.py", line 44, in test_key
+    win.type_keys(key, with_spaces=True)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shaye\AppData\Roaming\Python\Python313\site-packages\pywinauto\base_wrapper.py", line 937, in type_keys
+    self.verify_actionable()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shaye\AppData\Roaming\Python\Python313\site-packages\pywinauto\base_wrapper.py", line 681, in verify_actionable
+    self.verify_enabled()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shaye\AppData\Roaming\Python\Python313\site-packages\pywinauto\base_wrapper.py", line 692, in verify_enabled
+    raise ElementNotEnabled()
+pywinauto.base_wrapper.ElementNotEnabled

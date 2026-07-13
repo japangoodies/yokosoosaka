@@ -4516,6 +4516,33 @@ if (fi) fi.addEventListener('change', e => {
   e.target.value = '';
 });
 
+// Description image upload — resize to fit modal (600px) and insert <img> at cursor
+var did = document.getElementById('addDescImageBtn');
+if (did) did.addEventListener('click', function() {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.style.display = 'none';
+  document.body.appendChild(input);
+  input.addEventListener('change', function() {
+    var file = input.files[0];
+    if (!file) return;
+    var ta = document.getElementById('formDesc');
+    if (!ta) return;
+    resizeImage(file, 600, 0.8, function(dataUrl) {
+      var imgTag = '<img src="' + dataUrl + '" style="max-width:100%;height:auto;display:block;margin:8px 0" alt="">';
+      var start = ta.selectionStart;
+      var end = ta.selectionEnd;
+      var text = ta.value;
+      ta.value = text.substring(0, start) + imgTag + text.substring(end);
+      ta.selectionStart = ta.selectionEnd = start + imgTag.length;
+      ta.focus();
+      input.remove();
+    });
+  });
+  input.click();
+});
+
 // Auto-add ₱ prefix to price input
 var fpEl = document.getElementById('formPrice');
 if (fpEl) fpEl.addEventListener('input', function(e) {

@@ -1,0 +1,25 @@
+=== WINVQP93 Control Structure ===
+Window: ' W I N V Q P  version 9.3 for FASTFOOD'
+Class: vqpmain
+
+Control Identifiers:
+
+vqpmain - ' W I N V Q P  version 9.3 for FASTFOOD'    (L0, T0, R1920, B1080)
+[' W I N V Q P  version 9.3 for FASTFOOD', ' W I N V Q P  version 9.3 for FASTFOODvqpmain', 'vqpmain']
+child_window(title=" W I N V Q P  version 9.3 for FASTFOOD", class_name="vqpmain")
+   | 
+   | Static - ''    (L3, T30, R3, B30)
+   | ['Static', 'Static0', 'Static1']
+   | child_window(class_name="Static")
+   | 
+   | StatusBar - 'Ready'    (L3, T1051, R1917, B1077)
+   | ['Ready', 'ReadyStatusBar', 'StatusBar']
+   | child_window(title="Ready", class_name="msctls_statusbar32")
+   | 
+   | Static - ''    (L991, T1054, R1177, B1054)
+   | ['Static2']
+   | child_window(class_name="Static")
+   | 
+   | Static - ''    (L3, T31, R3, B31)
+   | ['Static3']
+   | child_window(class_name="Static")

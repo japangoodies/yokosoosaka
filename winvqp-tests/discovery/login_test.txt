@@ -1,0 +1,19 @@
+F1                             Ready                -> Ready               
+F2                             Ready                -> Ready               
+F3                             Ready                -> Ready               
+F4                             Ready                -> Ready               
+F5                             Ready                -> Ready               
+F6                             Ready                -> Ready               
+F7                             Ready                -> Ready               
+F8                             Ready                -> Ready               
+F9                             Ready                -> Ready               
+F10                            Ready                -> Ready               
+F11                            Ready                -> Ready               
+F12                            Ready                -> Ready               
+Type '1'                       Ready                -> Ready               
+Enter                          Ready                -> Ready               
+Escape                         ERROR: Unknown code: ESCAPE
+CTRL+1                         Ready                -> Ready               
+ALT+1                          Ready                -> Ready               
+
+Screenshot saved: E:\opencode\winvqp-tests\discovery\login_test.png
