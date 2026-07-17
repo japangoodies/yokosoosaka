@@ -243,21 +243,32 @@ function showCustomerOrders() {
             '<span>' + escapeHtml(i.name) + (i.color ? ' (' + escapeHtml(i.color) + ')' : '') + (i.size && i.size !== 'q' ? '/' + i.size : '') + ' x' + i.qty + '</span>' +
             '<span>\u20b1' + (ip * i.qty).toFixed(2) + '</span></div>';
         }).join('');
-        var statusColors = { pending: '#f59e0b', 'deposit-paid': '#3b82f6', confirmed: '#22c55e', cancelled: '#ef4444' };
-        var statusColor = statusColors[o.status] || '#888';
         var totalVal = parseFloat(String(o.total || '').replace(/[^0-9.\-]/g, ''));
         if (isNaN(totalVal)) totalVal = items.reduce(function(s, it) { return s + (parseFloat(String(it.price || '').replace(/[^0-9.\-]/g, '')) || 0) * (it.qty || 0); }, 0);
         var depVal = parseFloat(String(o.deposit || '').replace(/[^0-9.\-]/g, ''));
-        return '<div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;margin-bottom:10px;background:#fafafa">' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
-          '<strong style="font-size:14px">' + escapeHtml(o.poNumber || '') + '</strong>' +
-          '<span style="font-size:12px;background:' + statusColor + ';color:#fff;padding:2px 8px;border-radius:10px">' + escapeHtml(o.status || '') + '</span></div>' +
-          '<div style="font-size:12px;color:#666;margin-bottom:6px">' + (o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '') + '</div>' +
+        var steps = [
+          { key: 'pending', label: 'Pending', done: o.status === 'deposit-paid' || o.status === 'confirmed', active: o.status === 'pending' },
+          { key: 'deposit-paid', label: 'Deposit Paid', done: o.status === 'confirmed', active: o.status === 'deposit-paid' },
+          { key: 'confirmed', label: 'Confirmed', done: false, active: o.status === 'confirmed' }
+        ];
+        var stepperHtml = '<div class="order-stepper">' + steps.map(function(s, i) {
+          var cls = s.done ? 'step-done' : s.active ? 'step-active' : 'step-inactive';
+          return '<div class="step ' + cls + '">' +
+            '<div class="step-dot"><span class="step-check">' + (s.done ? '✓' : s.active ? '●' : '○') + '</span></div>' +
+            '<span class="step-label">' + s.label + '</span>' +
+            (i < steps.length - 1 ? '<div class="step-line"><div class="step-line-fill" style="width:' + (s.done ? '100%' : '0%') + '"></div></div>' : '') +
+            '</div>';
+        }).join('') + '</div>';
+        return '<div class="order-card">' +
+          '<div class="order-card-header">' +
+          '<strong>' + escapeHtml(o.poNumber || '') + '</strong>' +
+          '<span class="order-date">' + (o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '') + '</span>' +
+          (o.status === 'cancelled' ? '<span class="order-status-badge cancelled">Cancelled</span>' : '') +
+          '</div>' +
+          stepperHtml +
           itemsHtml +
-          '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:bold;padding-top:4px;margin-top:4px;border-top:2px solid #e0e0e0">' +
-          '<span>Total</span><span>\u20b1' + totalVal.toFixed(2) + '</span></div>' +
-          (!isNaN(depVal) ? '<div style="display:flex;justify-content:space-between;font-size:12px;color:#666">' +
-          '<span>Deposit</span><span>\u20b1' + depVal.toFixed(2) + '</span></div>' : '') +
+          '<div class="order-total-row"><span>Total</span><span>\u20b1' + totalVal.toFixed(2) + '</span></div>' +
+          (!isNaN(depVal) ? '<div class="order-deposit-row"><span>Deposit Paid</span><span>\u20b1' + depVal.toFixed(2) + '</span></div>' : '') +
           '</div>';
       }).join('');
       list.innerHTML = html;
@@ -2256,7 +2267,11 @@ function toggleFavorite(id, e) {
   }
   localStorage.setItem('favorites', JSON.stringify(favorites));
   var btn = document.querySelector('.wishlist-btn[data-id="' + id + '"]');
-  if (btn) btn.classList.toggle('active', favorites.indexOf(id) !== -1);
+  if (btn) {
+    btn.classList.toggle('active', favorites.indexOf(id) !== -1);
+    var svg = btn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', favorites.indexOf(id) !== -1 ? '#e94560' : 'none');
+  }
 }
 
 function toggleShowFavorites() {
@@ -2265,6 +2280,65 @@ function toggleShowFavorites() {
   var favBtn = document.getElementById('favFilterBtn');
   if (favBtn) favBtn.classList.toggle('active', showFavoritesOnly);
   renderProducts();
+}
+
+function shareProduct(id) {
+  var p = products.find(function(x) { return x.id === id; });
+  if (!p) return;
+  var url = window.location.origin + window.location.pathname + '?product=' + id;
+  var text = p.name + ' - ' + p.price + '\n\n' + url;
+  if (navigator.share) {
+    navigator.share({ title: p.name, text: text, url: url }).catch(function() {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('Copied! Share with friends on Messenger', 'success');
+    }).catch(function() {
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+function fallbackCopy(txt) {
+  var ta = document.createElement('textarea');
+  ta.value = txt;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); showToast('Copied! Share with friends', 'success'); } catch(e) { prompt('Copy this link:', txt); }
+  document.body.removeChild(ta);
+}
+
+function renderRelatedProducts(id, containerId) {
+  var container = document.getElementById(containerId);
+  if (!container || !products) return;
+  var p = products.find(function(x) { return x.id === id; });
+  if (!p) return;
+  var related = products.filter(function(x) {
+    if (x.id === id) return false;
+    if (x.category1 && p.category1 && x.category1 === p.category1) return true;
+    if (x.category2 && p.category2 && x.category2 === p.category2) return true;
+    return false;
+  }).slice(0, 8);
+  if (related.length < 2) {
+    related = products.filter(function(x) {
+      if (x.id === id) return false;
+      if (x.category0 && p.category0 && x.category0 === p.category0) return true;
+      return false;
+    }).slice(0, 8);
+  }
+  if (related.length < 2) { container.style.display = 'none'; return; }
+  container.style.display = 'block';
+  container.innerHTML = '<div class="related-title">You May Also Like</div>' +
+    '<div class="related-grid">' + related.map(function(r) {
+      var img = (Array.isArray(r.images) && r.images.length > 0) ? r.images[0] : (r.image || 'images/products/placeholder.svg');
+      return '<div class="related-card" onclick="closeLiveModal();setTimeout(function(){openProduct(' + r.id + ')},300)">' +
+        '<img src="' + img + '" alt="' + r.name + '" loading="lazy" onerror="this.src=\'images/products/placeholder.svg\'">' +
+        '<div class="related-card-info">' +
+        '<div class="related-card-name">' + r.name + '</div>' +
+        '<div class="related-card-price">' + (r.price || '') + '</div></div></div>';
+    }).join('') + '</div>';
 }
 
 function trackRecentlyViewed(id) {
@@ -2372,8 +2446,8 @@ function renderProducts() {
     return '<div class="product-card' + (p.onSale ? ' on-sale' : '') + '" data-id="' + p.id + '">' +
       mediaHtml +
       (p.onSale ? '<span class="product-sale-badge">SALE</span>' : '') +
-      '<button class="wishlist-btn' + (favorites.indexOf(p.id) !== -1 ? ' active' : '') + '" data-id="' + p.id + '" onclick="toggleFavorite(' + p.id + ', event)" title="Add to favorites">♥</button>' +
-      '<button class="quick-view-btn" onclick="event.stopPropagation();openProduct(' + p.id + ')" title="Quick View">👁</button>' +
+      '<button class="share-btn" onclick="event.stopPropagation();shareProduct(' + p.id + ')" title="Share"><span class="share-btn-label">Share</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98"/><path d="M15.41 6.51l-6.82 3.98"/></svg></button>' +
+      '<button class="wishlist-btn' + (favorites.indexOf(p.id) !== -1 ? ' active' : '') + '" data-id="' + p.id + '" onclick="toggleFavorite(' + p.id + ', event)" title="Add to favorites"><svg width="18" height="18" viewBox="0 0 24 24" fill="' + (favorites.indexOf(p.id) !== -1 ? '#e94560' : 'none') + '" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>' +
       '<div class="product-info">' +
       (p.category0 ? '<div class="product-group">' + p.category0 + '</div>' : '') +
       '<div class="product-category">' + p.category1 + '</div>' +
@@ -3087,18 +3161,23 @@ function openModal(product) {
             (_modalImages.length > 1 ? '<button id="modalStripPrev" onclick="modalStripNav(-1)" style="position:absolute;left:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">‹</button>' : '') +
             (_modalImages.length > 1 ? '<button id="modalStripNext" onclick="modalStripNav(1)" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 1px 4px rgba(0,0,0,0.15)">›</button>' : '') +
         '</div>' +
-        '<div style="padding:24px 32px 32px">' +
-          '<h2 style="font-size:20px;margin:0 0 4px;line-height:1.3">' + (product.name || '') + '</h2>' +
-          '<div style="display:flex;align-items:center;gap:8px;margin:0 0 4px"><span style="font-size:18px;font-weight:700;color:#e94560">' + (product.price || '') + '</span>' + (product.onSale ? '<span style="background:#d32f2f;color:#fff;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:0.5px">SALE</span>' : '') + '</div>' +
-          '<p style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:#888;font-weight:600;margin:0 0 8px">' + (product.category0 ? product.category0 + ' / ' : '') + (product.category1 || '') + (product.category2 ? ' · ' + product.category2 : '') + '</p>' +
-          colorPickerHtml +
+      '<div style="padding:24px 32px 32px" id="modalInfoContainer">' +
+           '<h2 style="font-size:20px;margin:0 0 4px;line-height:1.3">' + (product.name || '') + '</h2>' +
+           '<div style="display:flex;align-items:center;gap:8px;margin:0 0 4px"><span style="font-size:18px;font-weight:700;color:#e94560">' + (product.price || '') + '</span>' + (product.onSale ? '<span style="background:#d32f2f;color:#fff;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:0.5px">SALE</span>' : '') + '</div>' +
+      '<p style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:#888;font-weight:600;margin:0 0 8px">' + (product.category0 ? product.category0 + ' / ' : '') + (product.category1 || '') + (product.category2 ? ' · ' + product.category2 : '') + '</p>' +
+           '<div style="margin:0 0 8px;display:flex;gap:8px;align-items:center">' +
+           '<button onclick="shareProduct(' + product.id + ')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;color:#475569;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor=\'#0084ff\';this.style.color=\'#0084ff\';this.style.background=\'#f0f7ff\'" onmouseout="this.style.borderColor=\'#e2e8f0\';this.style.color=\'#475569\';this.style.background=\'#f8fafc\'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98"/><path d="M15.41 6.51l-6.82 3.98"/></svg> Share</button>' +
+           (window.innerWidth <= 768 ? '' : '<span style="font-size:0.7rem;color:#94a3b8">Tap to copy or share via Messenger</span>') +
+           '</div>' +
+           colorPickerHtml +
           sizesHtml +
           '<p style="color:#666;margin:0 0 16px;line-height:1.6;font-size:14px">' + (product.description || '') + '</p>' +
           '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">' +
           '<span style="font-size:0.8rem;font-weight:600;padding:4px 10px;border-radius:4px;' + (totalAvail > 0 ? 'background:#e8f5e9;color:#2e7d32' : 'background:#ffebee;color:#c62828') + '">' + (totalAvail > 3 ? 'In Stock' : totalAvail > 0 ? 'Only ' + totalAvail + ' left' : 'Out of Stock') + '</span>' +
            (totalAvail > 0 ? '<button id="modalAddToCartBtn" onclick="addToCartFromModal(' + product.id + ')" style="padding:12px 32px;border-radius:8px;border:none;font-weight:600;font-size:14px;background:#e94560;color:#fff;cursor:pointer">' + (productHasSizes ? 'Select a size' : 'Add to Cart') + '</button>' : '<button id="modalAddToCartBtn" disabled style="padding:12px 32px;border-radius:8px;border:none;font-weight:600;font-size:14px;background:#ccc;color:#888;cursor:not-allowed">Out of Stock</button>') +
            '</div>' +
-        '</div>' +
+           '<div id="modalRelatedSection" class="related-section"></div>' +
+         '</div>' +
       '</div>' +
     '</div>';
     
@@ -3124,6 +3203,7 @@ function openModal(product) {
     }
     lockBody();
     try { history.pushState({modal: true}, '', '#modal'); } catch (e) {}
+    renderRelatedProducts(product.id, 'modalRelatedSection');
   } catch (e) {
     console.error('openModal error:', e);
   }
@@ -4529,7 +4609,7 @@ if (did) did.addEventListener('click', function() {
     if (!file) return;
     var ta = document.getElementById('formDesc');
     if (!ta) return;
-    resizeImage(file, 600, 0.8, function(dataUrl) {
+    resizeImage(file, 800, 0.85, function(dataUrl) {
       var imgTag = '<img src="' + dataUrl + '" style="max-width:100%;height:auto;display:block;margin:8px 0" alt="">';
       var start = ta.selectionStart;
       var end = ta.selectionEnd;
@@ -6071,6 +6151,15 @@ function exportAnalyticsCSV() {
 // ---- INIT ----
 function parseURLParams() {
   var params = new URLSearchParams(window.location.search);
+  var pid = params.get('product');
+  if (pid) {
+    var id = parseInt(pid, 10);
+    if (!isNaN(id)) {
+      setTimeout(function() { openProduct(id); }, 600);
+    }
+    history.replaceState({}, '', window.location.pathname);
+    return;
+  }
   var group = params.get('group');
   if (group) {
     currentGroup = group;
