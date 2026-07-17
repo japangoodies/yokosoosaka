@@ -292,27 +292,7 @@ function renderOrdersList(orders) {
     var totalVal = parseFloat(String(o.total || '').replace(/[^0-9.\-]/g, ''));
     if (isNaN(totalVal)) totalVal = items.reduce(function(s, it) { return s + (parseFloat(String(it.price || '').replace(/[^0-9.\-]/g, '')) || 0) * (it.qty || 0); }, 0);
     var depVal = parseFloat(String(o.deposit || '').replace(/[^0-9.\-]/g, ''));
-    var steps = [
-      { key: 'pending', label: 'Pending', done: o.status === 'deposit-paid' || o.status === 'confirmed', active: o.status === 'pending' },
-      { key: 'deposit-paid', label: 'Deposit Paid', done: o.status === 'confirmed', active: o.status === 'deposit-paid' },
-      { key: 'confirmed', label: 'Confirmed', done: false, active: o.status === 'confirmed' }
-    ];
-    var stepperHtml = '<div class="order-stepper">' + steps.map(function(s, i) {
-      var cls = s.done ? 'step-done' : s.active ? 'step-active' : 'step-inactive';
-      return '<div class="step ' + cls + '">' +
-        '<div class="step-dot"><span class="step-check">' + (s.done ? '✓' : s.active ? '●' : '') + '</span></div>' +
-        '<span class="step-label">' + s.label + '</span>' +
-        (i < steps.length - 1 ? '<div class="step-line"><div class="step-line-fill" style="height:' + (s.done ? '100%' : '0%') + '"></div></div>' : '') +
-        '</div>';
-    }).join('') + '</div>';
-    var statusLabel = o.status === 'deposit-paid' ? 'Deposit Paid' : o.status === 'confirmed' ? 'Confirmed' : o.status === 'cancelled' ? 'Cancelled' : 'Pending';
     return '<div class="order-card">' +
-      '<div class="order-card-header">' +
-      '<div><div class="order-po">' + escapeHtml(o.poNumber || '') + '</div>' +
-      '<div class="order-date">' + (o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '') + '</div></div>' +
-      '<span class="order-status-pill ' + o.status + '">' + statusLabel + '</span>' +
-      '</div>' +
-      stepperHtml +
       '<div class="order-items">' + itemsHtml + '</div>' +
       '<div class="order-footer">' +
       '<div class="order-footer-left">' +
