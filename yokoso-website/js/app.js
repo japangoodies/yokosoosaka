@@ -233,15 +233,31 @@ function showCustomerOrders() {
     .then(function(j) {
       var orders = j.docs || [];
       if (!orders.length) { list.innerHTML = '<div style="color:#888;padding:20px;text-align:center">No orders yet.</div>'; return; }
+      function itemImg(i) {
+        var match = products.find(function(p) { return p.name === i.name; });
+        if (match) {
+          var imgs = match.images || (match.image ? [match.image] : []);
+          if (imgs.length > 0) return imgs[0];
+        }
+        return 'images/products/placeholder.svg';
+      }
       var html = orders.map(function(o) {
         var items = [];
         try { items = JSON.parse(o.items || '[]'); } catch(e) {}
         var itemsHtml = items.map(function(i) {
           var ip = parseFloat(String(i.price || '').replace(/[^0-9.\-]/g, ''));
           if (isNaN(ip)) ip = 0;
-          return '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px;border-bottom:1px solid #f0f0f0">' +
-            '<span>' + escapeHtml(i.name) + (i.color ? ' (' + escapeHtml(i.color) + ')' : '') + (i.size && i.size !== 'q' ? '/' + i.size : '') + ' x' + i.qty + '</span>' +
-            '<span>\u20b1' + (ip * i.qty).toFixed(2) + '</span></div>';
+          var img = itemImg(i);
+          var variant = (i.color ? escapeHtml(i.color) : '') + (i.size && i.size !== 'q' ? ' / ' + escapeHtml(i.size) : '');
+          return '<div class="order-item">' +
+            '<img class="order-item-img" src="' + img + '" onerror="this.src=\'images/products/placeholder.svg\'">' +
+            '<div class="order-item-info">' +
+            '<div class="order-item-name">' + escapeHtml(i.name) + '</div>' +
+            (variant ? '<div class="order-item-variant">' + variant + '</div>' : '') +
+            '<div class="order-item-qty">x' + i.qty + '</div>' +
+            '</div>' +
+            '<div class="order-item-price">\u20b1' + (ip * i.qty).toFixed(2) + '</div>' +
+            '</div>';
         }).join('');
         var totalVal = parseFloat(String(o.total || '').replace(/[^0-9.\-]/g, ''));
         if (isNaN(totalVal)) totalVal = items.reduce(function(s, it) { return s + (parseFloat(String(it.price || '').replace(/[^0-9.\-]/g, '')) || 0) * (it.qty || 0); }, 0);
@@ -259,16 +275,19 @@ function showCustomerOrders() {
             (i < steps.length - 1 ? '<div class="step-line"><div class="step-line-fill" style="height:' + (s.done ? '100%' : '0%') + '"></div></div>' : '') +
             '</div>';
         }).join('') + '</div>';
+        var statusLabel = o.status === 'deposit-paid' ? 'Deposit Paid' : o.status === 'confirmed' ? 'Confirmed' : o.status === 'cancelled' ? 'Cancelled' : 'Pending';
         return '<div class="order-card">' +
           '<div class="order-card-header">' +
-          '<strong>' + escapeHtml(o.poNumber || '') + '</strong>' +
-          '<span class="order-date">' + (o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '') + '</span>' +
-          (o.status === 'cancelled' ? '<span class="order-status-badge cancelled">Cancelled</span>' : '') +
+          '<div><strong class="order-po">' + escapeHtml(o.poNumber || '') + '</strong>' +
+          '<div class="order-date">' + (o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '') + '</div></div>' +
+          '<span class="order-status-pill ' + o.status + '">' + statusLabel + '</span>' +
           '</div>' +
           stepperHtml +
-          itemsHtml +
+          '<div class="order-items">' + itemsHtml + '</div>' +
+          '<div class="order-footer">' +
           '<div class="order-total-row"><span>Total</span><span>\u20b1' + totalVal.toFixed(2) + '</span></div>' +
           (!isNaN(depVal) ? '<div class="order-deposit-row"><span>Deposit Paid</span><span>\u20b1' + depVal.toFixed(2) + '</span></div>' : '') +
+          '</div>' +
           '</div>';
       }).join('');
       list.innerHTML = html;
