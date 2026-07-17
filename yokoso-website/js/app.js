@@ -968,6 +968,7 @@ function renderOrders(orders) {
     if (o.status === 'pending') { statusBadge = 'Pending'; statusColor = '#f57f17'; }
     else if (o.status === 'deposit_paid') { statusBadge = 'Deposit Paid'; statusColor = '#1976d2'; }
     else if (o.status === 'confirmed') { statusBadge = 'Confirmed'; statusColor = '#2e7d32'; }
+    else if (o.status === 'delivered') { statusBadge = 'Delivered'; statusColor = '#7c3aed'; }
     else if (o.status === 'cancelled') { statusBadge = 'Cancelled'; statusColor = '#c62828'; }
     else { statusBadge = o.status || '—'; statusColor = '#888'; }
     html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.06)">';
@@ -986,6 +987,9 @@ function renderOrders(orders) {
       html += '<button onclick="event.stopPropagation();cancelOrder(\'' + poSafe + '\')" style="padding:3px 8px;background:#c62828;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px">Cancel</button>';
     } else if (o.status === 'deposit_paid') {
       html += '<button onclick="event.stopPropagation();confirmOrder(\'' + poSafe + '\')" style="padding:3px 8px;background:#2e7d32;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px;margin-right:4px">Confirm</button>';
+      html += '<button onclick="event.stopPropagation();cancelOrder(\'' + poSafe + '\')" style="padding:3px 8px;background:#c62828;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px">Cancel</button>';
+    } else if (o.status === 'confirmed') {
+      html += '<button onclick="event.stopPropagation();deliverOrder(\'' + poSafe + '\')" style="padding:3px 8px;background:#7c3aed;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px;margin-right:4px">Delivered</button>';
       html += '<button onclick="event.stopPropagation();cancelOrder(\'' + poSafe + '\')" style="padding:3px 8px;background:#c62828;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px">Cancel</button>';
     }
     html += '</td></tr>';
@@ -1017,6 +1021,7 @@ function showOrderDetail(poNumber) {
       if (order.status === 'pending') statusColor = '#f57f17';
       else if (order.status === 'deposit_paid') statusColor = '#1976d2';
       else if (order.status === 'confirmed') statusColor = '#2e7d32';
+      else if (order.status === 'delivered') statusColor = '#7c3aed';
       else if (order.status === 'cancelled') statusColor = '#c62828';
       else statusColor = '#888';
       var overlay = document.createElement('div');
@@ -1069,6 +1074,9 @@ function showOrderDetail(poNumber) {
           addOrderActionBtn(actionsDiv, 'Cancel Order', '#c62828', function() { overlay.remove(); cancelOrder(poEnc); });
         } else if (order.status === 'deposit_paid') {
           addOrderActionBtn(actionsDiv, 'Confirm Order', '#2e7d32', function() { overlay.remove(); confirmOrder(poEnc); });
+          addOrderActionBtn(actionsDiv, 'Cancel Order', '#c62828', function() { overlay.remove(); cancelOrder(poEnc); });
+        } else if (order.status === 'confirmed') {
+          addOrderActionBtn(actionsDiv, 'Mark Delivered', '#7c3aed', function() { overlay.remove(); deliverOrder(poEnc); });
           addOrderActionBtn(actionsDiv, 'Cancel Order', '#c62828', function() { overlay.remove(); cancelOrder(poEnc); });
         }
       }
@@ -1201,6 +1209,19 @@ function confirmOrder(poNumber) {
       else showCartNotification('Confirm failed: ' + (j.error || ''));
     })
     .catch(function(e) { showCartNotification('Confirm error: ' + (e.message || '')); });
+}
+
+function deliverOrder(poNumber) {
+  var base = STOCK_PROXY_URL.replace(/\/+$/, '');
+  fetch(base + '/orders/' + encodeURIComponent(poNumber) + '/delivered', { method: 'POST' })
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      if (j.ok) {
+        showCartNotification('Order marked delivered: ' + poNumber);
+        loadOrders();
+      } else showCartNotification('Failed: ' + (j.error || ''));
+    })
+    .catch(function(e) { showCartNotification('Error: ' + (e.message || '')); });
 }
 
 function cancelOrder(poNumber) {

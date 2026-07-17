@@ -701,6 +701,26 @@ async function handleRequest(request, env) {
       return new Response(JSON.stringify({ ok: true, poNumber: po, status: 'cancelled', storage: 'firestore' }), { headers: corsHeaders(origin) });
     }
 
+    // POST /orders/:poNumber/delivered
+    if (request.method === 'POST' && parts.length === 3 && parts[0] === 'orders' && parts[2] === 'delivered') {
+      const po = parts[1];
+      if (env && env.ORDERS_KV) {
+        const order = await kvGetOrder(env, po);
+        if (!order) return new Response(JSON.stringify({ error: 'Order not found' }), { status: 404, headers: corsHeaders(origin) });
+        order.status = 'delivered';
+        await kvSaveOrder(env, order);
+        return new Response(JSON.stringify({ ok: true, poNumber: po, status: 'delivered', storage: 'kv' }), { headers: corsHeaders(origin) });
+      }
+      const docId = encodeURIComponent(po);
+      const resp = await fetchWithRetry(`${FIRESTORE_BASE}/orders/${docId}?key=${API_KEY}&updateMask.fieldPaths=status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: { status: { stringValue: 'delivered' } } })
+      });
+      if (!resp.ok) throw new Error(`Deliver order: HTTP ${resp.status}`);
+      return new Response(JSON.stringify({ ok: true, poNumber: po, status: 'delivered', storage: 'firestore' }), { headers: corsHeaders(origin) });
+    }
+
     // GET /debug/list-orders
     if (request.method === 'GET' && parts.length === 2 && parts[0] === 'debug' && parts[1] === 'list-orders') {
       const results = { hasKV: !!(env && env.ORDERS_KV) };
