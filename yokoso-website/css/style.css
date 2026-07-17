@@ -2406,22 +2406,26 @@ body {
 .order-status-badge.cancelled { background: #fef2f2; color: #dc2626; }
 .order-stepper {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 0;
   margin-bottom: 14px;
   padding: 0;
+  position: relative;
 }
 .order-stepper .step {
   display: flex;
-  align-items: center;
-  flex: 1;
+  align-items: flex-start;
   position: relative;
+  padding-bottom: 20px;
 }
-.order-stepper .step:last-child { flex: 0 0 auto; }
+.order-stepper .step:last-child { padding-bottom: 0; }
 .step-dot {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 .step-check {
   width: 28px;
@@ -2433,35 +2437,42 @@ body {
   font-size: 12px;
   font-weight: 700;
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 .step-done .step-check { background: #22c55e; color: #fff; }
 .step-active .step-check { background: #e94560; color: #fff; box-shadow: 0 0 0 4px rgba(233,69,96,0.15); }
 .step-inactive .step-check { background: #f1f5f9; color: #94a3b8; border: 2px solid #e2e8f0; }
 .step-label {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: #64748b;
-  margin-left: 4px;
-  white-space: nowrap;
+  margin-left: 10px;
+  padding-top: 5px;
+  line-height: 1.2;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 .step-done .step-label { color: #16a34a; }
 .step-active .step-label { color: #e94560; }
 .step-line {
-  flex: 1;
-  height: 2px;
+  position: absolute;
+  left: 13px;
+  top: 28px;
+  bottom: 0;
+  width: 2px;
   background: #e2e8f0;
-  margin: 0 8px;
-  position: relative;
   border-radius: 2px;
-  min-width: 20px;
 }
+.step:last-child .step-line { display: none; }
 .step-line-fill {
-  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   background: #22c55e;
   border-radius: 2px;
-  transition: width 0.5s ease;
+  transition: height 0.5s ease;
 }
 .order-total-row {
   display: flex;

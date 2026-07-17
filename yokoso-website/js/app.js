@@ -256,7 +256,7 @@ function showCustomerOrders() {
           return '<div class="step ' + cls + '">' +
             '<div class="step-dot"><span class="step-check">' + (s.done ? '✓' : s.active ? '●' : '○') + '</span></div>' +
             '<span class="step-label">' + s.label + '</span>' +
-            (i < steps.length - 1 ? '<div class="step-line"><div class="step-line-fill" style="width:' + (s.done ? '100%' : '0%') + '"></div></div>' : '') +
+            (i < steps.length - 1 ? '<div class="step-line"><div class="step-line-fill" style="height:' + (s.done ? '100%' : '0%') + '"></div></div>' : '') +
             '</div>';
         }).join('') + '</div>';
         return '<div class="order-card">' +
