@@ -2426,7 +2426,7 @@ body {
 .orders-tabs::-webkit-scrollbar { display: none; }
 .orders-tab {
   flex: 1 0 auto;
-  padding: 12px 14px;
+  padding: 12px 12px;
   background: none;
   border: none;
   font-size: 13px;
