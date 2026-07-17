@@ -1,0 +1,6 @@
+tree d9bc46afc657c21398590a2db294bde12919f3f1
+parent 7f2bb8ccee826ef7f4c84144f0f5120231bdcb8f
+author noobita019 <noobita019@users.noreply.github.com> 1779896463 +0800
+committer noobita019 <noobita019@users.noreply.github.com> 1779896463 +0800
+
+FIX CRITICAL BUG: fbDB = firebase.firestore() was never called due to if(fbDB) guard
