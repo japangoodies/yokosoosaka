@@ -4755,17 +4755,21 @@ function syncToGitHub() {
     .catch(function(err) {
       window._githubBusy = false;
       console.error('[Sync] GitHub sync failed:', err.message);
-      if (statusEl) {
-        if (err.message.indexOf('HTTP 401') !== -1) {
+      if (err.message.indexOf('HTTP 401') !== -1) {
+        if (statusEl) {
           statusEl.innerHTML = 'Token expired. <a href="#" onclick="window.open(\'https://github.com/settings/tokens\');return false" style="color:#007bff">Generate new token</a> → paste in Sync Settings.';
-          showToast('GitHub token expired. Update in Config tab.', 'error');
-        } else {
-          statusEl.textContent = 'Sync failed: ' + err.message;
-          showToast('GitHub sync failed: ' + err.message + '. Data saved locally only.', 'error');
+          statusEl.style.color = '#dc3545';
         }
-        statusEl.style.color = '#dc3545';
+        showToast('GitHub token expired. Update in Config tab.', 'error');
+      } else if (err.message.indexOf('update ref') !== -1) {
+        if (statusEl) { statusEl.textContent = 'GitHub backup sync delayed (retrying)'; statusEl.style.color = '#e67e22'; }
+        console.warn('[Sync] GitHub backup conflict (expected with auto-sync):', err.message);
       } else {
-        showToast('GitHub sync failed: ' + err.message, 'error');
+        if (statusEl) {
+          statusEl.textContent = 'GitHub sync failed: ' + err.message;
+          statusEl.style.color = '#dc3545';
+        }
+        showToast('GitHub sync failed: ' + err.message + '. Worker saved data cross-device.', 'warn');
       }
       if (window._githubQueued) { window._githubQueued = false; syncToGitHub(); }
     });
@@ -6231,18 +6235,22 @@ function pollWorkerProducts() {
     })
     .then(function(data) {
       if (data && data.products && data.products.length > 0 && data.updatedAt > lastSync) {
-        var mergeCount = 0;
+        var changed = 0;
         data.products.forEach(function(wp) {
           var idx = products.findIndex(function(p) { return p.id === wp.id; });
           if (idx !== -1) {
             products[idx] = wp;
-            mergeCount++;
+            changed++;
+          } else {
+            products.push(wp);
+            changed++;
           }
         });
-        if (mergeCount > 0) {
+        if (changed > 0) {
           localStorage.setItem('yokoso_last_poll', String(data.updatedAt));
+          localStorage.setItem('yokoso_products', JSON.stringify(products));
           renderProducts();
-          console.log('[Sync] Poll: merged ' + mergeCount + ' products from worker');
+          console.log('[Sync] Poll: merged ' + changed + ' products from worker');
         }
       }
     })
