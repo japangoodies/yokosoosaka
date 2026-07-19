@@ -1,6 +1,8 @@
 // Cloudflare Worker — Supabase stock proxy
 // Paste this entire file into Cloudflare Dashboard > Workers & Pages > Create Worker > Save and Deploy
 
+let memoryProducts = null;
+
 const FIRESTORE_BASE = 'https://firestore.googleapis.com/v1/projects/japan-goodies/databases/(default)/documents';
 const API_KEY = 'AIzaSyCR8jcz2JeDr3VYztZm2KYdns4uPUajtqQ';
 
@@ -973,23 +975,22 @@ async function handleRequest(request, env) {
 
     // PUT /products — save products data to KV for cross-device sync
     if (request.method === 'PUT' && parts.length === 1 && parts[0] === 'products') {
-      if (!env || !env.ORDERS_KV) {
-        return new Response(JSON.stringify({ error: 'KV not available' }), { status: 500, headers: corsHeaders(origin) });
-      }
       const body = await request.json();
-      await env.ORDERS_KV.put('products_data', JSON.stringify({
-        products: body.products,
-        updatedAt: body.updatedAt || Date.now()
-      }));
+      const payload = { products: body.products, updatedAt: body.updatedAt || Date.now() };
+      if (env && env.ORDERS_KV) {
+        await env.ORDERS_KV.put('products_data', JSON.stringify(payload)).catch(() => {});
+      }
+      memoryProducts = payload;
       return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders(origin) });
     }
 
     // GET /products — get products data from KV
     if (request.method === 'GET' && parts.length === 1 && parts[0] === 'products') {
-      if (!env || !env.ORDERS_KV) {
-        return new Response(JSON.stringify({ products: [], updatedAt: 0 }), { headers: corsHeaders(origin) });
+      let data = null;
+      if (env && env.ORDERS_KV) {
+        data = await env.ORDERS_KV.get('products_data', { type: 'json' }).catch(() => null);
       }
-      const data = await env.ORDERS_KV.get('products_data', { type: 'json' }).catch(() => null);
+      if (!data) data = memoryProducts;
       return new Response(JSON.stringify(data || { products: [], updatedAt: 0 }), { headers: corsHeaders(origin) });
     }
 

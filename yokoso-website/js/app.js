@@ -1637,143 +1637,79 @@ function migrateProducts() {
 }
 
 function loadProducts(callback) {
-  var rendered = false;
+  var called = false;
   function done() {
-    if (!rendered) { rendered = true; if (callback) callback(); }
+    if (called) return;
+    called = true;
+    if (callback) callback();
   }
 
-  var cdnLoaded = false;
-
-  // Stage 1: Load from CDN file (Cloudflare Pages — always fresh), fallback to localStorage
-  fetch('data/products.json?_=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (data && data.length > 0) {
-        products = data;
-        migrateProducts();
-        cdnLoaded = true;
-        localStorage.setItem('yokoso_sync_time', Date.now().toString());
-        console.log('[Load] Loaded from CDN file: ' + products.length + ' products');
-      } else {
-        throw new Error('empty file');
-      }
-    })
-    .catch(function() {
-      var saved = localStorage.getItem('yokoso_products');
-      if (saved) {
-        try { products = JSON.parse(saved); migrateProducts(); console.log('[Load] Fallback to localStorage: ' + products.length + ' products'); }
-        catch { products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)); console.log('[Load] Fallback to defaults (localStorage parse failed)'); }
-      } else {
-        products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-        console.log('[Load] Fallback to defaults');
-      }
-    })
-    .then(function() {
-    // Stage 2: If there are pending unsaved edits, localStorage is authoritative
-    // (CDN file may be stale from GitHub sync not yet propagated to Cloudflare Pages).
-    var pend = localStorage.getItem('yokoso_pending_sync');
-    if (pend === 'true') {
-      var saved = localStorage.getItem('yokoso_products');
-      if (saved) {
-        try {
-          products = JSON.parse(saved);
+  function loadFromWorker() {
+    if (!isProxyReady()) return loadFromGitHub();
+    fetch(proxyUrl('products'))
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(data) {
+        if (data && data.products && data.products.length > 0) {
+          products = data.products;
           migrateProducts();
-          console.log('[Load] Pending edits found, using localStorage: ' + products.length + ' products');
-        } catch(e) {
-          console.warn('[Load] Failed to parse localStorage products:', e);
-        }
-      }
-    }
-    // Merge onSale from localStorage onto CDN data (always, not just when pending edits).
-    // Only ADD onSale by default — also respect explicit onSale=false when pending edits exist
-    // (so admin's "turn off" survives stale CDN).
-    if (cdnLoaded) {
-      var saved = localStorage.getItem('yokoso_products');
-      if (saved) {
-        try {
-          var localProds = JSON.parse(saved);
-          if (localProds && localProds.length > 0) {
-            var merged = 0;
-            var pend = localStorage.getItem('yokoso_pending_sync') === 'true';
-            products.forEach(function(p) {
-              var lp = localProds.find(function(x) { return x.id === p.id; });
-              if (lp) {
-                if (lp.onSale === true) {
-                  p.onSale = true;
-                  merged++;
-                } else if (lp.onSale === false && pend) {
-                  delete p.onSale;
-                  merged++;
-                }
-              }
-            });
-            if (merged > 0) console.log('[Load] LocalStorage onSale merged onto CDN data: ' + merged + ' products');
-          }
-        } catch(e) {
-          console.warn('[Load] Failed to parse localStorage for onSale merge:', e);
-        }
-      }
-    }
-    localStorage.setItem('yokoso_products', JSON.stringify(products));
-    console.log('[Debug] After Stage 2, products.length =', products.length);
-
-    // Stage 3: Override with worker data (authoritative — always has latest edits)
-    function afterWorkerCheck() {
-      // Stage 4: Firebase sync (if available)
-      if (fbDB) {
-        fbDB.collection(FB_COLLECTION).doc(FB_DOC).get()
-          .then(function(doc) {
-            if (!doc.exists || !doc.data().items || !doc.data().items.length) {
-              fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(function() {});
-            }
-            done();
-          })
-          .catch(function() { done(); });
-        setTimeout(done, 3000);
-      } else {
-        console.log('[Debug] Before done(), products.length =', products.length);
-        done();
-      }
-    }
-
-    if (isProxyReady()) {
-      fetch(proxyUrl('products'))
-        .then(function(r) {
-          if (!r.ok) throw new Error('HTTP ' + r.status);
-          return r.json();
-        })
-        .then(function(data) {
-          var pend = localStorage.getItem('yokoso_pending_sync') === 'true';
-          if (data && data.products && data.products.length > 0 && !pend) {
-            products = data.products;
-            migrateProducts();
-            // Re-merge onSale from localStorage
-            var saved = localStorage.getItem('yokoso_products');
-            if (saved) {
-              try {
-                var localProds = JSON.parse(saved);
-                products.forEach(function(p) {
-                  var lp = localProds.find(function(x) { return x.id === p.id; });
-                  if (lp) {
-                    if (lp.onSale === true) p.onSale = true;
-                    else if (lp.onSale === false && pend) delete p.onSale;
-                  }
-                });
-              } catch(e) {}
-            }
-            console.log('[Load] Overrode with worker data: ' + products.length + ' products');
-          }
           localStorage.setItem('yokoso_products', JSON.stringify(products));
-          afterWorkerCheck();
-        })
-        .catch(function() { afterWorkerCheck(); });
-    } else {
-      afterWorkerCheck();
-    }
-  });
+          console.log('[Load] Worker: ' + products.length + ' products');
+          afterProductsLoaded();
+          return;
+        }
+        throw new Error('worker empty');
+      })
+      .catch(function() { loadFromGitHub(); });
+  }
 
-  // Load categories
-  loadCategories();
+  function loadFromGitHub() {
+    fetch('https://raw.githubusercontent.com/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/main/' + GITHUB_PATH)
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(data) {
+        if (data && data.length > 0) {
+          products = data;
+          migrateProducts();
+          localStorage.setItem('yokoso_products', JSON.stringify(products));
+          if (isProxyReady()) {
+            fetch(proxyUrl('products'), {
+              method: 'PUT', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ products: products, updatedAt: Date.now() })
+            }).catch(function() {});
+          }
+          console.log('[Load] GitHub raw: ' + products.length + ' products');
+          afterProductsLoaded();
+          return;
+        }
+        throw new Error('github empty');
+      })
+      .catch(function() { loadFromLocal(); });
+  }
+
+  function loadFromLocal() {
+    var saved = localStorage.getItem('yokoso_products');
+    if (saved) {
+      try {
+        products = JSON.parse(saved);
+        migrateProducts();
+        console.log('[Load] localStorage cache: ' + products.length + ' products');
+        afterProductsLoaded();
+        return;
+      } catch(e) {
+        console.warn('[Load] localStorage parse failed:', e);
+      }
+    }
+    products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+    migrateProducts();
+    console.log('[Load] defaults: ' + products.length + ' products');
+    afterProductsLoaded();
+  }
+
+  function afterProductsLoaded() {
+    loadCategories();
+    done();
+  }
+
+  loadFromWorker();
 }
 
 function loadCategories() {
@@ -1959,44 +1895,41 @@ function saveCategoriesConfig() {
 }
 
 function saveProducts() {
-  console.log('[Save] saveProducts() called. Products count:', products.length);
+  console.log('[Save] saveProducts(). Products count:', products.length);
   localStorage.setItem('yokoso_products', JSON.stringify(products));
-  localStorage.setItem('yokoso_pending_sync', 'true');
   localStorage.setItem('yokoso_local_save_time', Date.now().toString());
-  console.log('[Save] Written to localStorage, pending_sync=true');
-  if (fbDB) {
-    fbDB.collection(FB_COLLECTION).doc(FB_DOC).set({ items: products }).catch(function() {});
-  }
-  if (localStorage.getItem('autoSyncEnabled') === 'true' && localStorage.getItem('github_token')) {
-    console.log('[Save] Auto-sync enabled, triggering syncToGitHub()');
-    syncToGitHub();
-  } else {
-    console.log('[Save] Auto-sync not enabled or no token. Token exists:', !!localStorage.getItem('github_token'));
-  }
-  // Push to worker for cross-device real-time sync
+  console.log('[Save] localStorage cache written');
+
+  // Primary: push to Worker for cross-device sync
   if (isProxyReady()) {
     fetch(proxyUrl('products'), {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ products: products, updatedAt: Date.now() })
     }).then(function(r) {
-      if (r.ok) console.log('[Sync] Products pushed to worker');
-    }).catch(function(err) { console.warn('[Sync] Worker push failed:', err.message); });
+      if (r.ok) console.log('[Save] Worker synced');
+      else console.warn('[Save] Worker HTTP ' + r.status);
+    }).catch(function(err) { console.warn('[Save] Worker failed:', err.message); });
   }
-  // Show commit reminder in admin panel
+
+  // Backup: GitHub auto-sync if enabled
+  if (localStorage.getItem('autoSyncEnabled') === 'true' && localStorage.getItem('github_token')) {
+    console.log('[Save] GitHub auto-sync triggered');
+    syncToGitHub();
+  }
+
   var reminder = document.getElementById('commitReminder');
   if (!reminder) {
     reminder = document.createElement('div');
     reminder.id = 'commitReminder';
-    reminder.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#ffc107;color:#333;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.2);cursor:pointer;max-width:300px;';
+    reminder.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#28a745;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.2);cursor:pointer;max-width:300px;';
     reminder.addEventListener('click', function() { this.remove(); });
     document.body.appendChild(reminder);
   }
-  var syncing = localStorage.getItem('autoSyncEnabled') === 'true' && localStorage.getItem('github_token');
-  reminder.innerHTML = syncing ? 'Syncing to GitHub... ✓' : 'Changes saved locally. <b>Export JSON</b> and commit <code>data/products.json</code> to GitHub to sync all devices.';
+  reminder.textContent = 'Saved ✓';
   reminder.style.display = 'block';
   clearTimeout(reminder._timeout);
-  reminder._timeout = setTimeout(function() { if (reminder) reminder.style.display = 'none'; }, syncing ? 2000 : 6000);
+  reminder._timeout = setTimeout(function() { if (reminder) reminder.style.display = 'none'; }, 1500);
 }
 
 function uploadImage(dataUrl) {
@@ -4922,9 +4855,6 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
     })
     .then(function(refData) {
       console.log('[Sync] Ref updated to', refData.object.sha, 'for', filePath);
-      if (filePath === GITHUB_PATH) {
-        localStorage.setItem('yokoso_sync_time', Date.now().toString());
-      }
       if (statusEl) { statusEl.textContent = 'Synced ✓'; statusEl.style.color = '#28a745'; }
       console.log('[Sync] doGitHubSync succeeded for', filePath);
     });
@@ -4951,14 +4881,21 @@ function forceSync() {
     showToast('No GitHub token configured. Go to Config tab first.', 'error');
     return;
   }
-  // Re-save everything fresh to localStorage with a new timestamp
   localStorage.setItem('yokoso_products', JSON.stringify(products));
-  var now = Date.now().toString();
-  localStorage.setItem('yokoso_local_save_time', now);
-  localStorage.setItem('yokoso_pending_sync', 'true');
-  console.log('[ForceSync] Saved ' + products.length + ' products to localStorage, time=' + now);
-  // Set a force-sync marker so other devices know to discard stale localStorage
-  localStorage.setItem('yokoso_force_sync_time', now);
+  localStorage.setItem('yokoso_local_save_time', Date.now().toString());
+  console.log('[ForceSync] Saved ' + products.length + ' products to localStorage');
+
+  // Push to Worker first
+  if (isProxyReady()) {
+    fetch(proxyUrl('products'), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ products: products, updatedAt: Date.now() })
+    }).then(function(r) {
+      if (r.ok) console.log('[ForceSync] Worker synced');
+    }).catch(function(err) { console.warn('[ForceSync] Worker failed:', err.message); });
+  }
+
   showToast('Force sync: saving ' + products.length + ' products to GitHub...', 'info');
   var statusEl = document.getElementById('syncStatus');
   if (statusEl) { statusEl.textContent = 'Force syncing...'; statusEl.style.color = '#e94560'; }
@@ -4967,10 +4904,8 @@ function forceSync() {
   doGitHubSync(GITHUB_PATH, encoded, 'Force-sync: ' + products.length + ' products from admin', statusEl, 0)
     .then(function() {
       console.log('[ForceSync] GitHub sync succeeded.');
-      localStorage.setItem('yokoso_pending_sync', 'false');
-      // Also sync categories
       syncCategoriesToGitHub();
-      showToast('Force sync complete! All devices will get the latest data.', 'success');
+      showToast('Force sync complete!', 'success');
       if (statusEl) { statusEl.textContent = 'Force synced ✓'; statusEl.style.color = '#28a745'; }
     })
     .catch(function(err) {
@@ -5034,8 +4969,6 @@ function showAdminPanel() {
   }
   // Release expired orders (older than 24h)
   releaseExpiredOrders();
-  // CDN products are always authoritative — loadProducts() already handles
-  // localStorage fallback and pending edits. Don't replace here.
   document.getElementById('maintenanceOverlay').classList.add('active', 'admin-mode');
   document.getElementById('maintenancePublic').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'block';
