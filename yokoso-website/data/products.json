@@ -1,5 +1,97 @@
 [
   {
+    "id": 81,
+    "name": "GU STRAP BALLET SNEAKER",
+    "category0": "WOMENS",
+    "category1": "Shoes",
+    "category2": "GU",
+    "variants": {
+      "BLACK": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784478293/xgifbv64gdkfxan7io30.jpg"
+        ]
+      },
+      "RED": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784478294/p2xidtk6dowbr9wkdakz.jpg"
+        ]
+      },
+      "BROWN": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784478293/phrzitgfz4nsypxb6ubm.jpg"
+        ]
+      }
+    },
+    "price": "₱995.00",
+    "description": "Sizes avail: XS to XXL\n250 DP TO SECURE ITEM",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784478294/gqq440zyqrwhuxsuvbkk.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784478294/fdgui4gjgbzyfl1i672u.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784478294/vtiudyb9vgoed6ocmmws.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784478293/phrzitgfz4nsypxb6ubm.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784478293/xgifbv64gdkfxan7io30.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784478294/p2xidtk6dowbr9wkdakz.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784478294/cayexhpml7hzk82taqmh.jpg"
+    ],
+    "available": true,
+    "onSale": true,
+    "_colorOrder": [
+      "BLACK",
+      "RED",
+      "BROWN"
+    ],
+    "deposit": "₱250",
+    "originalPrice": "₱990"
+  },
+  {
     "id": 67,
     "name": "GU 2-WAY LONG BELT BAG",
     "category0": "WOMENS",
@@ -9,7 +101,7 @@
       "BLACK": {
         "sizes": [],
         "stock": {
-          "q": 5
+          "q": 4
         },
         "images": [
           "https://res.cloudinary.com/dvpfyxknb/image/upload/v1783763374/in077pmljpgu26aliod5.jpg"
@@ -42,7 +134,7 @@
     "originalPrice": "₱735",
     "color": "",
     "sizes": [],
-    "stock": 10,
+    "stock": 9,
     "onSale": true
   },
   {
@@ -445,7 +537,7 @@
     "originalPrice": "₱975.00",
     "color": "",
     "sizes": [],
-    "stock": 5
+    "stock": 120
   },
   {
     "id": 79,
@@ -3106,49 +3198,6 @@
       "Design 4",
       "Design 5"
     ]
-  },
-  {
-    "stock": 30,
-    "category0": "WOMENS",
-    "_colorOrder": [
-      "Default"
-    ],
-    "id": 32,
-    "deposit": "₱200",
-    "category1": "Shoes",
-    "sizes": [],
-    "name": "GU STRAP BALLET SNEAKER",
-    "variants": {
-      "Default": {
-        "sizes": [
-          "XS",
-          "S",
-          "M",
-          "L",
-          "XL",
-          "2XL"
-        ],
-        "stock": {
-          "XS": 5,
-          "S": 5,
-          "M": 5,
-          "L": 5,
-          "XL": 5,
-          "2XL": 5
-        }
-      }
-    },
-    "images": [
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782749413/yuxdljsgusdlmk43ywql.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782749413/yb5tl65afe9pilegopjj.jpg",
-      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1782749413/goyvfaubxrgz2ze1la5h.jpg"
-    ],
-    "category2": "GU",
-    "price": "₱850.00",
-    "available": true,
-    "originalPrice": "₱845",
-    "color": "",
-    "description": "Sizes avail: XS to XXL\n200 DP TO SECURE ITEM"
   },
   {
     "available": true,
