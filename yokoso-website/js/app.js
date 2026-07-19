@@ -1895,18 +1895,28 @@ function saveProducts() {
   console.log('[Save] saveProducts(). Products count:', products.length);
   localStorage.setItem('yokoso_products', JSON.stringify(products));
   localStorage.setItem('yokoso_local_save_time', Date.now().toString());
-  console.log('[Save] localStorage cache written');
+  showToast('Saving...', 'info', 5000);
 
   // Primary: push to Worker for cross-device sync
-  if (isProxyReady()) {
+  if (!isProxyReady()) {
+    showToast('Saved locally. Set Stock Proxy URL in Config for cross-device sync.', 'warn', 5000);
+    console.warn('[Save] Proxy not configured');
+  } else {
     fetch(proxyUrl('products'), {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ products: products, updatedAt: Date.now() })
     }).then(function(r) {
-      if (r.ok) console.log('[Save] Worker synced');
-      else console.warn('[Save] Worker HTTP ' + r.status);
-    }).catch(function(err) { console.warn('[Save] Worker failed:', err.message); });
+      if (r.ok) {
+        showToast('Saved ✓ visible on all devices', 'success', 3000);
+        console.log('[Save] Worker synced');
+      } else {
+        return r.text().then(function(t) { throw new Error('HTTP ' + r.status + ': ' + t); });
+      }
+    }).catch(function(err) {
+      showToast('Save failed - not visible on other devices: ' + err.message, 'error', 6000);
+      console.error('[Save] Worker failed:', err.message);
+    });
   }
 
   // Backup: GitHub auto-sync if enabled
@@ -1914,19 +1924,6 @@ function saveProducts() {
     console.log('[Save] GitHub auto-sync triggered');
     syncToGitHub();
   }
-
-  var reminder = document.getElementById('commitReminder');
-  if (!reminder) {
-    reminder = document.createElement('div');
-    reminder.id = 'commitReminder';
-    reminder.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#28a745;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.2);cursor:pointer;max-width:300px;';
-    reminder.addEventListener('click', function() { this.remove(); });
-    document.body.appendChild(reminder);
-  }
-  reminder.textContent = 'Saved ✓';
-  reminder.style.display = 'block';
-  clearTimeout(reminder._timeout);
-  reminder._timeout = setTimeout(function() { if (reminder) reminder.style.display = 'none'; }, 1500);
 }
 
 function uploadImage(dataUrl) {

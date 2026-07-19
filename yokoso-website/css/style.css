@@ -3164,6 +3164,7 @@ body {
 }
 .toast.success { border-left: 3px solid #2d8a4e; }
 .toast.error { border-left: 3px solid #e94560; }
+.toast.warn { border-left: 3px solid #e67e22; }
 .toast.info { border-left: 3px solid #4a90d9; }
 @media (max-width: 480px) {
   .toast-container { top: auto; bottom: 1.5rem; right: 1rem; left: 1rem; }
