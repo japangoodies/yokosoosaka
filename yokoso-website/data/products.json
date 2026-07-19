@@ -1,5 +1,47 @@
 [
   {
+    "id": 82,
+    "name": "UNIQLO X CECILIE BAHNSEN SHIRRING NONSLEEVE",
+    "category0": "WOMENS",
+    "category1": "Clothing",
+    "category2": "Uniqlo",
+    "variants": {
+      "Default": {
+        "sizes": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "XS": 5,
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        }
+      }
+    },
+    "price": "₱695.00",
+    "description": "Sizes avail: nasa pic na po\nSize reference nasa comsec\n200 DP TO SECURE ITEM\nYokoso Osaka - Japan Goodies PH\nSize - length - bust",
+    "images": [
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784481131/jcg9vxcnb9qcxdxm46yr.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784481131/wpsrmuburlyzg28gplsc.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784481131/hqwyjqexoeoytl62i5d3.jpg",
+      "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784481131/lyunzcn7pelbsbp3r9d8.jpg"
+    ],
+    "available": true,
+    "onSale": true,
+    "_colorOrder": [
+      "Default"
+    ]
+  },
+  {
     "id": 81,
     "name": "GU STRAP BALLET SNEAKER",
     "category0": "WOMENS",
@@ -89,7 +131,10 @@
       "BROWN"
     ],
     "deposit": "₱250",
-    "originalPrice": "₱990"
+    "originalPrice": "₱990",
+    "color": "",
+    "sizes": [],
+    "stock": 5
   },
   {
     "id": 67,
