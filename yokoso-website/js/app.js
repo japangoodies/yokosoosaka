@@ -2337,17 +2337,34 @@ function shareProduct(id) {
   if (!p) return;
   var url = window.location.origin + window.location.pathname + '?product=' + id;
   var text = p.name + ' - ' + p.price + '\n\n' + url;
-  if (navigator.share) {
-    navigator.share({ title: p.name, text: text, url: url }).catch(function() {});
-  } else if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(function() {
-      showToast('Copied! Share with friends on Messenger', 'success');
-    }).catch(function() {
-      fallbackCopy(text);
-    });
-  } else {
-    fallbackCopy(text);
+  var imgUrl = (Array.isArray(p.images) && p.images.length > 0) ? p.images[0] : (p.image || '');
+  var doShare = function(shareData) {
+    if (navigator.share) {
+      navigator.share(shareData).catch(function() {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareData.text || text).then(function() {
+        showToast('Copied! Share with friends on Messenger', 'success');
+      }).catch(function() { fallbackCopy(shareData.text || text); });
+    } else {
+      fallbackCopy(shareData.text || text);
+    }
+  };
+  if (!imgUrl || typeof navigator.canShare !== 'function') {
+    doShare({ title: p.name, text: text, url: url });
+    return;
   }
+  fetch(imgUrl)
+    .then(function(r) { return r.blob(); })
+    .then(function(blob) {
+      var ext = imgUrl.split('.').pop().split('?')[0] || 'jpg';
+      var file = new File([blob], 'product.' + ext, { type: blob.type });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        doShare({ title: p.name, text: text, url: url, files: [file] });
+      } else {
+        doShare({ title: p.name, text: text, url: url });
+      }
+    })
+    .catch(function() { doShare({ title: p.name, text: text, url: url }); });
 }
 function fallbackCopy(txt) {
   var ta = document.createElement('textarea');
