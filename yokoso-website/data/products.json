@@ -6,7 +6,43 @@
     "category1": "Clothing",
     "category2": "Uniqlo",
     "variants": {
-      "Default": {
+      "Design 1": {
+        "sizes": [
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784481869/ptmmkw7evf5mfkrvh9xr.jpg"
+        ]
+      },
+      "Design 2": {
+        "sizes": [
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784481869/jez0yunghdp6dz3tnrmx.jpg"
+        ]
+      },
+      "Design 3": {
         "sizes": [
           "XS",
           "S",
@@ -24,11 +60,35 @@
           "XL": 5,
           "2XL": 5,
           "3XL": 5
-        }
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784481869/n4sr4tphxm0cni6uyeut.jpg"
+        ]
+      },
+      "Design 4": {
+        "sizes": [
+          "S",
+          "M",
+          "L",
+          "XL",
+          "2XL",
+          "3XL"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "2XL": 5,
+          "3XL": 5
+        },
+        "images": [
+          "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784481869/lxnop1davimrivfpke8z.jpg"
+        ]
       }
     },
     "price": "₱699.00",
-    "description": "Sizes avail: nasa pic na po\nSize reference nasa comsec\n200 DP TO SECURE ITEM\nYokoso Osaka - Japan Goodies PH\nSize - length - bust",
+    "description": "200 DP TO SECURE ITEM",
     "images": [
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784481869/ptmmkw7evf5mfkrvh9xr.jpg",
       "https://res.cloudinary.com/dvpfyxknb/image/upload/v1784481869/jez0yunghdp6dz3tnrmx.jpg",
@@ -38,8 +98,13 @@
     "available": true,
     "onSale": true,
     "_colorOrder": [
-      "Default"
-    ]
+      "Design 1",
+      "Design 2",
+      "Design 3",
+      "Design 4"
+    ],
+    "deposit": "₱200",
+    "originalPrice": "₱695"
   },
   {
     "id": 81,
