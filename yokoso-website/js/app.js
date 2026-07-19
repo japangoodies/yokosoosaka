@@ -4934,8 +4934,11 @@ function doGitHubSync(filePath, encoded, message, statusEl, attempt) {
     // 409/422 = branch moved between read and write. Rebase on the fresh head
     // (which now includes any code fixes) and retry, instead of force-overwriting.
     if ((err.status === 409 || err.status === 422) && attempt < MAX_ATTEMPTS - 1) {
-      console.warn('[Sync] Ref conflict (HTTP ' + err.status + '), rebasing on latest ' + GITHUB_BRANCH + ' and retrying (' + (attempt + 1) + '/' + (MAX_ATTEMPTS - 1) + ')');
-      return doGitHubSync(filePath, encoded, message, statusEl, attempt + 1);
+      var delay = Math.pow(2, attempt) * 200;
+      console.warn('[Sync] Ref conflict (HTTP ' + err.status + '), rebasing on latest ' + GITHUB_BRANCH + ' and retrying (' + (attempt + 1) + '/' + (MAX_ATTEMPTS - 1) + ') in ' + delay + 'ms');
+      return new Promise(function(r) { setTimeout(r, delay); }).then(function() {
+        return doGitHubSync(filePath, encoded, message, statusEl, attempt + 1);
+      });
     }
     throw err;
   });
