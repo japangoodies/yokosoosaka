@@ -1644,8 +1644,27 @@ function loadProducts(callback) {
     if (callback) callback();
   }
 
-  function loadFromWorker() {
-    if (!isProxyReady()) return loadFromGitHub();
+  // Priority 1: localStorage (instant, has latest edits)
+  var saved = localStorage.getItem('yokoso_products');
+  if (saved) {
+    try {
+      products = JSON.parse(saved);
+      migrateProducts();
+      console.log('[Load] localStorage: ' + products.length + ' products');
+    } catch(e) {
+      console.warn('[Load] localStorage parse failed:', e);
+      products = null;
+    }
+  }
+  if (!products || !products.length) {
+    products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+    migrateProducts();
+    console.log('[Load] defaults: ' + products.length + ' products');
+  }
+
+  // Background sync: Worker first, then GitHub
+  function bgFromWorker() {
+    if (!isProxyReady()) { bgFromGitHub(); return; }
     fetch(proxyUrl('products'))
       .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function(data) {
@@ -1653,63 +1672,41 @@ function loadProducts(callback) {
           products = data.products;
           migrateProducts();
           localStorage.setItem('yokoso_products', JSON.stringify(products));
-          console.log('[Load] Worker: ' + products.length + ' products');
-          afterProductsLoaded();
-          return;
+          console.log('[Load] Worker bg-sync: ' + products.length + ' products');
         }
-        throw new Error('worker empty');
       })
-      .catch(function() { loadFromGitHub(); });
+      .catch(function() { bgFromGitHub(); });
   }
 
-  function loadFromGitHub() {
+  function bgFromGitHub() {
     fetch('https://raw.githubusercontent.com/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/main/' + GITHUB_PATH)
       .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function(data) {
         if (data && data.length > 0) {
-          products = data;
-          migrateProducts();
-          localStorage.setItem('yokoso_products', JSON.stringify(products));
+          var localIds = {}; products.forEach(function(p) { localIds[p.id] = true; });
+          var merged = false;
+          data.forEach(function(p) {
+            if (!localIds[p.id]) { products.push(p); merged = true; }
+          });
+          if (merged) {
+            migrateProducts();
+            localStorage.setItem('yokoso_products', JSON.stringify(products));
+            console.log('[Load] GitHub bg-merge: +' + merged + ' products');
+          }
           if (isProxyReady()) {
             fetch(proxyUrl('products'), {
               method: 'PUT', headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ products: products, updatedAt: Date.now() })
             }).catch(function() {});
           }
-          console.log('[Load] GitHub raw: ' + products.length + ' products');
-          afterProductsLoaded();
-          return;
         }
-        throw new Error('github empty');
       })
-      .catch(function() { loadFromLocal(); });
+      .catch(function() {});
   }
 
-  function loadFromLocal() {
-    var saved = localStorage.getItem('yokoso_products');
-    if (saved) {
-      try {
-        products = JSON.parse(saved);
-        migrateProducts();
-        console.log('[Load] localStorage cache: ' + products.length + ' products');
-        afterProductsLoaded();
-        return;
-      } catch(e) {
-        console.warn('[Load] localStorage parse failed:', e);
-      }
-    }
-    products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-    migrateProducts();
-    console.log('[Load] defaults: ' + products.length + ' products');
-    afterProductsLoaded();
-  }
-
-  function afterProductsLoaded() {
-    loadCategories();
-    done();
-  }
-
-  loadFromWorker();
+  loadCategories();
+  done();
+  bgFromWorker();
 }
 
 function loadCategories() {
